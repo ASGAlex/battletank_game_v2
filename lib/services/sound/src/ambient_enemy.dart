@@ -1,0 +1,28 @@
+//
+//
+// mixin AmbientEnemy on BaseTank {
+//   @override
+//   void update(double dt) {
+//     super.update(dt);
+//
+//     final radiusOfAmbient = mySize * 20;
+//     seeComponentType<Npc>(
+//         radiusVision: radiusOfAmbient,
+//         observed: (enemies) {
+//           double minDistance = radiusOfAmbient;
+//           for (final enemy in enemies) {
+//             final newDistance = enemy.position.distanceTo(position);
+//             if (newDistance < minDistance) {
+//               minDistance = newDistance;
+//             }
+//           }
+//           final soundVolume = 1 - minDistance / radiusOfAmbient;
+//           final player = Sound().moveEnemies;
+//           player.controller?.setVolume(soundVolume);
+//           player.play();
+//         },
+//         notObserved: () {
+//           Sound().moveEnemies.pause();
+//         });
+//   }
+// }

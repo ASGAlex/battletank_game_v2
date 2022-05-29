@@ -1,0 +1,144 @@
+part of tank;
+
+enum _BulletState { fly, boom }
+
+class Bullet extends SpriteAnimationGroupComponent<_BulletState>
+    with CollisionCallbacks, HideableComponent {
+  Bullet(
+      {required this.direction,
+      required this.firedFrom,
+      this.damage = 1,
+      super.position,
+      super.angle})
+      : super(anchor: Anchor.center) {
+    current = _BulletState.fly;
+  }
+
+  final Direction direction;
+  int damage = 1;
+  int speed = 150;
+
+  PositionComponent firedFrom;
+
+  final _light = _Light();
+
+  @override
+  Future<void> onLoad() async {
+    final boom = await SpriteSheetRegistry().boom.animation;
+    size = SpriteSheetRegistry().bullet.spriteSize;
+    animations = {
+      _BulletState.fly: SpriteSheetRegistry().bullet.animation,
+      _BulletState.boom: boom
+    };
+    boom.onComplete = () {
+      hidden = false;
+      removeFromParent();
+    };
+    add(_BulletHitbox(size: size.clone()));
+    add(_light);
+
+    Vector2 displacement;
+    final diff = firedFrom.size.x / 2;
+    switch (direction) {
+      case Direction.left:
+        displacement = position.translate(-diff, 0);
+        break;
+      case Direction.right:
+        displacement = position.translate(diff, 0);
+        break;
+      case Direction.up:
+        displacement = position.translate(0, -diff);
+        break;
+      case Direction.down:
+        displacement = position.translate(0, diff);
+        break;
+    }
+    position = displacement;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    if (!hidden) {
+      super.render(canvas);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    if (current == _BulletState.fly) {
+      final innerSpeed = speed * dt;
+      Vector2 displacement;
+      switch (direction) {
+        case Direction.left:
+          displacement = position.translate(-innerSpeed, 0);
+          break;
+        case Direction.right:
+          displacement = position.translate(innerSpeed, 0);
+          break;
+        case Direction.up:
+          displacement = position.translate(0, -innerSpeed);
+          break;
+        case Direction.down:
+          displacement = position.translate(0, innerSpeed);
+          break;
+      }
+      position = displacement;
+    }
+    super.update(dt);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (current == _BulletState.boom) return;
+    if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
+      return;
+    }
+
+    _light.renderShape = false;
+    _light.removeFromParent();
+    current = _BulletState.boom;
+    size = SpriteSheetRegistry().boom.spriteSize;
+
+    if (other is Brick) {
+      Sound().playerBulletWall.play();
+    } else if (other is HeavyBrick) {
+      Sound().playerBulletStrongWall.play();
+    }
+
+    if (other is DestroyableComponent) {
+      other.takeDamage(damage);
+    }
+
+    super.onCollision(intersectionPoints, other);
+  }
+}
+
+class _BulletHitbox extends RectangleHitbox {
+  _BulletHitbox({super.size, super.position});
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
+    if (other is HitboxNoInteraction) {
+      return;
+    }
+    super.onCollision(intersectionPoints, other);
+  }
+}
+
+class _Light extends CircleComponent {
+  _Light({super.children})
+      : super(position: Vector2(1, 1), anchor: Anchor.center, radius: 16);
+
+  @override
+  onLoad() {
+    paint = Paint();
+    paint
+      ..color = Colors.orangeAccent.withOpacity(0.3)
+      ..blendMode = BlendMode.lighten
+      ..maskFilter = const MaskFilter.blur(
+        BlurStyle.normal,
+        5,
+      );
+    return null;
+  }
+}
