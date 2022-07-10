@@ -58,14 +58,16 @@ class MyGame extends FlameGame
         tileMap: tiledComponent.tileMap, layerNames: ['tree'])
       ..priority = RenderPriority.tree.priority);
 
-    add(TileProcessor.getPictureComponent(
-        tileMap: tiledComponent.tileMap, layerNames: ['water'])
-      ..priority = RenderPriority.water.priority);
+    // add(TileProcessor.getPictureComponent(
+    //     tileMap: tiledComponent.tileMap, layerNames: ['water'])
+    //   ..priority = RenderPriority.water.priority);
 
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 700),
       'water': const Duration(milliseconds: 50)
     });
+
+    final compiler = AnimationBatchCompiler();
 
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
@@ -85,12 +87,17 @@ class MyGame extends FlameGame
               lazyCollisionService.addHitbox(
                   position: position, size: size, layer: 'water');
             }
+            compiler.addTile(position, tile);
           })
         },
         layersToLoad: [
           'tree',
           'water'
         ]);
+
+    final animatedWater = await compiler.compile();
+    animatedWater.priority = RenderPriority.water.priority;
+    add(animatedWater);
 
     // tiledComponent.tileMap.map.layers.removeWhere((element) =>
     //     ['ground', 'collision', 'interaction'].contains(element.name));
@@ -117,7 +124,7 @@ class MyGame extends FlameGame
   };
 
   loadInteractiveObjects(TiledComponent tiledComponent) {
-    const layersToLoad = ['collision', 'interaction', 'tree'];
+    const layersToLoad = ['collision'];
 
     TileProcessor.createComponentsFromTiles(
         tileMap: tiledComponent.tileMap,
