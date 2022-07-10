@@ -10,8 +10,8 @@ import 'package:flame/image_composition.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tiled/tiled.dart';
 
-typedef ComponentBuilder = Component Function(
-    TileProcessor tile, Vector2 position, Vector2 size);
+part 'src/animation_batch_compiler.dart';
+part 'src/picture_batch_compiler.dart';
 
 typedef TileProcessorFunc = void Function(
     TileProcessor tile, Vector2 position, Vector2 size);
@@ -128,38 +128,6 @@ class TileProcessor {
     }
   }
 
-  static PictureComponent getPictureComponent(
-      {required RenderableTiledMap tileMap, List<String>? layerNames}) {
-    layerNames ??= [];
-    _unlistedLayers(tileMap, layerNames).forEach((element) {
-      element.visible = false;
-    });
-    tileMap.refreshCache();
-
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder);
-    tileMap.render(canvas);
-    final picture = recorder.endRecording();
-
-    _unlistedLayers(tileMap, layerNames).forEach((element) {
-      element.visible = true;
-    });
-    tileMap.refreshCache();
-
-    return PictureComponent(picture);
-  }
-
-  static List<Layer> _unlistedLayers(
-      RenderableTiledMap tileMap, List<String> layerNames) {
-    final unlisted = <Layer>[];
-    for (final layer in tileMap.map.layers) {
-      if (!layerNames.contains(layer.name)) {
-        unlisted.add(layer);
-      }
-    }
-    return unlisted;
-  }
-
   static void processTileType(
       {required RenderableTiledMap tileMap,
       required Map<String, TileProcessorFunc> processorByType,
@@ -201,125 +169,5 @@ class TileProcessor {
           .removeWhere((element) => layersToLoad.contains(element.name));
       tileMap.refreshCache();
     }
-  }
-
-  static List<Component> createComponentsFromTiles(
-      {required RenderableTiledMap tileMap,
-      required Map<String, ComponentBuilder> componentByType,
-      required List<String> layersToLoad,
-      Component? game,
-      bool clear = true}) {
-    List<Component> newComponents = [];
-    for (final layer in layersToLoad) {
-      final tileLayer = tileMap.getLayer<TileLayer>(layer);
-      final tileData = tileLayer?.data;
-      if (tileData != null) {
-        int xOffset = 0;
-        int yOffset = 0;
-        for (final tileId in tileData) {
-          if (tileId != 0) {
-            final tileset = tileMap.map.tilesetByTileGId(tileId);
-            final tileData = tileset.tiles[tileId];
-            final position = Vector2(xOffset.toDouble() * tileMap.map.tileWidth,
-                yOffset.toDouble() * tileMap.map.tileWidth);
-            final component = componentByType[tileData.type];
-            if (component != null) {
-              final tileProcessor = TileProcessor(tileData, tileset);
-              final newComponent = component(
-                  tileProcessor,
-                  position,
-                  Vector2(tileMap.map.tileWidth.toDouble(),
-                      tileMap.map.tileWidth.toDouble()));
-              if (game != null) {
-                game.add(newComponent);
-              }
-              newComponents.add(newComponent);
-            }
-          }
-          xOffset++;
-          if (xOffset == tileLayer?.width) {
-            xOffset = 0;
-            yOffset++;
-          }
-        }
-      }
-    }
-
-    if (clear) {
-      tileMap.map.layers
-          .removeWhere((element) => layersToLoad.contains(element.name));
-      tileMap.refreshCache();
-    }
-
-    return newComponents;
-  }
-}
-
-class PictureComponent extends PositionComponent {
-  PictureComponent(this.picture);
-
-  final Picture picture;
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawPicture(picture);
-  }
-}
-
-class AnimationBatchCompiler {
-  SpriteAnimation? animation;
-  bool _loading = false;
-
-  List<Vector2> positions = [];
-  final Completer _completer = Completer();
-
-  Future addTile(Vector2 position, TileProcessor tileProcessor) async {
-    if (animation == null && _loading == false) {
-      _loading = true;
-      animation = await tileProcessor.getSpriteAnimation();
-      if (animation == null) {
-        _loading = false;
-      } else {
-        _completer.complete();
-      }
-    }
-    positions.add(position);
-  }
-
-  Future<SpriteAnimationComponent> compile() async {
-    await _completer.future;
-    final anim = animation;
-    if (anim == null) {
-      throw "Can't compile while animation is not loaded!";
-    }
-
-    List<Sprite> newSprites = [];
-
-    while (anim.currentIndex < anim.frames.length) {
-      final sprite = anim.getSprite();
-      final composition = ImageComposition();
-      for (final pos in positions) {
-        composition.add(sprite.image, pos, source: sprite.src);
-      }
-      final composedImage = await composition.compose();
-      newSprites.add(Sprite(composedImage));
-      anim.currentIndex++;
-    }
-    final spriteAnimation = SpriteAnimation.variableSpriteList(newSprites,
-        stepTimes: anim.getVariableStepTimes());
-    return SpriteAnimationComponent(
-        animation: spriteAnimation,
-        position: Vector2.all(0),
-        size: newSprites.first.image.size);
-  }
-}
-
-extension VariableStepTimes on SpriteAnimation {
-  List<double> getVariableStepTimes() {
-    final times = <double>[];
-    for (final frame in frames) {
-      times.add(frame.stepTime);
-    }
-    return times;
   }
 }

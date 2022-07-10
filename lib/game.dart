@@ -51,23 +51,21 @@ class MyGame extends FlameGame
 
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
 
-    add(TileProcessor.getPictureComponent(
+    final pictureCompiler = PictureBatchCompiler();
+
+    add(pictureCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']));
 
-    add(TileProcessor.getPictureComponent(
-        tileMap: tiledComponent.tileMap, layerNames: ['tree'])
+    add(pictureCompiler
+        .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree'])
       ..priority = RenderPriority.tree.priority);
-
-    // add(TileProcessor.getPictureComponent(
-    //     tileMap: tiledComponent.tileMap, layerNames: ['water'])
-    //   ..priority = RenderPriority.water.priority);
 
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 700),
       'water': const Duration(milliseconds: 50)
     });
 
-    final compiler = AnimationBatchCompiler();
+    final animationCompiler = AnimationBatchCompiler();
 
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
@@ -87,50 +85,32 @@ class MyGame extends FlameGame
               lazyCollisionService.addHitbox(
                   position: position, size: size, layer: 'water');
             }
-            compiler.addTile(position, tile);
-          })
+            animationCompiler.addTile(position, tile);
+          }),
+          'brick': ((tile, position, size) {
+            add(Brick(tile, position: position, size: size));
+          }),
+          'heavy_brick': ((tile, position, size) {
+            add(HeavyBrick(tile, position: position, size: size));
+          }),
         },
         layersToLoad: [
           'tree',
-          'water'
+          'water',
+          'collision'
         ]);
 
-    final animatedWater = await compiler.compile();
+    final animatedWater = await animationCompiler.compile();
     animatedWater.priority = RenderPriority.water.priority;
     add(animatedWater);
 
-    // tiledComponent.tileMap.map.layers.removeWhere((element) =>
-    //     ['ground', 'collision', 'interaction'].contains(element.name));
-    // tiledComponent.tileMap.refreshCache();
-    // tiledComponent.priority = RenderPriority.tree.priority;
-    //
-    // add(tiledComponent);
-
     loadSpawns(tiledComponent);
-
-    loadInteractiveObjects(tiledComponent);
     loadSounds();
 
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
     camera.zoom = 2.5;
     restorePlayer();
     // spawnEnemy();
-  }
-
-  Map<String, ComponentBuilder> componentByType = {
-    'brick': (tile, pos, size) => Brick(tile, position: pos, size: size),
-    'heavy_brick': (tile, pos, size) =>
-        HeavyBrick(tile, position: pos, size: size),
-  };
-
-  loadInteractiveObjects(TiledComponent tiledComponent) {
-    const layersToLoad = ['collision'];
-
-    TileProcessor.createComponentsFromTiles(
-        tileMap: tiledComponent.tileMap,
-        componentByType: componentByType,
-        layersToLoad: layersToLoad,
-        game: this);
   }
 
   loadSpawns(TiledComponent tiledComponent) {
