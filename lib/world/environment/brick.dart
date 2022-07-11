@@ -77,8 +77,7 @@ class Brick extends SpriteComponent with CollisionCallbacks {
   }
 
   _die() {
-    if (shouldRemove) return;
+    if (isRemoving) return;
     removeFromParent();
-    remove(this);
   }
 }

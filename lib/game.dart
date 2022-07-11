@@ -19,7 +19,6 @@ import 'package:tiled/tiled.dart';
 
 class MyGame extends FlameGame
     with
-        FPSCounter,
         ColorFilterMix,
         HasKeyboardHandlerComponents,
         SingleGameInstance,
@@ -160,10 +159,6 @@ class MyGame extends FlameGame
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-
-    // if (debugMode) {
-    fpsTextPaint.render(canvas, fps(120).toString(), Vector2(10, 2));
-    // }
 
     final hudTextPaintNormal = TextPaint(
         style: const TextStyle(
