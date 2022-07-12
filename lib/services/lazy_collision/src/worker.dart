@@ -123,26 +123,16 @@ class _Worker extends LongRunningIsolateServer {
   }
 
   _collisionsUpdate(String layer) {
+    final sw = Stopwatch();
+    sw.start();
     _calculatedResults[layer]?.clear();
     final layerHitboxes = _hitboxes[layer] ?? {};
     for (final activeItem in layerHitboxes.entries) {
       final activeHbList = _activeHitboxes[layer] ?? <int>[];
       if (!activeHbList.contains(activeItem.key)) continue;
 
-      // final activeWidth = activeItem.value.width;
-      // final activeHeight = activeItem.value.height;
-
       final layerOtherHitboxes = _hitboxes[layer] ?? {};
       for (final other in layerOtherHitboxes.entries) {
-        // final otherWidth = other.value.width;
-        // final otherHeight = other.value.height;
-
-        // if (activeItem.key == other.key) continue;
-        // final xDistance = activeItem.value.topLeft.x - other.value.topLeft.x;
-        // if (xDistance.abs() > activeWidth + otherWidth) continue;
-        // final yDistance = activeItem.value.topLeft.y - other.value.topLeft.y;
-        // if (yDistance.abs() > activeHeight + otherHeight) continue;
-
         var overlap = activeItem.value.intersects(other.value);
 
         var current = _calculatedResults[layer]?[activeItem.key] ?? 0;
@@ -155,6 +145,9 @@ class _Worker extends LongRunningIsolateServer {
         _calculatedResults[layer]![activeItem.key] = current;
       }
     }
+
+    print(
+        "hb count: ${layerHitboxes.length}; elapsed: ${sw.elapsedMilliseconds}");
   }
 
   _hitboxAdd(_Message message) {

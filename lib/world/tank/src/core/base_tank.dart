@@ -25,6 +25,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   double _trackDistance = 0;
   double _dtSumTreesCheck = 0;
 
+  bool get trackTreeCollisions => true;
+
   @override
   int health = 1;
 
@@ -57,16 +59,18 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     add(RectangleHitbox());
     add(_movementHitbox);
 
-    final game = findParent<MyGame>();
-    game?.lazyCollisionService
-        .addHitbox(
-            position: position,
-            size: size,
-            layer: 'tree',
-            type: CollisionType.active)
-        .then((value) {
-      _lazyTreeHitboxId = value;
-    });
+    if (trackTreeCollisions) {
+      final game = findParent<MyGame>();
+      game?.lazyCollisionService
+          .addHitbox(
+              position: position,
+              size: size,
+              layer: 'tree',
+              type: CollisionType.active)
+          .then((value) {
+        _lazyTreeHitboxId = value;
+      });
+    }
 
     return super.onLoad();
   }
@@ -119,11 +123,13 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           break;
       }
       position = displacement;
-      game?.lazyCollisionService.updateHitbox(
-          id: _lazyTreeHitboxId,
-          position: position.translate(-size.x / 2, -size.y / 2),
-          layer: 'tree',
-          size: size);
+      if (trackTreeCollisions) {
+        game?.lazyCollisionService.updateHitbox(
+            id: _lazyTreeHitboxId,
+            position: position.translate(-size.x / 2, -size.y / 2),
+            layer: 'tree',
+            size: size);
+      }
 
       _trackDistance += innerSpeed;
       if (_trackDistance > 2) {
@@ -136,7 +142,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       }
     }
 
-    if (_dtSumTreesCheck >= 0.5) {
+    if (_dtSumTreesCheck >= 0.5 && trackTreeCollisions) {
       game?.lazyCollisionService
           .getCollisionsCount(_lazyTreeHitboxId, 'tree')
           .then((value) {
@@ -156,6 +162,9 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   @override
   onDeath() {
+    final game = findParent<MyGame>();
+    game?.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
+    game?.lazyCollisionService.removeHitbox(_movementHitbox.lazyId, 'water');
     super.onDeath();
     current = MovementState.die;
   }

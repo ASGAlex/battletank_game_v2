@@ -12,6 +12,7 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
   static Spawn? _getFree([bool forPlayer = false]) {
     for (var spawn in _instances) {
       if (!spawn.busy && spawn.isForPlayer == forPlayer && !spawn.isColliding) {
+        spawn.busy = true;
         return spawn;
       }
     }

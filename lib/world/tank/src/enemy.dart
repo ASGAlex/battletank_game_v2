@@ -8,6 +8,9 @@ class Enemy extends Tank {
   @override
   int health = 1;
 
+  @override
+  bool get trackTreeCollisions => false;
+
   var _movementMode = _MovementMode.random;
 
   var _lastAvailableDirections = <Direction>[];

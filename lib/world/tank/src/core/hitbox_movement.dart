@@ -12,6 +12,7 @@ class _MovementHitbox extends RectangleHitbox
   }
 
   int _lazyMovementHitboxId = -1;
+  int get lazyId => _lazyMovementHitboxId;
   int _otherCollisions = 0;
   bool _collideWithWater = false;
 
@@ -40,7 +41,6 @@ class _MovementHitbox extends RectangleHitbox
       if (other.parent is! Spawn && other is! HitboxNoInteraction) {
         _otherCollisions++;
         tank.canMoveForward = false;
-        print('cant move!');
       }
     } catch (e) {
       print(e);

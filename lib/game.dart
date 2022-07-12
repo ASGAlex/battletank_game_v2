@@ -35,13 +35,8 @@ class MyGame extends FlameGame
 
   final lazyCollisionService = LazyCollisionsService();
 
-  // final treeController = TreeController();
-  // final waterController = WaterController();
-
   bool isPlayerHiddenFromEnemy = false;
-
-  // @override
-  // bool debugMode = true;
+  List<Enemy> _enemies = [];
 
   @override
   Future<void> onLoad() async {
@@ -60,8 +55,8 @@ class MyGame extends FlameGame
       ..priority = RenderPriority.tree.priority);
 
     await lazyCollisionService.run({
-      'tree': const Duration(milliseconds: 700),
-      'water': const Duration(milliseconds: 50)
+      'tree': const Duration(milliseconds: 1000),
+      'water': const Duration(milliseconds: 150)
     });
 
     final animationCompiler = AnimationBatchCompiler();
@@ -84,7 +79,6 @@ class MyGame extends FlameGame
               lazyCollisionService.addHitbox(
                   position: position, size: size, layer: 'water');
             }
-            animationCompiler.addTile(position, tile);
           }),
           'brick': ((tile, position, size) {
             add(Brick(tile, position: position, size: size));
@@ -95,8 +89,18 @@ class MyGame extends FlameGame
         },
         layersToLoad: [
           'tree',
-          'water',
+          // 'water',
           'collision'
+        ]);
+    TileProcessor.processTileType(
+        tileMap: tiledComponent.tileMap,
+        processorByType: <String, TileProcessorFunc>{
+          'water': ((tile, position, size) {
+            animationCompiler.addTile(position, tile);
+          }),
+        },
+        layersToLoad: [
+          'water',
         ]);
 
     final animatedWater = await animationCompiler.compile();
@@ -109,7 +113,11 @@ class MyGame extends FlameGame
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
     camera.zoom = 2.5;
     restorePlayer();
-    // spawnEnemy();
+    Future.delayed(Duration(seconds: 5)).then((value) {
+      for (var i = 0; i < 30; i++) {
+        spawnEnemy();
+      }
+    });
   }
 
   loadSpawns(TiledComponent tiledComponent) {
@@ -153,6 +161,7 @@ class MyGame extends FlameGame
     var spawn = await Spawn.waitFree();
     final object = Enemy(position: spawn.position.clone());
     await spawn.createTank(object, true);
+    _enemies.add(object);
     return object;
   }
 
@@ -199,4 +208,16 @@ class MyGame extends FlameGame
   void clampZoom() {
     camera.zoom = camera.zoom.clamp(0.05, 5.0);
   }
+
+// @override
+// KeyEventResult onKeyEvent(
+//     RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+//   if (event.physicalKey == PhysicalKeyboardKey.f1) {
+//     for (var enemy in _enemies) {
+//       enemy.takeDamage(1000);
+//     }
+//     return KeyEventResult.handled;
+//   }
+//   return KeyEventResult.ignored;
+// }
 }

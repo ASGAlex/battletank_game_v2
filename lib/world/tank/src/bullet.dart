@@ -93,6 +93,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
       return;
     }
+    if (firedFrom is Enemy && other is Enemy) return;
 
     _light.renderShape = false;
     _light.removeFromParent();

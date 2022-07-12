@@ -42,7 +42,6 @@ abstract class SpriteSheetBase {
       }));
 
   Future<SpriteAnimation> awaitAnimation(Future<SpriteAnimation> animation) {
-    print('await animation for $this');
     _awaitList.add(animation);
     return animation;
   }
@@ -50,7 +49,6 @@ abstract class SpriteSheetBase {
   /// Call in animation getter to quickly create a new instance of "precompiled"
   /// animation
   Future<SpriteAnimation> getPrecompiledAnimation(String name) async {
-    print('get new animation for $this');
     if (!_allLoaded) {
       await Future.wait(_awaitList);
       _allLoaded = true;
