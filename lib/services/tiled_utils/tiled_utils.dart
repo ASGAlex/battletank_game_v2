@@ -11,7 +11,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tiled/tiled.dart';
 
 part 'src/animation_batch_compiler.dart';
-part 'src/picture_batch_compiler.dart';
+part 'src/image_batch_compiler.dart';
 
 typedef TileProcessorFunc = void Function(
     TileProcessor tile, Vector2 position, Vector2 size);

@@ -1,8 +1,8 @@
 part of tiled_utils;
 
-class PictureBatchCompiler {
-  PositionComponent compileMapLayer(
-      {required RenderableTiledMap tileMap, List<String>? layerNames}) {
+class ImageBatchCompiler {
+  Future<PositionComponent> compileMapLayer(
+      {required RenderableTiledMap tileMap, List<String>? layerNames}) async {
     layerNames ??= [];
     _unlistedLayers(tileMap, layerNames).forEach((element) {
       element.visible = false;
@@ -19,7 +19,10 @@ class PictureBatchCompiler {
     });
     tileMap.refreshCache();
 
-    return _PictureComponent(picture);
+    final image =
+        await picture.toImage(tileMap.map.width * 8, tileMap.map.height * 8);
+
+    return _ImageComponent(image);
   }
 
   static List<Layer> _unlistedLayers(
@@ -34,13 +37,14 @@ class PictureBatchCompiler {
   }
 }
 
-class _PictureComponent extends PositionComponent {
-  _PictureComponent(this.picture);
+class _ImageComponent extends PositionComponent {
+  _ImageComponent(this.image);
 
-  final Picture picture;
+  final Image image;
 
   @override
   void render(Canvas canvas) {
-    canvas.drawPicture(picture);
+    canvas.drawImage(image, const Offset(0, 0), Paint());
+    // canvas.drawPicture(picture);
   }
 }

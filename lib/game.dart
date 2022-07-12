@@ -69,14 +69,15 @@ class MyGame extends FlameGame
 
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
 
-    final pictureCompiler = PictureBatchCompiler();
-
-    add(pictureCompiler.compileMapLayer(
-        tileMap: tiledComponent.tileMap, layerNames: ['ground']));
-
-    add(pictureCompiler
-        .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree'])
-      ..priority = RenderPriority.tree.priority);
+    final imageCompiler = ImageBatchCompiler();
+    final ground = await imageCompiler.compileMapLayer(
+        tileMap: tiledComponent.tileMap, layerNames: ['ground']);
+    ground.priority = RenderPriority.ground.priority;
+    add(ground);
+    final tree = await imageCompiler
+        .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
+    tree.priority = RenderPriority.tree.priority;
+    add(tree);
 
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 1000),
