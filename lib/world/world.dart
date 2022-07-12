@@ -18,6 +18,8 @@ enum RenderPriority {
   const RenderPriority(this.priority);
 }
 
+const distantOfSilence = 300.0;
+
 mixin ObjectLayers on FlameGame {
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);

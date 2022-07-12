@@ -1,5 +1,3 @@
-//
-//
 // mixin AmbientEnemy on BaseTank {
 //   @override
 //   void update(double dt) {

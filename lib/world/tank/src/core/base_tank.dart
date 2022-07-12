@@ -37,6 +37,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   SpriteAnimation? animationIdle;
   SpriteAnimation? animationDie;
 
+  final audioPlayer = DistantSfxPlayer(distantOfSilence);
+
   @override
   Future<void> onLoad() async {
     if (animationRun == null || animationIdle == null) {
@@ -89,7 +91,15 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           position: position,
           firedFrom: this);
       findParent<MyGame>()?.addBullet(bullet);
-      Sound().playerFireBullet.play();
+      final sfx = Sound().playerFireBullet;
+      if (this is Player) {
+        sfx.play();
+      } else {
+        final game = findParent<MyGame>();
+        audioPlayer.actualDistance =
+            (game?.player?.position.distanceTo(position) ?? 101);
+        audioPlayer.play(sfx);
+      }
       return true;
     }
 
@@ -167,5 +177,18 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     game?.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
     super.onDeath();
     current = MovementState.die;
+
+    Sfx? sfx;
+    if (this is Player) {
+      sfx = Sound().explosionPlayer;
+    } else if (this is Enemy) {
+      sfx = Sound().explosionEnemy;
+    }
+
+    if (sfx != null) {
+      audioPlayer.actualDistance =
+          (game?.player?.position.distanceTo(position) ?? 101);
+      audioPlayer.play(sfx);
+    }
   }
 }

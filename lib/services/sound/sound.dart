@@ -2,6 +2,7 @@ library sound;
 
 import 'package:audioplayers/audioplayers.dart';
 
+part 'src/distant_sfx_player.dart';
 part 'src/sfx.dart';
 
 typedef SfxBuilder = Sfx Function();

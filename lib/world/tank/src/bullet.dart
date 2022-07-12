@@ -20,6 +20,10 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   PositionComponent firedFrom;
 
+  final audioPlayer = DistantSfxPlayer(distantOfSilence);
+  double _distance = 0;
+  final _maxDistance = 500;
+
   final _light = _Light();
 
   @override
@@ -83,6 +87,10 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
           break;
       }
       position = displacement;
+      _distance += innerSpeed;
+      if (_distance > _maxDistance) {
+        die();
+      }
     }
     super.update(dt);
   }
@@ -96,15 +104,20 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     if (firedFrom is Enemy && other is Enemy) return;
     if (other is WaterCollide) return;
 
-    _light.renderShape = false;
-    _light.removeFromParent();
-    current = _BulletState.boom;
-    size = SpriteSheetRegistry().boom.spriteSize;
+    die();
 
+    Sfx? sfx;
     if (other is Brick) {
-      Sound().playerBulletWall.play();
+      sfx = Sound().playerBulletWall;
     } else if (other is HeavyBrick) {
-      Sound().playerBulletStrongWall.play();
+      sfx = Sound().playerBulletStrongWall;
+    }
+
+    if (sfx != null) {
+      final game = findParent<MyGame>();
+      audioPlayer.actualDistance =
+          (game?.player?.position.distanceTo(position) ?? 101);
+      audioPlayer.play(sfx);
     }
 
     if (other is DestroyableComponent) {
@@ -112,6 +125,13 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     }
 
     super.onCollision(intersectionPoints, other);
+  }
+
+  die() {
+    _light.renderShape = false;
+    _light.removeFromParent();
+    current = _BulletState.boom;
+    size = SpriteSheetRegistry().boom.spriteSize;
   }
 }
 

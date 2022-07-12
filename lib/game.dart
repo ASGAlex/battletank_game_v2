@@ -38,6 +38,7 @@ class MyGame extends FlameGame
 
   bool isPlayerHiddenFromEnemy = false;
   List<Enemy> _enemies = [];
+  Player? player;
 
   @override
   Future<void> onLoad() async {
@@ -158,6 +159,7 @@ class MyGame extends FlameGame
     final object = Player(position: spawn.position.clone());
     await spawn.createTank(object, true);
     camera.followComponent(object);
+    player = object;
     return object;
   }
 
