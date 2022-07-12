@@ -123,8 +123,6 @@ class _Worker extends LongRunningIsolateServer {
   }
 
   _collisionsUpdate(String layer) {
-    final sw = Stopwatch();
-    sw.start();
     _calculatedResults[layer]?.clear();
     final layerHitboxes = _hitboxes[layer] ?? {};
     for (final activeItem in layerHitboxes.entries) {
@@ -145,9 +143,6 @@ class _Worker extends LongRunningIsolateServer {
         _calculatedResults[layer]![activeItem.key] = current;
       }
     }
-
-    print(
-        "hb count: ${layerHitboxes.length}; elapsed: ${sw.elapsedMilliseconds}");
   }
 
   _hitboxAdd(_Message message) {

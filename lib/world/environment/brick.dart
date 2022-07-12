@@ -35,42 +35,24 @@ class Brick extends SpriteComponent with CollisionCallbacks {
   }
 
   void _collideWithBullet(Bullet bullet) {
-    final vector = center - bullet.center;
-    if (vector.x.abs() > vector.y.abs()) {
-      //horizontal
-      if (vector.x > 0) {
-        //from left
-        if (_hitsByBullet == 0) {
+    if (_hitsByBullet >= 1) {
+      _die();
+    } else {
+      switch (bullet.direction) {
+        case Direction.right:
           size.x -= halfBrick;
           position.x += halfBrick;
-        } else {
-          _die();
-        }
-      } else {
-        //from right
-        if (_hitsByBullet == 0) {
+          break;
+        case Direction.up:
+          size.y -= halfBrick;
+          break;
+        case Direction.left:
           size.x -= halfBrick;
-        } else {
-          _die();
-        }
-      }
-    } else {
-      //vertical
-      if (vector.y > 0) {
-        //from top
-        if (_hitsByBullet == 0) {
+          break;
+        case Direction.down:
           size.y -= halfBrick;
           position.y += halfBrick;
-        } else {
-          _die();
-        }
-      } else {
-        //from bottom
-        if (_hitsByBullet == 0) {
-          size.y -= halfBrick;
-        } else {
-          _die();
-        }
+          break;
       }
     }
     _hitsByBullet++;

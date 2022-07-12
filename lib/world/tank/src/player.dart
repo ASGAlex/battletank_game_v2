@@ -32,6 +32,7 @@ class Player extends Tank {
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (dead) return false;
     bool directionButtonPressed = false;
     bool updateAngle = false;
     for (final key in keysPressed) {

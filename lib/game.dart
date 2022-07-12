@@ -40,6 +40,27 @@ class MyGame extends FlameGame
   List<Enemy> _enemies = [];
   Player? player;
 
+  final hudTextPaintNormal = TextPaint(
+      style: const TextStyle(
+    fontWeight: FontWeight.bold,
+    color: Colors.black,
+    backgroundColor: Colors.white,
+  ));
+
+  final hudTextPaintGood = TextPaint(
+      style: const TextStyle(
+    fontWeight: FontWeight.bold,
+    color: Colors.green,
+    backgroundColor: Colors.black12,
+  ));
+
+  final hudTextPaintDanger = TextPaint(
+      style: const TextStyle(
+    fontWeight: FontWeight.bold,
+    color: Colors.red,
+    backgroundColor: Colors.black12,
+  ));
+
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -119,10 +140,14 @@ class MyGame extends FlameGame
     camera.zoom = 2.5;
     restorePlayer();
     Future.delayed(Duration(seconds: 5)).then((value) {
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 2; i++) {
         spawnEnemy();
       }
     });
+
+    add(FpsTextComponent(textRenderer: hudTextPaintDanger)
+      ..x = 0
+      ..y = 0);
   }
 
   loadSpawns(TiledComponent tiledComponent) {
@@ -175,26 +200,6 @@ class MyGame extends FlameGame
   void render(Canvas canvas) {
     super.render(canvas);
 
-    final hudTextPaintNormal = TextPaint(
-        style: const TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.black,
-      backgroundColor: Colors.white,
-    ));
-
-    final hudTextPaintGood = TextPaint(
-        style: const TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.green,
-      backgroundColor: Colors.black12,
-    ));
-
-    final hudTextPaintDanger = TextPaint(
-        style: const TextStyle(
-      fontWeight: FontWeight.bold,
-      color: Colors.red,
-      backgroundColor: Colors.black12,
-    ));
     if (isPlayerHiddenFromEnemy) {
       hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
     } else {
