@@ -22,7 +22,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   final audioPlayer = DistantSfxPlayer(distantOfSilence);
   double _distance = 0;
-  final _maxDistance = 500;
+  final _maxDistance = 800;
 
   final _light = _Light();
 

@@ -25,11 +25,11 @@ class Sfx {
     _assetSource = AssetSource(fullPathToAsset);
   }
 
-  play() {
+  Future play() async {
     final src = _assetSource;
     if (src != null) {
       _controller?.pause();
-      _controller?.play(src);
+      return _controller?.play(src);
     }
   }
 

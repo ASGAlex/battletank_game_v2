@@ -3,6 +3,34 @@ part of tank;
 class Player extends Tank {
   Player({super.position});
 
+  double _dtAmbientEnemySoundCheck = 0;
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    _dtAmbientEnemySoundCheck += dt;
+    if (_dtAmbientEnemySoundCheck > 2) {
+      _dtAmbientEnemySoundCheck = 0;
+      final game = findParent<MyGame>();
+      if (game != null) {
+        var minDistance = distantOfSilence;
+        for (final enemy in game.enemies) {
+          final distance = enemy.position.distanceTo(position);
+          if (distance < minDistance) {
+            minDistance = distance;
+          }
+        }
+        final sfx = Sound().moveEnemies;
+        if (minDistance >= distantOfSilence) {
+          sfx.pause();
+        } else {
+          sfx.controller?.setVolume(1 - (minDistance / distantOfSilence));
+          sfx.play();
+        }
+      }
+    }
+  }
+
   @override
   Future<void> onLoad() async {
     animationRun = await SpriteSheetRegistry().tankBasic.animationRun;
@@ -28,6 +56,12 @@ class Player extends Tank {
     });
 
     super.takeDamage(damage);
+  }
+
+  @override
+  onDeath() {
+    Sound().movePlayer.pause();
+    super.onDeath();
   }
 
   @override
@@ -76,7 +110,9 @@ class Player extends Tank {
 
     if (directionButtonPressed && canMoveForward) {
       current = MovementState.run;
-      Sound().movePlayer.play();
+      final sfx = Sound().movePlayer;
+      // sfx.controller?.setVolume(0.5);
+      sfx.play();
     } else {
       if (!dead) {
         current = MovementState.idle;

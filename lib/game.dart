@@ -37,7 +37,7 @@ class MyGame extends FlameGame
   final lazyCollisionService = LazyCollisionsService();
 
   bool isPlayerHiddenFromEnemy = false;
-  List<Enemy> _enemies = [];
+  List<Enemy> enemies = [];
   Player? player;
 
   final hudTextPaintNormal = TextPaint(
@@ -65,6 +65,7 @@ class MyGame extends FlameGame
   Future<void> onLoad() async {
     super.onLoad();
     initColorFilter<MyGame>();
+    loadSounds();
 
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
 
@@ -134,13 +135,12 @@ class MyGame extends FlameGame
     add(animatedWater);
 
     loadSpawns(tiledComponent);
-    loadSounds();
 
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
     camera.zoom = 2.5;
     restorePlayer();
     Future.delayed(Duration(seconds: 5)).then((value) {
-      for (var i = 0; i < 2; i++) {
+      for (var i = 0; i < 30; i++) {
         spawnEnemy();
       }
     });
@@ -170,11 +170,11 @@ class MyGame extends FlameGame
       () => SfxLongLoop('move_player.m4a'),
       () => SfxLongLoop('move_enemies.m4a'),
       () => Sfx('explosion_player.m4a', 2),
-      () => Sfx('explosion_enemy.m4a', 3),
-      () => Sfx('player_fire_bullet.m4a', 10),
-      () => Sfx('player_bullet_wall.m4a', 10),
-      () => Sfx('player_bullet_strong_wall.m4a', 10),
-      () => Sfx('bullet_strong_tank.m4a', 10),
+      () => Sfx('explosion_enemy.m4a', 10),
+      () => Sfx('player_fire_bullet.m4a', 50),
+      () => Sfx('player_bullet_wall.m4a', 25),
+      () => Sfx('player_bullet_strong_wall.m4a', 25),
+      () => Sfx('bullet_strong_tank.m4a', 25),
     ];
     sound.init(sfxList);
   }
@@ -192,7 +192,7 @@ class MyGame extends FlameGame
     var spawn = await Spawn.waitFree();
     final object = Enemy(position: spawn.position.clone());
     await spawn.createTank(object, true);
-    _enemies.add(object);
+    enemies.add(object);
     return object;
   }
 

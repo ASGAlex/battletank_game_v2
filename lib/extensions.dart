@@ -2,7 +2,7 @@ import 'package:flame/extensions.dart';
 import 'package:tank_game/services/sound/sound.dart';
 
 extension Shortcuts on Sound {
-  Sfx get movePlayer => sfx('move_player')!;
+  Sfx get movePlayer => sfx('move_player')!..controller?.setVolume(0.5);
 
   Sfx get moveEnemies => sfx('move_enemies')!;
 

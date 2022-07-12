@@ -93,6 +93,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       findParent<MyGame>()?.addBullet(bullet);
       final sfx = Sound().playerFireBullet;
       if (this is Player) {
+        sfx.controller?.setVolume(1);
         sfx.play();
       } else {
         final game = findParent<MyGame>();

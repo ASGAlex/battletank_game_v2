@@ -106,6 +106,10 @@ class Enemy extends Tank {
   @override
   onDeath() {
     super.onDeath();
-    findParent<MyGame>()?.spawnEnemy();
+    final game = findParent<MyGame>();
+    if (game != null) {
+      game.enemies.remove(this);
+      game.spawnEnemy();
+    }
   }
 }
