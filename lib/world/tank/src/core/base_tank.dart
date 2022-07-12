@@ -14,7 +14,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   Direction lookDirection = Direction.right;
   int speed = 50;
   bool canMoveForward = true;
-  bool collisionCheckedAfterAngleUpdate = true;
+  // bool collisionCheckedAfterAngleUpdate = true;
 
   bool _isHiddenFromEnemy = false;
 
@@ -104,8 +104,9 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     final game = findParent<MyGame>();
 
     if (current == MovementState.run &&
-        canMoveForward &&
-        collisionCheckedAfterAngleUpdate) {
+            canMoveForward /*&&
+        collisionCheckedAfterAngleUpdate*/
+        ) {
       final innerSpeed = speed * dt;
       Vector2 displacement;
       switch (lookDirection) {
@@ -164,7 +165,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   onDeath() {
     final game = findParent<MyGame>();
     game?.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
-    game?.lazyCollisionService.removeHitbox(_movementHitbox.lazyId, 'water');
     super.onDeath();
     current = MovementState.die;
   }

@@ -13,6 +13,7 @@ import 'package:tank_game/services/tiled_utils/tiled_utils.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/water.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
@@ -56,7 +57,7 @@ class MyGame extends FlameGame
 
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 1000),
-      'water': const Duration(milliseconds: 150)
+      // 'water': const Duration(milliseconds: 150)
     });
 
     final animationCompiler = AnimationBatchCompiler();
@@ -72,13 +73,16 @@ class MyGame extends FlameGame
                   position: position, size: size, layer: 'tree');
             }
           }),
+          // 'water': ((tile, position, size) {
+          //   final collision = tile.getCollisionRect();
+          //   if (collision != null) {
+          //     collision.position = position;
+          //     lazyCollisionService.addHitbox(
+          //         position: position, size: size, layer: 'water');
+          //   }
+          // }),
           'water': ((tile, position, size) {
-            final collision = tile.getCollisionRect();
-            if (collision != null) {
-              collision.position = position;
-              lazyCollisionService.addHitbox(
-                  position: position, size: size, layer: 'water');
-            }
+            add(WaterCollide(tile, position: position, size: size));
           }),
           'brick': ((tile, position, size) {
             add(Brick(tile, position: position, size: size));

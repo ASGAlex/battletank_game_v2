@@ -94,6 +94,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
       return;
     }
     if (firedFrom is Enemy && other is Enemy) return;
+    if (other is WaterCollide) return;
 
     _light.renderShape = false;
     _light.removeFromParent();

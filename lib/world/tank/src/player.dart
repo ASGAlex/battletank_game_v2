@@ -85,7 +85,7 @@ class Player extends Tank {
 
     if (updateAngle) {
       angle = lookDirection.angle;
-      collisionCheckedAfterAngleUpdate = false;
+      // collisionCheckedAfterAngleUpdate = false;
     }
 
     return false;

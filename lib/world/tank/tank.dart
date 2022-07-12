@@ -14,6 +14,7 @@ import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/water.dart';
 
 import '../../services/sound/sound.dart';
 import '../world.dart';
