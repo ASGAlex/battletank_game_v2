@@ -23,6 +23,7 @@ import '../world.dart';
 part 'src/bullet.dart';
 part 'src/core/base_tank.dart';
 part 'src/core/direction.dart';
+part 'src/core/hitbox_map_bounds.dart';
 part 'src/core/hitbox_movement.dart';
 part 'src/core/hitbox_movement_side.dart';
 part 'src/core/trail.dart';

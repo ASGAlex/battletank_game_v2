@@ -40,6 +40,8 @@ class MyGame extends FlameGame
   List<Enemy> enemies = [];
   Player? player;
 
+  RenderableTiledMap? currentMap;
+
   final hudTextPaintNormal = TextPaint(
       style: const TextStyle(
     fontWeight: FontWeight.bold,
@@ -68,6 +70,7 @@ class MyGame extends FlameGame
     loadSounds();
 
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
+    currentMap = tiledComponent.tileMap;
 
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
@@ -135,7 +138,7 @@ class MyGame extends FlameGame
     camera.zoom = 2.5;
     restorePlayer();
     Future.delayed(const Duration(seconds: 5)).then((value) {
-      for (var i = 0; i < 30; i++) {
+      for (var i = 0; i < 1; i++) {
         spawnEnemy();
       }
     });
@@ -214,16 +217,4 @@ class MyGame extends FlameGame
   void clampZoom() {
     camera.zoom = camera.zoom.clamp(0.05, 5.0);
   }
-
-// @override
-// KeyEventResult onKeyEvent(
-//     RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-//   if (event.physicalKey == PhysicalKeyboardKey.f1) {
-//     for (var enemy in _enemies) {
-//       enemy.takeDamage(1000);
-//     }
-//     return KeyEventResult.handled;
-//   }
-//   return KeyEventResult.ignored;
-// }
 }

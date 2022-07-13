@@ -19,8 +19,9 @@ class ImageBatchCompiler {
     });
     tileMap.refreshCache();
 
-    final image =
-        await picture.toImage(tileMap.map.width * 8, tileMap.map.height * 8);
+    final image = await picture.toImage(
+        tileMap.map.width * tileMap.map.tileWidth,
+        tileMap.map.height * tileMap.map.tileHeight);
 
     return _ImageComponent(image);
   }
@@ -45,6 +46,5 @@ class _ImageComponent extends PositionComponent {
   @override
   void render(Canvas canvas) {
     canvas.drawImage(image, const Offset(0, 0), Paint());
-    // canvas.drawPicture(picture);
   }
 }

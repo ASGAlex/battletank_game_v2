@@ -1,7 +1,7 @@
 part of tank;
 
 class _MovementHitbox extends RectangleHitbox
-    with DebugRender
+    with DebugRender, _HitboxMapBounds
     implements HitboxNoInteraction {
   _MovementHitbox({super.angle, super.anchor, super.priority})
       : super(position: Vector2(13, 1));
@@ -11,28 +11,14 @@ class _MovementHitbox extends RectangleHitbox
     return parent as Tank;
   }
 
-  // int _lazyMovementHitboxId = -1;
-  // int get lazyId => _lazyMovementHitboxId;
   int _otherCollisions = 0;
-  // bool _collideWithWater = false;
 
   @override
   Future? onLoad() {
     // debug = true;
     position = Vector2(tank.size.x / 2, 1);
-    size = Vector2(tank.size.x / 2 + 0.9, tank.size.y - 2);
-
-    // final game = findParent<MyGame>();
-    //
-    // game?.lazyCollisionService
-    //     .addHitbox(
-    //         position: absolutePosition,
-    //         size: size,
-    //         layer: 'water',
-    //         type: CollisionType.active)
-    //     .then((value) {
-    //   _lazyMovementHitboxId = value;
-    // });
+    size = Vector2(tank.size.x / 2 + 0.9, tank.size.y - 3);
+    priority = 100;
   }
 
   @override
@@ -40,7 +26,9 @@ class _MovementHitbox extends RectangleHitbox
     try {
       if (other.parent is! Spawn && other is! HitboxNoInteraction) {
         _otherCollisions++;
-        tank.canMoveForward = false;
+        if (!_outOfBounds) {
+          tank.canMoveForward = false;
+        }
       }
     } catch (e) {
       print(e);
@@ -53,7 +41,7 @@ class _MovementHitbox extends RectangleHitbox
     try {
       if (other.parent is! Spawn && other is! HitboxNoInteraction) {
         _otherCollisions--;
-        if (_otherCollisions == 0) {
+        if (_otherCollisions == 0 && !_outOfBounds) {
           tank.canMoveForward = true;
         }
       }
@@ -63,49 +51,15 @@ class _MovementHitbox extends RectangleHitbox
     super.onCollisionEnd(other);
   }
 
-  // void onWaterCollisionStart() {
-  //   tank.canMoveForward = false;
-  // }
-  //
-  // void onWaterCollisionEnd() {
-  //   if (_otherCollisions == 0) tank.canMoveForward = true;
-  // }
+  @override
+  update(dt) {
+    super.update(dt);
+    if (tank.canMoveForward) {
+      tank.canMoveForward = !_outOfBounds;
+    }
 
-  // @override
-  // void update(double dt) {
-  //   final game = findParent<MyGame>();
-  //
-  //   final hbRelativePos = position.clone();
-  //   final tankMatrix = tank.transformMatrix.clone();
-  //   var rect = Rect.fromLTRB(hbRelativePos.x, hbRelativePos.y,
-  //       hbRelativePos.x + size.x, hbRelativePos.y + size.y);
-  //   rect = rect.transform(tankMatrix);
-  //
-  //   // game?.lazyCollisionService.updateHitbox(
-  //   //     id: _lazyMovementHitboxId,
-  //   //     position: rect.topLeft.toVector2(),
-  //   //     size: rect.size.toVector2(),
-  //   //     layer: 'water');
-  //
-  //   super.update(dt);
-  //
-  //   // try {
-  //   //   game?.lazyCollisionService
-  //   //       .getCollisionsCount(_lazyMovementHitboxId, 'water')
-  //   //       .then((value) {
-  //   //     final isCollidingNew = (value > 1);
-  //   //     if (!_collideWithWater && isCollidingNew) {
-  //   //       _collideWithWater = isCollidingNew;
-  //   //       onWaterCollisionStart();
-  //   //     } else if (_collideWithWater && !isCollidingNew) {
-  //   //       _collideWithWater = isCollidingNew;
-  //   //       onWaterCollisionEnd();
-  //   //     }
-  //   //   });
-  //   //
-  //   //   tank.collisionCheckedAfterAngleUpdate = true;
-  //   // } catch (e) {
-  //   //   print(e);
-  //   // }
-  // }
+    if (!_outOfBounds && _otherCollisions == 0) {
+      tank.canMoveForward = true;
+    }
+  }
 }

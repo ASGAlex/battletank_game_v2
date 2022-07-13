@@ -3,6 +3,7 @@ part of tank;
 abstract class HitboxNoInteraction extends RectangleHitbox {}
 
 class _MovementSideHitbox extends RectangleHitbox
+    with _HitboxMapBounds
     implements HitboxNoInteraction {
   _MovementSideHitbox(
       {required this.direction, super.angle, super.anchor, super.priority})
@@ -14,7 +15,7 @@ class _MovementSideHitbox extends RectangleHitbox
 
   int _collisions = 0;
 
-  bool get canMoveToDirection => _collisions == 0;
+  bool get canMoveToDirection => !_outOfBounds && _collisions == 0;
 
   @override
   Future? onLoad() {

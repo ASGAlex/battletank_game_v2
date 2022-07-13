@@ -10,8 +10,8 @@ class TrackTrailController extends PositionComponent {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     final picture = recorder.endRecording();
-    width = tileMap.map.width * 8;
-    height = tileMap.map.height * 8;
+    width = (tileMap.map.width * tileMap.map.tileWidth).toDouble();
+    height = (tileMap.map.height * tileMap.map.tileHeight).toDouble();
     image = await picture.toImage(width.toInt(), height.toInt());
   }
 
