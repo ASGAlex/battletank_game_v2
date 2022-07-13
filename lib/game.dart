@@ -79,9 +79,12 @@ class MyGame extends FlameGame
     tree.priority = RenderPriority.tree.priority;
     add(tree);
 
+    final trackController = TrackTrailController();
+    await trackController.init(tiledComponent.tileMap);
+    add(trackController);
+
     await lazyCollisionService.run({
-      'tree': const Duration(milliseconds: 1000),
-      // 'water': const Duration(milliseconds: 150)
+      'tree': const Duration(milliseconds: 100),
     });
 
     final animationCompiler = AnimationBatchCompiler();
@@ -97,14 +100,6 @@ class MyGame extends FlameGame
                   position: position, size: size, layer: 'tree');
             }
           }),
-          // 'water': ((tile, position, size) {
-          //   final collision = tile.getCollisionRect();
-          //   if (collision != null) {
-          //     collision.position = position;
-          //     lazyCollisionService.addHitbox(
-          //         position: position, size: size, layer: 'water');
-          //   }
-          // }),
           'water': ((tile, position, size) {
             add(WaterCollide(tile, position: position, size: size));
           }),
@@ -117,7 +112,6 @@ class MyGame extends FlameGame
         },
         layersToLoad: [
           'tree',
-          // 'water',
           'collision'
         ]);
     TileProcessor.processTileType(
@@ -140,7 +134,7 @@ class MyGame extends FlameGame
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
     camera.zoom = 2.5;
     restorePlayer();
-    Future.delayed(Duration(seconds: 5)).then((value) {
+    Future.delayed(const Duration(seconds: 5)).then((value) {
       for (var i = 0; i < 30; i++) {
         spawnEnemy();
       }

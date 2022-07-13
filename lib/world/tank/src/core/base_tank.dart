@@ -14,7 +14,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   Direction lookDirection = Direction.right;
   int speed = 50;
   bool canMoveForward = true;
-  // bool collisionCheckedAfterAngleUpdate = true;
 
   bool _isHiddenFromEnemy = false;
 
@@ -114,10 +113,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     _dtSumTreesCheck += dt;
     final game = findParent<MyGame>();
 
-    if (current == MovementState.run &&
-            canMoveForward /*&&
-        collisionCheckedAfterAngleUpdate*/
-        ) {
+    if (current == MovementState.run && canMoveForward) {
       final innerSpeed = speed * dt;
       Vector2 displacement;
       switch (lookDirection) {
@@ -148,6 +144,12 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
         _trackDistance = 0;
         final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
         final rightTrackPos = transform.localToGlobal(Vector2(0, 12));
+
+        TrackTrailController.addTrack(
+            _TrackTrailNew(position: leftTrackPos, angle: angle));
+        TrackTrailController.addTrack(
+            _TrackTrailNew(position: rightTrackPos, angle: angle));
+
         // final game = findParent<MyGame>();
         // game?.addTrack(_TrackTrail(position: leftTrackPos, angle: angle));
         // game?.addTrack(_TrackTrail(position: rightTrackPos, angle: angle));

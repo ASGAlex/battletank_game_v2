@@ -1,40 +1,93 @@
 part of tank;
 
-class _TrackTrail extends RectangleComponent {
-  _TrackTrail({super.position, super.angle})
-      : super(
-          paint: Paint()..color = Colors.black.withOpacity(0.5),
-          size: Vector2(1, 4),
-          anchor: Anchor.topLeft,
-        ) {
-    if (_precompiledColors.isEmpty) {
-      for (var opacity = 0.5; opacity >= 0; opacity -= 0.01) {
-        _precompiledColors[opacity] = Colors.black.withOpacity(opacity);
-      }
-    }
+class TrackTrailController extends PositionComponent {
+  TrackTrailController() {
+    position = Vector2(0, 0);
+    priority = RenderPriority.trackTrail.priority;
   }
 
-  double opacity = 0.5;
+  init(RenderableTiledMap tileMap) async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    final picture = recorder.endRecording();
+    width = tileMap.map.width * 8;
+    height = tileMap.map.height * 8;
+    image = await picture.toImage(width.toInt(), height.toInt());
+  }
+
+  static final newTracks = <_TrackTrailNew>[];
+
+  static addTrack(_TrackTrailNew newTrack) {
+    newTracks.add(newTrack);
+  }
+
+  late Image image;
+
   double dtSum = 0;
 
-  static final Map<double, Color> _precompiledColors = {};
-
   @override
-  void update(double dt) {
+  void update(double dt) async {
     dtSum += dt;
+
+    Picture? picture;
+    if (newTracks.isNotEmpty) {
+      final paint = Paint()..color = material.Colors.black.withOpacity(0.5);
+      final recorder = PictureRecorder();
+      final canvasNew = Canvas(recorder);
+      for (final track in newTracks) {
+        canvasNew.save();
+        canvasNew.translate(track.position.x, track.position.y);
+        canvasNew.rotate(track.angle);
+        canvasNew.drawRect(const Rect.fromLTRB(0, 0, 1, 4), paint);
+        canvasNew.restore();
+      }
+      picture = recorder.endRecording();
+      newTracks.clear();
+    }
+
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+
+    var imgUpdated = false;
     if (dtSum >= 1) {
       dtSum = 0;
-      opacity -= 0.01;
-      if (opacity <= 0) {
-        renderShape = false;
-        removeFromParent();
-      } else {
-        final newColor = _precompiledColors[opacity];
-        if (newColor != null) {
-          paint.color = newColor;
-        }
-      }
+      canvas.drawImage(
+          image,
+          const Offset(0, 0),
+          Paint()
+            ..color = material.Colors.white.withOpacity(0.99)
+            ..filterQuality = FilterQuality.low);
+      imgUpdated = true;
     }
+
+    if (picture != null) {
+      if (!imgUpdated) {
+        canvas.drawImage(image, const Offset(0, 0),
+            Paint()..filterQuality = FilterQuality.low);
+      }
+      canvas.drawPicture(picture);
+      imgUpdated = true;
+    }
+
+    if (imgUpdated) {
+      final pic = recorder.endRecording();
+      image = await pic.toImage(width.toInt(), height.toInt());
+    }
+
     super.update(dt);
   }
+
+  @override
+  render(Canvas canvas) {
+    canvas.drawImage(
+        image, const Offset(0, 0), Paint()..filterQuality = FilterQuality.low);
+    super.render(canvas);
+  }
+}
+
+class _TrackTrailNew {
+  _TrackTrailNew({required this.position, required this.angle});
+
+  Vector2 position;
+  double angle;
 }

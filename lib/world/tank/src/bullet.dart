@@ -155,7 +155,7 @@ class _Light extends CircleComponent {
   onLoad() {
     paint = Paint();
     paint
-      ..color = Colors.orangeAccent.withOpacity(0.3)
+      ..color = material.Colors.orangeAccent.withOpacity(0.3)
       ..blendMode = BlendMode.lighten
       ..maskFilter = const MaskFilter.blur(
         BlurStyle.normal,

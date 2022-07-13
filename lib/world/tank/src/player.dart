@@ -49,7 +49,7 @@ class Player extends Tank {
   @override
   takeDamage(int damage) {
     final game = findParent<MyGame>();
-    game?.colorFilter?.animateTo(Colors.red,
+    game?.colorFilter?.animateTo(material.Colors.red,
         blendMode: BlendMode.colorBurn,
         duration: const Duration(milliseconds: 250), onFinish: () {
       game.colorFilter?.config.color = null;
