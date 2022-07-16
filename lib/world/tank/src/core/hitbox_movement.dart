@@ -16,15 +16,17 @@ class _MovementHitbox extends RectangleHitbox
   @override
   Future? onLoad() {
     // debug = true;
-    position = Vector2(1, -2);
-    size = Vector2(tank.size.x - 3, 2);
+    position = Vector2(1, -1);
+    size = Vector2(tank.size.x - 3, 3);
     priority = 100;
   }
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
     try {
-      if (other.parent is! Spawn && other is! HitboxNoInteraction) {
+      if (other.parent is! Spawn &&
+          other.parent is! Bullet &&
+          other is! HitboxNoInteraction) {
         _otherCollisions++;
         if (!_outOfBounds) {
           tank.canMoveForward = false;
@@ -39,7 +41,9 @@ class _MovementHitbox extends RectangleHitbox
   @override
   void onCollisionEnd(ShapeHitbox other) {
     try {
-      if (other.parent is! Spawn && other is! HitboxNoInteraction) {
+      if (other.parent is! Spawn &&
+          other.parent is! Bullet &&
+          other is! HitboxNoInteraction) {
         _otherCollisions--;
         if (_otherCollisions == 0 && !_outOfBounds) {
           tank.canMoveForward = true;

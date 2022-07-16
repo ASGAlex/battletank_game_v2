@@ -67,7 +67,8 @@ class Enemy extends Tank {
     return distance < distanceOfSilence;
   }
 
-  bool _moveRandom(double dt) {
+  bool _moveRandom(double dt,
+      {Direction? preferred, int min = 10, int max = 25}) {
     var directionChanged = false;
     final innerSpeed = speed * dt;
     _directionDistance -= innerSpeed;
@@ -76,27 +77,36 @@ class Enemy extends Tank {
     final enouthDistanceRunned = ((_initialDirectionDistance -
                 (_directionDistance < 0 ? 0 : _directionDistance))) /
             _initialDirectionDistance >=
-        0.4;
+        0.3;
     if (isCollisionLandscapeChanged(availableDirections) &&
         enouthDistanceRunned) {
       final random = Random();
       final changeDirection = random.nextBool();
       if (changeDirection) {
-        _setRandomDirection(availableDirections);
+        if (preferred != null && availableDirections.contains(preferred)) {
+          lookDirection = preferred;
+          angle = preferred.angle;
+        } else {
+          _setRandomDirection(availableDirections, min: min, max: max);
+        }
         directionChanged = true;
-        print(
-            'collision changed $_directionDistance of $_initialDirectionDistance');
       }
     } else if (_directionDistance <= 0) {
-      _setRandomDirection(availableDirections);
+      if (preferred != null && availableDirections.contains(preferred)) {
+        lookDirection = preferred;
+        angle = preferred.angle;
+      } else {
+        _setRandomDirection(availableDirections, min: min, max: max);
+      }
       directionChanged = true;
-
-      print('distance end');
     } else if (!canMoveForward) {
-      _setRandomDirection(availableDirections);
+      if (preferred != null && availableDirections.contains(preferred)) {
+        lookDirection = preferred;
+        angle = preferred.angle;
+      } else {
+        _setRandomDirection(availableDirections, min: min, max: max);
+      }
       directionChanged = true;
-
-      print('cant move forward');
     }
     current = MovementState.run;
     if (_movementMode == _MovementMode.randomWithFire) {
@@ -119,16 +129,10 @@ class Enemy extends Tank {
           List<Direction> currentAvailableDirections) =>
       _lastAvailableDirections.length < currentAvailableDirections.length;
 
-  Direction? _lastPreferredDirection;
-
   bool _temporaryRandom = false;
+  bool _inverseDirection = false;
 
   void _moveToPlayer(double dt) {
-    if (_temporaryRandom) {
-      _temporaryRandom = !_moveRandom(dt);
-      if (_temporaryRandom) return;
-    }
-
     final game = findParent<MyGame>();
     final playerPosition = game?.player?.position;
     final isPlayerDead = game?.player?.dead ?? true;
@@ -140,33 +144,74 @@ class Enemy extends Tank {
     final xDiff = position.x - playerPosition.x;
     final yDiff = position.y - playerPosition.y;
     Direction? preferredDirection;
+    Direction? secondaryDirection;
+    Direction? directionHorizontal;
+    Direction? directionVertical;
     bool attack = false;
     double attackDistance = 0;
-    if (xDiff.abs() < yDiff.abs()) {
-      if (xDiff > 7) {
-        preferredDirection = Direction.left;
-      } else if (xDiff < -7) {
-        preferredDirection = Direction.right;
-      } else {
-        preferredDirection = (yDiff > 0 ? Direction.up : Direction.down);
-        attack = true;
-        attackDistance = yDiff.abs();
-      }
-    } else {
-      if (yDiff > 7) {
-        preferredDirection = Direction.up;
-      } else if (yDiff < -7) {
-        preferredDirection = Direction.down;
-      } else {
-        preferredDirection = (xDiff > 0 ? Direction.left : Direction.right);
-        attack = true;
-        attackDistance = xDiff.abs();
-      }
+
+    if (xDiff > 7) {
+      directionHorizontal = Direction.left;
+    } else if (xDiff < -7) {
+      directionHorizontal = Direction.right;
+    }
+    /*else {
+      preferredDirection = (yDiff > 0 ? Direction.up : Direction.down);
+      attack = true;
+      attackDistance = yDiff.abs();
+    }*/
+
+    if (yDiff > 7) {
+      directionVertical = Direction.up;
+    } else if (yDiff < -7) {
+      directionVertical = Direction.down;
+    }
+    /* else {
+      preferredDirection = (xDiff > 0 ? Direction.left : Direction.right);
+      attack = true;
+      attackDistance = xDiff.abs();
+    }*/
+
+    if (directionHorizontal != null && directionVertical != null) {
+      preferredDirection =
+          (xDiff.abs() < yDiff.abs() ? directionHorizontal : directionVertical);
+      secondaryDirection =
+          (xDiff.abs() < yDiff.abs() ? directionVertical : directionHorizontal);
+    } else if (directionHorizontal == null) {
+      _inverseDirection = false;
+      preferredDirection = directionVertical;
+      secondaryDirection = directionHorizontal;
+      attack = true;
+      attackDistance = yDiff.abs();
+    } else if (directionVertical == null) {
+      _inverseDirection = false;
+      preferredDirection = directionHorizontal;
+      secondaryDirection = directionVertical;
+      attack = true;
+      attackDistance = xDiff.abs();
     }
 
-    _lastPreferredDirection = preferredDirection;
+    if (_inverseDirection) {
+      final _tmp = secondaryDirection;
+      secondaryDirection = preferredDirection;
+      preferredDirection = _tmp;
+    }
 
-    // print(preferredDirection);
+    if (preferredDirection == null) {
+      throw 'Preferred direction error';
+    }
+
+
+    if (_temporaryRandom) {
+      print(secondaryDirection);
+      _temporaryRandom = !_moveRandom(dt, preferred: secondaryDirection);
+      if (_temporaryRandom) return;
+      if (secondaryDirection != null) {
+        preferredDirection = secondaryDirection;
+      }
+      _inverseDirection = true;
+      print('end random: $lookDirection, $preferredDirection');
+    }
 
     final availableDirections = _getAvailableDirections();
     if (canMoveForward) {
@@ -177,6 +222,14 @@ class Enemy extends Tank {
       _directionDistance = 0;
       lookDirection = preferredDirection;
       angle = preferredDirection.angle;
+      if (_inverseDirection) {
+        print('start random after stop');
+        print(availableDirections);
+        print(preferredDirection);
+        print(secondaryDirection);
+        print(lookDirection);
+        print('===');
+      }
       if (attack && attackDistance < 100) {
         current = MovementState.idle;
       } else {
@@ -184,7 +237,7 @@ class Enemy extends Tank {
       }
     } else {
       _temporaryRandom = true;
-      _moveRandom(dt);
+      _moveRandom(dt, min: 2, max: 5);
     }
 
     if (attack) {
@@ -192,7 +245,8 @@ class Enemy extends Tank {
     }
   }
 
-  void _setRandomDirection(List<Direction> availableDirections) {
+  void _setRandomDirection(List<Direction> availableDirections,
+      {int min = 10, int max = 25}) {
     _lastAvailableDirections = availableDirections;
     if (availableDirections.isEmpty) return;
 
@@ -201,7 +255,7 @@ class Enemy extends Tank {
     lookDirection = availableDirections[i];
     angle = lookDirection.angle;
     _initialDirectionDistance = _directionDistance =
-        random.nextInt((size.x * 25).toInt()) + size.x * 10;
+        random.nextInt((size.x * max).toInt()) + size.x * min;
   }
 
   @override
