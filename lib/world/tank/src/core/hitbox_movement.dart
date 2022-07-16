@@ -16,8 +16,8 @@ class _MovementHitbox extends RectangleHitbox
   @override
   Future? onLoad() {
     // debug = true;
-    position = Vector2(tank.size.x / 2, 1);
-    size = Vector2(tank.size.x / 2 + 0.9, tank.size.y - 3);
+    position = Vector2(1, -2);
+    size = Vector2(tank.size.x - 3, 2);
     priority = 100;
   }
 

@@ -13,7 +13,7 @@ class Player extends Tank {
       _dtAmbientEnemySoundCheck = 0;
       final game = findParent<MyGame>();
       if (game != null) {
-        var minDistance = distantOfSilence;
+        var minDistance = distanceOfSilence;
         for (final enemy in game.enemies) {
           final distance = enemy.position.distanceTo(position);
           if (distance < minDistance) {
@@ -21,10 +21,10 @@ class Player extends Tank {
           }
         }
         final sfx = Sound().moveEnemies;
-        if (minDistance >= distantOfSilence) {
+        if (minDistance >= distanceOfSilence) {
           sfx.pause();
         } else {
-          sfx.controller?.setVolume(1 - (minDistance / distantOfSilence));
+          sfx.controller?.setVolume(1 - (minDistance / distanceOfSilence));
           sfx.play();
         }
       }

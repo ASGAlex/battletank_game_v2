@@ -38,7 +38,7 @@ class TrackTrailController extends PositionComponent {
         canvasNew.save();
         canvasNew.translate(track.position.x, track.position.y);
         canvasNew.rotate(track.angle);
-        canvasNew.drawRect(const Rect.fromLTRB(0, 0, 1, 4), paint);
+        canvasNew.drawRect(const Rect.fromLTWH(0, 13, 4, 1), paint);
         canvasNew.restore();
       }
       picture = recorder.endRecording();

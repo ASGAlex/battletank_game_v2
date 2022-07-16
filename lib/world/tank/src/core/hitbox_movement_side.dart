@@ -3,7 +3,7 @@ part of tank;
 abstract class HitboxNoInteraction extends RectangleHitbox {}
 
 class _MovementSideHitbox extends RectangleHitbox
-    with _HitboxMapBounds
+    with _HitboxMapBounds, DebugRender
     implements HitboxNoInteraction {
   _MovementSideHitbox(
       {required this.direction, super.angle, super.anchor, super.priority})
@@ -17,24 +17,34 @@ class _MovementSideHitbox extends RectangleHitbox
 
   bool get canMoveToDirection => !_outOfBounds && _collisions == 0;
 
+  Direction get globalMapDirection {
+    var globalValue = direction.value + tank.lookDirection.value;
+    if (globalValue > 3) {
+      return Direction.fromValue(globalValue - 4);
+    }
+    return Direction.fromValue(globalValue);
+  }
+
   @override
   Future? onLoad() {
+    // debug = true;
+
     switch (direction) {
       case Direction.left:
-        position = Vector2(-tank.size.x, 2);
-        size = Vector2(tank.size.x, tank.size.y - 3);
+        position = Vector2(-4, 2);
+        size = Vector2(4, tank.size.y - 3);
         break;
       case Direction.right:
         position = Vector2(tank.size.x, 2);
-        size = Vector2(tank.size.x, tank.size.y - 3);
+        size = Vector2(4, tank.size.y - 3);
         break;
       case Direction.up:
-        position = Vector2(2, -tank.size.y);
-        size = Vector2(tank.size.x - 3, tank.size.y);
+        position = Vector2(2, -4);
+        size = Vector2(tank.size.x - 3, 4);
         break;
       case Direction.down:
         position = Vector2(2, tank.size.y);
-        size = Vector2(tank.size.x - 3, tank.size.y);
+        size = Vector2(tank.size.x - 3, 4);
         break;
     }
     return null;

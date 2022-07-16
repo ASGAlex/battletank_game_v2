@@ -11,7 +11,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center);
 
-  Direction lookDirection = Direction.right;
+  Direction lookDirection = Direction.up;
   int speed = 50;
   bool canMoveForward = true;
 
@@ -36,7 +36,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   SpriteAnimation? animationIdle;
   SpriteAnimation? animationDie;
 
-  final audioPlayer = DistantSfxPlayer(distantOfSilence);
+  final audioPlayer = DistantSfxPlayer(distanceOfSilence);
 
   @override
   Future<void> onLoad() async {
@@ -97,7 +97,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       } else {
         final game = findParent<MyGame>();
         audioPlayer.actualDistance =
-            (game?.player?.position.distanceTo(position) ?? 101);
+            (game?.player?.position.distanceTo(position) ??
+                distanceOfSilence + 1);
         audioPlayer.play(sfx);
       }
       return true;
@@ -143,7 +144,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       if (_trackDistance > 2) {
         _trackDistance = 0;
         final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
-        final rightTrackPos = transform.localToGlobal(Vector2(0, 12));
+        final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
         TrackTrailController.addTrack(
             _TrackTrailNew(position: leftTrackPos, angle: angle));
@@ -190,7 +191,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
     if (sfx != null) {
       audioPlayer.actualDistance =
-          (game?.player?.position.distanceTo(position) ?? 101);
+          (game?.player?.position.distanceTo(position) ??
+              distanceOfSilence + 1);
       audioPlayer.play(sfx);
     }
   }
