@@ -65,33 +65,47 @@ class MyGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
+    print('Start loading!');
     super.onLoad();
     initColorFilter<MyGame>();
-    loadSounds();
 
+    print('loading sounds...');
+    loadSounds();
+    print('done.');
+
+    print('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
     currentMap = tiledComponent.tileMap;
+    print('done.');
 
+    print('Compiling ground layer...');
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']);
     ground.priority = RenderPriority.ground.priority;
     add(ground);
+    print('done.');
+
+    print('Compiling tree layer...');
     final tree = await imageCompiler
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
     tree.priority = RenderPriority.tree.priority;
     add(tree);
+    print('done.');
 
+    print('Preparing back buffer...');
     final trackController = TrackTrailController();
     await trackController.init(tiledComponent.tileMap);
     add(trackController);
+    print('done.');
 
+    print('Starting lazy collision service...');
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 100),
     });
+    print('done.');
 
-    final animationCompiler = AnimationBatchCompiler();
-
+    print('Creating trees and collision tiles...');
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
@@ -117,6 +131,10 @@ class MyGame extends FlameGame
           'tree',
           'collision'
         ]);
+    print('done.');
+
+    print('Creating water tiles...');
+    final animationCompiler = AnimationBatchCompiler();
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
@@ -127,25 +145,38 @@ class MyGame extends FlameGame
         layersToLoad: [
           'water',
         ]);
+    print('done.');
 
+    print('Compiling water animation...');
     final animatedWater = await animationCompiler.compile();
     animatedWater.priority = RenderPriority.water.priority;
     add(animatedWater);
+    print('done.');
 
+    print('Loading spawns...');
     loadSpawns(tiledComponent);
+    print('done.');
 
+    print('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
-    camera.zoom = 2.5;
-    restorePlayer();
-    Future.delayed(const Duration(seconds: 5)).then((value) {
-      for (var i = 0; i < 1; i++) {
-        spawnEnemy();
-      }
-    });
+    camera.zoom = 2;
 
+    restorePlayer();
+    print('done.');
+
+    // Future.delayed(const Duration(seconds: 5)).then((value) {
+    //   for (var i = 0; i < 1; i++) {
+    //     spawnEnemy();
+    //   }
+    // });
+
+    print('Prepare UI...');
     add(FpsTextComponent(textRenderer: hudTextPaintDanger)
       ..x = 0
       ..y = 0);
+    print('done.');
+
+    print('All done, game started!');
   }
 
   loadSpawns(TiledComponent tiledComponent) {
@@ -153,10 +184,24 @@ class MyGame extends FlameGame
         tiledComponent.tileMap.getLayer<ObjectGroup>('spawn')?.objects;
     if (spawns != null) {
       for (final spawnObject in spawns) {
-        addSpawn(Spawn(
+        final newSpawn = Spawn(
             position: Vector2(spawnObject.x + spawnObject.width / 2,
                 spawnObject.y + spawnObject.height / 2),
-            isForPlayer: spawnObject.name == 'spawn_player'));
+            isForPlayer: spawnObject.name == 'spawn_player');
+        for (final property in spawnObject.properties) {
+          switch (property.name) {
+            case 'cooldown_seconds':
+              newSpawn.cooldown = Duration(seconds: int.parse(property.value));
+              break;
+            case 'tanks_inside':
+              newSpawn.tanksInside = int.parse(property.value);
+              break;
+            case 'trigger_distance':
+              newSpawn.triggerDistance = double.parse(property.value);
+              break;
+          }
+        }
+        addSpawn(newSpawn);
       }
     }
   }

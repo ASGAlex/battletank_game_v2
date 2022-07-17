@@ -22,7 +22,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   final audioPlayer = DistantSfxPlayer(distanceOfSilence);
   double _distance = 0;
-  final _maxDistance = 800;
+  final _maxDistance = 300;
 
   final _light = _Light();
 
@@ -58,6 +58,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
         break;
     }
     position = displacement;
+    angle = direction.angle;
   }
 
   @override

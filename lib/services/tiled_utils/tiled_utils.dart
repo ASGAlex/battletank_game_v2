@@ -139,9 +139,17 @@ class TileProcessor {
       if (tileData != null) {
         int xOffset = 0;
         int yOffset = 0;
-        for (final tileId in tileData) {
+        for (var tileId in tileData) {
           if (tileId != 0) {
             final tileset = tileMap.map.tilesetByTileGId(tileId);
+
+            final firstGid = tileset.firstGid;
+            if (firstGid != null) {
+              tileId = tileId - firstGid + 1;
+            }
+            if (firstGid == 4) {
+              print('brick');
+            }
             final tileData = tileset.tiles[tileId];
             final position = Vector2(xOffset.toDouble() * tileMap.map.tileWidth,
                 yOffset.toDouble() * tileMap.map.tileWidth);
