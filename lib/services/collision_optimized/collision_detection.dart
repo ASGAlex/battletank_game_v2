@@ -13,6 +13,12 @@ class OptimizedCollisionDetection extends StandardCollisionDetection {
         0,
         (map.map.width * map.map.tileWidth).toDouble(),
         (map.map.height * map.map.tileHeight).toDouble());
+
+    broadphase.treeNew.mainBoxSize = Rect.fromLTWH(
+        0,
+        0,
+        (map.map.width * map.map.tileWidth).toDouble(),
+        (map.map.height * map.map.tileHeight).toDouble());
     final cd = OptimizedCollisionDetection(broadphase: broadphase);
     return cd;
   }
@@ -22,8 +28,7 @@ class OptimizedCollisionDetection extends StandardCollisionDetection {
   @override
   void add(ShapeHitbox item) {
     super.add(item);
-    final index = items.indexOf(item);
-    quadBf.tree.add(item, index);
+    quadBf.treeNew.add(item);
   }
 
   @override
@@ -35,26 +40,28 @@ class OptimizedCollisionDetection extends StandardCollisionDetection {
 
   @override
   void remove(ShapeHitbox item) {
-    final index = quadBf.items.indexOf(item);
-    quadBf.tree.remove(index);
+    quadBf.treeNew.remove(item);
     super.remove(item);
   }
 
   @override
   void removeAll(Iterable<ShapeHitbox> items) {
-    quadBf.tree.clear();
+    quadBf.treeNew.clear();
     super.removeAll(items);
   }
 
-  List<BoxesDbgInfo> get collisionQuadBoxes => _getBoxes(quadBf.tree);
+  List<BoxesDbgInfo> get collisionQuadBoxes =>
+      _getBoxes(quadBf.treeNew.rootNode, quadBf.treeNew.mainBoxSize);
 
-  List<BoxesDbgInfo> _getBoxes(QuadTree tree) {
+  List<BoxesDbgInfo> _getBoxes(Node node, Rect rootBox) {
     final boxes = <BoxesDbgInfo>[];
-    boxes.add(BoxesDbgInfo(
-        tree.bounds, tree.hitboxes as List<ShapeHitbox>, tree.count));
-    if (tree.children.isNotEmpty) {
-      for (final child in tree.children) {
-        boxes.addAll(_getBoxes(child));
+    final hitboxes = node.values;
+    boxes.add(
+        BoxesDbgInfo(rootBox, hitboxes as List<ShapeHitbox>, hitboxes.length));
+    if (node.children[0] != null) {
+      for (var i = 0; i < node.children.length; i++) {
+        boxes.addAll(_getBoxes(node.children[i] as Node<ShapeHitbox>,
+            quadBf.treeNew.computeBox(rootBox, i)));
       }
     }
     return boxes;

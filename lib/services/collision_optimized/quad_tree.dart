@@ -1,23 +1,23 @@
 part of 'broadphase.dart';
 
-class QuadTree<T extends Hitbox<T>> {
+class QuadTreeOld<T extends Hitbox<T>> {
   static const maxObjects = 20;
   static const maxLevels = 500;
   static const _exceptionMessage = 'Bounds not set';
 
-  static final _cachedHitboxesTrees = <int, QuadTree>{};
+  static final _cachedHitboxesTrees = <int, QuadTreeOld>{};
   static final _oldPositionById = <int, Aabb2>{};
 
-  QuadTree();
+  QuadTreeOld();
 
   int _level = 0;
   final _hitboxes = <int, T>{};
-  final _children = <QuadTree<T>>[];
+  final _children = <QuadTreeOld<T>>[];
 
   var bounds = Rect.zero;
 
-  QuadTree.subtree(this._level, this.bounds);
-  List<QuadTree> get children => _children;
+  QuadTreeOld.subtree(this._level, this.bounds);
+  List<QuadTreeOld> get children => _children;
   int get count => _hitboxes.length;
 
   List<T> get hitboxes => _hitboxes.values.toList();
@@ -39,13 +39,13 @@ class QuadTree<T extends Hitbox<T>> {
     var x = bounds.left;
     var y = bounds.top;
 
-    _children.add(QuadTree<T>.subtree(
+    _children.add(QuadTreeOld<T>.subtree(
         _level + 1, Rect.fromLTWH(x + subWidth, y, subWidth, subHeight)));
-    _children.add(QuadTree<T>.subtree(
+    _children.add(QuadTreeOld<T>.subtree(
         _level + 1, Rect.fromLTWH(x, y, subWidth, subHeight)));
-    _children.add(QuadTree<T>.subtree(
+    _children.add(QuadTreeOld<T>.subtree(
         _level + 1, Rect.fromLTWH(x, y + subHeight, subWidth, subHeight)));
-    _children.add(QuadTree<T>.subtree(_level + 1,
+    _children.add(QuadTreeOld<T>.subtree(_level + 1,
         Rect.fromLTWH(x + subWidth, y + subHeight, subWidth, subHeight)));
   }
 

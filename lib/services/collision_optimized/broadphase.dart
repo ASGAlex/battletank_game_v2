@@ -5,11 +5,13 @@ import 'package:flame/src/collisions/collision_callbacks.dart';
 import 'package:flame/src/collisions/hitboxes/hitbox.dart';
 
 part 'quad_tree.dart';
+part 'quad_tree_new.dart';
 
 class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
-  QuadTreeBroadphase({super.items}) : tree = QuadTree<T>();
+  QuadTreeBroadphase({super.items}) : tree = QuadTreeOld<T>();
 
-  final QuadTree<T> tree;
+  final treeNew = QuadTree<T>();
+  final QuadTreeOld<T> tree;
   final List<T> _active = [];
 
   final Set<CollisionProspect<T>> _potentials = {};
@@ -28,13 +30,13 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       final asShapeItem = (item as ShapeHitbox);
 
       if (asShapeItem.isRemoving || asShapeItem.parent == null) {
-        tree.remove(globalIndex);
+        treeNew.remove(item);
         continue;
       }
       _updateItemPosition(item, globalIndex);
 
-      final markRemove = <int>[];
-      final potentiallyCollide = tree.retrieve(globalIndex);
+      final markRemove = <T>[];
+      final potentiallyCollide = treeNew.query(item);
       for (final potential in potentiallyCollide) {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
@@ -42,7 +44,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         final asShapePotential = (potential as ShapeHitbox);
 
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
-          markRemove.add(globalIndex);
+          markRemove.add(item);
           continue;
         } else if (asShapePotential.parent == asShapeItem.parent &&
             asShapeItem.parent != null) {
@@ -59,11 +61,11 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         _potentials.add(CollisionProspect<T>(item, potential));
       }
       for (final i in markRemove) {
-        tree.remove(i);
+        treeNew.remove(i);
       }
     }
 
-    // print("p: ${_potentials.length} ");
+    print("p: ${_potentials.length} ");
     return _potentials;
   }
 
