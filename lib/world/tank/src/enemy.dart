@@ -206,7 +206,8 @@ class Enemy extends Tank {
     }
 
     if (preferredDirection == null) {
-      throw 'Preferred direction error';
+      current = MovementState.idle;
+      return;
     }
 
     if (_temporaryRandom) {

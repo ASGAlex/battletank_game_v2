@@ -18,6 +18,8 @@ import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
+import 'services/collision_optimized/collision_detection.dart';
+
 class MyGame extends FlameGame
     with
         ColorFilterMix,
@@ -76,6 +78,8 @@ class MyGame extends FlameGame
     print('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
     currentMap = tiledComponent.tileMap;
+    collisionDetection =
+        OptimizedCollisionDetection.fromMap(tiledComponent.tileMap);
     print('done.');
 
     print('Compiling ground layer...');
