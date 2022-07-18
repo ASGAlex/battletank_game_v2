@@ -38,6 +38,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   final audioPlayer = DistantSfxPlayer(distanceOfSilence);
 
+  Duration? _boomDuration;
+
   @override
   Future<void> onLoad() async {
     if (animationRun == null || animationIdle == null) {
@@ -45,10 +47,12 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     }
 
     animationDie ??= await SpriteSheetRegistry().boomBig.animation;
-    animationDie?.onComplete = () {
-      removeFromParent();
-      hidden = true;
-    };
+
+    double boomDurationSeconds = 0.0;
+    for (final frame in animationDie!.frames) {
+      boomDurationSeconds += frame.stepTime;
+    }
+    _boomDuration = Duration(seconds: boomDurationSeconds.toInt());
 
     animations = {
       MovementState.run: animationRun!,
@@ -194,6 +198,13 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           (game?.player?.position.distanceTo(position) ??
               distanceOfSilence + 1);
       audioPlayer.play(sfx);
+    }
+
+    if (_boomDuration != null) {
+      Future.delayed(_boomDuration!).then((value) {
+        removeFromParent();
+        hidden = true;
+      });
     }
   }
 }

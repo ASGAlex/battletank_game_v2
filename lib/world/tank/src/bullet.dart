@@ -26,18 +26,22 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   final _light = _Light();
 
+  Duration? _boomDuration;
+
   @override
   Future<void> onLoad() async {
     final boom = await SpriteSheetRegistry().boom.animation;
+    double boomDurationSeconds = 0.0;
+    for (final frame in boom.frames) {
+      boomDurationSeconds += frame.stepTime;
+    }
+    _boomDuration = Duration(seconds: boomDurationSeconds.toInt());
     size = SpriteSheetRegistry().bullet.spriteSize;
     animations = {
       _BulletState.fly: SpriteSheetRegistry().bullet.animation,
       _BulletState.boom: boom
     };
-    boom.onComplete = () {
-      hidden = false;
-      removeFromParent();
-    };
+
     add(_BulletHitbox(size: size.clone()));
     add(_light);
 
@@ -134,6 +138,13 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     _light.removeFromParent();
     current = _BulletState.boom;
     size = SpriteSheetRegistry().boom.spriteSize;
+
+    if (_boomDuration != null) {
+      Future.delayed(_boomDuration!).then((value) {
+        hidden = false;
+        removeFromParent();
+      });
+    }
   }
 }
 

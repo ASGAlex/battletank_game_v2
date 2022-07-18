@@ -44,6 +44,8 @@ class Enemy extends Tank {
       if ((_hearPlayer() || _seePlayer()) &&
           _movementMode != _MovementMode.target) {
         _movementMode = _MovementMode.toPlayerBlind;
+      } else {
+        _movementMode = _MovementMode.random;
       }
       switch (_movementMode) {
         case _MovementMode.random:

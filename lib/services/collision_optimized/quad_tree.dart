@@ -147,9 +147,4 @@ class _QuadTree<T extends Hitbox<T>> {
     }
     return [];
   }
-
-  updatePosition(T item, int globalIndex) {
-    remove(globalIndex);
-    add(item, globalIndex);
-  }
 }

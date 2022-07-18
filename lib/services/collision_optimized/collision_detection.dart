@@ -22,7 +22,7 @@ class OptimizedCollisionDetection extends StandardCollisionDetection {
   @override
   void add(ShapeHitbox item) {
     super.add(item);
-    final index = items.length - 1;
+    final index = items.indexOf(item);
     quadBf.tree.add(item, index);
   }
 
