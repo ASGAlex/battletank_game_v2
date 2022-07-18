@@ -32,23 +32,27 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
       _updateItemPosition(item, globalIndex);
 
+      final markRemove = <int>[];
       final potentiallyCollide = tree.retrieve(globalIndex);
       for (final potential in potentiallyCollide) {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
         }
 
+        if ((potential as ShapeHitbox).isRemoving ||
+            (potential as ShapeHitbox).parent == null) {
+          markRemove.add(globalIndex);
+          continue;
+        }
+
         _potentials.add(CollisionProspect<T>(item, potential));
       }
-      //
-      // if (activeOnly.length > 50) {
-      //   _sweep(activeOnly);
-      // }
+      for (final i in markRemove) {
+        tree.remove(i);
+      }
     }
 
-    // if (_potentials.length > 50) {}
-
-    // print("${sw.elapsedMicroseconds}, p: ${_potentials.length} ");
+    print("p: ${_potentials.length} ");
     return _potentials;
   }
 

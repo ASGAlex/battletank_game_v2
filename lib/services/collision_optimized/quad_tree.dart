@@ -1,8 +1,8 @@
 part of 'broadphase.dart';
 
 class _QuadTree<T extends Hitbox<T>> {
-  static const maxObjects = 50;
-  static const maxLevels = 100;
+  static const maxObjects = 20;
+  static const maxLevels = 500;
   static const _exceptionMessage = 'Bounds not set';
 
   static final _cachedHitboxesTrees = <int, _QuadTree>{};
