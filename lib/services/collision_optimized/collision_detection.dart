@@ -45,4 +45,26 @@ class OptimizedCollisionDetection extends StandardCollisionDetection {
     quadBf.tree.clear();
     super.removeAll(items);
   }
+
+  List<BoxesDbgInfo> get collisionQuadBoxes => _getBoxes(quadBf.tree);
+
+  List<BoxesDbgInfo> _getBoxes(QuadTree tree) {
+    final boxes = <BoxesDbgInfo>[];
+    boxes.add(BoxesDbgInfo(
+        tree.bounds, tree.hitboxes as List<ShapeHitbox>, tree.count));
+    if (tree.children.isNotEmpty) {
+      for (final child in tree.children) {
+        boxes.addAll(_getBoxes(child));
+      }
+    }
+    return boxes;
+  }
+}
+
+class BoxesDbgInfo {
+  BoxesDbgInfo(this.rect, this.hitboxes, this.count);
+
+  Rect rect;
+  List<ShapeHitbox> hitboxes;
+  int count;
 }

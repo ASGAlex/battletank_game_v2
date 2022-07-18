@@ -1,21 +1,26 @@
 part of 'broadphase.dart';
 
-class _QuadTree<T extends Hitbox<T>> {
+class QuadTree<T extends Hitbox<T>> {
   static const maxObjects = 20;
   static const maxLevels = 500;
   static const _exceptionMessage = 'Bounds not set';
 
-  static final _cachedHitboxesTrees = <int, _QuadTree>{};
+  static final _cachedHitboxesTrees = <int, QuadTree>{};
+  static final _oldPositionById = <int, Aabb2>{};
 
-  _QuadTree();
+  QuadTree();
 
   int _level = 0;
   final _hitboxes = <int, T>{};
-  final _children = <_QuadTree<T>>[];
+  final _children = <QuadTree<T>>[];
 
   var bounds = Rect.zero;
 
-  _QuadTree.subtree(this._level, this.bounds);
+  QuadTree.subtree(this._level, this.bounds);
+  List<QuadTree> get children => _children;
+  int get count => _hitboxes.length;
+
+  List<T> get hitboxes => _hitboxes.values.toList();
 
   clear() {
     _hitboxes.clear();
@@ -34,13 +39,13 @@ class _QuadTree<T extends Hitbox<T>> {
     var x = bounds.left;
     var y = bounds.top;
 
-    _children.add(_QuadTree<T>.subtree(
+    _children.add(QuadTree<T>.subtree(
         _level + 1, Rect.fromLTWH(x + subWidth, y, subWidth, subHeight)));
-    _children.add(_QuadTree<T>.subtree(
+    _children.add(QuadTree<T>.subtree(
         _level + 1, Rect.fromLTWH(x, y, subWidth, subHeight)));
-    _children.add(_QuadTree<T>.subtree(
+    _children.add(QuadTree<T>.subtree(
         _level + 1, Rect.fromLTWH(x, y + subHeight, subWidth, subHeight)));
-    _children.add(_QuadTree<T>.subtree(_level + 1,
+    _children.add(QuadTree<T>.subtree(_level + 1,
         Rect.fromLTWH(x + subWidth, y + subHeight, subWidth, subHeight)));
   }
 
@@ -106,6 +111,7 @@ class _QuadTree<T extends Hitbox<T>> {
 
     _hitboxes[globalIndex] = hitbox;
     _cachedHitboxesTrees[globalIndex] = this;
+    _oldPositionById[globalIndex] = Aabb2.copy(hitbox.aabb);
 
     if (_hitboxes.length > maxObjects && _level < maxLevels) {
       if (_children.isEmpty) {
@@ -126,12 +132,23 @@ class _QuadTree<T extends Hitbox<T>> {
     }
   }
 
+  bool isMoved(T hitbox, int globalIndex) {
+    final lastPos = _oldPositionById[globalIndex];
+    if (lastPos == null) return true;
+    if (lastPos.min == hitbox.aabb.min && lastPos.max == hitbox.aabb.max) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   remove(int globalIndex) {
     if (bounds == Rect.zero) throw _exceptionMessage;
 
     final tree = _cachedHitboxesTrees[globalIndex];
     if (tree != null) {
       tree._hitboxes.remove(globalIndex);
+      _oldPositionById.remove(globalIndex);
     }
   }
 

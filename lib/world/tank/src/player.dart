@@ -6,6 +6,9 @@ class Player extends Tank {
   double _dtAmbientEnemySoundCheck = 0;
 
   @override
+  int health = 100000;
+
+  @override
   void update(double dt) {
     super.update(dt);
     _dtAmbientEnemySoundCheck += dt;

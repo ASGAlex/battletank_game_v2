@@ -7,9 +7,9 @@ import 'package:flame/src/collisions/hitboxes/hitbox.dart';
 part 'quad_tree.dart';
 
 class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
-  QuadTreeBroadphase({super.items});
+  QuadTreeBroadphase({super.items}) : tree = QuadTree<T>();
 
-  final tree = _QuadTree<T>();
+  final QuadTree<T> tree;
   final List<T> _active = [];
 
   final Set<CollisionProspect<T>> _potentials = {};
@@ -25,8 +25,9 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         continue;
       }
 
-      if ((item as ShapeHitbox).isRemoving ||
-          (item as ShapeHitbox).parent == null) {
+      final asShapeItem = (item as ShapeHitbox);
+
+      if (asShapeItem.isRemoving || asShapeItem.parent == null) {
         tree.remove(globalIndex);
         continue;
       }
@@ -38,10 +39,20 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
         }
+        final asShapePotential = (potential as ShapeHitbox);
 
-        if ((potential as ShapeHitbox).isRemoving ||
-            (potential as ShapeHitbox).parent == null) {
+        if (asShapePotential.isRemoving || asShapePotential.parent == null) {
           markRemove.add(globalIndex);
+          continue;
+        } else if (asShapePotential.parent == asShapeItem.parent &&
+            asShapeItem.parent != null) {
+          continue;
+        }
+
+        final itemCenter = item.aabb.center;
+        final potentialCenter = potential.aabb.center;
+        if ((itemCenter.x - potentialCenter.x).abs() > 20 &&
+            (itemCenter.y - potentialCenter.y).abs() > 20) {
           continue;
         }
 
@@ -52,13 +63,15 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
-    print("p: ${_potentials.length} ");
+    // print("p: ${_potentials.length} ");
     return _potentials;
   }
 
   _updateItemPosition(T item, int globalIndex) {
-    tree.remove(globalIndex);
-    tree.add(item, items.indexOf(item));
+    if (tree.isMoved(item, globalIndex)) {
+      tree.remove(globalIndex);
+      tree.add(item, items.indexOf(item));
+    }
   }
 
   @override

@@ -247,6 +247,28 @@ class MyGame extends FlameGame
   void render(Canvas canvas) {
     super.render(canvas);
 
+    final cd = collisionDetection as OptimizedCollisionDetection;
+    final boxes = cd.collisionQuadBoxes;
+    final boxPaint = Paint();
+    boxPaint.color = Colors.blue;
+    boxPaint.strokeWidth = 2;
+    boxPaint.style = PaintingStyle.stroke;
+    camera.viewport.apply(canvas);
+    for (final rect in boxes) {
+      canvas.drawRect(rect.rect, boxPaint);
+      for (final hb in rect.hitboxes) {
+        canvas.drawRect(
+            Rect.fromLTRB(
+                hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+            boxPaint);
+      }
+      hudTextPaintNormal.render(
+          canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
+    }
+    final playerPos = player?.absoluteTopLeftPosition.toOffset();
+    if (playerPos != null) {
+      canvas.drawCircle(playerPos, 3, boxPaint);
+    }
     if (isPlayerHiddenFromEnemy) {
       hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
     } else {
