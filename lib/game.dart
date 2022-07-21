@@ -250,7 +250,7 @@ class MyGame extends FlameGame
     final cd = collisionDetection as OptimizedCollisionDetection;
     final boxes = cd.collisionQuadBoxes;
     final boxPaint = Paint();
-    boxPaint.color = Colors.blue;
+    boxPaint.color = Colors.blue.withOpacity(0.5);
     boxPaint.strokeWidth = 2;
     boxPaint.style = PaintingStyle.stroke;
     camera.viewport.apply(canvas);
@@ -269,11 +269,11 @@ class MyGame extends FlameGame
     if (playerPos != null) {
       canvas.drawCircle(playerPos, 3, boxPaint);
     }
-    if (isPlayerHiddenFromEnemy) {
-      hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
-    } else {
-      hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
-    }
+    // if (isPlayerHiddenFromEnemy) {
+    //   hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
+    // } else {
+    //   hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
+    // }
   }
 
   static const zoomPerScrollUnit = 0.02;

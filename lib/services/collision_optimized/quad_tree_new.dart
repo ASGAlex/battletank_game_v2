@@ -31,8 +31,10 @@ class Node<T extends Hitbox<T>> {
 }
 
 class QuadTree<T extends Hitbox<T>> {
-  static const maxObjects = 16;
-  static const maxLevels = 20;
+  static const maxObjects = 25;
+  static const maxLevels = 10;
+  static final _oldPositionByItem = <ShapeHitbox, Aabb2>{};
+  static final _itemAtNode = <ShapeHitbox, Node>{};
 
   var level = 0;
 
@@ -113,20 +115,24 @@ class QuadTree<T extends Hitbox<T>> {
   }
 
   add(T hitbox) {
-    _add(rootNode, 0, mainBoxSize, hitbox);
+    final node = _add(rootNode, 0, mainBoxSize, hitbox);
+    _oldPositionByItem[hitbox as ShapeHitbox] = Aabb2.copy(hitbox.aabb);
+    _itemAtNode[hitbox as ShapeHitbox] = node;
   }
 
-  _add(Node<T> node, int depth, Rect box, T value) {
+  Node<T> _add(Node<T> node, int depth, Rect box, T value) {
     // assert(box.containsRect(getBoxOfValue(value)));
+    Node<T> finalNode;
     if (isLeaf(node)) {
       // Insert the value in this node if possible
       if (depth >= maxLevels || node.values.length < maxObjects) {
         node.values.add(value);
+        finalNode = node;
       }
       // Otherwise, we split and we try again
       else {
         split(node, box);
-        _add(node, depth, box, value);
+        finalNode = _add(node, depth, box, value);
       }
     } else {
       var i = getQuadrant(box, getBoxOfValue(value));
@@ -134,13 +140,16 @@ class QuadTree<T extends Hitbox<T>> {
       if (i != -1) {
         final children = node.children[i];
         if (children == null) throw 'Invalid index $i';
-        _add(children as Node<T>, depth + 1, computeBox(box, i), value);
+        finalNode =
+            _add(children as Node<T>, depth + 1, computeBox(box, i), value);
       }
       // Otherwise, we add the value in the current node
       else {
         node.values.add(value);
+        finalNode = node;
       }
     }
+    return finalNode;
   }
 
   void split(Node node, Rect box) {
@@ -165,11 +174,11 @@ class QuadTree<T extends Hitbox<T>> {
     node.values = moveValues;
   }
 
-  void remove(T hitbox) {
-    _remove(rootNode, mainBoxSize, hitbox);
+  void remove(T hitbox, {bool oldPosition = false}) {
+    _remove(rootNode, mainBoxSize, hitbox, oldPosition);
   }
 
-  bool _remove(Node node, Rect box, T value) {
+  bool _remove(Node node, Rect box, T value, bool oldPosition) {
     // assert(box.containsRect(getBoxOfValue(value)));
     if (isLeaf(node)) {
       // Remove the value from node
@@ -177,11 +186,23 @@ class QuadTree<T extends Hitbox<T>> {
       return true;
     } else {
       // Remove the value in a child if the value is entirely contained in it
-      var i = getQuadrant(box, getBoxOfValue(value));
+      var hitboxToCheck = value;
+      if (oldPosition) {
+        final lastPos = _oldPositionByItem[value];
+        if (lastPos != null) {
+          hitboxToCheck = RectangleHitbox(
+              position: Vector2(lastPos.min.x, lastPos.min.y),
+              size: Vector2(lastPos.max.x - lastPos.min.x,
+                  lastPos.max.y - lastPos.min.y)) as T;
+        }
+      }
+      var i = getQuadrant(box, getBoxOfValue(hitboxToCheck));
       if (i != -1) {
         final children = node.children[i];
         if (children == null) throw 'invalid index $i';
-        if (_remove(children, computeBox(box, i), value)) return tryMerge(node);
+        if (_remove(children, computeBox(box, i), value, oldPosition)) {
+          return tryMerge(node);
+        }
       }
       // Otherwise, we remove the value from the current node
       else {
@@ -241,6 +262,16 @@ class QuadTree<T extends Hitbox<T>> {
           _query(child, childBox, queryBox, values);
         }
       }
+    }
+  }
+
+  bool isMoved(T hitbox) {
+    final lastPos = _oldPositionByItem[hitbox];
+    if (lastPos == null) return true;
+    if (lastPos.min == hitbox.aabb.min && lastPos.max == hitbox.aabb.max) {
+      return false;
+    } else {
+      return true;
     }
   }
 }

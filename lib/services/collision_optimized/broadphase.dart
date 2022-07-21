@@ -3,6 +3,8 @@ import 'package:flame/extensions.dart';
 import 'package:flame/src/collisions/broadphase.dart';
 import 'package:flame/src/collisions/collision_callbacks.dart';
 import 'package:flame/src/collisions/hitboxes/hitbox.dart';
+import 'package:tank_game/world/environment/water.dart';
+import 'package:tank_game/world/tank/tank.dart';
 
 part 'quad_tree.dart';
 part 'quad_tree_new.dart';
@@ -33,7 +35,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         treeNew.remove(item);
         continue;
       }
-      _updateItemPosition(item, globalIndex);
+      updateItemPosition(item);
 
       final markRemove = <T>[];
       final potentiallyCollide = treeNew.query(item);
@@ -44,17 +46,23 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         final asShapePotential = (potential as ShapeHitbox);
 
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
-          markRemove.add(item);
+          markRemove.add(potential);
           continue;
         } else if (asShapePotential.parent == asShapeItem.parent &&
             asShapeItem.parent != null) {
           continue;
         }
 
+        final itemParent = asShapeItem.parent;
+        if (itemParent is Bullet) {
+          if (asShapePotential.parent is WaterCollide) continue;
+          if (itemParent.firedFrom == asShapePotential.parent) continue;
+        }
+
         final itemCenter = item.aabb.center;
         final potentialCenter = potential.aabb.center;
-        if ((itemCenter.x - potentialCenter.x).abs() > 20 &&
-            (itemCenter.y - potentialCenter.y).abs() > 20) {
+        if ((itemCenter.x - potentialCenter.x).abs() > 25 &&
+            (itemCenter.y - potentialCenter.y).abs() > 25) {
           continue;
         }
 
@@ -65,14 +73,14 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
-    print("p: ${_potentials.length} ");
+    // print("p: ${_potentials.length} ");
     return _potentials;
   }
 
-  _updateItemPosition(T item, int globalIndex) {
-    if (tree.isMoved(item, globalIndex)) {
-      tree.remove(globalIndex);
-      tree.add(item, items.indexOf(item));
+  updateItemPosition(T item) {
+    if (treeNew.isMoved(item)) {
+      treeNew.remove(item, oldPosition: true);
+      treeNew.add(item);
     }
   }
 

@@ -35,7 +35,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     for (final frame in boom.frames) {
       boomDurationSeconds += frame.stepTime;
     }
-    _boomDuration = Duration(seconds: boomDurationSeconds.toInt());
+    _boomDuration = Duration(seconds: boomDurationSeconds.toInt() * 5);
     size = SpriteSheetRegistry().bullet.spriteSize;
     animations = {
       _BulletState.fly: SpriteSheetRegistry().bullet.animation,

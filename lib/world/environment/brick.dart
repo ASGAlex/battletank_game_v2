@@ -1,5 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/services/collision_optimized/collision_detection.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -15,12 +17,15 @@ class Brick extends SpriteComponent with CollisionCallbacks {
   static const halfBrick = 4.0;
   static final brickSize = Vector2.all(halfBrick * 2);
 
+  late ShapeHitbox _hitbox;
+
   @override
   Future<void> onLoad() async {
     sprite = await tileProcessor.getSprite();
     final collision = tileProcessor.getCollisionRect();
     if (collision != null) {
       collision.collisionType = CollisionType.passive;
+      _hitbox = collision;
       add(collision);
     }
   }
@@ -54,6 +59,10 @@ class Brick extends SpriteComponent with CollisionCallbacks {
           position.y += halfBrick;
           break;
       }
+      _hitbox.size = size;
+      final game = findParent<MyGame>();
+      final cd = game?.collisionDetection as OptimizedCollisionDetection;
+      cd.quadBf.updateItemPosition(_hitbox);
     }
     _hitsByBullet++;
   }
