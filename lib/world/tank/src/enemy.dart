@@ -213,14 +213,14 @@ class Enemy extends Tank {
     }
 
     if (_temporaryRandom) {
-      print(secondaryDirection);
+      // print(secondaryDirection);
       _temporaryRandom = !_moveRandom(dt, preferred: secondaryDirection);
       if (_temporaryRandom) return;
       if (secondaryDirection != null) {
         preferredDirection = secondaryDirection;
       }
       _inverseDirection = true;
-      print('end random: $lookDirection, $preferredDirection');
+      // print('end random: $lookDirection, $preferredDirection');
     }
 
     final availableDirections = _getAvailableDirections();
@@ -233,12 +233,12 @@ class Enemy extends Tank {
       lookDirection = preferredDirection;
       angle = preferredDirection.angle;
       if (_inverseDirection) {
-        print('start random after stop');
-        print(availableDirections);
-        print(preferredDirection);
-        print(secondaryDirection);
-        print(lookDirection);
-        print('===');
+        // print('start random after stop');
+        // print(availableDirections);
+        // print(preferredDirection);
+        // print(secondaryDirection);
+        // print(lookDirection);
+        // print('===');
       }
       if (attack && attackDistance < 100) {
         current = MovementState.idle;

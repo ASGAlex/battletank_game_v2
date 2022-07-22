@@ -20,11 +20,10 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   @override
   Set<CollisionProspect<T>> query() {
-    // final sw = Stopwatch()..start();
+    final sw = Stopwatch()..start();
     _potentials.clear();
 
-    for (var globalIndex = 0; globalIndex < items.length; globalIndex++) {
-      final item = items[globalIndex];
+    for (var item in items) {
       if (item.collisionType != CollisionType.active) {
         continue;
       }
@@ -73,7 +72,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
-    // print("p: ${_potentials.length} ");
+    print("S: ${sw.elapsedMilliseconds}  p: ${_potentials.length} ");
     return _potentials;
   }
 

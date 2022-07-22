@@ -9,6 +9,9 @@ class Player extends Tank {
   int health = 100000;
 
   @override
+  int speed = 80;
+
+  @override
   void update(double dt) {
     super.update(dt);
     _dtAmbientEnemySoundCheck += dt;
