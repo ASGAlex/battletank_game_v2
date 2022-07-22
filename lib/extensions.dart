@@ -1,3 +1,4 @@
+import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:tank_game/services/sound/sound.dart';
 
@@ -26,5 +27,15 @@ extension Vector2Ext on Vector2 {
 
   Vector2 copyWith({double? x, double? y}) {
     return Vector2(x ?? this.x, y ?? this.y);
+  }
+}
+
+extension StepTime on SpriteAnimation {
+  Duration get duration {
+    double durationMicroseconds = 0;
+    for (final frame in frames) {
+      durationMicroseconds += (frame.stepTime * 1000000);
+    }
+    return Duration(microseconds: durationMicroseconds.toInt());
   }
 }

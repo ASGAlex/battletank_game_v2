@@ -34,7 +34,6 @@ class QuadTree<T extends Hitbox<T>> {
   static const maxObjects = 25;
   static const maxLevels = 10;
   static final _oldPositionByItem = <ShapeHitbox, Aabb2>{};
-  static final _itemAtNode = <ShapeHitbox, Node>{};
 
   var level = 0;
 
@@ -117,7 +116,6 @@ class QuadTree<T extends Hitbox<T>> {
   add(T hitbox) {
     final node = _add(rootNode, 0, mainBoxSize, hitbox);
     _oldPositionByItem[hitbox as ShapeHitbox] = Aabb2.copy(hitbox.aabb);
-    _itemAtNode[hitbox as ShapeHitbox] = node;
   }
 
   Node<T> _add(Node<T> node, int depth, Rect box, T value) {

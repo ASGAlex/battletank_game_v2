@@ -27,22 +27,20 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
   final _light = _Light();
 
   Duration? _boomDuration;
+  late _BulletHitbox _hitbox;
 
   @override
   Future<void> onLoad() async {
     final boom = await SpriteSheetRegistry().boom.animation;
-    double boomDurationSeconds = 0.0;
-    for (final frame in boom.frames) {
-      boomDurationSeconds += frame.stepTime;
-    }
-    _boomDuration = Duration(seconds: boomDurationSeconds.toInt() * 5);
+    _boomDuration = boom.duration;
     size = SpriteSheetRegistry().bullet.spriteSize;
     animations = {
       _BulletState.fly: SpriteSheetRegistry().bullet.animation,
       _BulletState.boom: boom
     };
 
-    add(_BulletHitbox(size: size.clone()));
+    _hitbox = _BulletHitbox(size: size.clone());
+    add(_hitbox);
     add(_light);
 
     Vector2 displacement;
@@ -134,6 +132,10 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
   }
 
   die() {
+    final game = findParent<MyGame>();
+    final cd = game?.collisionDetection as OptimizedCollisionDetection;
+    cd.quadBf.remove(_hitbox);
+
     _light.renderShape = false;
     _light.removeFromParent();
     current = _BulletState.boom;

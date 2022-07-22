@@ -17,6 +17,7 @@ import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/water.dart';
 
+import '../../services/collision_optimized/collision_detection.dart';
 import '../../services/sound/sound.dart';
 import '../world.dart';
 

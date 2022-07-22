@@ -62,7 +62,7 @@ class Brick extends SpriteComponent with CollisionCallbacks {
       _hitbox.size = size;
       final game = findParent<MyGame>();
       final cd = game?.collisionDetection as OptimizedCollisionDetection;
-      cd.quadBf.updateItemPosition(_hitbox);
+      cd.quadBf.updateItemSizeOrPosition(_hitbox);
     }
     _hitsByBullet++;
   }

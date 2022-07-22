@@ -35,7 +35,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         treeNew.remove(item);
         continue;
       }
-      updateItemPosition(item);
+      updateItemSizeOrPosition(item);
 
       final markRemove = <T>[];
       final potentiallyCollide = treeNew.query(item);
@@ -77,11 +77,15 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
     return _potentials;
   }
 
-  updateItemPosition(T item) {
+  updateItemSizeOrPosition(T item) {
     if (treeNew.isMoved(item)) {
       treeNew.remove(item, oldPosition: true);
       treeNew.add(item);
     }
+  }
+
+  remove(T item) {
+    treeNew.remove(item);
   }
 
   @override

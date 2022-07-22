@@ -48,11 +48,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
     animationDie ??= await SpriteSheetRegistry().boomBig.animation;
 
-    double boomDurationSeconds = 0.0;
-    for (final frame in animationDie!.frames) {
-      boomDurationSeconds += frame.stepTime;
-    }
-    _boomDuration = Duration(seconds: boomDurationSeconds.toInt());
+    _boomDuration = animationDie!.duration;
 
     animations = {
       MovementState.run: animationRun!,
