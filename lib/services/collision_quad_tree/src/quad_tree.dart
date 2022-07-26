@@ -1,6 +1,6 @@
-part of 'broadphase.dart';
+part of collision_quad_tree;
 
-extension QuadMethods on Rect {
+extension _QuadMethods on Rect {
   bool containsRect(Rect box) =>
       left <= box.left &&
       box.right <= right &&
@@ -13,12 +13,12 @@ extension QuadMethods on Rect {
       bottom <= box.top);
 }
 
-class Node<T extends Hitbox<T>> {
-  final List<Node?> children =
+class _Node<T extends Hitbox<T>> {
+  final List<_Node?> children =
       List.generate(4, (index) => null, growable: false);
   var values = <T>[];
 
-  Node? parent;
+  _Node? parent;
 
   List<T> get valuesRecursive {
     final data = <T>[];
@@ -32,19 +32,19 @@ class Node<T extends Hitbox<T>> {
   }
 }
 
-class QuadTree<T extends Hitbox<T>> {
+class _QuadTree<T extends Hitbox<T>> {
   static const maxObjects = 25;
   static const maxLevels = 10;
   static final _oldPositionByItem = <ShapeHitbox, Aabb2>{};
-  static final _itemAtNode = <ShapeHitbox, Node>{};
+  static final _itemAtNode = <ShapeHitbox, _Node>{};
 
   var level = 0;
 
-  QuadTree();
+  _QuadTree();
 
   Rect mainBoxSize = Rect.zero;
 
-  var rootNode = Node<T>();
+  var rootNode = _Node<T>();
 
   List<T> get hitboxes => rootNode.valuesRecursive;
 
@@ -54,10 +54,10 @@ class QuadTree<T extends Hitbox<T>> {
     return Rect.fromPoints(minOffset, value.aabb.max.toOffset());
   }
 
-  bool isLeaf(Node node) => node.children[0] == null;
+  bool isLeaf(_Node node) => node.children[0] == null;
 
   clear() {
-    rootNode = Node<T>();
+    rootNode = _Node<T>();
   }
 
   Rect computeBox(Rect box, int i) {
@@ -122,9 +122,9 @@ class QuadTree<T extends Hitbox<T>> {
     _itemAtNode[hitbox as ShapeHitbox] = node;
   }
 
-  Node<T> _add(Node<T> node, int depth, Rect box, T value, Node? parent) {
+  _Node<T> _add(_Node<T> node, int depth, Rect box, T value, _Node? parent) {
     // assert(box.containsRect(getBoxOfValue(value)));
-    Node<T> finalNode;
+    _Node<T> finalNode;
     if (isLeaf(node)) {
       // Insert the value in this node if possible
       if (depth >= maxLevels || node.values.length < maxObjects) {
@@ -143,7 +143,7 @@ class QuadTree<T extends Hitbox<T>> {
         final children = node.children[i];
         if (children == null) throw 'Invalid index $i';
         finalNode = _add(
-            children as Node<T>, depth + 1, computeBox(box, i), value, node);
+            children as _Node<T>, depth + 1, computeBox(box, i), value, node);
       }
       // Otherwise, we add the value in the current node
       else {
@@ -157,11 +157,11 @@ class QuadTree<T extends Hitbox<T>> {
     return finalNode;
   }
 
-  void split(Node node, Rect box) {
+  void split(_Node node, Rect box) {
     assert(isLeaf(node), "Only leaves can be split");
     // Create children
     for (var i = 0; i < node.children.length; i++) {
-      node.children[i] = Node<T>()..parent = node;
+      node.children[i] = _Node<T>()..parent = node;
     }
 
     // Assign values to children
@@ -191,7 +191,7 @@ class QuadTree<T extends Hitbox<T>> {
     }
   }
 
-  bool _remove(Node node, Rect box, T value, bool oldPosition) {
+  bool _remove(_Node node, Rect box, T value, bool oldPosition) {
     // assert(box.containsRect(getBoxOfValue(value)));
     if (isLeaf(node)) {
       // Remove the value from node
@@ -225,11 +225,11 @@ class QuadTree<T extends Hitbox<T>> {
     }
   }
 
-  void removeValue(Node node, T value) {
+  void removeValue(_Node node, T value) {
     node.values.removeWhere((element) => element == value);
   }
 
-  bool tryMerge(Node node) {
+  bool tryMerge(_Node node) {
     assert(!isLeaf(node), "Only interior nodes can be merged");
     var nbValues = node.values.length;
     for (final child in node.children) {
@@ -267,7 +267,7 @@ class QuadTree<T extends Hitbox<T>> {
     return values;
   }
 
-  List<T> _getChildrenItems(Node parent) {
+  List<T> _getChildrenItems(_Node parent) {
     final list = <T>[];
     for (final child in parent.children) {
       if (child != null) {
@@ -280,7 +280,7 @@ class QuadTree<T extends Hitbox<T>> {
     return list;
   }
 
-  List<T> _getParentItems(Node node) {
+  List<T> _getParentItems(_Node node) {
     final list = <T>[];
     var parent = node.parent;
     if (parent != null) {
@@ -290,7 +290,7 @@ class QuadTree<T extends Hitbox<T>> {
     return list;
   }
 
-  void _querySlow(Node node, Rect box, Rect queryBox, List<T> values) {
+  void _querySlow(_Node node, Rect box, Rect queryBox, List<T> values) {
     // assert(queryBox.intersects(box));
     for (final value in node.values) {
       if (queryBox.intersects(getBoxOfValue(value as T))) {

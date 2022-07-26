@@ -32,6 +32,7 @@ dependencies:
   audioplayers: ^1.0.0-rc.1
   audioplayers_windows: ^1.0.0-rc.1
   flame_tiled: ^1.6.0
+  tiled: 0.8.1
   dart_numerics: ^0.0.6
   poly_collisions: ^1.4.0
   flutter:

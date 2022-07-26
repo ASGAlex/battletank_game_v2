@@ -3,7 +3,10 @@ part of tank;
 enum _BulletState { fly, boom }
 
 class Bullet extends SpriteAnimationGroupComponent<_BulletState>
-    with CollisionCallbacks, HideableComponent {
+    with
+        CollisionCallbacks,
+        HideableComponent,
+        CollisionQuadTreeController<MyGame> {
   Bullet(
       {required this.direction,
       required this.firedFrom,
@@ -90,6 +93,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
           break;
       }
       position = displacement;
+      // updateQuadTreeCollision(_hitbox);
       _distance += innerSpeed;
       if (_distance > _maxDistance) {
         die();
@@ -99,14 +103,23 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (current == _BulletState.boom) return;
-    if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
-      return;
-    }
-    if (firedFrom is Enemy && other is Enemy) return;
-    if (other is WaterCollide) return;
+  bool broadPhaseCheck(PositionComponent other) {
+    final success = super.broadPhaseCheck(other);
+    if (success) {
+      if (current == _BulletState.boom) return false;
+      if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
+        return false;
+      }
 
+      if (firedFrom is Enemy && other is Enemy) return false;
+      if (other is WaterCollide) return false;
+    }
+
+    return success;
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     die();
 
     Sfx? sfx;
@@ -132,9 +145,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
   }
 
   die() {
-    final game = findParent<MyGame>();
-    final cd = game?.collisionDetection as OptimizedCollisionDetection;
-    cd.quadBf.remove(_hitbox);
+    removeQuadTreeCollision(_hitbox);
 
     _light.renderShape = false;
     _light.removeFromParent();
@@ -150,15 +161,17 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
   }
 }
 
-class _BulletHitbox extends RectangleHitbox {
+class _BulletHitbox extends RectangleHitbox
+    with CollisionQuadTreeController<MyGame> {
   _BulletHitbox({super.size, super.position});
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
-    if (other is HitboxNoInteraction) {
-      return;
+  bool broadPhaseCheck(PositionComponent other) {
+    final success = super.broadPhaseCheck(other);
+    if (success && (other is _MovementSideHitbox || other is _MovementHitbox)) {
+      return false;
     }
-    super.onCollision(intersectionPoints, other);
+    return success;
   }
 }
 

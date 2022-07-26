@@ -1,17 +1,9 @@
-import 'package:flame/collisions.dart';
-import 'package:flame/extensions.dart';
-import 'package:flame/src/collisions/broadphase.dart';
-import 'package:flame/src/collisions/collision_callbacks.dart';
-import 'package:flame/src/collisions/hitboxes/hitbox.dart';
-import 'package:tank_game/world/environment/water.dart';
-import 'package:tank_game/world/tank/tank.dart';
+part of collision_quad_tree;
 
-part 'quad_tree.dart';
+class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
+  _QuadTreeBroadphase({super.items});
 
-class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
-  QuadTreeBroadphase({super.items});
-
-  final tree = QuadTree<T>();
+  final tree = _QuadTree<T>();
   final List<T> _active = [];
 
   final Set<CollisionProspect<T>> _potentials = {};
@@ -32,7 +24,6 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         tree.remove(item);
         continue;
       }
-      updateItemSizeOrPosition(item);
 
       final markRemove = <T>[];
       final potentiallyCollide = tree.query(item);
@@ -48,6 +39,12 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         } else if (asShapePotential.parent == asShapeItem.parent &&
             asShapeItem.parent != null) {
           continue;
+        }
+
+        if (asShapeItem is CollisionQuadTreeController) {
+          final success = (asShapeItem as CollisionQuadTreeController)
+              .broadPhaseCheck(asShapePotential);
+          if (!success) continue;
         }
 
         final itemParent = asShapeItem.parent;
@@ -75,10 +72,8 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   }
 
   updateItemSizeOrPosition(T item) {
-    if (tree.isMoved(item)) {
-      tree.remove(item, oldPosition: true);
-      tree.add(item);
-    }
+    tree.remove(item, oldPosition: true);
+    tree.add(item);
   }
 
   remove(T item) {

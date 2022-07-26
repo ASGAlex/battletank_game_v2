@@ -6,6 +6,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     with
         KeyboardHandler,
         CollisionCallbacks,
+        CollisionQuadTreeController<MyGame>,
         DestroyableComponent,
         HideableComponent {
   Tank({super.position})
@@ -31,6 +32,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   int _lazyTreeHitboxId = -1;
   final _movementHitbox = _MovementHitbox();
+  final _boundingHitbox = RectangleHitbox();
 
   SpriteAnimation? animationRun;
   SpriteAnimation? animationIdle;
@@ -57,7 +59,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     };
 
     current = MovementState.idle;
-    add(RectangleHitbox());
+    add(_boundingHitbox);
     add(_movementHitbox);
 
     if (trackTreeCollisions) {
@@ -132,6 +134,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           break;
       }
       position = displacement;
+      // updateQuadTreeCollision(_movementHitbox);
+      // updateQuadTreeCollision(_boundingHitbox);
       if (trackTreeCollisions) {
         game?.lazyCollisionService.updateHitbox(
             id: _lazyTreeHitboxId,
@@ -150,10 +154,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
             _TrackTrailNew(position: leftTrackPos, angle: angle));
         TrackTrailController.addTrack(
             _TrackTrailNew(position: rightTrackPos, angle: angle));
-
-        // final game = findParent<MyGame>();
-        // game?.addTrack(_TrackTrail(position: leftTrackPos, angle: angle));
-        // game?.addTrack(_TrackTrail(position: rightTrackPos, angle: angle));
       }
     }
 

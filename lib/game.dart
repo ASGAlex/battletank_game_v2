@@ -18,14 +18,14 @@ import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
-import 'services/collision_optimized/collision_detection.dart';
+import 'services/collision_quad_tree/collision_quad_tree.dart';
 
 class MyGame extends FlameGame
     with
         ColorFilterMix,
         HasKeyboardHandlerComponents,
         SingleGameInstance,
-        HasCollisionDetection,
+        HasQuadTreeCollisionDetection,
         ScrollDetector,
         ObjectLayers {
   MyGame(this.mapFile);
@@ -78,8 +78,17 @@ class MyGame extends FlameGame
     print('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
     currentMap = tiledComponent.tileMap;
-    collisionDetection =
-        OptimizedCollisionDetection.fromMap(tiledComponent.tileMap);
+    initCollisionDetection(Rect.fromLTWH(
+        0,
+        0,
+        (tiledComponent.tileMap.map.width *
+                tiledComponent.tileMap.map.tileWidth)
+            .toDouble(),
+        (tiledComponent.tileMap.map.height *
+                tiledComponent.tileMap.map.tileHeight)
+            .toDouble()));
+    // collisionDetection =
+    //     OptimizedCollisionDetection.fromMap(tiledComponent.tileMap);
     print('done.');
 
     print('Compiling ground layer...');
@@ -246,29 +255,29 @@ class MyGame extends FlameGame
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-
-    final cd = collisionDetection as OptimizedCollisionDetection;
-    final boxes = cd.collisionQuadBoxes;
-    final boxPaint = Paint();
-    boxPaint.color = Colors.blue.withOpacity(0.5);
-    boxPaint.strokeWidth = 2;
-    boxPaint.style = PaintingStyle.stroke;
-    camera.viewport.apply(canvas);
-    for (final rect in boxes) {
-      canvas.drawRect(rect.rect, boxPaint);
-      for (final hb in rect.hitboxes) {
-        canvas.drawRect(
-            Rect.fromLTRB(
-                hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-            boxPaint);
-      }
-      hudTextPaintNormal.render(
-          canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
-    }
-    final playerPos = player?.absoluteTopLeftPosition.toOffset();
-    if (playerPos != null) {
-      canvas.drawCircle(playerPos, 3, boxPaint);
-    }
+    //
+    // final cd = collisionDetection as QuadTreeCollisionDetection;
+    // final boxes = cd.collisionQuadBoxes;
+    // final boxPaint = Paint();
+    // boxPaint.color = Colors.blue.withOpacity(0.5);
+    // boxPaint.strokeWidth = 2;
+    // boxPaint.style = PaintingStyle.stroke;
+    // camera.viewport.apply(canvas);
+    // for (final rect in boxes) {
+    //   canvas.drawRect(rect.rect, boxPaint);
+    //   for (final hb in rect.hitboxes) {
+    //     canvas.drawRect(
+    //         Rect.fromLTRB(
+    //             hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+    //         boxPaint);
+    //   }
+    //   hudTextPaintNormal.render(
+    //       canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
+    // }
+    // final playerPos = player?.absoluteTopLeftPosition.toOffset();
+    // if (playerPos != null) {
+    //   canvas.drawCircle(playerPos, 3, boxPaint);
+    // }
     // if (isPlayerHiddenFromEnemy) {
     //   hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
     // } else {

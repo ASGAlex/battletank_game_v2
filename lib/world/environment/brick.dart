@@ -1,13 +1,14 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/collision_optimized/collision_detection.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 
+import '../../services/collision_quad_tree/collision_quad_tree.dart';
 import '../../services/tiled_utils/tiled_utils.dart';
 
-class Brick extends SpriteComponent with CollisionCallbacks {
+class Brick extends SpriteComponent
+    with CollisionCallbacks, CollisionQuadTreeController<MyGame> {
   Brick(this.tileProcessor, {super.position, super.size})
       : super(priority: RenderPriority.player.priority);
 
@@ -60,9 +61,7 @@ class Brick extends SpriteComponent with CollisionCallbacks {
           break;
       }
       _hitbox.size = size;
-      final game = findParent<MyGame>();
-      final cd = game?.collisionDetection as OptimizedCollisionDetection;
-      cd.quadBf.updateItemSizeOrPosition(_hitbox);
+      updateQuadTreeCollision(_hitbox);
     }
     _hitsByBullet++;
   }

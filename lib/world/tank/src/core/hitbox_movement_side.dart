@@ -1,10 +1,7 @@
 part of tank;
 
-abstract class HitboxNoInteraction extends RectangleHitbox {}
-
 class _MovementSideHitbox extends RectangleHitbox
-    with _HitboxMapBounds, DebugRender
-    implements HitboxNoInteraction {
+    with _HitboxMapBounds, DebugRender, CollisionQuadTreeController<MyGame> {
   _MovementSideHitbox(
       {required this.direction, super.angle, super.anchor, super.priority})
       : super(position: Vector2(0, 0));
@@ -51,18 +48,25 @@ class _MovementSideHitbox extends RectangleHitbox
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
-    if (other.parent is! Spawn) {
-      _collisions++;
+  bool broadPhaseCheck(PositionComponent other) {
+    final success = super.broadPhaseCheck(other);
+    if (success && (other.parent is Spawn || other is _MovementHitbox)) {
+      return false;
     }
+    return success;
+  }
+
+  @override
+  void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
+    _collisions++;
+
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(ShapeHitbox other) {
-    if (other.parent is! Spawn) {
-      _collisions--;
-    }
+    _collisions--;
+
     super.onCollisionEnd(other);
   }
 }

@@ -1,8 +1,7 @@
 part of tank;
 
 class _MovementHitbox extends RectangleHitbox
-    with DebugRender, _HitboxMapBounds
-    implements HitboxNoInteraction {
+    with DebugRender, _HitboxMapBounds, CollisionQuadTreeController<MyGame> {
   _MovementHitbox({super.angle, super.anchor, super.priority})
       : super(position: Vector2(13, 1));
 
@@ -22,15 +21,23 @@ class _MovementHitbox extends RectangleHitbox
   }
 
   @override
+  bool broadPhaseCheck(PositionComponent other) {
+    final success = super.broadPhaseCheck(other);
+    if (other is _MovementSideHitbox ||
+        other is _MovementHitbox ||
+        other.parent is Spawn ||
+        other.parent is Bullet) {
+      return false;
+    }
+    return success;
+  }
+
+  @override
   void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
     try {
-      if (other.parent is! Spawn &&
-          other.parent is! Bullet &&
-          other is! HitboxNoInteraction) {
-        _otherCollisions++;
-        if (!_outOfBounds) {
-          tank.canMoveForward = false;
-        }
+      _otherCollisions++;
+      if (!_outOfBounds) {
+        tank.canMoveForward = false;
       }
     } catch (e) {
       print(e);
@@ -41,13 +48,9 @@ class _MovementHitbox extends RectangleHitbox
   @override
   void onCollisionEnd(ShapeHitbox other) {
     try {
-      if (other.parent is! Spawn &&
-          other.parent is! Bullet &&
-          other is! HitboxNoInteraction) {
-        _otherCollisions--;
-        if (_otherCollisions == 0 && !_outOfBounds) {
-          tank.canMoveForward = true;
-        }
+      _otherCollisions--;
+      if (_otherCollisions == 0 && !_outOfBounds) {
+        tank.canMoveForward = true;
       }
     } catch (e) {
       print(e);
