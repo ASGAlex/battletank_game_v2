@@ -60,7 +60,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
         final itemCenter = item.aabb.center;
         final potentialCenter = potential.aabb.center;
-        if ((itemCenter.x - potentialCenter.x).abs() > 25 &&
+        if ((itemCenter.x - potentialCenter.x).abs() > 25 ||
             (itemCenter.y - potentialCenter.y).abs() > 25) {
           continue;
         }
@@ -72,7 +72,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
-    print("S: ${sw.elapsedMilliseconds}  p: ${_potentials.length} ");
+    print("S: ${sw.elapsedMicroseconds}  p: ${_potentials.length} ");
     return _potentials;
   }
 
@@ -88,7 +88,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   }
 
   @override
-  Set<CollisionProspect<T>> query22() {
+  Set<CollisionProspect<T>> queryOld() {
     final sw = Stopwatch()..start();
     _potentials.clear();
     items.sort((a, b) => (a.aabb.min.x - b.aabb.min.x).ceil());
@@ -117,7 +117,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       _active.add(item);
     }
 
-    print(sw.elapsedMicroseconds);
+    print("S: ${sw.elapsedMicroseconds}  p: ${_potentials.length} ");
     return _potentials;
   }
 }

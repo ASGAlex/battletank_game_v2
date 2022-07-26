@@ -262,6 +262,7 @@ class QuadTree<T extends Hitbox<T>> {
     } else {
       values.addAll(node.values as List<T>);
       values.addAll(_getChildrenItems(node));
+      values.addAll(_getParentItems(node));
     }
     return values;
   }
@@ -275,6 +276,16 @@ class QuadTree<T extends Hitbox<T>> {
           list.addAll(_getChildrenItems(child));
         }
       }
+    }
+    return list;
+  }
+
+  List<T> _getParentItems(Node node) {
+    final list = <T>[];
+    var parent = node.parent;
+    if (parent != null) {
+      list.addAll(parent.values as List<T>);
+      list.addAll(_getParentItems(parent));
     }
     return list;
   }

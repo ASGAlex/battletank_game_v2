@@ -17,7 +17,7 @@ class _MovementHitbox extends RectangleHitbox
   Future? onLoad() {
     // debug = true;
     position = Vector2(1, -1);
-    size = Vector2(tank.size.x - 3, 3);
+    size = Vector2(tank.size.x - 2, 8);
     priority = 100;
   }
 
