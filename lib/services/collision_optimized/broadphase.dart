@@ -7,13 +7,11 @@ import 'package:tank_game/world/environment/water.dart';
 import 'package:tank_game/world/tank/tank.dart';
 
 part 'quad_tree.dart';
-part 'quad_tree_new.dart';
 
 class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
-  QuadTreeBroadphase({super.items}) : tree = QuadTreeOld<T>();
+  QuadTreeBroadphase({super.items});
 
-  final treeNew = QuadTree<T>();
-  final QuadTreeOld<T> tree;
+  final tree = QuadTree<T>();
   final List<T> _active = [];
 
   final Set<CollisionProspect<T>> _potentials = {};
@@ -31,13 +29,13 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       final asShapeItem = (item as ShapeHitbox);
 
       if (asShapeItem.isRemoving || asShapeItem.parent == null) {
-        treeNew.remove(item);
+        tree.remove(item);
         continue;
       }
       updateItemSizeOrPosition(item);
 
       final markRemove = <T>[];
-      final potentiallyCollide = treeNew.query(item);
+      final potentiallyCollide = tree.query(item);
       for (final potential in potentiallyCollide) {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
@@ -68,7 +66,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         _potentials.add(CollisionProspect<T>(item, potential));
       }
       for (final i in markRemove) {
-        treeNew.remove(i);
+        tree.remove(i);
       }
     }
 
@@ -77,14 +75,14 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   }
 
   updateItemSizeOrPosition(T item) {
-    if (treeNew.isMoved(item)) {
-      treeNew.remove(item, oldPosition: true);
-      treeNew.add(item);
+    if (tree.isMoved(item)) {
+      tree.remove(item, oldPosition: true);
+      tree.add(item);
     }
   }
 
   remove(T item) {
-    treeNew.remove(item);
+    tree.remove(item);
   }
 
   @override

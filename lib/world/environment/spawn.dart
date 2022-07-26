@@ -93,7 +93,7 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
   }
 
   _doCreateByTriggerAttempt() {
-    return;
+    // return;
     if (canSpawnAnything) return;
 
     if (_inactive) return;
