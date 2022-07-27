@@ -145,10 +145,7 @@ class TileProcessor {
 
             final firstGid = tileset.firstGid;
             if (firstGid != null) {
-              tileId = tileId - firstGid + 1;
-            }
-            if (firstGid == 4) {
-              print('brick');
+              tileId = tileId - firstGid; //+ 1;
             }
             final tileData = tileset.tiles[tileId];
             final position = Vector2(xOffset.toDouble() * tileMap.map.tileWidth,

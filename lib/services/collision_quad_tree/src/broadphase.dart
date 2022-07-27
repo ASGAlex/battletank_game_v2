@@ -40,7 +40,8 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
           markRemove.add(potential);
           continue;
-        } else if (asShapePotential.parent == asShapeItem.parent &&
+        }
+        if (asShapePotential.parent == asShapeItem.parent &&
             asShapeItem.parent != null) {
           continue;
         }
