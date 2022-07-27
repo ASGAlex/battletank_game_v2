@@ -1,5 +1,7 @@
 library collision_quad_tree;
 
+import 'dart:collection';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';

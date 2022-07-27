@@ -5,13 +5,13 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   final tree = _QuadTree<T>();
   final List<T> _active = [];
-
-  final Set<CollisionProspect<T>> _potentials = {};
+  final _skipPair = <T, HashSet<T>>{};
 
   @override
-  Set<CollisionProspect<T>> query() {
+  HashSet<CollisionProspect<T>> query() {
     final sw = Stopwatch()..start();
-    _potentials.clear();
+    final potentials = HashSet<CollisionProspect<T>>();
+    _skipPair.clear();
 
     for (var item in items) {
       if (item.collisionType != CollisionType.active) {
@@ -31,6 +31,10 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
         }
+
+        if (_skipPair[potential]?.contains(item) != null) {
+          continue;
+        }
         final asShapePotential = (potential as ShapeHitbox);
 
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
@@ -44,13 +48,36 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         if (asShapeItem is CollisionQuadTreeController) {
           final success = (asShapeItem as CollisionQuadTreeController)
               .broadPhaseCheck(asShapePotential);
-          if (!success) continue;
-        }
-
-        final itemParent = asShapeItem.parent;
-        if (itemParent is Bullet) {
-          if (asShapePotential.parent is WaterCollide) continue;
-          if (itemParent.firedFrom == asShapePotential.parent) continue;
+          if (success) {
+            if (asShapePotential is CollisionQuadTreeController) {
+              final success = (asShapePotential as CollisionQuadTreeController)
+                  .broadPhaseCheck(asShapeItem);
+              if (!success) {
+                _skip(potential, item);
+                continue;
+              }
+            }
+          } else {
+            _skip(potential, item);
+            continue;
+          }
+        } else if (asShapeItem.parent is CollisionQuadTreeController) {
+          final success = (asShapeItem.parent as CollisionQuadTreeController)
+              .broadPhaseCheck(asShapePotential.parent as PositionComponent);
+          if (success) {
+            if (asShapePotential.parent is CollisionQuadTreeController) {
+              final success =
+                  (asShapePotential.parent as CollisionQuadTreeController)
+                      .broadPhaseCheck(asShapeItem.parent as PositionComponent);
+              if (!success) {
+                _skip(potential, item);
+                continue;
+              }
+            }
+          } else {
+            _skip(potential, item);
+            continue;
+          }
         }
 
         final itemCenter = item.aabb.center;
@@ -60,15 +87,22 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        _potentials.add(CollisionProspect<T>(item, potential));
+        potentials.add(CollisionProspect<T>(item, potential));
       }
       for (final i in markRemove) {
         tree.remove(i);
       }
     }
 
-    print("S: ${sw.elapsedMicroseconds}  p: ${_potentials.length} ");
-    return _potentials;
+    print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
+    return potentials;
+  }
+
+  _skip(T item, T potential) {
+    if (_skipPair[item] == null) {
+      _skipPair[item] = HashSet<T>();
+    }
+    _skipPair[item]?.add(potential);
   }
 
   updateItemSizeOrPosition(T item) {
@@ -83,7 +117,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   @override
   Set<CollisionProspect<T>> queryOld() {
     final sw = Stopwatch()..start();
-    _potentials.clear();
+    final Set<CollisionProspect<T>> potentials = {};
     items.sort((a, b) => (a.aabb.min.x - b.aabb.min.x).ceil());
     for (final item in items) {
       if (item.collisionType == CollisionType.inactive) {
@@ -101,7 +135,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         if (activeBox.max.x >= currentMin) {
           if (item.collisionType == CollisionType.active ||
               activeItem.collisionType == CollisionType.active) {
-            _potentials.add(CollisionProspect<T>(item, activeItem));
+            potentials.add(CollisionProspect<T>(item, activeItem));
           }
         } else {
           _active.remove(activeItem);
@@ -110,7 +144,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       _active.add(item);
     }
 
-    print("S: ${sw.elapsedMicroseconds}  p: ${_potentials.length} ");
-    return _potentials;
+    print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
+    return potentials;
   }
 }
