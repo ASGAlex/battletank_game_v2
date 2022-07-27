@@ -63,6 +63,23 @@ class Enemy extends Tank {
     super.update(dt);
   }
 
+  bool _sideHitboxesEnabled = true;
+
+  _enableSideHitboxes([bool enable = true]) {
+    for (var hb in _movementSideHitboxes) {
+      if (enable) {
+        hb.collisionType = CollisionType.inactive;
+      } else {
+        hb.collisionType = CollisionType.active;
+      }
+    }
+    _sideHitboxesEnabled = enable;
+  }
+
+  _disableSideHitboxes() {
+    _enableSideHitboxes(false);
+  }
+
   bool _hearPlayer() {
     final game = findParent<MyGame>();
     final player = game?.player;
@@ -89,11 +106,16 @@ class Enemy extends Tank {
     final innerSpeed = speed * dt;
     _directionDistance -= innerSpeed;
 
-    final availableDirections = _getAvailableDirections();
     final enoughDistanceRunned = ((_initialDirectionDistance -
                 (_directionDistance < 0 ? 0 : _directionDistance))) /
             _initialDirectionDistance >=
         0.3;
+
+    if (enoughDistanceRunned && !_sideHitboxesEnabled) {
+      _enableSideHitboxes();
+      return false;
+    }
+    final availableDirections = _getAvailableDirections();
     if (isCollisionLandscapeChanged(availableDirections) &&
         enoughDistanceRunned) {
       final random = Random();
@@ -127,6 +149,10 @@ class Enemy extends Tank {
     current = MovementState.run;
     if (_movementMode == _MovementMode.randomWithFire) {
       _shouldFireAfterReload = !onFire();
+    }
+
+    if (directionChanged) {
+      _disableSideHitboxes();
     }
     return directionChanged;
   }

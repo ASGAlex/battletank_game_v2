@@ -134,8 +134,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           break;
       }
       position = displacement;
-      // updateQuadTreeCollision(_movementHitbox);
-      // updateQuadTreeCollision(_boundingHitbox);
       if (trackTreeCollisions) {
         game?.lazyCollisionService.updateHitbox(
             id: _lazyTreeHitboxId,
