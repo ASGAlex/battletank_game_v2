@@ -115,9 +115,6 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
       if (firedFrom is Enemy && other is Enemy) return false;
     }
-    if (other is Player) {
-      print('123');
-    }
     return success;
   }
 
@@ -170,9 +167,6 @@ class _BulletHitbox extends RectangleHitbox
 
   @override
   bool broadPhaseCheck(PositionComponent other) {
-    if (other.parent is Player) {
-      print('11');
-    }
     final success = super.broadPhaseCheck(other);
     if (success && (other is _MovementSideHitbox || other is _MovementHitbox)) {
       return false;

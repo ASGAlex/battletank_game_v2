@@ -32,9 +32,9 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        if (_skipPair[potential]?.contains(item) != null) {
-          continue;
-        }
+        // if (_skipPair[potential]?.contains(item) != null) {
+        //   continue;
+        // }
         final asShapePotential = (potential as ShapeHitbox);
 
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
@@ -53,12 +53,12 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
               final success = (asShapePotential as CollisionQuadTreeController)
                   .broadPhaseCheck(asShapeItem);
               if (!success) {
-                _skip(potential, item);
+                // _skip(potential, item);
                 continue;
               }
             }
           } else {
-            _skip(potential, item);
+            // _skip(potential, item);
             continue;
           }
         } else if (asShapeItem.parent is CollisionQuadTreeController) {
@@ -70,12 +70,12 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
                   (asShapePotential.parent as CollisionQuadTreeController)
                       .broadPhaseCheck(asShapeItem.parent as PositionComponent);
               if (!success) {
-                _skip(potential, item);
+                // _skip(potential, item);
                 continue;
               }
             }
           } else {
-            _skip(potential, item);
+            // _skip(potential, item);
             continue;
           }
         }
