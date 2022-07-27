@@ -1,17 +1,19 @@
 part of collision_quad_tree;
 
+typedef ExternalBroadphaseCheck = bool Function(
+    PositionComponent one, PositionComponent another);
+
 class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   _QuadTreeBroadphase({super.items});
 
   final tree = _QuadTree<T>();
   final List<T> _active = [];
-  final _skipPair = <T, HashSet<T>>{};
+  ExternalBroadphaseCheck? broadphaseCheck;
 
   @override
   HashSet<CollisionProspect<T>> query() {
     final sw = Stopwatch()..start();
     final potentials = HashSet<CollisionProspect<T>>();
-    _skipPair.clear();
 
     for (var item in items) {
       if (item.collisionType != CollisionType.active) {
@@ -25,6 +27,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         continue;
       }
 
+      final itemCenter = item.aabb.center;
       final markRemove = <T>[];
       final potentiallyCollide = tree.query(item);
       for (final potential in potentiallyCollide) {
@@ -32,9 +35,6 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        // if (_skipPair[potential]?.contains(item) != null) {
-        //   continue;
-        // }
         final asShapePotential = (potential as ShapeHitbox);
 
         if (asShapePotential.isRemoving || asShapePotential.parent == null) {
@@ -46,45 +46,9 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        if (asShapeItem is CollisionQuadTreeController) {
-          final success = (asShapeItem as CollisionQuadTreeController)
-              .broadPhaseCheck(asShapePotential);
-          if (success) {
-            if (asShapePotential is CollisionQuadTreeController) {
-              final success = (asShapePotential as CollisionQuadTreeController)
-                  .broadPhaseCheck(asShapeItem);
-              if (!success) {
-                // _skip(potential, item);
-                continue;
-              }
-            }
-          } else {
-            // _skip(potential, item);
-            continue;
-          }
-        } else if (asShapeItem.parent is CollisionQuadTreeController) {
-          final success = (asShapeItem.parent as CollisionQuadTreeController)
-              .broadPhaseCheck(asShapePotential.parent as PositionComponent);
-          if (success) {
-            if (asShapePotential.parent is CollisionQuadTreeController) {
-              final success =
-                  (asShapePotential.parent as CollisionQuadTreeController)
-                      .broadPhaseCheck(asShapeItem.parent as PositionComponent);
-              if (!success) {
-                // _skip(potential, item);
-                continue;
-              }
-            }
-          } else {
-            // _skip(potential, item);
-            continue;
-          }
-        }
-
-        final itemCenter = item.aabb.center;
         final potentialCenter = potential.aabb.center;
-        if ((itemCenter.x - potentialCenter.x).abs() > 25 ||
-            (itemCenter.y - potentialCenter.y).abs() > 25) {
+        if ((itemCenter.x - potentialCenter.x).abs() > 20 ||
+            (itemCenter.y - potentialCenter.y).abs() > 20) {
           continue;
         }
 
@@ -95,15 +59,25 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
+    if (broadphaseCheck != null) {
+      final removePotentials = <CollisionProspect<T>>[];
+      for (final item in potentials) {
+        var keep = broadphaseCheck!(
+            item.a as PositionComponent, item.b as PositionComponent);
+        if (keep) {
+          keep = broadphaseCheck!(
+              item.b as PositionComponent, item.a as PositionComponent);
+        }
+        if (!keep) {
+          removePotentials.add(item);
+        }
+      }
+
+      potentials.removeAll(removePotentials);
+    }
+
     print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
     return potentials;
-  }
-
-  _skip(T item, T potential) {
-    if (_skipPair[item] == null) {
-      _skipPair[item] = HashSet<T>();
-    }
-    _skipPair[item]?.add(potential);
   }
 
   updateItemSizeOrPosition(T item) {

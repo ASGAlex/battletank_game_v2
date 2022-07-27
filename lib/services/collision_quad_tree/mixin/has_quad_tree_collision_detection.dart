@@ -19,6 +19,36 @@ mixin HasQuadTreeCollisionDetection on FlameGame
 
   initCollisionDetection(Rect mapDimensions) {
     _collisionDetection = _QuadTreeCollisionDetection(mapDimensions);
+    (collisionDetection as _QuadTreeCollisionDetection)
+        .quadBroadphase
+        .broadphaseCheck = broadPhaseCheck;
+  }
+
+  bool broadPhaseCheck(PositionComponent one, PositionComponent another) {
+    bool checkParent = false;
+    if (one is CollisionQuadTreeController) {
+      if (!(one).broadPhaseCheck(another)) {
+        return false;
+      }
+    } else {
+      checkParent = true;
+    }
+
+    if (another is CollisionQuadTreeController) {
+      if (!(another).broadPhaseCheck(one)) {
+        return false;
+      }
+    } else {
+      checkParent = true;
+    }
+
+    if (checkParent &&
+        one.parent is CollisionQuadTreeController &&
+        another.parent is CollisionQuadTreeController) {
+      return broadPhaseCheck(
+          one.parent as PositionComponent, another.parent as PositionComponent);
+    }
+    return true;
   }
 
   scheduleHitboxUpdate(ShapeHitbox hitbox) {
