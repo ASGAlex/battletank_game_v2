@@ -93,7 +93,7 @@ class _Bullet extends SpriteSheetBase {
   String get fileName => 'spritesheets/bullet.png';
 
   @override
-  Vector2 get spriteSize => Vector2(4, 3);
+  Vector2 get spriteSize => Vector2(3, 4);
 
   SpriteAnimation get animation => _bullet;
 }
