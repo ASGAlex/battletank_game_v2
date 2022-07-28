@@ -1,5 +1,3 @@
-library tiled_utils;
-
 import 'dart:async';
 import 'dart:ui';
 
@@ -9,9 +7,6 @@ import 'package:flame/flame.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tiled/tiled.dart';
-
-part 'src/animation_batch_compiler.dart';
-part 'src/image_batch_compiler.dart';
 
 typedef TileProcessorFunc = void Function(
     TileProcessor tile, Vector2 position, Vector2 size);

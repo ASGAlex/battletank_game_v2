@@ -1,4 +1,9 @@
-part of tiled_utils;
+import 'dart:async';
+
+import 'package:flame/components.dart';
+import 'package:flame/image_composition.dart';
+
+import 'tile_processor.dart';
 
 class AnimationBatchCompiler {
   SpriteAnimation? animation;

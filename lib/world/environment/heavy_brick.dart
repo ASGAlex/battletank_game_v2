@@ -1,8 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/world.dart';
-
-import '../../services/tiled_utils/tiled_utils.dart';
 
 class HeavyBrick extends SpriteComponent
     with CollisionCallbacks, DestroyableComponent {

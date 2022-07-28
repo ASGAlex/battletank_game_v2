@@ -1,4 +1,9 @@
-part of tiled_utils;
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:flame/components.dart';
+import 'package:flame_tiled/flame_tiled.dart';
+import 'package:tiled/tiled.dart';
 
 class ImageBatchCompiler {
   Future<PositionComponent> compileMapLayer(
