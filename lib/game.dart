@@ -6,7 +6,6 @@ import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import 'package:tank_game/services/color_filter/color_filter.dart';
 import 'package:tank_game/services/lazy_collision/lazy_collision.dart';
 import 'package:tank_game/services/sound/sound.dart';
 import 'package:tank_game/services/tiled_utils/tiled_utils.dart';
@@ -19,6 +18,7 @@ import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'packages/color_filter/lib/color_filter.dart';
 
 class MyGame extends FlameGame
     with

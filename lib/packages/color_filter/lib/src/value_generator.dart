@@ -1,7 +1,11 @@
-part of color_filter;
+import 'dart:ui';
+
+import 'package:flame/components.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/widgets.dart';
 
 /// Component used to generate numbers using the gameLoop.
-class _ValueGeneratorComponent extends Component {
+class ValueGeneratorComponent extends Component {
   bool _isFinished = false;
   final int _maxInMicroSeconds = 1000000;
 
@@ -16,7 +20,7 @@ class _ValueGeneratorComponent extends Component {
   double _displacement = 0;
   bool _isRunning = false;
 
-  _ValueGeneratorComponent(
+  ValueGeneratorComponent(
     this.duration, {
     this.begin = 0,
     this.end = 1,

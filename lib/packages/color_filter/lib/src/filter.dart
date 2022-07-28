@@ -1,15 +1,23 @@
-part of color_filter;
+import 'dart:ui';
+
+import 'package:dart_numerics/dart_numerics.dart';
+import 'package:flame/components.dart';
+import 'package:flame/game.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/widgets.dart';
+
+import 'value_generator.dart';
 
 mixin ColorFilterMix on FlameGame {
   initColorFilter<T extends ColorFilterMix>([ColorFilterConfig? config]) {
     config ??= ColorFilterConfig();
-    colorFilter = _ColorFilterComponent<T>(config);
+    colorFilter = ColorFilterComponent<T>(config);
     add(colorFilter!);
   }
 
-  _ColorFilterComponent? colorFilter;
+  ColorFilterComponent? colorFilter;
 
-  _ValueGeneratorComponent getValueGenerator(
+  ValueGeneratorComponent getValueGenerator(
     Duration duration, {
     double begin = 0.0,
     double end = 1.0,
@@ -17,7 +25,7 @@ mixin ColorFilterMix on FlameGame {
     VoidCallback? onFinish,
     ValueChanged<double>? onChange,
   }) {
-    final valueGenerator = _ValueGeneratorComponent(
+    final valueGenerator = ValueGeneratorComponent(
       duration,
       end: end,
       begin: begin,
@@ -39,23 +47,21 @@ class ColorFilterConfig {
   bool get enable => color != null;
 }
 
-class _ColorFilterComponent<T extends ColorFilterMix> extends Component {
+class ColorFilterComponent<T extends ColorFilterMix> extends Component {
   ColorTween? _tween;
 
   ColorFilterConfig config;
 
-  _ColorFilterComponent(this.config) : super(priority: int64MaxValue);
+  ColorFilterComponent(this.config) : super(priority: int64MaxValue);
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
     if (config.enable == true) {
-      // canvas.save();
       canvas.drawColor(
         config.color!,
         config.blendMode,
       );
-      // canvas.restore();
     }
   }
 
