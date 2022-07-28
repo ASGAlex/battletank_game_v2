@@ -11,13 +11,13 @@ import 'package:flutter/material.dart' as material;
 import 'package:flutter/services.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/water.dart';
 
-import '../../services/collision_quad_tree/collision_quad_tree.dart';
 import '../../services/sound/sound.dart';
 import '../world.dart';
 

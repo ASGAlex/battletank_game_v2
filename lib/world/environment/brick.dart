@@ -1,10 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 
-import '../../services/collision_quad_tree/collision_quad_tree.dart';
 import '../../services/tiled_utils/tiled_utils.dart';
 
 class Brick extends SpriteComponent

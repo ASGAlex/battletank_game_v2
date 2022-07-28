@@ -1,12 +1,18 @@
-part of collision_quad_tree;
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flutter/widgets.dart';
+
+import '../broadphase.dart';
+import '../collision_detection.dart';
+import 'has_quad_tree_collision_detection.dart';
 
 mixin CollisionQuadTreeController<T extends HasQuadTreeCollisionDetection>
     on PositionComponent {
   final _listenerByComponent = <ShapeHitbox, VoidCallback>{};
 
-  _QuadTreeBroadphase get _quadBroadphase {
+  QuadTreeBroadphase get _quadBroadphase {
     final game = findParent<T>();
-    final bf = game?.collisionDetection as _QuadTreeCollisionDetection;
+    final bf = game?.collisionDetection as QuadTreeCollisionDetection;
     return bf.quadBroadphase;
   }
 

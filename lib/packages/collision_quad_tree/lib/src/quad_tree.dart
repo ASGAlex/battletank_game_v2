@@ -1,4 +1,9 @@
-part of collision_quad_tree;
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
+import 'package:flame/game.dart';
+import 'package:flame/src/collisions/hitboxes/hitbox.dart';
+import 'package:flutter/widgets.dart';
 
 extension _QuadMethods on Rect {
   bool containsRect(Rect box) =>
@@ -32,7 +37,7 @@ class _Node<T extends Hitbox<T>> {
   }
 }
 
-class _QuadTree<T extends Hitbox<T>> {
+class QuadTree<T extends Hitbox<T>> {
   static const maxObjects = 25;
   static const maxLevels = 10;
   static final _oldPositionByItem = <ShapeHitbox, Aabb2>{};
@@ -40,7 +45,7 @@ class _QuadTree<T extends Hitbox<T>> {
 
   var level = 0;
 
-  _QuadTree();
+  QuadTree();
 
   Rect mainBoxSize = Rect.zero;
 

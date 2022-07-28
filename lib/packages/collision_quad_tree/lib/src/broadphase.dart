@@ -1,12 +1,20 @@
-part of collision_quad_tree;
+import 'dart:collection';
+
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/src/collisions/broadphase.dart';
+import 'package:flame/src/collisions/collision_callbacks.dart';
+import 'package:flame/src/collisions/hitboxes/hitbox.dart';
+
+import 'quad_tree.dart';
 
 typedef ExternalBroadphaseCheck = bool Function(
     PositionComponent one, PositionComponent another);
 
-class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
-  _QuadTreeBroadphase({super.items});
+class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
+  QuadTreeBroadphase({super.items});
 
-  final tree = _QuadTree<T>();
+  final tree = QuadTree<T>();
   final List<T> _active = [];
   ExternalBroadphaseCheck? broadphaseCheck;
 

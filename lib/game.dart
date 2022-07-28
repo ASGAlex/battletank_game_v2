@@ -18,7 +18,7 @@ import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
-import 'services/collision_quad_tree/collision_quad_tree.dart';
+import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
 
 class MyGame extends FlameGame
     with

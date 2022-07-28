@@ -1,4 +1,11 @@
-part of collision_quad_tree;
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
+import 'package:flame/game.dart';
+import 'package:flutter/widgets.dart';
+
+import '../collision_detection.dart';
+import 'collision_controller.dart';
 
 mixin HasQuadTreeCollisionDetection on FlameGame
     implements HasCollisionDetection {
@@ -11,15 +18,15 @@ mixin HasQuadTreeCollisionDetection on FlameGame
 
   @override
   set collisionDetection(CollisionDetection<Hitbox> cd) {
-    if (cd is! _QuadTreeCollisionDetection) {
-      throw 'Must be _QuadTreeCollisionDetection!';
+    if (cd is! QuadTreeCollisionDetection) {
+      throw 'Must be QuadTreeCollisionDetection!';
     }
     _collisionDetection = cd;
   }
 
   initCollisionDetection(Rect mapDimensions) {
-    _collisionDetection = _QuadTreeCollisionDetection(mapDimensions);
-    (collisionDetection as _QuadTreeCollisionDetection)
+    _collisionDetection = QuadTreeCollisionDetection(mapDimensions);
+    (collisionDetection as QuadTreeCollisionDetection)
         .quadBroadphase
         .broadphaseCheck = broadPhaseCheck;
   }
@@ -59,7 +66,7 @@ mixin HasQuadTreeCollisionDetection on FlameGame
   void update(double dt) {
     super.update(dt);
     for (final hb in _scheduledUpdate) {
-      (collisionDetection as _QuadTreeCollisionDetection)
+      (collisionDetection as QuadTreeCollisionDetection)
           .quadBroadphase
           .updateItemSizeOrPosition(hb);
     }
