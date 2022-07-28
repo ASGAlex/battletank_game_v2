@@ -21,6 +21,8 @@ import '../../services/collision_quad_tree/collision_quad_tree.dart';
 import '../../services/sound/sound.dart';
 import '../world.dart';
 
+part 'src/behaviors/available_directions.dart';
+part 'src/behaviors/random_movement.dart';
 part 'src/bullet.dart';
 part 'src/core/base_tank.dart';
 part 'src/core/direction.dart';

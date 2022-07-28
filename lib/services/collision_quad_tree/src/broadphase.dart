@@ -12,7 +12,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   @override
   HashSet<CollisionProspect<T>> query() {
-    final sw = Stopwatch()..start();
+    // final sw = Stopwatch()..start();
     final potentials = HashSet<CollisionProspect<T>>();
 
     for (var item in items) {
@@ -76,7 +76,7 @@ class _QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       potentials.removeAll(removePotentials);
     }
 
-    print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
+    // print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
     return potentials;
   }
 

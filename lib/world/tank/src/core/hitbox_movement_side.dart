@@ -28,20 +28,20 @@ class _MovementSideHitbox extends RectangleHitbox
 
     switch (direction) {
       case Direction.left:
-        position = Vector2(-4, 2);
-        size = Vector2(4, tank.size.y - 3);
+        position = Vector2(-8, 2);
+        size = Vector2(8, tank.size.y - 3);
         break;
       case Direction.right:
         position = Vector2(tank.size.x, 2);
-        size = Vector2(4, tank.size.y - 3);
+        size = Vector2(8, tank.size.y - 3);
         break;
       case Direction.up:
-        position = Vector2(2, -4);
-        size = Vector2(tank.size.x - 3, 4);
+        position = Vector2(2, -8);
+        size = Vector2(tank.size.x - 3, 8);
         break;
       case Direction.down:
         position = Vector2(2, tank.size.y);
-        size = Vector2(tank.size.x - 3, 4);
+        size = Vector2(tank.size.x - 3, 8);
         break;
     }
     return null;
