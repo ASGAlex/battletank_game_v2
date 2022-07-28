@@ -1,4 +1,4 @@
-part of sound;
+import 'package:audioplayers/audioplayers.dart';
 
 class Sfx {
   Sfx(this.fileName, [this.instances = 1]);

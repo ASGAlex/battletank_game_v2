@@ -1,4 +1,4 @@
-part of sound;
+import 'sfx.dart';
 
 class DistantSfxPlayer {
   DistantSfxPlayer(this._distanceOfSilence);
