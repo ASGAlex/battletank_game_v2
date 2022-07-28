@@ -1,4 +1,9 @@
-part of lazy_collision;
+import 'dart:isolate';
+import 'dart:math';
+
+import 'package:flame/collisions.dart';
+import 'package:flame/extensions.dart';
+import 'package:tank_game/packages/long_running_isolate/lib/long_running_isolate.dart';
 
 enum WorkerAction {
   layerInit,
@@ -10,8 +15,8 @@ enum WorkerAction {
   hitboxRemove
 }
 
-class _Message {
-  _Message(
+class Message {
+  Message(
       {required this.action,
       this.id,
       this.position,
@@ -53,8 +58,8 @@ class _Message {
   WorkerAction action;
 }
 
-class _Worker extends LongRunningIsolateServer {
-  _Worker(super.sendPort, super.receivePort, [this.debugLabel = '']);
+class Worker extends LongRunningIsolateServer {
+  Worker(super.sendPort, super.receivePort, [this.debugLabel = '']);
 
   final String debugLabel;
 
@@ -67,7 +72,7 @@ class _Worker extends LongRunningIsolateServer {
 
   @override
   processMessage(message) {
-    if (message is _Message) {
+    if (message is Message) {
       switch (message.action) {
         case WorkerAction.collisionsUpdate:
           _collisionsUpdate(message.layer ?? 'default');
@@ -145,7 +150,7 @@ class _Worker extends LongRunningIsolateServer {
     }
   }
 
-  _hitboxAdd(_Message message) {
+  _hitboxAdd(Message message) {
     final layer = message.layer;
     if (layer == null) throw 'No layer data';
 
@@ -169,7 +174,7 @@ class _Worker extends LongRunningIsolateServer {
     }
   }
 
-  _hitboxUpdate(_Message message) {
+  _hitboxUpdate(Message message) {
     final layer = message.layer;
     if (layer == null) throw 'No layer data';
 
@@ -184,7 +189,7 @@ class _Worker extends LongRunningIsolateServer {
     }
   }
 
-  _hitboxRemove(_Message message) {
+  _hitboxRemove(Message message) {
     final layer = message.layer;
     if (layer == null) throw 'No layer data';
 
@@ -195,7 +200,7 @@ class _Worker extends LongRunningIsolateServer {
     }
   }
 
-  Rectangle<double>? _createRect(_Message message) {
+  Rectangle<double>? _createRect(Message message) {
     final position = message.position;
     if (position == null) return null;
 
@@ -207,8 +212,8 @@ class _Worker extends LongRunningIsolateServer {
   }
 }
 
-Future<void> _workerIsolateMain(SendPort p) async {
-  final server = _Worker(p, ReceivePort());
+Future<void> workerIsolateMain(SendPort p) async {
+  final server = Worker(p, ReceivePort());
   print('Worker ${server.internalId} started.');
   server.run();
 }

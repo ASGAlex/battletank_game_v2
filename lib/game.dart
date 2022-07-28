@@ -6,7 +6,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import 'package:tank_game/services/lazy_collision/lazy_collision.dart';
+import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/services/sound/sound.dart';
 import 'package:tank_game/services/tiled_utils/tiled_utils.dart';
 import 'package:tank_game/world/environment/brick.dart';
