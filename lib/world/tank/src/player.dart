@@ -264,14 +264,19 @@ class Player extends Tank {
 
     if (directionButtonPressed && canMoveForward) {
       current = MovementState.run;
-      final sfx = Sound().movePlayer;
-      // sfx.controller?.setVolume(0.5);
-      sfx.play();
+      if (_movePlayerSoundPaused) {
+        _movePlayerSound?.controller?.setVolume(0.5);
+        _movePlayerSound?.play();
+        _movePlayerSoundPaused = false;
+      }
     } else {
       if (!dead) {
         current = MovementState.idle;
       }
-      Sound().movePlayer.pause();
+      if (!_movePlayerSoundPaused) {
+        _movePlayerSound?.pause();
+        _movePlayerSoundPaused = true;
+      }
     }
 
     if (updateAngle) {

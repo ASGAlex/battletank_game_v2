@@ -13,10 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/sound/lib/sound.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
-import 'package:tank_game/world/environment/brick.dart';
-import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
-import 'package:tank_game/world/environment/water.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
@@ -118,7 +115,7 @@ class MyGame extends FlameGame
     print('Preparing back buffer...');
     final trackController = TrackTrailController();
     await trackController.init(tiledComponent.tileMap);
-    add(trackController);
+    // add(trackController);
     print('done.');
 
     print('Starting lazy collision service...');
@@ -146,7 +143,7 @@ class MyGame extends FlameGame
             add(Brick(tile, position: position, size: size));
           }),
           'heavy_brick': ((tile, position, size) {
-            add(HeavyBrick(tile, position: position, size: size));
+            // add(HeavyBrick(tile, position: position, size: size));
           }),
         },
         layersToLoad: [
