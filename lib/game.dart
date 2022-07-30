@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
@@ -94,8 +95,6 @@ class MyGame extends FlameGame
         (tiledComponent.tileMap.map.height *
                 tiledComponent.tileMap.map.tileHeight)
             .toDouble()));
-    // collisionDetection =
-    //     OptimizedCollisionDetection.fromMap(tiledComponent.tileMap);
     print('done.');
 
     print('Compiling ground layer...');
@@ -232,6 +231,8 @@ class MyGame extends FlameGame
     print('done.');
 
     print('All done, game started!');
+    Flame.device.setLandscape();
+    Flame.device.fullScreen();
   }
 
   playerFire() {
