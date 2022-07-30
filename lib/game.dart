@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
+import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
@@ -27,6 +30,8 @@ class MyGame extends FlameGame
         SingleGameInstance,
         HasQuadTreeCollisionDetection,
         ScrollDetector,
+        HasDraggables,
+        HasTappables,
         ObjectLayers {
   MyGame(this.mapFile);
 
@@ -43,6 +48,8 @@ class MyGame extends FlameGame
   Player? player;
 
   RenderableTiledMap? currentMap;
+
+  JoystickComponent? joystick;
 
   final hudTextPaintNormal = TextPaint(
       style: const TextStyle(
@@ -174,6 +181,41 @@ class MyGame extends FlameGame
     camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
     camera.zoom = 2;
 
+    final image = await images.load('joystick.png');
+    final sheet = SpriteSheet.fromColumnsAndRows(
+      image: image,
+      columns: 6,
+      rows: 1,
+    );
+    if (Platform.isAndroid || Platform.isIOS) {
+      joystick = JoystickComponent(
+        priority: RenderPriority.ui.priority,
+        knob: SpriteComponent(
+          sprite: sheet.getSpriteById(1),
+          size: Vector2.all(150),
+        ),
+        background: SpriteComponent(
+          sprite: sheet.getSpriteById(0),
+          size: Vector2.all(200),
+        ),
+        margin: const EdgeInsets.only(left: 80, bottom: 120),
+      );
+      add(HudButtonComponent(
+          button: SpriteComponent(
+              sprite: sheet.getSpriteById(3), size: Vector2.all(200))
+            ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
+          buttonDown: SpriteComponent(
+              sprite: sheet.getSpriteById(5), size: Vector2.all(200)),
+          onPressed: playerFire,
+          priority: RenderPriority.ui.priority,
+          margin: const EdgeInsets.only(bottom: 120, right: 80)));
+      add(joystick!);
+
+      joystick?.background
+          ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
+      joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
+    }
+
     restorePlayer();
     print('done.');
 
@@ -190,6 +232,10 @@ class MyGame extends FlameGame
     print('done.');
 
     print('All done, game started!');
+  }
+
+  playerFire() {
+    player?.onFire();
   }
 
   loadSpawns(TiledComponent tiledComponent) {

@@ -11,7 +11,8 @@ enum RenderPriority {
   water(9),
   trackTrail(5),
   spawn(1),
-  ground(0);
+  ground(0),
+  ui(100);
 
   final int priority;
 
