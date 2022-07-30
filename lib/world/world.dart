@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tank_game/game.dart';
 
 enum RenderPriority {
   tree(12),
@@ -82,6 +83,18 @@ mixin HideableComponent on Component {
     if (!hidden) {
       super.render(canvas);
     }
+  }
+}
+
+mixin MyGameRef on Component {
+  MyGame? _gameRef;
+
+  MyGame get game => _gameRef!;
+
+  @override
+  Future<void>? onLoad() {
+    _gameRef = findParent<MyGame>();
+    return super.onLoad();
   }
 }
 

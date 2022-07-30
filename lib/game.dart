@@ -23,6 +23,8 @@ import 'package:tiled/tiled.dart';
 
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'packages/color_filter/lib/color_filter.dart';
+import 'world/environment/brick.dart';
+import 'world/environment/water.dart';
 
 class MyGame extends FlameGame
     with
@@ -70,6 +72,7 @@ class MyGame extends FlameGame
       style: const TextStyle(
     fontWeight: FontWeight.bold,
     color: Colors.red,
+    fontSize: 24,
     backgroundColor: Colors.black12,
   ));
 

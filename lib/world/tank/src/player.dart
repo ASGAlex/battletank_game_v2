@@ -13,6 +13,12 @@ class Player extends Tank {
 
   JoystickComponent? joystick;
 
+  Sfx? _movePlayerSound;
+  bool _movePlayerSoundPaused = true;
+
+  Sfx? _moveEnemiesAmbientSound;
+  bool _moveEnemiesAmbientSoundPaused = true;
+
   @override
   void update(double dt) {
     super.update(dt);
@@ -22,21 +28,24 @@ class Player extends Tank {
     _dtAmbientEnemySoundCheck += dt;
     if (_dtAmbientEnemySoundCheck > 2) {
       _dtAmbientEnemySoundCheck = 0;
-      final game = findParent<MyGame>();
-      if (game != null) {
-        var minDistance = distanceOfSilence;
-        for (final enemy in game.enemies) {
-          final distance = enemy.position.distanceTo(position);
-          if (distance < minDistance) {
-            minDistance = distance;
-          }
+      var minDistance = distanceOfSilence;
+      for (final enemy in game.enemies) {
+        final distance = enemy.position.distanceTo(position);
+        if (distance < minDistance) {
+          minDistance = distance;
         }
-        final sfx = Sound().moveEnemies;
-        if (minDistance >= distanceOfSilence) {
-          sfx.pause();
-        } else {
-          sfx.controller?.setVolume(1 - (minDistance / distanceOfSilence));
-          sfx.play();
+      }
+      if (minDistance >= distanceOfSilence) {
+        if (!_moveEnemiesAmbientSoundPaused) {
+          _moveEnemiesAmbientSound?.pause();
+          _moveEnemiesAmbientSoundPaused = true;
+        }
+      } else {
+        _moveEnemiesAmbientSound?.controller
+            ?.setVolume(1 - (minDistance / distanceOfSilence));
+        if (_moveEnemiesAmbientSoundPaused) {
+          _moveEnemiesAmbientSound?.play();
+          _moveEnemiesAmbientSoundPaused = false;
         }
       }
     }
@@ -46,22 +55,22 @@ class Player extends Tank {
   Future<void> onLoad() async {
     animationRun = await SpriteSheetRegistry().tankBasic.animationRun;
     animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
-    joystick = findParent<MyGame>()?.joystick;
-    super.onLoad();
+    await super.onLoad();
+    joystick = game.joystick;
+    _movePlayerSound = Sound().movePlayer;
+    _moveEnemiesAmbientSound = Sound().moveEnemies;
   }
 
   @override
   onHiddenChange(bool hidden) {
     if (hidden == true && dead == true) {
-      final game = findParent<MyGame>();
-      game?.restorePlayer();
+      game.restorePlayer();
     }
   }
 
   @override
   takeDamage(int damage) {
-    final game = findParent<MyGame>();
-    game?.colorFilter?.animateTo(material.Colors.red,
+    game.colorFilter?.animateTo(material.Colors.red,
         blendMode: BlendMode.colorBurn,
         duration: const Duration(milliseconds: 250), onFinish: () {
       game.colorFilter?.config.color = null;
@@ -81,11 +90,13 @@ class Player extends Tank {
     final direction = joystick?.direction;
     bool directionButtonPressed = false;
     bool updateAngle = false;
-
+    // return false;
     if (direction == null) {
       return false;
     }
-    final angleDegrees = (joystick?.delta.screenAngle() ?? 0) * (180 / pi);
+
+    //TODO: reimplement JoystickComponent to avoid calculating angle twice
+    final angleDegrees = 0; //(joystick?.delta.screenAngle() ?? 0) * (180 / pi);
 
     switch (direction) {
       case JoystickDirection.up:
@@ -182,14 +193,19 @@ class Player extends Tank {
     }
     if (directionButtonPressed && canMoveForward) {
       current = MovementState.run;
-      final sfx = Sound().movePlayer;
-      // sfx.controller?.setVolume(0.5);
-      sfx.play();
+      if (_movePlayerSoundPaused) {
+        _movePlayerSound?.controller?.setVolume(0.5);
+        _movePlayerSound?.play();
+        _movePlayerSoundPaused = false;
+      }
     } else {
       if (!dead) {
         current = MovementState.idle;
       }
-      Sound().movePlayer.pause();
+      if (!_movePlayerSoundPaused) {
+        _movePlayerSound?.pause();
+        _movePlayerSoundPaused = true;
+      }
     }
 
     if (updateAngle) {
@@ -263,7 +279,6 @@ class Player extends Tank {
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {
-    final game = findParent<MyGame>();
-    game?.isPlayerHiddenFromEnemy = isHidden;
+    game.isPlayerHiddenFromEnemy = isHidden;
   }
 }

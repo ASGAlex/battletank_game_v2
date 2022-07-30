@@ -8,6 +8,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
         CollisionCallbacks,
         CollisionQuadTreeController<MyGame>,
         DestroyableComponent,
+        MyGameRef,
         HideableComponent {
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center);
@@ -42,6 +43,14 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   Duration? _boomDuration;
 
+  var _halfSizeX = 0.0;
+  var _halfSizeY = 0.0;
+
+  updateSize() {
+    _halfSizeX = size.x / 2;
+    _halfSizeY = size.y / 2;
+  }
+
   @override
   Future<void> onLoad() async {
     if (animationRun == null || animationIdle == null) {
@@ -61,10 +70,11 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     current = MovementState.idle;
     add(_boundingHitbox);
     add(_movementHitbox);
+    updateSize();
+    await super.onLoad();
 
     if (trackTreeCollisions) {
-      final game = findParent<MyGame>();
-      game?.lazyCollisionService
+      game.lazyCollisionService
           .addHitbox(
               position: position,
               size: size,
@@ -74,8 +84,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
         _lazyTreeHitboxId = value;
       });
     }
-
-    return super.onLoad();
   }
 
   bool onFire() {
@@ -91,15 +99,14 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           angle: angle,
           position: position,
           firedFrom: this);
-      findParent<MyGame>()?.addBullet(bullet);
+      game.addBullet(bullet);
       final sfx = Sound().playerFireBullet;
       if (this is Player) {
         sfx.controller?.setVolume(1);
         sfx.play();
       } else {
-        final game = findParent<MyGame>();
         audioPlayer.actualDistance =
-            (game?.player?.position.distanceTo(position) ??
+            (game.player?.position.distanceTo(position) ??
                 distanceOfSilence + 1);
         audioPlayer.play(sfx);
       }
@@ -114,7 +121,6 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   @override
   void update(double dt) {
     _dtSumTreesCheck += dt;
-    final game = findParent<MyGame>();
 
     if (current == MovementState.run && canMoveForward) {
       final innerSpeed = speed * dt;
@@ -133,50 +139,49 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           displacement = position.translate(0, innerSpeed);
           break;
       }
-      position = displacement;
-      if (trackTreeCollisions) {
-        game?.lazyCollisionService.updateHitbox(
-            id: _lazyTreeHitboxId,
-            position: position.translate(-size.x / 2, -size.y / 2),
-            layer: 'tree',
-            size: size);
-      }
-
-      _trackDistance += innerSpeed;
-      if (_trackDistance > 2) {
-        _trackDistance = 0;
-        final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
-        final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
-
-        TrackTrailController.addTrack(
-            _TrackTrailNew(position: leftTrackPos, angle: angle));
-        TrackTrailController.addTrack(
-            _TrackTrailNew(position: rightTrackPos, angle: angle));
-      }
-    }
-
-    if (_dtSumTreesCheck >= 0.5 && trackTreeCollisions) {
-      game?.lazyCollisionService
-          .getCollisionsCount(_lazyTreeHitboxId, 'tree')
-          .then((value) {
-        final isHidden = value >= 4;
-
-        if (isHidden != _isHiddenFromEnemy) {
-          _isHiddenFromEnemy = isHidden;
-          onHiddenFromEnemyChanged(isHidden);
+      if (!displacement.isZero()) {
+        position = displacement;
+        if (trackTreeCollisions) {
+          game.lazyCollisionService.updateHitbox(
+              id: _lazyTreeHitboxId,
+              position: position.translate(-_halfSizeX, -_halfSizeY),
+              layer: 'tree',
+              size: size);
         }
-      });
-    }
+        _trackDistance += innerSpeed;
+        if (_trackDistance > 2) {
+          _trackDistance = 0;
+          final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
+          final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-    super.update(dt);
+          TrackTrailController.addTrack(
+              _TrackTrailNew(position: leftTrackPos, angle: angle));
+          TrackTrailController.addTrack(
+              _TrackTrailNew(position: rightTrackPos, angle: angle));
+        }
+        if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
+          game.lazyCollisionService
+              .getCollisionsCount(_lazyTreeHitboxId, 'tree')
+              .then((value) {
+            final isHidden = value >= 4;
+
+            if (isHidden != _isHiddenFromEnemy) {
+              _isHiddenFromEnemy = isHidden;
+              onHiddenFromEnemyChanged(isHidden);
+            }
+          });
+        }
+      }
+
+      super.update(dt);
+    }
   }
 
   void onHiddenFromEnemyChanged(bool isHidden) {}
 
   @override
   onDeath() {
-    final game = findParent<MyGame>();
-    game?.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
+    game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
     super.onDeath();
     current = MovementState.die;
 
@@ -189,8 +194,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
     if (sfx != null) {
       audioPlayer.actualDistance =
-          (game?.player?.position.distanceTo(position) ??
-              distanceOfSilence + 1);
+          (game.player?.position.distanceTo(position) ?? distanceOfSilence + 1);
       audioPlayer.play(sfx);
     }
 

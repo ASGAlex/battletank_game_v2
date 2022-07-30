@@ -25,6 +25,7 @@ class Sound {
     if (sfx != null) {
       sfx.load('audio/sfx/');
     }
+    sfx?.controller?.setPlayerMode(PlayerMode.lowLatency);
     return sfx;
   }
 
