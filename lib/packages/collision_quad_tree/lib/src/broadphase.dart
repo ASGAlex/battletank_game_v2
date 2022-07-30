@@ -16,28 +16,27 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   final tree = QuadTree<T>();
   final List<T> _active = [];
+
+  final activeCollisions = HashSet<T>();
+
   ExternalBroadphaseCheck? broadphaseCheck;
 
   @override
   HashSet<CollisionProspect<T>> query() {
-    // final sw = Stopwatch()..start();
     final potentials = HashSet<CollisionProspect<T>>();
+    final potentialsTmp = <List<T>>[];
 
-    for (var item in items) {
-      if (item.collisionType != CollisionType.active) {
-        continue;
-      }
-
-      final asShapeItem = (item as ShapeHitbox);
+    for (var activeItem in activeCollisions) {
+      final asShapeItem = (activeItem as ShapeHitbox);
 
       if (asShapeItem.isRemoving || asShapeItem.parent == null) {
-        tree.remove(item);
+        tree.remove(activeItem);
         continue;
       }
 
-      final itemCenter = item.aabb.center;
+      final itemCenter = activeItem.aabb.center;
       final markRemove = <T>[];
-      final potentiallyCollide = tree.query(item);
+      final potentiallyCollide = tree.query(activeItem);
       for (final potential in potentiallyCollide) {
         if (potential.collisionType == CollisionType.inactive) {
           continue;
@@ -60,7 +59,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        potentials.add(CollisionProspect<T>(item, potential));
+        potentialsTmp.add([activeItem, potential]);
       }
       for (final i in markRemove) {
         tree.remove(i);
@@ -68,23 +67,18 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
     }
 
     if (broadphaseCheck != null) {
-      final removePotentials = <CollisionProspect<T>>[];
-      for (final item in potentials) {
-        var keep = broadphaseCheck!(
-            item.a as PositionComponent, item.b as PositionComponent);
+      for (var i = 0; i < potentialsTmp.length; i++) {
+        final item0 = potentialsTmp[i].first as PositionComponent;
+        final item1 = potentialsTmp[i].last as PositionComponent;
+        var keep = broadphaseCheck!(item0, item1);
         if (keep) {
-          keep = broadphaseCheck!(
-              item.b as PositionComponent, item.a as PositionComponent);
+          keep = broadphaseCheck!(item1, item0);
         }
-        if (!keep) {
-          removePotentials.add(item);
+        if (keep) {
+          potentials.add(CollisionProspect(item0 as T, item1 as T));
         }
       }
-
-      potentials.removeAll(removePotentials);
     }
-
-    // print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
     return potentials;
   }
 

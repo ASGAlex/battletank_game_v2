@@ -33,9 +33,9 @@ class _AvailableDirectionsChecker {
   enableSideHitboxes([bool enable = true]) {
     for (var hb in _movementSideHitboxes) {
       if (enable) {
-        hb.collisionType = CollisionType.active;
+        parent.changeCollisionType(hb, CollisionType.active);
       } else {
-        hb.collisionType = CollisionType.inactive;
+        parent.changeCollisionType(hb, CollisionType.inactive);
       }
     }
     _sideHitboxesEnabled = enable;
