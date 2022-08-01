@@ -190,7 +190,7 @@ class QuadTree<T extends Hitbox<T>> {
     node.values = moveValues;
   }
 
-  void remove(T hitbox, {bool oldPosition = false}) =>
+  remove(T hitbox, {bool oldPosition = false}) =>
       _removeFast(hitbox, oldPosition: oldPosition);
 
   bool _removeFast(T hitbox, {bool oldPosition = false}) {

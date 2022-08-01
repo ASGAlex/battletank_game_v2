@@ -16,10 +16,7 @@ class QuadTreeCollisionDetection extends StandardCollisionDetection {
   @override
   void add(ShapeHitbox item) {
     super.add(item);
-    quadBroadphase.tree.add(item);
-    if (item.collisionType == CollisionType.active) {
-      quadBroadphase.activeCollisions.add(item);
-    }
+    quadBroadphase.add(item);
   }
 
   @override
@@ -31,17 +28,13 @@ class QuadTreeCollisionDetection extends StandardCollisionDetection {
 
   @override
   void remove(ShapeHitbox item) {
-    if (item.collisionType == CollisionType.active) {
-      quadBroadphase.activeCollisions.remove(item);
-    }
-    quadBroadphase.tree.remove(item);
+    quadBroadphase.remove(item);
     super.remove(item);
   }
 
   @override
   void removeAll(Iterable<ShapeHitbox> items) {
-    quadBroadphase.tree.clear();
-    quadBroadphase.activeCollisions.clear();
+    quadBroadphase.clear();
     super.removeAll(items);
   }
 

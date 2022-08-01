@@ -21,6 +21,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   ExternalBroadphaseCheck? broadphaseCheck;
   final _broadphaseCheckCache = <T, Map<T, bool>>{};
+  static final _aabb2CenterCache = <ShapeHitbox, Vector2>{};
 
   @override
   HashSet<CollisionProspect<T>> query() {
@@ -58,7 +59,13 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
           continue;
         }
 
-        final potentialCenter = potential.aabb.center;
+        Vector2 potentialCenter;
+        if (potential.collisionType == CollisionType.passive) {
+          potentialCenter = _getCenterOfHitbox(asShapePotential);
+        } else {
+          potentialCenter = potential.aabb.center;
+        }
+
         if ((itemCenter.x - potentialCenter.x).abs() > 20 ||
             (itemCenter.y - potentialCenter.y).abs() > 20) {
           continue;
@@ -95,11 +102,34 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   updateItemSizeOrPosition(T item) {
     tree.remove(item, oldPosition: true);
+    if (item.collisionType == CollisionType.passive) {
+      _getCenterOfHitbox(item as ShapeHitbox);
+    }
     tree.add(item);
+  }
+
+  add(T hitbox) {
+    tree.add(hitbox);
+    if (hitbox.collisionType == CollisionType.active) {
+      activeCollisions.add(hitbox);
+    } else if (hitbox.collisionType == CollisionType.passive) {
+      _getCenterOfHitbox(hitbox as ShapeHitbox);
+    }
   }
 
   remove(T item) {
     tree.remove(item);
+    if (item.collisionType == CollisionType.active) {
+      activeCollisions.remove(item);
+    }
+    _aabb2CenterCache.remove(item);
+  }
+
+  clear() {
+    tree.clear();
+    _aabb2CenterCache.clear();
+    activeCollisions.clear();
+    _broadphaseCheckCache.clear();
   }
 
   @override
@@ -134,5 +164,14 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
     print("S: ${sw.elapsedMicroseconds}  p: ${potentials.length} ");
     return potentials;
+  }
+
+  Vector2 _getCenterOfHitbox(ShapeHitbox hitbox) {
+    var centerVal = QuadTreeBroadphase._aabb2CenterCache[hitbox];
+    if (centerVal == null) {
+      centerVal = hitbox.aabb.center;
+      QuadTreeBroadphase._aabb2CenterCache[hitbox] = centerVal;
+    }
+    return centerVal;
   }
 }
