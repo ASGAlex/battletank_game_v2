@@ -19,6 +19,7 @@ import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'packages/collision_quad_tree/lib/src/collision_detection.dart';
 import 'packages/color_filter/lib/color_filter.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/water.dart';
@@ -216,6 +217,7 @@ class MyGame extends FlameGame
     }
 
     restorePlayer();
+    // camera.snapTo(Vector2.all(1110));
     print('done.');
 
     // Future.delayed(const Duration(seconds: 5)).then((value) {
@@ -302,34 +304,49 @@ class MyGame extends FlameGame
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    //
-    // final cd = collisionDetection as QuadTreeCollisionDetection;
-    // final boxes = cd.collisionQuadBoxes;
-    // final boxPaint = Paint();
-    // boxPaint.color = Colors.blue.withOpacity(0.5);
-    // boxPaint.strokeWidth = 2;
-    // boxPaint.style = PaintingStyle.stroke;
-    // camera.viewport.apply(canvas);
-    // for (final rect in boxes) {
-    //   canvas.drawRect(rect.rect, boxPaint);
-    //   for (final hb in rect.hitboxes) {
-    //     canvas.drawRect(
-    //         Rect.fromLTRB(
-    //             hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-    //         boxPaint);
-    //   }
-    //   hudTextPaintNormal.render(
-    //       canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
-    // }
-    // final playerPos = player?.absoluteTopLeftPosition.toOffset();
-    // if (playerPos != null) {
-    //   canvas.drawCircle(playerPos, 3, boxPaint);
-    // }
-    // if (isPlayerHiddenFromEnemy) {
-    //   hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
-    // } else {
-    //   hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
-    // }
+    if (false) {
+      final cd = collisionDetection as QuadTreeCollisionDetection;
+      final boxes = cd.collisionQuadBoxes;
+      final boxPaint = Paint();
+      boxPaint.color = Colors.blue.withOpacity(0.5);
+      boxPaint.strokeWidth = 2;
+      boxPaint.style = PaintingStyle.stroke;
+
+      final boxRootPaint = Paint();
+      boxRootPaint.color = Colors.red.withOpacity(0.8);
+      boxRootPaint.strokeWidth = 2;
+      boxRootPaint.style = PaintingStyle.stroke;
+
+      camera.viewport.apply(canvas);
+      for (final rect in boxes) {
+        canvas.drawRect(rect.rect, boxPaint);
+        for (final hb in rect.hitboxes) {
+          if (rect.hasChildren) {
+            canvas.drawRect(
+                Rect.fromLTRB(
+                    hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+                boxRootPaint);
+          } else {
+            canvas.drawRect(
+                Rect.fromLTRB(
+                    hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+                boxPaint);
+          }
+        }
+        hudTextPaintNormal.render(
+            canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
+      }
+      final playerPos = player?.absoluteTopLeftPosition.toOffset();
+      if (playerPos != null) {
+        canvas.drawCircle(playerPos, 3, boxPaint);
+      }
+    } else {
+      if (isPlayerHiddenFromEnemy) {
+        hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
+      } else {
+        hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
+      }
+    }
   }
 
   static const zoomPerScrollUnit = 0.02;

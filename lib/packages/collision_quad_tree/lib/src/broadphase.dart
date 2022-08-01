@@ -20,6 +20,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   final activeCollisions = HashSet<T>();
 
   ExternalBroadphaseCheck? broadphaseCheck;
+  final _broadphaseCheckCache = <T, Map<T, bool>>{};
 
   @override
   HashSet<CollisionProspect<T>> query() {
@@ -37,8 +38,12 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       final itemCenter = activeItem.aabb.center;
       final markRemove = <T>[];
       final potentiallyCollide = tree.query(activeItem);
-      for (final potential in potentiallyCollide) {
+      for (final potential in potentiallyCollide.entries.first.value) {
         if (potential.collisionType == CollisionType.inactive) {
+          continue;
+        }
+
+        if (_broadphaseCheckCache[activeItem]?[potential] == false) {
           continue;
         }
 
@@ -66,7 +71,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
       }
     }
 
-    if (broadphaseCheck != null) {
+    if (potentialsTmp.isNotEmpty && broadphaseCheck != null) {
       for (var i = 0; i < potentialsTmp.length; i++) {
         final item0 = potentialsTmp[i].first as PositionComponent;
         final item1 = potentialsTmp[i].last as PositionComponent;
@@ -76,9 +81,15 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         }
         if (keep) {
           potentials.add(CollisionProspect(item0 as T, item1 as T));
+        } else {
+          if (_broadphaseCheckCache[item0 as T] == null) {
+            _broadphaseCheckCache[item0 as T] = {};
+          }
+          _broadphaseCheckCache[item0 as T]![item1 as T] = false;
         }
       }
     }
+    print("P: ${potentials.length}");
     return potentials;
   }
 

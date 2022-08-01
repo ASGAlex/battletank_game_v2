@@ -45,7 +45,6 @@ class _RandomMovementController {
     final innerSpeed = parent.speed * dt;
     _remainingDistance -= innerSpeed;
     if (!planChanged && _canChangePlan) {
-      print('reset');
       _hasPlan = false;
       directionsChecker.enableSideHitboxes();
     }
