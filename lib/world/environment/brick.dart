@@ -74,6 +74,7 @@ class Brick extends PositionComponent
 
   _die() {
     if (isRemoving) return;
+    _treeInitiallyUpdated = false;
     removeFromParent();
     game.brickRenderer.bricks.remove(this);
   }
@@ -82,6 +83,15 @@ class Brick extends PositionComponent
   void renderTree(Canvas canvas) {
     // TODO: implement renderTree
     // super.renderTree(canvas);
+  }
+
+  bool _treeInitiallyUpdated = false;
+  @override
+  void updateTree(double dt) {
+    if (!_treeInitiallyUpdated) {
+      super.updateTree(dt);
+      _treeInitiallyUpdated = false;
+    }
   }
 }
 

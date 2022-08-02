@@ -25,4 +25,13 @@ class WaterCollide extends PositionComponent with CollisionCallbacks {
     // TODO: implement renderTree
     // super.renderTree(canvas);
   }
+
+  bool _treeInitiallyUpdated = false;
+  @override
+  void updateTree(double dt) {
+    if (!_treeInitiallyUpdated) {
+      super.updateTree(dt);
+      _treeInitiallyUpdated = false;
+    }
+  }
 }
