@@ -71,7 +71,7 @@ class TrackTrailController extends PositionComponent {
 
     if (imgUpdated) {
       final pic = recorder.endRecording();
-      image = await pic.toImage(width.toInt(), height.toInt());
+      pic.toImage(width.toInt(), height.toInt()).then((value) => image = value);
     }
 
     super.update(dt);

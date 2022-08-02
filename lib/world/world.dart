@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
@@ -113,5 +114,24 @@ mixin DestroyableComponent on PositionComponent {
   @mustCallSuper
   onDeath() {
     dead = true;
+  }
+}
+
+class StaticCollision extends RectangleHitbox {
+  StaticCollision(RectangleHitbox collision) {
+    position = collision.position;
+    size = collision.size;
+    angle = collision.angle;
+    anchor = collision.anchor;
+    priority = collision.priority;
+    shouldFillParent = collision.shouldFillParent;
+    collisionType = collision.collisionType;
+  }
+
+  Vector2? _cachedCenter;
+
+  Vector2 get collisionCenter {
+    _cachedCenter ??= aabb.center;
+    return _cachedCenter!;
   }
 }

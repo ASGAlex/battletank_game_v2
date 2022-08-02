@@ -48,6 +48,8 @@ class MyGame extends FlameGame
   List<Enemy> enemies = [];
   Player? player;
 
+  BrickRenderController brickRenderer = BrickRenderController();
+
   RenderableTiledMap? currentMap;
 
   JoystickComponent? joystick;
@@ -116,7 +118,7 @@ class MyGame extends FlameGame
     print('Preparing back buffer...');
     final trackController = TrackTrailController();
     await trackController.init(tiledComponent.tileMap);
-    // add(trackController);
+    add(trackController);
     print('done.');
 
     print('Starting lazy collision service...');
@@ -140,8 +142,11 @@ class MyGame extends FlameGame
           'water': ((tile, position, size) {
             add(WaterCollide(tile, position: position, size: size));
           }),
-          'brick': ((tile, position, size) {
-            add(Brick(tile, position: position, size: size));
+          'brick': ((tile, position, size) async {
+            final brick = Brick(tile, position: position, size: size);
+            add(brick);
+            brickRenderer.sprite ??= await tile.getSprite();
+            brickRenderer.bricks.add(brick);
           }),
           'heavy_brick': ((tile, position, size) {
             // add(HeavyBrick(tile, position: position, size: size));
@@ -151,6 +156,7 @@ class MyGame extends FlameGame
           'tree',
           'collision'
         ]);
+    add(brickRenderer);
     print('done.');
 
     print('Creating water tiles...');
@@ -211,9 +217,9 @@ class MyGame extends FlameGame
           margin: const EdgeInsets.only(bottom: 120, right: 80)));
       add(joystick!);
 
-      joystick?.background
-          ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
-      joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
+      // joystick?.background
+      //     ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
+      // joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
     }
 
     restorePlayer();
@@ -304,6 +310,7 @@ class MyGame extends FlameGame
   @override
   void render(Canvas canvas) {
     super.render(canvas);
+    // brickRenderer.render(canvas);
     if (false) {
       final cd = collisionDetection as QuadTreeCollisionDetection;
       final boxes = cd.collisionQuadBoxes;

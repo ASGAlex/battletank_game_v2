@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/tank/tank.dart';
+import 'package:tank_game/world/world.dart';
 
 import '../../services/spritesheet/spritesheet.dart';
 
@@ -54,7 +55,8 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
   Future<void> onLoad() async {
     animation = await SpriteSheetRegistry().spawn.animation;
     animation?.onComplete = reverseAnimation;
-    add(RectangleHitbox()..collisionType = CollisionType.passive);
+    add(StaticCollision(
+        RectangleHitbox()..collisionType = CollisionType.passive));
   }
 
   void reverseAnimation() {

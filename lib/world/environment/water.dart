@@ -14,7 +14,7 @@ class WaterCollide extends PositionComponent with CollisionCallbacks {
     final collision = tileProcessor.getCollisionRect();
     if (collision != null) {
       collision.collisionType = CollisionType.passive;
-      add(collision);
+      add(StaticCollision(collision));
     }
   }
 }

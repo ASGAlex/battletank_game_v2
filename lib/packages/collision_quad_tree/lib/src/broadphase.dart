@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/src/collisions/broadphase.dart';
 import 'package:flame/src/collisions/collision_callbacks.dart';
 import 'package:flame/src/collisions/hitboxes/hitbox.dart';
+import 'package:tank_game/world/world.dart';
 
 import 'quad_tree.dart';
 
@@ -21,7 +22,6 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
 
   ExternalBroadphaseCheck? broadphaseCheck;
   final _broadphaseCheckCache = <T, Map<T, bool>>{};
-  static final _aabb2CenterCache = <ShapeHitbox, Vector2>{};
 
   @override
   HashSet<CollisionProspect<T>> query() {
@@ -96,7 +96,7 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
         }
       }
     }
-    print("P: ${potentials.length}");
+    // print("P: ${potentials.length}");
     return potentials;
   }
 
@@ -122,12 +122,10 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
     if (item.collisionType == CollisionType.active) {
       activeCollisions.remove(item);
     }
-    _aabb2CenterCache.remove(item);
   }
 
   clear() {
     tree.clear();
-    _aabb2CenterCache.clear();
     activeCollisions.clear();
     _broadphaseCheckCache.clear();
   }
@@ -167,11 +165,9 @@ class QuadTreeBroadphase<T extends Hitbox<T>> extends Broadphase<T> {
   }
 
   Vector2 _getCenterOfHitbox(ShapeHitbox hitbox) {
-    var centerVal = QuadTreeBroadphase._aabb2CenterCache[hitbox];
-    if (centerVal == null) {
-      centerVal = hitbox.aabb.center;
-      QuadTreeBroadphase._aabb2CenterCache[hitbox] = centerVal;
+    if (hitbox is StaticCollision) {
+      return hitbox.collisionCenter;
     }
-    return centerVal;
+    return hitbox.aabb.center;
   }
 }
