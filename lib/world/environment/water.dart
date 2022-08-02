@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
@@ -16,5 +18,11 @@ class WaterCollide extends PositionComponent with CollisionCallbacks {
       collision.collisionType = CollisionType.passive;
       add(StaticCollision(collision));
     }
+  }
+
+  @override
+  void renderTree(Canvas canvas) {
+    // TODO: implement renderTree
+    // super.renderTree(canvas);
   }
 }

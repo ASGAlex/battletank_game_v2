@@ -77,6 +77,12 @@ class Brick extends PositionComponent
     removeFromParent();
     game.brickRenderer.bricks.remove(this);
   }
+
+  @override
+  void renderTree(Canvas canvas) {
+    // TODO: implement renderTree
+    // super.renderTree(canvas);
+  }
 }
 
 class BrickRenderController extends PositionComponent {
