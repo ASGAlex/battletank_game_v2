@@ -23,6 +23,7 @@ import 'package:tank_game/world/environment/water.dart';
 import '../world.dart';
 
 part 'src/behaviors/available_directions.dart';
+part 'src/behaviors/fire.dart';
 part 'src/behaviors/random_movement.dart';
 part 'src/bullet.dart';
 part 'src/core/base_tank.dart';

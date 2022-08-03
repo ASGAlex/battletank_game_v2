@@ -13,12 +13,11 @@ class Enemy extends Tank {
 
   var _movementMode = _MovementMode.random;
 
-  var _lastAvailableDirections = <Direction>[];
-
-  bool _shouldFireAfterReload = false;
+  final _lastAvailableDirections = <Direction>[];
 
   final _directionsChecker = _AvailableDirectionsChecker();
   _RandomMovementController? _randomMovementController;
+  _FireController? _fireController;
 
   @override
   Future<void> onLoad() async {
@@ -27,6 +26,12 @@ class Enemy extends Tank {
     _directionsChecker.onLoad(this);
     _randomMovementController = _RandomMovementController(
         directionsChecker: _directionsChecker, parent: this);
+    _fireController = _FireController(this);
+    _randomMovementController?.onDirectionChanged = () {
+      if (_hearPlayer()) {
+        _fireController?.fireASAP();
+      }
+    };
 
     await super.onLoad();
 
@@ -60,6 +65,11 @@ class Enemy extends Tank {
     super.update(dt);
   }
 
+  @override
+  void onWeaponReloaded() {
+    _fireController?.onWeaponReloaded();
+  }
+
   bool _hearPlayer() {
     final game = findParent<MyGame>();
     final player = game?.player;
@@ -83,13 +93,6 @@ class Enemy extends Tank {
   bool isCollisionLandscapeChanged(
           List<Direction> currentAvailableDirections) =>
       _lastAvailableDirections.length < currentAvailableDirections.length;
-
-  @override
-  onWeaponReloaded() {
-    if (_shouldFireAfterReload) {
-      _shouldFireAfterReload = !onFire();
-    }
-  }
 
   @override
   onDeath() {

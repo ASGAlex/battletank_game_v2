@@ -26,6 +26,8 @@ class _RandomMovementController {
 
   final _directionFreq = <Direction, int>{};
 
+  VoidCallback? onDirectionChanged;
+
   bool _createMovementPlan() {
     final availableDirections = directionsChecker.getAvailableDirections();
     _hasPlan = _setRandomDirection(availableDirections);
@@ -57,6 +59,7 @@ class _RandomMovementController {
     var count = _directionFreq[_plannedDirection] ?? 0;
     count++;
     _directionFreq[_plannedDirection] = count;
+    onDirectionChanged?.call();
   }
 
   bool _setRandomDirection(List<Direction> availableDirections) {
