@@ -10,6 +10,7 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/sound/lib/sound.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
@@ -27,7 +28,8 @@ import 'world/environment/water.dart';
 class MyGame extends FlameGame
     with
         ColorFilterMix,
-        HasKeyboardHandlerComponents,
+        // HasKeyboardHandlerComponents,
+        KeyboardEvents,
         SingleGameInstance,
         HasQuadTreeCollisionDetection,
         ScrollDetector,
@@ -367,5 +369,79 @@ class MyGame extends FlameGame
 
   void clampZoom() {
     camera.zoom = camera.zoom.clamp(0.05, 5.0);
+  }
+
+  KeyEventResult onKeyEvent(
+    RawKeyEvent event,
+    Set<LogicalKeyboardKey> keysPressed,
+  ) {
+    final player = this.player;
+    if (player == null) return KeyEventResult.handled;
+    if (player.dead == true) return KeyEventResult.handled;
+
+    bool directionButtonPressed = false;
+    bool updateAngle = false;
+    for (final key in keysPressed) {
+      // if (key == LogicalKeyboardKey.keyK) {
+      //   takeDamage(1);
+      // }
+
+      if (key == LogicalKeyboardKey.keyW) {
+        directionButtonPressed = true;
+        if (player.lookDirection != Direction.up) {
+          player.lookDirection = Direction.up;
+          updateAngle = true;
+        }
+      }
+      if (key == LogicalKeyboardKey.keyA) {
+        directionButtonPressed = true;
+        if (player.lookDirection != Direction.left) {
+          player.lookDirection = Direction.left;
+          updateAngle = true;
+        }
+      }
+      if (key == LogicalKeyboardKey.keyS) {
+        directionButtonPressed = true;
+        if (player.lookDirection != Direction.down) {
+          player.lookDirection = Direction.down;
+          updateAngle = true;
+        }
+      }
+      if (key == LogicalKeyboardKey.keyD) {
+        directionButtonPressed = true;
+        if (player.lookDirection != Direction.right) {
+          player.lookDirection = Direction.right;
+          updateAngle = true;
+        }
+      }
+
+      if (key == LogicalKeyboardKey.space) {
+        player.onFire();
+      }
+    }
+
+    if (directionButtonPressed && player.canMoveForward) {
+      player.current = MovementState.run;
+      if (player.movePlayerSoundPaused) {
+        player.movePlayerSound?.controller?.setVolume(0.5);
+        player.movePlayerSound?.play();
+        player.movePlayerSoundPaused = false;
+      }
+    } else {
+      if (!player.dead) {
+        player.current = MovementState.idle;
+      }
+      if (!player.movePlayerSoundPaused) {
+        player.movePlayerSound?.pause();
+        player.movePlayerSoundPaused = true;
+      }
+    }
+
+    if (updateAngle) {
+      player.angle = player.lookDirection.angle;
+    }
+
+    return KeyEventResult.handled;
+    ;
   }
 }

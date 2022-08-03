@@ -1,7 +1,7 @@
 part of tank;
 
-class _MovementHitbox extends RectangleHitbox
-    with DebugRender, _HitboxMapBounds, CollisionQuadTreeController<MyGame> {
+class _MovementHitbox extends _HitboxMapBounds
+    with DebugRender, CollisionQuadTreeController<MyGame> {
   _MovementHitbox({super.angle, super.anchor, super.priority})
       : super(position: Vector2(13, 1));
 
@@ -18,6 +18,7 @@ class _MovementHitbox extends RectangleHitbox
     position = Vector2(1, -1);
     size = Vector2(tank.size.x - 2, 8);
     priority = 100;
+    super.onLoad();
   }
 
   @override
