@@ -11,7 +11,7 @@ class Player extends Tank {
   @override
   int speed = 80;
 
-  JoystickComponent? joystick;
+  MyJoystick? joystick;
 
   Sfx? movePlayerSound;
   bool movePlayerSoundPaused = true;
@@ -87,110 +87,48 @@ class Player extends Tank {
 
   bool onJoystickEvent() {
     if (dead) return false;
-    final direction = joystick?.direction;
     bool directionButtonPressed = false;
     bool updateAngle = false;
     // return false;
-    if (direction == null) {
+
+    final angleDegrees = joystick?.knobAngleDegrees;
+
+    if (angleDegrees == null) {
       return false;
     }
 
-    //TODO: reimplement JoystickComponent to avoid calculating angle twice
-    final angleDegrees = 0; //(joystick?.delta.screenAngle() ?? 0) * (180 / pi);
-
-    switch (direction) {
-      case JoystickDirection.up:
-        directionButtonPressed = true;
-        if (lookDirection != Direction.up) {
-          lookDirection = Direction.up;
-          updateAngle = true;
-        }
-        break;
-      case JoystickDirection.upLeft:
-        if (angleDegrees < -45) {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.left) {
-            lookDirection = Direction.left;
-            updateAngle = true;
-          }
-        } else {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.up) {
-            lookDirection = Direction.up;
-            updateAngle = true;
-          }
-        }
-        break;
-      case JoystickDirection.upRight:
-        if (angleDegrees > 45) {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.right) {
-            lookDirection = Direction.right;
-            updateAngle = true;
-          }
-        } else {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.up) {
-            lookDirection = Direction.up;
-            updateAngle = true;
-          }
-        }
-        break;
-      case JoystickDirection.right:
-        directionButtonPressed = true;
-        if (lookDirection != Direction.right) {
-          lookDirection = Direction.right;
-          updateAngle = true;
-        }
-        break;
-      case JoystickDirection.down:
-        directionButtonPressed = true;
-        if (lookDirection != Direction.down) {
-          lookDirection = Direction.down;
-          updateAngle = true;
-        }
-        break;
-      case JoystickDirection.downRight:
-        if (angleDegrees > 135) {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.down) {
-            lookDirection = Direction.down;
-            updateAngle = true;
-          }
-        } else {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.right) {
-            lookDirection = Direction.right;
-            updateAngle = true;
-          }
-        }
-        break;
-      case JoystickDirection.downLeft:
-        if (angleDegrees < -135) {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.left) {
-            lookDirection = Direction.left;
-            updateAngle = true;
-          }
-        } else {
-          directionButtonPressed = true;
-          if (lookDirection != Direction.down) {
-            lookDirection = Direction.down;
-            updateAngle = true;
-          }
-        }
-        break;
-      case JoystickDirection.left:
-        directionButtonPressed = true;
-        if (lookDirection != Direction.left) {
-          lookDirection = Direction.left;
-          updateAngle = true;
-        }
-        break;
-      case JoystickDirection.idle:
-        // TODO: Handle this case.
-        break;
+    directionButtonPressed = true;
+    if (angleDegrees == 0) {
+      directionButtonPressed = false;
+    } else if (angleDegrees >= 315 || angleDegrees <= 45) {
+      //Up
+      if (lookDirection != Direction.up) {
+        lookDirection = Direction.up;
+        updateAngle = true;
+      }
+    } else if (angleDegrees > 45 && angleDegrees < 135) {
+      //Right
+      if (lookDirection != Direction.right) {
+        lookDirection = Direction.right;
+        updateAngle = true;
+      }
+    } else if (angleDegrees >= 135 && angleDegrees <= 225) {
+      //Bottom
+      if (lookDirection != Direction.down) {
+        lookDirection = Direction.down;
+        updateAngle = true;
+      }
+    } else if (angleDegrees > 225 && angleDegrees < 315) {
+      //Left
+      if (lookDirection != Direction.left) {
+        lookDirection = Direction.left;
+        updateAngle = true;
+      }
+    } else {
+      directionButtonPressed = false;
+      throw "Unexpected Joystick direction error. Angle is& $angleDegrees";
     }
+
     if (directionButtonPressed && canMoveForward) {
       current = MovementState.run;
       if (_movementHitbox.collisionType != CollisionType.active) {

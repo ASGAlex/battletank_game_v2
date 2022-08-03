@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/sound/lib/sound.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
+import 'package:tank_game/ui/joystick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
@@ -50,11 +51,11 @@ class MyGame extends FlameGame
   List<Enemy> enemies = [];
   Player? player;
 
-  BrickRenderController brickRenderer = BrickRenderController();
+  BrickRenderController? brickRenderer;
 
   RenderableTiledMap? currentMap;
 
-  JoystickComponent? joystick;
+  MyJoystick? joystick;
 
   final hudTextPaintNormal = TextPaint(
       style: const TextStyle(
@@ -130,6 +131,11 @@ class MyGame extends FlameGame
     print('done.');
 
     print('Creating trees and collision tiles...');
+    brickRenderer = BrickRenderController(
+        ((currentMap?.map.width ?? 0) * (currentMap?.map.tileWidth ?? 0))
+            .toInt(),
+        ((currentMap?.map.height ?? 0) * (currentMap?.map.tileHeight ?? 0))
+            .toInt());
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
@@ -147,8 +153,8 @@ class MyGame extends FlameGame
           'brick': ((tile, position, size) async {
             final brick = Brick(tile, position: position, size: size);
             add(brick);
-            brickRenderer.sprite ??= await tile.getSprite();
-            brickRenderer.bricks.add(brick);
+            brickRenderer?.sprite ??= await tile.getSprite();
+            brickRenderer?.bricks.add(brick);
           }),
           'heavy_brick': ((tile, position, size) {
             // add(HeavyBrick(tile, position: position, size: size));
@@ -158,7 +164,7 @@ class MyGame extends FlameGame
           'tree',
           'collision'
         ]);
-    add(brickRenderer);
+    add(brickRenderer!);
     print('done.');
 
     print('Creating water tiles...');
@@ -196,7 +202,7 @@ class MyGame extends FlameGame
       rows: 1,
     );
     if (Platform.isAndroid || Platform.isIOS) {
-      joystick = JoystickComponent(
+      joystick = MyJoystick(
         priority: RenderPriority.ui.priority,
         knob: SpriteComponent(
           sprite: sheet.getSpriteById(1),

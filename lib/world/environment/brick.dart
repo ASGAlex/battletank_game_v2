@@ -46,7 +46,7 @@ class Brick extends PositionComponent
   }
 
   void _collideWithBullet(Bullet bullet) {
-    game.brickRenderer.imageChanged = true;
+    game.brickRenderer?.imageChanged = true;
     if (_hitsByBullet >= 1) {
       _die();
     } else {
@@ -76,7 +76,7 @@ class Brick extends PositionComponent
     if (isRemoving) return;
     _treeInitiallyUpdated = false;
     removeFromParent();
-    game.brickRenderer.bricks.remove(this);
+    game.brickRenderer?.bricks.remove(this);
   }
 
   @override
@@ -96,6 +96,9 @@ class Brick extends PositionComponent
 }
 
 class BrickRenderController extends PositionComponent {
+  BrickRenderController(this.mapWidth, this.mapHeight);
+  int mapWidth;
+  int mapHeight;
   final bricks = HashSet<Brick>();
 
   bool imageChanged = true;
@@ -123,7 +126,7 @@ class BrickRenderController extends PositionComponent {
       final canvas = Canvas(recorder);
       component.render(canvas);
       final picture = recorder.endRecording();
-      picture.toImage(1000, 1000).then((value) => _image = value);
+      picture.toImage(mapWidth, mapHeight).then((value) => _image = value);
 
       imageChanged = false;
     }

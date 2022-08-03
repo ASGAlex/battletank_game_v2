@@ -7,28 +7,27 @@ class _HitboxMapBounds extends RectangleHitbox with MyGameRef {
   num mapWidth = 0.0;
   num mapHeight = 0.0;
 
+  @override
   onLoad() {
     mapWidth = (game.currentMap?.map.width ?? 0) *
         (game.currentMap?.map.tileWidth ?? 0);
 
     mapHeight = (game.currentMap?.map.height ?? 0) *
         (game.currentMap?.map.tileHeight ?? 0);
+    return null;
   }
 
   @override
   update(dt) {
-    final hbRect = Rect.fromLTRB(aabb.min.x, aabb.min.y, aabb.max.x, aabb.max.y)
-        .toMathRectangle();
-
-    final mapRect =
-        Rect.fromLTWH(0, 0, mapWidth.toDouble(), mapHeight.toDouble())
-            .toMathRectangle();
-
-    if (mapRect.containsRectangle(hbRect)) {
-      _outOfBounds = false;
-    } else {
-      _outOfBounds = true;
+    bool tmp = false;
+    if (aabb.min.x < 0 || aabb.max.x > mapWidth) {
+      tmp = true;
     }
+    if (aabb.min.y < 0 || aabb.max.y > mapHeight) {
+      tmp = true;
+    }
+    _outOfBounds = tmp;
+
     super.update(dt);
   }
 }
