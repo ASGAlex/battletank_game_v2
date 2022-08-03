@@ -90,7 +90,7 @@ class Brick extends PositionComponent
   void updateTree(double dt) {
     if (!_treeInitiallyUpdated) {
       super.updateTree(dt);
-      _treeInitiallyUpdated = false;
+      _treeInitiallyUpdated = true;
     }
   }
 }
