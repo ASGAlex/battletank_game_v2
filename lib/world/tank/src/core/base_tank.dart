@@ -172,7 +172,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           });
         }
       }
-
+    }
+    if (current != MovementState.idle) {
       super.update(dt);
     }
   }

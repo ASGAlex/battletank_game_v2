@@ -91,7 +91,9 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
     _doCreateAttempt();
     _doCreateByTriggerAttempt();
 
-    super.update(dt);
+    if (busy) {
+      super.update(dt);
+    }
   }
 
   _doCreateByTriggerAttempt() {

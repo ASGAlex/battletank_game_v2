@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
@@ -29,7 +28,6 @@ import 'world/environment/water.dart';
 class MyGame extends FlameGame
     with
         ColorFilterMix,
-        // HasKeyboardHandlerComponents,
         KeyboardEvents,
         SingleGameInstance,
         HasQuadTreeCollisionDetection,
@@ -192,8 +190,8 @@ class MyGame extends FlameGame
     print('done.');
 
     print('Spawning the Player...');
-    camera.viewport = FixedResolutionViewport(Vector2(1366, 768));
-    camera.zoom = 2;
+    camera.viewport = FixedResolutionViewport(Vector2(400, 250));
+    // camera.zoom = 1;
 
     final image = await images.load('joystick.png');
     final sheet = SpriteSheet.fromColumnsAndRows(
@@ -206,23 +204,24 @@ class MyGame extends FlameGame
         priority: RenderPriority.ui.priority,
         knob: SpriteComponent(
           sprite: sheet.getSpriteById(1),
-          size: Vector2.all(150),
+          size: Vector2.all(30),
         ),
         background: SpriteComponent(
           sprite: sheet.getSpriteById(0),
-          size: Vector2.all(200),
+          size: Vector2.all(60),
         ),
-        margin: const EdgeInsets.only(left: 80, bottom: 120),
+        margin: const EdgeInsets.only(left: 20, bottom: 40),
       );
       add(HudButtonComponent(
           button: SpriteComponent(
-              sprite: sheet.getSpriteById(3), size: Vector2.all(200))
-            ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
+              sprite: sheet.getSpriteById(3),
+              size: Vector2.all(
+                  50)) /*..add(OpacityEffect.to(0.5, EffectController(duration: 0)))*/,
           buttonDown: SpriteComponent(
-              sprite: sheet.getSpriteById(5), size: Vector2.all(200)),
+              sprite: sheet.getSpriteById(5), size: Vector2.all(50)),
           onPressed: playerFire,
           priority: RenderPriority.ui.priority,
-          margin: const EdgeInsets.only(bottom: 120, right: 80)));
+          margin: const EdgeInsets.only(bottom: 40, right: 20)));
       add(joystick!);
 
       // joystick?.background
@@ -240,11 +239,11 @@ class MyGame extends FlameGame
     //   }
     // });
 
-    print('Prepare UI...');
-    add(FpsTextComponent(textRenderer: hudTextPaintDanger)
-      ..x = 0
-      ..y = 0);
-    print('done.');
+    // print('Prepare UI...');
+    // add(FpsTextComponent(textRenderer: hudTextPaintDanger)
+    //   ..x = 0
+    //   ..y = 0);
+    // print('done.');
 
     print('All done, game started!');
     Flame.device.setLandscape();
@@ -356,11 +355,11 @@ class MyGame extends FlameGame
         canvas.drawCircle(playerPos, 3, boxPaint);
       }
     } else {
-      if (isPlayerHiddenFromEnemy) {
-        hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
-      } else {
-        hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
-      }
+      // if (isPlayerHiddenFromEnemy) {
+      //   hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
+      // } else {
+      //   hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
+      // }
     }
   }
 
@@ -448,6 +447,21 @@ class MyGame extends FlameGame
     }
 
     return KeyEventResult.handled;
-    ;
+  }
+
+  void onDragStart(int pointerId, DragStartInfo info) {
+    joystick?.handleDragStart(pointerId, info);
+  }
+
+  void onDragUpdate(int pointerId, DragUpdateInfo info) {
+    joystick?.handleDragUpdated(pointerId, info);
+  }
+
+  void onDragEnd(int pointerId, DragEndInfo info) {
+    joystick?.handleDragEnded(pointerId, info);
+  }
+
+  void onDragCancel(int pointerId) {
+    joystick?.handleDragCanceled(pointerId);
   }
 }

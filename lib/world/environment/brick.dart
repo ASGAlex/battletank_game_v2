@@ -103,11 +103,11 @@ class BrickRenderController extends PositionComponent {
 
   bool imageChanged = true;
   Sprite? sprite;
-  Image? _image;
+  Picture? _picture;
 
   @override
   render(Canvas canvas) async {
-    if (_image == null || (imageChanged && sprite != null)) {
+    if (_picture == null || (imageChanged && sprite != null)) {
       final batch = SpriteBatch(sprite!.image);
       for (final brick in bricks) {
         var source = sprite!.src;
@@ -125,12 +125,13 @@ class BrickRenderController extends PositionComponent {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
       component.render(canvas);
-      final picture = recorder.endRecording();
-      picture.toImage(mapWidth, mapHeight).then((value) => _image = value);
+      _picture = recorder.endRecording();
 
       imageChanged = false;
     }
 
-    canvas.drawImage(_image!, Offset.zero, Paint());
+    if (_picture != null) {
+      canvas.drawPicture(_picture!);
+    }
   }
 }
