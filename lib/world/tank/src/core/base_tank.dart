@@ -1,6 +1,6 @@
 part of tank;
 
-enum MovementState { run, idle, die }
+enum MovementState { run, idle, die, wreck }
 
 class Tank extends SpriteAnimationGroupComponent<MovementState>
     with
@@ -38,6 +38,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   SpriteAnimation? animationRun;
   SpriteAnimation? animationIdle;
   SpriteAnimation? animationDie;
+  SpriteAnimation? animationWreck;
 
   final distantAudioPlayer = DistantSfxPlayer(distanceOfSilence);
 
@@ -58,13 +59,15 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     }
 
     animationDie ??= await SpriteSheetRegistry().boomBig.animation;
+    animationWreck ??= await SpriteSheetRegistry().tankBasic.animationWreck;
 
     _boomDuration = animationDie!.duration;
 
     animations = {
       MovementState.run: animationRun!,
       MovementState.idle: animationIdle!,
-      MovementState.die: animationDie!
+      MovementState.die: animationDie!,
+      MovementState.wreck: animationWreck!
     };
 
     current = MovementState.idle;
@@ -181,28 +184,35 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   @override
   onDeath() {
-    game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
-    super.onDeath();
-    current = MovementState.die;
+    if (current != MovementState.wreck) {
+      game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
+      current = MovementState.die;
 
-    Sfx? sfx;
-    if (this is Player) {
-      sfx = SoundLibrary().explosionPlayer;
-    } else if (this is Enemy) {
-      sfx = SoundLibrary().explosionEnemy;
-    }
+      super.onDeath();
 
-    if (sfx != null) {
-      distantAudioPlayer.actualDistance =
-          (game.player?.position.distanceTo(position) ?? distanceOfSilence + 1);
-      distantAudioPlayer.play(sfx);
-    }
+      Sfx? sfx;
+      if (this is Player) {
+        sfx = SoundLibrary().explosionPlayer;
+      } else if (this is Enemy) {
+        sfx = SoundLibrary().explosionEnemy;
+      }
 
-    if (_boomDuration != null) {
-      Future.delayed(_boomDuration!).then((value) {
-        removeFromParent();
-        hidden = true;
-      });
+      if (sfx != null) {
+        distantAudioPlayer.actualDistance =
+            (game.player?.position.distanceTo(position) ??
+                distanceOfSilence + 1);
+        distantAudioPlayer.play(sfx);
+      }
+
+      if (_boomDuration != null) {
+        Future.delayed(_boomDuration!).then((value) {
+          current = MovementState.wreck;
+          health = 1;
+        });
+      }
+    } else {
+      game.backBuffer?.add(this);
+      removeFromParent();
     }
   }
 }

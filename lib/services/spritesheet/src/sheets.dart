@@ -53,7 +53,7 @@ class _TankBasic extends SpriteSheetBase {
       stepTime: 10,
     );
     compileAnimation(
-      name: 'track',
+      name: 'wreck',
       from: 2,
       to: 3,
       stepTime: 10,
@@ -73,6 +73,9 @@ class _TankBasic extends SpriteSheetBase {
   Future<SpriteAnimation> get animationRun => getPrecompiledAnimation('run');
 
   Future<SpriteAnimation> get animationIdle => getPrecompiledAnimation('idle');
+
+  Future<SpriteAnimation> get animationWreck =>
+      getPrecompiledAnimation('wreck');
 
   Sprite get track => _track;
 }

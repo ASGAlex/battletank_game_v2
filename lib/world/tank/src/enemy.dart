@@ -41,6 +41,7 @@ class Enemy extends Tank {
 
   @override
   void update(double dt) {
+    if (current == MovementState.wreck) return;
     if (current != MovementState.die) {
       if ((_hearPlayer() || _seePlayer()) &&
           _movementMode != _MovementMode.target) {

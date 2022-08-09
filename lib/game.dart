@@ -104,7 +104,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Preparing back buffer...');
-    backBuffer = BackBuffer(mapWidth.toInt(), mapHeight.toInt(), 2, 10);
+    backBuffer = BackBuffer(mapWidth.toInt(), mapHeight.toInt(), 2, 10, 0.98);
     add(backBuffer!);
     consoleMessages.sendMessage('done.');
 
