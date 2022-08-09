@@ -15,6 +15,7 @@ import 'package:tank_game/ui/joystick.dart';
 import 'package:tank_game/ui/keyboard.dart';
 import 'package:tank_game/ui/visibility_indicator.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
@@ -66,15 +67,12 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     Flame.device.setLandscape();
     Flame.device.fullScreen();
     consoleMessages.sendMessage('Start loading!');
-    // print('Start loading!');
     super.onLoad();
     initColorFilter<MyGame>();
 
     consoleMessages.sendMessage('loading sounds...');
-    // print('loading sounds...');
     SoundLibrary().init();
     consoleMessages.sendMessage('done.');
-    // print('done.');
 
     consoleMessages.sendMessage('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
@@ -99,8 +97,9 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     consoleMessages.sendMessage('Compiling tree layer...');
     final tree = await imageCompiler
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
-    tree.priority = RenderPriority.tree.priority;
-    add(tree);
+    final treeWithShadow = TreeLayer(tree, mapWidth.toInt(), mapHeight.toInt());
+    treeWithShadow.priority = RenderPriority.tree.priority;
+    add(treeWithShadow);
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Preparing back buffer...');
