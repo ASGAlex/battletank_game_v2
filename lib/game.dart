@@ -114,7 +114,12 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Creating trees and collision tiles...');
-    batchRenderer = BatchComponentRenderer(mapWidth.toInt(), mapHeight.toInt());
+    batchRenderer = BatchComponentRenderer(mapWidth.toInt(), mapHeight.toInt(),
+        offsetSteps: 3,
+        drawShadow: true,
+        offsetShadowSteps: 2,
+        offsetDirection: const Offset(2.5, -2.5));
+    batchRenderer?.priority = RenderPriority.walls.priority;
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{

@@ -8,7 +8,7 @@ import 'package:tank_game/world/world.dart';
 class HeavyBrick extends SpriteComponent
     with CollisionCallbacks, DestroyableComponent, BatchRender {
   HeavyBrick(this.tileProcessor, {super.position, super.size})
-      : super(priority: RenderPriority.player.priority);
+      : super(priority: RenderPriority.walls.priority);
 
   TileProcessor tileProcessor;
 

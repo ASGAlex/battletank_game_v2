@@ -15,7 +15,7 @@ class Brick extends SpriteComponent
         MyGameRef,
         BatchRender {
   Brick(this.tileProcessor, {super.position, super.size})
-      : super(priority: RenderPriority.player.priority);
+      : super(priority: RenderPriority.walls.priority);
 
   TileProcessor tileProcessor;
 

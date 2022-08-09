@@ -7,12 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 
 enum RenderPriority {
-  tree(12),
-  bullet(11),
+  walls(20),
+  tree(15),
+  bullet(12),
   player(10),
   water(9),
-  trackTrail(5),
-  spawn(1),
+  spawn(5),
+  trackTrail(1),
   ground(0),
   ui(100);
 
