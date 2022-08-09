@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
+import 'package:tank_game/ui/console_messages.dart';
 import 'package:tank_game/ui/joystick.dart';
 import 'package:tank_game/ui/keyboard.dart';
 import 'package:tank_game/ui/visibility_indicator.dart';
@@ -56,20 +57,26 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   RenderableTiledMap? currentMap;
 
   BackBuffer? backBuffer;
+  final consoleMessages = ConsoleMessages();
 
   final hudVisibility = VisibilityIndicator();
 
   @override
   Future<void> onLoad() async {
-    print('Start loading!');
+    Flame.device.setLandscape();
+    Flame.device.fullScreen();
+    consoleMessages.sendMessage('Start loading!');
+    // print('Start loading!');
     super.onLoad();
     initColorFilter<MyGame>();
 
-    print('loading sounds...');
+    consoleMessages.sendMessage('loading sounds...');
+    // print('loading sounds...');
     SoundLibrary().init();
-    print('done.');
+    consoleMessages.sendMessage('done.');
+    // print('done.');
 
-    print('loading map...');
+    consoleMessages.sendMessage('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
     currentMap = tiledComponent.tileMap;
     final mapWidth = (tiledComponent.tileMap.map.width *
@@ -79,35 +86,35 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
             tiledComponent.tileMap.map.tileHeight)
         .toDouble();
     initCollisionDetection(Rect.fromLTWH(0, 0, mapWidth, mapHeight));
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Compiling ground layer...');
+    consoleMessages.sendMessage('Compiling ground layer...');
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']);
     ground.priority = RenderPriority.ground.priority;
     add(ground);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Compiling tree layer...');
+    consoleMessages.sendMessage('Compiling tree layer...');
     final tree = await imageCompiler
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
     tree.priority = RenderPriority.tree.priority;
     add(tree);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Preparing back buffer...');
+    consoleMessages.sendMessage('Preparing back buffer...');
     backBuffer = BackBuffer(mapWidth.toInt(), mapHeight.toInt(), 2, 10);
     add(backBuffer!);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Starting lazy collision service...');
+    consoleMessages.sendMessage('Starting lazy collision service...');
     await lazyCollisionService.run({
       'tree': const Duration(milliseconds: 100),
     });
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Creating trees and collision tiles...');
+    consoleMessages.sendMessage('Creating trees and collision tiles...');
     batchRenderer = BatchComponentRenderer(mapWidth.toInt(), mapHeight.toInt());
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
@@ -139,9 +146,9 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
           'collision'
         ]);
     add(batchRenderer!);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Creating water tiles...');
+    consoleMessages.sendMessage('Creating water tiles...');
     final animationCompiler = AnimationBatchCompiler();
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
@@ -153,19 +160,19 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
         layersToLoad: [
           'water',
         ]);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Compiling water animation...');
+    consoleMessages.sendMessage('Compiling water animation...');
     final animatedWater = await animationCompiler.compile();
     animatedWater.priority = RenderPriority.water.priority;
     add(animatedWater);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Loading spawns...');
+    consoleMessages.sendMessage('Loading spawns...');
     loadSpawns(tiledComponent);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Starting UI');
+    consoleMessages.sendMessage('Starting UI');
     initJoystick(() {
       player?.onFire();
     });
@@ -173,19 +180,18 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     hudVisibility.x = 2;
     hudVisibility.y = 2;
     add(hudVisibility);
-    print('done.');
+    consoleMessages.sendMessage('done.');
 
-    print('Spawning the Player...');
+    consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
     // camera.zoom = 1;
 
-    restorePlayer();
+    final playerSpawn = await Spawn.waitFree(true);
+    camera.followComponent(playerSpawn);
+    restorePlayer(playerSpawn);
     SoundLibrary().playIntro();
-    print('done.');
-
-    print('All done, game started!');
-    Flame.device.setLandscape();
-    Flame.device.fullScreen();
+    consoleMessages.sendMessage('done.');
+    consoleMessages.sendMessage('All done, game started!');
   }
 
   loadSpawns(TiledComponent tiledComponent) {
@@ -215,8 +221,8 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     }
   }
 
-  Future<Player> restorePlayer() async {
-    var spawn = await Spawn.waitFree(true);
+  Future<Player> restorePlayer([Spawn? spawn]) async {
+    spawn ??= await Spawn.waitFree(true);
     final object = Player(position: spawn.position.clone());
     await spawn.createTank(object, true);
     camera.followComponent(object);

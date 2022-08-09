@@ -16,6 +16,45 @@ void main(List<String> args) {
   runApp(
     GameWidget(
       game: myGame,
+      loadingBuilder: (BuildContext ctx) {
+        return StreamBuilder(
+            stream: myGame.consoleMessages.stream,
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              final msgScrollController = ScrollController();
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                try {
+                  msgScrollController
+                      .jumpTo(msgScrollController.position.maxScrollExtent);
+                } catch (e) {}
+              });
+              return Container(
+                color: Colors.black,
+                margin: const EdgeInsets.all(0),
+                child: ListView.builder(
+                  itemExtent: 24,
+                  controller: msgScrollController,
+                  itemCount: myGame.consoleMessages.gameMessages.length,
+                  reverse: false,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      verticalDirection: VerticalDirection.up,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          myGame.consoleMessages.gameMessages[index],
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Courier',
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
+            });
+      },
     ),
   );
 }
