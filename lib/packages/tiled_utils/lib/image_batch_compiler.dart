@@ -12,7 +12,9 @@ class ImageBatchCompiler {
     _unlistedLayers(tileMap, layerNames).forEach((element) {
       element.visible = false;
     });
-    tileMap.refreshCache();
+    for (var rl in tileMap.renderableLayers) {
+      rl.refreshCache();
+    }
 
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
@@ -22,7 +24,9 @@ class ImageBatchCompiler {
     _unlistedLayers(tileMap, layerNames).forEach((element) {
       element.visible = true;
     });
-    tileMap.refreshCache();
+    for (var rl in tileMap.renderableLayers) {
+      rl.refreshCache();
+    }
 
     final image = await picture.toImage(
         tileMap.map.width * tileMap.map.tileWidth,

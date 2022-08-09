@@ -167,7 +167,9 @@ class TileProcessor {
     if (clear) {
       tileMap.map.layers
           .removeWhere((element) => layersToLoad.contains(element.name));
-      tileMap.refreshCache();
+      for (var rl in tileMap.renderableLayers) {
+        rl.refreshCache();
+      }
     }
   }
 }

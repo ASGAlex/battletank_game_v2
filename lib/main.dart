@@ -45,8 +45,8 @@ void main(List<String> args) {
                           myGame.consoleMessages.gameMessages[index],
                           style: const TextStyle(
                               color: Colors.white,
-                              fontFamily: 'Courier',
-                              fontWeight: FontWeight.bold),
+                              fontFamily: 'MonospaceRU',
+                              fontSize: 12),
                         ),
                       ],
                     );

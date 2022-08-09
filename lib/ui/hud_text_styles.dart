@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 final hudTextPaintNormal = TextPaint(
     style: TextStyle(
   fontWeight: FontWeight.bold,
+  fontFamily: 'MonospaceRU',
   color: Colors.black,
   backgroundColor: Colors.white.withOpacity(0.5),
 ));
@@ -12,6 +13,7 @@ final hudTextPaintNormal = TextPaint(
 final hudTextPaintGood = TextPaint(
     style: const TextStyle(
   fontWeight: FontWeight.bold,
+  fontFamily: 'MonospaceRU',
   color: Colors.green,
   backgroundColor: Colors.black12,
 ));
@@ -19,6 +21,7 @@ final hudTextPaintGood = TextPaint(
 final hudTextPaintDanger = TextPaint(
     style: const TextStyle(
   fontWeight: FontWeight.bold,
+  fontFamily: 'MonospaceRU',
   color: Colors.red,
   backgroundColor: Colors.black12,
 ));
