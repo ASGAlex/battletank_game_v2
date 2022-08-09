@@ -1,6 +1,6 @@
 part of tank;
 
-enum BulletState { fly, boom }
+enum BulletState { fly, boom, crater }
 
 class Bullet extends SpriteAnimationGroupComponent<BulletState>
     with
@@ -34,12 +34,13 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   @override
   Future<void> onLoad() async {
-    final boom = await SpriteSheetRegistry().boom.animation;
+    final boom = await SpriteSheetRegistry().boom.boom;
     _boomDuration = boom.duration;
     size = SpriteSheetRegistry().bullet.spriteSize;
     animations = {
       BulletState.fly: SpriteSheetRegistry().bullet.animation,
-      BulletState.boom: boom
+      BulletState.boom: boom,
+      BulletState.crater: await SpriteSheetRegistry().boom.crate
     };
 
     _hitbox = _BulletHitbox(size: size.clone());
@@ -96,7 +97,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       // updateQuadTreeCollision(_hitbox);
       _distance += innerSpeed;
       if (_distance > _maxDistance) {
-        die();
+        die(noHit: true);
       }
     }
     super.update(dt);
@@ -130,7 +131,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       sfx = SoundLibrary().playerBulletStrongWall;
     }
 
-    die(true);
+    die(skipRemove: true);
 
     if (sfx != null) {
       final game = findParent<MyGame>();
@@ -147,7 +148,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     super.onCollision(intersectionPoints, other);
   }
 
-  die([bool skipRemove = false]) {
+  die({bool skipRemove = false, bool noHit = false}) {
     if (!skipRemove) {
       removeQuadTreeCollision(_hitbox);
     }
@@ -159,7 +160,10 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
     if (_boomDuration != null) {
       Future.delayed(_boomDuration!).then((value) {
-        hidden = false;
+        if (noHit) {
+          current = BulletState.crater;
+          game.backBuffer?.add(this);
+        }
         removeFromParent();
       });
     }

@@ -5,6 +5,17 @@ class _Boom extends SpriteSheetBase {
     compileAnimation(
       name: 'boom',
       stepTime: 0.1,
+      from: 0,
+      to: 3,
+    ).then((value) {
+      value.loop = false;
+    });
+
+    compileAnimation(
+      name: 'crate',
+      stepTime: 0.1,
+      from: 3,
+      to: 4,
     ).then((value) {
       value.loop = false;
     });
@@ -16,7 +27,8 @@ class _Boom extends SpriteSheetBase {
   @override
   Vector2 get spriteSize => Vector2.all(16);
 
-  Future<SpriteAnimation> get animation => getPrecompiledAnimation('boom');
+  Future<SpriteAnimation> get boom => getPrecompiledAnimation('boom');
+  Future<SpriteAnimation> get crate => getPrecompiledAnimation('crate');
 }
 
 class _BoomBig extends SpriteSheetBase {
