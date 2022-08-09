@@ -11,6 +11,7 @@ import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/ui/joystick.dart';
 import 'package:tank_game/ui/keyboard.dart';
+import 'package:tank_game/ui/visibility_indicator.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
@@ -18,7 +19,6 @@ import 'package:tiled/tiled.dart';
 
 import 'packages/back_buffer/back_buffer.dart';
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
-import 'packages/collision_quad_tree/lib/src/collision_detection.dart';
 import 'packages/color_filter/lib/color_filter.dart';
 import 'services/sound/library.dart';
 import 'world/environment/brick.dart';
@@ -46,7 +46,6 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
   final lazyCollisionService = LazyCollisionsService();
 
-  bool isPlayerHiddenFromEnemy = false;
   List<Enemy> enemies = [];
   Player? player;
 
@@ -56,27 +55,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
   BackBuffer? backBuffer;
 
-  final hudTextPaintNormal = TextPaint(
-      style: const TextStyle(
-    fontWeight: FontWeight.bold,
-    color: Colors.black,
-    backgroundColor: Colors.white,
-  ));
-
-  final hudTextPaintGood = TextPaint(
-      style: const TextStyle(
-    fontWeight: FontWeight.bold,
-    color: Colors.green,
-    backgroundColor: Colors.black12,
-  ));
-
-  final hudTextPaintDanger = TextPaint(
-      style: const TextStyle(
-    fontWeight: FontWeight.bold,
-    color: Colors.red,
-    fontSize: 24,
-    backgroundColor: Colors.black12,
-  ));
+  final hudVisibility = VisibilityIndicator();
 
   @override
   Future<void> onLoad() async {
@@ -187,13 +166,19 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     loadSpawns(tiledComponent);
     print('done.');
 
-    print('Spawning the Player...');
-    camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    // camera.zoom = 1;
-
+    print('Starting UI');
     initJoystick(() {
       player?.onFire();
     });
+    hudVisibility.setVisibility(true);
+    hudVisibility.x = 2;
+    hudVisibility.y = 2;
+    add(hudVisibility);
+    print('done.');
+
+    print('Spawning the Player...');
+    camera.viewport = FixedResolutionViewport(Vector2(400, 250));
+    // camera.zoom = 1;
 
     restorePlayer();
     SoundLibrary().playIntro();
@@ -252,48 +237,43 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   void render(Canvas canvas) {
     super.render(canvas);
     // brickRenderer.render(canvas);
-    if (false) {
-      final cd = collisionDetection as QuadTreeCollisionDetection;
-      final boxes = cd.collisionQuadBoxes;
-      final boxPaint = Paint();
-      boxPaint.color = Colors.blue.withOpacity(0.5);
-      boxPaint.strokeWidth = 2;
-      boxPaint.style = PaintingStyle.stroke;
-
-      final boxRootPaint = Paint();
-      boxRootPaint.color = Colors.red.withOpacity(0.8);
-      boxRootPaint.strokeWidth = 2;
-      boxRootPaint.style = PaintingStyle.stroke;
-
-      camera.viewport.apply(canvas);
-      for (final rect in boxes) {
-        canvas.drawRect(rect.rect, boxPaint);
-        for (final hb in rect.hitboxes) {
-          if (rect.hasChildren) {
-            canvas.drawRect(
-                Rect.fromLTRB(
-                    hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-                boxRootPaint);
-          } else {
-            canvas.drawRect(
-                Rect.fromLTRB(
-                    hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-                boxPaint);
-          }
-        }
-        hudTextPaintNormal.render(
-            canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
-      }
-      final playerPos = player?.absoluteTopLeftPosition.toOffset();
-      if (playerPos != null) {
-        canvas.drawCircle(playerPos, 3, boxPaint);
-      }
-    } else {
-      // if (isPlayerHiddenFromEnemy) {
-      //   hudTextPaintGood.render(canvas, 'HIDDEN', Vector2(70, 2));
-      // } else {
-      //   hudTextPaintNormal.render(canvas, 'VISIBLE', Vector2(70, 2));
-      // }
-    }
+    // if (false) {
+    //   final cd = collisionDetection as QuadTreeCollisionDetection;
+    //   final boxes = cd.collisionQuadBoxes;
+    //   final boxPaint = Paint();
+    //   boxPaint.color = Colors.blue.withOpacity(0.5);
+    //   boxPaint.strokeWidth = 2;
+    //   boxPaint.style = PaintingStyle.stroke;
+    //
+    //   final boxRootPaint = Paint();
+    //   boxRootPaint.color = Colors.red.withOpacity(0.8);
+    //   boxRootPaint.strokeWidth = 2;
+    //   boxRootPaint.style = PaintingStyle.stroke;
+    //
+    //   camera.viewport.apply(canvas);
+    //   for (final rect in boxes) {
+    //     canvas.drawRect(rect.rect, boxPaint);
+    //     for (final hb in rect.hitboxes) {
+    //       if (rect.hasChildren) {
+    //         canvas.drawRect(
+    //             Rect.fromLTRB(
+    //                 hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+    //             boxRootPaint);
+    //       } else {
+    //         canvas.drawRect(
+    //             Rect.fromLTRB(
+    //                 hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
+    //             boxPaint);
+    //       }
+    //     }
+    //     hudTextPaintNormal.render(
+    //         canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
+    //   }
+    //   final playerPos = player?.absoluteTopLeftPosition.toOffset();
+    //   if (playerPos != null) {
+    //     canvas.drawCircle(playerPos, 3, boxPaint);
+    //   }
+    // } else {
+    // }
   }
 }
