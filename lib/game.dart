@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
@@ -282,17 +283,18 @@ class MyGame extends FlameGame
   }
 
   loadSounds() {
+    AudioPlayer.global.changeLogLevel(LogLevel.info);
     final sound = Sound();
     sound.playMusic('intro.m4a');
     final sfxList = [
       () => SfxLongLoop('move_player.m4a'),
       () => SfxLongLoop('move_enemies.m4a'),
-      () => Sfx('explosion_player.m4a', 2),
-      () => Sfx('explosion_enemy.m4a', 10),
-      () => Sfx('player_fire_bullet.m4a', 50),
-      () => Sfx('player_bullet_wall.m4a', 25),
-      () => Sfx('player_bullet_strong_wall.m4a', 25),
-      () => Sfx('bullet_strong_tank.m4a', 25),
+      () => SfxShort('explosion_player.m4a', 1),
+      () => SfxShort('explosion_enemy.m4a', 1),
+      () => SfxShort('player_fire_bullet.m4a', 1),
+      () => SfxShort('player_bullet_wall.m4a', 1),
+      () => SfxShort('player_bullet_strong_wall.m4a', 1),
+      () => SfxShort('bullet_strong_tank.m4a', 1),
     ];
     sound.init(sfxList);
   }

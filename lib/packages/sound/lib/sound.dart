@@ -5,8 +5,6 @@ import 'sfx.dart';
 export 'distant_sfx_player.dart';
 export 'sfx.dart';
 
-typedef SfxBuilder = Sfx Function();
-
 class Sound {
   static final Sound _instance = Sound._();
 
@@ -25,7 +23,7 @@ class Sound {
     if (sfx != null) {
       sfx.load('audio/sfx/');
     }
-    sfx?.controller?.setPlayerMode(PlayerMode.lowLatency);
+    sfx?.controller?.setPlayerMode(PlayerMode.mediaPlayer);
     return sfx;
   }
 

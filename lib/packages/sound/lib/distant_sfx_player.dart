@@ -26,8 +26,7 @@ class DistantSfxPlayer {
 
   play(Sfx sfx) async {
     if (_volume > 0) {
-      sfx.controller?.setVolume(_volume);
-      sfx.play();
+      sfx.play(volume: _volume);
     }
   }
 }

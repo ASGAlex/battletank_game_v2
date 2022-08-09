@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 
-class Sfx {
+typedef SfxBuilder = Sfx Function();
+
+abstract class Sfx {
   Sfx(this.fileName, [this.instances = 1]);
 
   final String fileName;
@@ -21,15 +23,13 @@ class Sfx {
     final cache = AudioCache();
     cache.load(fullPathToAsset);
     _controller = AudioPlayer();
-    controller?.setReleaseMode(ReleaseMode.stop);
     _assetSource = AssetSource(fullPathToAsset);
   }
 
-  Future play() async {
+  Future play({double? volume}) async {
     final src = _assetSource;
     if (src != null) {
-      _controller?.pause();
-      return _controller?.play(src);
+      return _controller?.play(src, volume: volume);
     }
   }
 
@@ -43,6 +43,23 @@ class Sfx {
   }
 }
 
+class SfxShort extends Sfx {
+  SfxShort(super.fileName, [super.instances = 1]);
+
+  load(String prefix) {
+    super.load(prefix);
+    controller?.setPlayerMode(PlayerMode.lowLatency);
+  }
+
+  @override
+  Future play({double? volume}) async {
+    return super.play(volume: volume).then((value) {
+      _controller = AudioPlayer();
+      controller?.setPlayerMode(PlayerMode.lowLatency);
+    });
+  }
+}
+
 class SfxLongLoop extends Sfx {
   SfxLongLoop(String fileName) : super(fileName);
 
@@ -52,12 +69,14 @@ class SfxLongLoop extends Sfx {
   load(String prefix) {
     super.load(prefix);
     controller?.setReleaseMode(ReleaseMode.loop);
+    controller?.setPlayerMode(PlayerMode.mediaPlayer);
   }
 
   @override
-  play() async {
+  play({double? volume}) async {
     if (isPlaying) return;
-    super.play();
+
+    super.play(volume: volume);
     isPlaying = true;
   }
 

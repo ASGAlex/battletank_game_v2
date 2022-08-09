@@ -39,7 +39,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   SpriteAnimation? animationIdle;
   SpriteAnimation? animationDie;
 
-  final audioPlayer = DistantSfxPlayer(distanceOfSilence);
+  final distantAudioPlayer = DistantSfxPlayer(distanceOfSilence);
 
   Duration? _boomDuration;
 
@@ -102,13 +102,12 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       game.addBullet(bullet);
       final sfx = Sound().playerFireBullet;
       if (this is Player) {
-        sfx.controller?.setVolume(1);
-        sfx.play();
+        sfx.play(volume: 1);
       } else {
-        audioPlayer.actualDistance =
+        distantAudioPlayer.actualDistance =
             (game.player?.position.distanceTo(position) ??
                 distanceOfSilence + 1);
-        audioPlayer.play(sfx);
+        distantAudioPlayer.play(sfx);
       }
       return true;
     }
@@ -194,9 +193,9 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     }
 
     if (sfx != null) {
-      audioPlayer.actualDistance =
+      distantAudioPlayer.actualDistance =
           (game.player?.position.distanceTo(position) ?? distanceOfSilence + 1);
-      audioPlayer.play(sfx);
+      distantAudioPlayer.play(sfx);
     }
 
     if (_boomDuration != null) {
