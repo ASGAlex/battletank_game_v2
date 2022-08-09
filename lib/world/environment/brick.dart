@@ -1,8 +1,5 @@
-import 'dart:ui';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/image_composition.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
@@ -77,23 +74,8 @@ class Brick extends SpriteComponent
 
   _die() {
     if (isRemoving) return;
-    _treeInitiallyUpdated = false;
+    scheduleTreeUpdate();
     removeFromParent();
     game.batchRenderer?.batchedComponents.remove(this);
-  }
-
-  @override
-  void renderTree(Canvas canvas) {
-    // TODO: implement renderTree
-    // super.renderTree(canvas);
-  }
-
-  bool _treeInitiallyUpdated = false;
-  @override
-  void updateTree(double dt) {
-    if (!_treeInitiallyUpdated) {
-      super.updateTree(dt);
-      _treeInitiallyUpdated = true;
-    }
   }
 }

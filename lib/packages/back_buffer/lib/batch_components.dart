@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 import 'package:flame/sprite.dart';
 
 mixin BatchRender on SpriteComponent {
@@ -18,6 +17,8 @@ mixin BatchRender on SpriteComponent {
       _treeInitiallyUpdated = true;
     }
   }
+
+  scheduleTreeUpdate() => _treeInitiallyUpdated = false;
 }
 
 class BatchComponentRenderer extends PositionComponent {
