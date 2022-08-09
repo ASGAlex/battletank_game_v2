@@ -100,7 +100,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           position: position,
           firedFrom: this);
       game.addBullet(bullet);
-      final sfx = Sound().playerFireBullet;
+      final sfx = SoundLibrary().playerFireBullet;
       if (this is Player) {
         sfx.play(volume: 1);
       } else {
@@ -187,9 +187,9 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
     Sfx? sfx;
     if (this is Player) {
-      sfx = Sound().explosionPlayer;
+      sfx = SoundLibrary().explosionPlayer;
     } else if (this is Enemy) {
-      sfx = Sound().explosionEnemy;
+      sfx = SoundLibrary().explosionEnemy;
     }
 
     if (sfx != null) {

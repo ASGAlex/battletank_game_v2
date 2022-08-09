@@ -57,8 +57,8 @@ class Player extends Tank {
     animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
     await super.onLoad();
     joystick = game.joystick;
-    movePlayerSound = Sound().movePlayer;
-    _moveEnemiesAmbientSound = Sound().moveEnemies;
+    movePlayerSound = SoundLibrary().movePlayer;
+    _moveEnemiesAmbientSound = SoundLibrary().moveEnemies;
   }
 
   @override
@@ -81,7 +81,7 @@ class Player extends Tank {
 
   @override
   onDeath() {
-    Sound().movePlayer.pause();
+    SoundLibrary().movePlayer.pause();
     super.onDeath();
   }
 

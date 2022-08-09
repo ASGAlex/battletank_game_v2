@@ -20,6 +20,7 @@ import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/water.dart';
 
+import '../../services/sound/library.dart';
 import '../world.dart';
 
 part 'src/behaviors/available_directions.dart';

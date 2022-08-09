@@ -124,9 +124,9 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
     Sfx? sfx;
     if (other is Brick) {
-      sfx = Sound().playerBulletWall;
+      sfx = SoundLibrary().playerBulletWall;
     } else if (other is HeavyBrick) {
-      sfx = Sound().playerBulletStrongWall;
+      sfx = SoundLibrary().playerBulletStrongWall;
     }
 
     if (sfx != null) {
