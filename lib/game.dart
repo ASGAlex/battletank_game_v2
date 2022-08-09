@@ -7,6 +7,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/ui/joystick.dart';
@@ -17,11 +18,12 @@ import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
-import 'packages/back_buffer/back_buffer.dart';
+import 'packages/back_buffer/lib/back_buffer.dart';
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'packages/color_filter/lib/color_filter.dart';
 import 'services/sound/library.dart';
 import 'world/environment/brick.dart';
+import 'world/environment/heavy_brick.dart';
 import 'world/environment/water.dart';
 
 abstract class MyGameFeatures extends FlameGame
@@ -49,7 +51,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   List<Enemy> enemies = [];
   Player? player;
 
-  BrickRenderController? brickRenderer;
+  BatchComponentRenderer? batchRenderer;
 
   RenderableTiledMap? currentMap;
 
@@ -106,11 +108,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     print('done.');
 
     print('Creating trees and collision tiles...');
-    brickRenderer = BrickRenderController(
-        ((currentMap?.map.width ?? 0) * (currentMap?.map.tileWidth ?? 0))
-            .toInt(),
-        ((currentMap?.map.height ?? 0) * (currentMap?.map.tileHeight ?? 0))
-            .toInt());
+    batchRenderer = BatchComponentRenderer(mapWidth.toInt(), mapHeight.toInt());
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
@@ -128,18 +126,19 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
           'brick': ((tile, position, size) async {
             final brick = Brick(tile, position: position, size: size);
             add(brick);
-            brickRenderer?.sprite ??= await tile.getSprite();
-            brickRenderer?.bricks.add(brick);
+            batchRenderer?.batchedComponents.add(brick);
           }),
-          'heavy_brick': ((tile, position, size) {
-            // add(HeavyBrick(tile, position: position, size: size));
+          'heavy_brick': ((tile, position, size) async {
+            final brick = HeavyBrick(tile, position: position, size: size);
+            add(brick);
+            batchRenderer?.batchedComponents.add(brick);
           }),
         },
         layersToLoad: [
           'tree',
           'collision'
         ]);
-    add(brickRenderer!);
+    add(batchRenderer!);
     print('done.');
 
     print('Creating water tiles...');
@@ -231,49 +230,5 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     await spawn.createTank(object, true);
     enemies.add(object);
     return object;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    // brickRenderer.render(canvas);
-    // if (false) {
-    //   final cd = collisionDetection as QuadTreeCollisionDetection;
-    //   final boxes = cd.collisionQuadBoxes;
-    //   final boxPaint = Paint();
-    //   boxPaint.color = Colors.blue.withOpacity(0.5);
-    //   boxPaint.strokeWidth = 2;
-    //   boxPaint.style = PaintingStyle.stroke;
-    //
-    //   final boxRootPaint = Paint();
-    //   boxRootPaint.color = Colors.red.withOpacity(0.8);
-    //   boxRootPaint.strokeWidth = 2;
-    //   boxRootPaint.style = PaintingStyle.stroke;
-    //
-    //   camera.viewport.apply(canvas);
-    //   for (final rect in boxes) {
-    //     canvas.drawRect(rect.rect, boxPaint);
-    //     for (final hb in rect.hitboxes) {
-    //       if (rect.hasChildren) {
-    //         canvas.drawRect(
-    //             Rect.fromLTRB(
-    //                 hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-    //             boxRootPaint);
-    //       } else {
-    //         canvas.drawRect(
-    //             Rect.fromLTRB(
-    //                 hb.aabb.min.x, hb.aabb.min.y, hb.aabb.max.x, hb.aabb.max.y),
-    //             boxPaint);
-    //       }
-    //     }
-    //     hudTextPaintNormal.render(
-    //         canvas, rect.count.toString(), rect.rect.topCenter.toVector2());
-    //   }
-    //   final playerPos = player?.absoluteTopLeftPosition.toOffset();
-    //   if (playerPos != null) {
-    //     canvas.drawCircle(playerPos, 3, boxPaint);
-    //   }
-    // } else {
-    // }
   }
 }

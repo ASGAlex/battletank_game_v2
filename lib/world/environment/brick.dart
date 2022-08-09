@@ -1,18 +1,21 @@
-import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
-import 'package:flame/sprite.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 
-class Brick extends PositionComponent
-    with CollisionCallbacks, CollisionQuadTreeController<MyGame>, MyGameRef {
+class Brick extends SpriteComponent
+    with
+        CollisionCallbacks,
+        CollisionQuadTreeController<MyGame>,
+        MyGameRef,
+        BatchRender {
   Brick(this.tileProcessor, {super.position, super.size})
       : super(priority: RenderPriority.player.priority);
 
@@ -26,7 +29,7 @@ class Brick extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    // sprite = await tileProcessor.getSprite();
+    sprite = await tileProcessor.getSprite();
     final collision = tileProcessor.getCollisionRect();
     if (collision != null) {
       collision.collisionType = CollisionType.passive;
@@ -46,7 +49,7 @@ class Brick extends PositionComponent
   }
 
   void _collideWithBullet(Bullet bullet) {
-    game.brickRenderer?.imageChanged = true;
+    game.batchRenderer?.imageChanged = true;
     if (_hitsByBullet >= 1) {
       _die();
     } else {
@@ -76,7 +79,7 @@ class Brick extends PositionComponent
     if (isRemoving) return;
     _treeInitiallyUpdated = false;
     removeFromParent();
-    game.brickRenderer?.bricks.remove(this);
+    game.batchRenderer?.batchedComponents.remove(this);
   }
 
   @override
@@ -91,47 +94,6 @@ class Brick extends PositionComponent
     if (!_treeInitiallyUpdated) {
       super.updateTree(dt);
       _treeInitiallyUpdated = true;
-    }
-  }
-}
-
-class BrickRenderController extends PositionComponent {
-  BrickRenderController(this.mapWidth, this.mapHeight);
-  int mapWidth;
-  int mapHeight;
-  final bricks = HashSet<Brick>();
-
-  bool imageChanged = true;
-  Sprite? sprite;
-  Picture? _picture;
-
-  @override
-  render(Canvas canvas) async {
-    if (_picture == null || (imageChanged && sprite != null)) {
-      final batch = SpriteBatch(sprite!.image);
-      for (final brick in bricks) {
-        var source = sprite!.src;
-        if (brick.size.x < 8) {
-          source = Rect.fromLTWH(
-              source.left, source.top, brick.size.x, source.height);
-        }
-        if (brick.size.y < 8) {
-          source = Rect.fromLTWH(
-              source.left, source.top, source.width, brick.size.y);
-        }
-        batch.add(source: source, offset: brick.position);
-      }
-      final component = SpriteBatchComponent(spriteBatch: batch);
-      final recorder = PictureRecorder();
-      final canvas = Canvas(recorder);
-      component.render(canvas);
-      _picture = recorder.endRecording();
-
-      imageChanged = false;
-    }
-
-    if (_picture != null) {
-      canvas.drawPicture(_picture!);
     }
   }
 }
