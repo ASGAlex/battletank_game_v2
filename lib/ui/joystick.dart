@@ -27,20 +27,20 @@ mixin MyJoystickMix on MyGameFeatures {
         priority: RenderPriority.ui.priority,
         knob: SpriteComponent(
           sprite: sheet.getSpriteById(1),
-          size: Vector2.all(30),
+          size: Vector2.all(40),
         ),
         background: SpriteComponent(
           sprite: sheet.getSpriteById(0),
-          size: Vector2.all(60),
+          size: Vector2.all(90),
         ),
         margin: const EdgeInsets.only(left: 20, bottom: 40),
       );
       add(HudButtonComponent(
           button: SpriteComponent(
-              sprite: sheet.getSpriteById(3), size: Vector2.all(50))
+              sprite: sheet.getSpriteById(3), size: Vector2.all(60))
             ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
           buttonDown: SpriteComponent(
-              sprite: sheet.getSpriteById(5), size: Vector2.all(50)),
+              sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
           onPressed: playerFire,
           priority: RenderPriority.ui.priority,
           margin: const EdgeInsets.only(bottom: 40, right: 20)));
@@ -52,18 +52,22 @@ mixin MyJoystickMix on MyGameFeatures {
     }
   }
 
+  @override
   void onDragStart(int pointerId, DragStartInfo info) {
     joystick?.handleDragStart(pointerId, info);
   }
 
+  @override
   void onDragUpdate(int pointerId, DragUpdateInfo info) {
     joystick?.handleDragUpdated(pointerId, info);
   }
 
+  @override
   void onDragEnd(int pointerId, DragEndInfo info) {
     joystick?.handleDragEnded(pointerId, info);
   }
 
+  @override
   void onDragCancel(int pointerId) {
     joystick?.handleDragCanceled(pointerId);
   }
@@ -94,6 +98,7 @@ class MyJoystick extends JoystickComponent {
 
   late final knobRadius2;
 
+  @override
   void onMount() {
     super.onMount();
     _baseKnobPosition = knob!.position.clone();
