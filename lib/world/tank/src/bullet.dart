@@ -1,8 +1,8 @@
 part of tank;
 
-enum _BulletState { fly, boom }
+enum BulletState { fly, boom }
 
-class Bullet extends SpriteAnimationGroupComponent<_BulletState>
+class Bullet extends SpriteAnimationGroupComponent<BulletState>
     with
         CollisionCallbacks,
         HideableComponent,
@@ -14,7 +14,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
       super.position,
       super.angle})
       : super(anchor: Anchor.center) {
-    current = _BulletState.fly;
+    current = BulletState.fly;
   }
 
   final Direction direction;
@@ -38,8 +38,8 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     _boomDuration = boom.duration;
     size = SpriteSheetRegistry().bullet.spriteSize;
     animations = {
-      _BulletState.fly: SpriteSheetRegistry().bullet.animation,
-      _BulletState.boom: boom
+      BulletState.fly: SpriteSheetRegistry().bullet.animation,
+      BulletState.boom: boom
     };
 
     _hitbox = _BulletHitbox(size: size.clone());
@@ -75,7 +75,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   @override
   void update(double dt) {
-    if (current == _BulletState.fly) {
+    if (current == BulletState.fly) {
       final innerSpeed = speed * dt;
       Vector2 displacement;
       switch (direction) {
@@ -108,7 +108,7 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
     if (success) {
       if (other is WaterCollide) return false;
-      if (current == _BulletState.boom) return false;
+      if (current == BulletState.boom) return false;
       if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
         return false;
       }
@@ -120,14 +120,17 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    die();
+    removeQuadTreeCollision(_hitbox);
 
     Sfx? sfx;
     if (other is Brick) {
+      other.collideWithBullet(this);
       sfx = SoundLibrary().playerBulletWall;
     } else if (other is HeavyBrick) {
       sfx = SoundLibrary().playerBulletStrongWall;
     }
+
+    die(true);
 
     if (sfx != null) {
       final game = findParent<MyGame>();
@@ -144,12 +147,14 @@ class Bullet extends SpriteAnimationGroupComponent<_BulletState>
     super.onCollision(intersectionPoints, other);
   }
 
-  die() {
-    removeQuadTreeCollision(_hitbox);
+  die([bool skipRemove = false]) {
+    if (!skipRemove) {
+      removeQuadTreeCollision(_hitbox);
+    }
 
     _light.renderShape = false;
     _light.removeFromParent();
-    current = _BulletState.boom;
+    current = BulletState.boom;
     size = SpriteSheetRegistry().boom.spriteSize;
 
     if (_boomDuration != null) {

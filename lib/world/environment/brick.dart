@@ -36,16 +36,8 @@ class Brick extends SpriteComponent
     super.onLoad();
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is Bullet) {
-      _collideWithBullet(other);
-    }
-
-    super.onCollision(intersectionPoints, other);
-  }
-
-  void _collideWithBullet(Bullet bullet) {
+  void collideWithBullet(Bullet bullet) {
+    if (bullet.current == BulletState.boom) return;
     game.batchRenderer?.imageChanged = true;
     if (_hitsByBullet >= 1) {
       _die();

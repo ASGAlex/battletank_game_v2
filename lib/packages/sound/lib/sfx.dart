@@ -17,6 +17,7 @@ abstract class Sfx {
   AudioPlayer? get controller => _controller;
 
   AssetSource? _assetSource;
+  AssetSource get assetSource => _assetSource!;
 
   load(String prefix) {
     _prefix = prefix;
@@ -46,6 +47,7 @@ abstract class Sfx {
 class SfxShort extends Sfx {
   SfxShort(super.fileName, [super.instances = 1]);
 
+  @override
   load(String prefix) {
     super.load(prefix);
     controller?.setPlayerMode(PlayerMode.lowLatency);
@@ -53,10 +55,10 @@ class SfxShort extends Sfx {
 
   @override
   Future play({double? volume}) async {
-    return super.play(volume: volume).then((value) {
-      _controller = AudioPlayer();
-      controller?.setPlayerMode(PlayerMode.lowLatency);
-    });
+    return AudioPlayer()
+      ..setPlayerMode(PlayerMode.lowLatency)
+      ..setVolume(volume ?? 1)
+      ..play(assetSource);
   }
 }
 
