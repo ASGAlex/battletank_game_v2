@@ -153,10 +153,10 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
           final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
           final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-          TrackTrailController.addTrack(
-              _TrackTrailNew(position: leftTrackPos, angle: angle));
-          TrackTrailController.addTrack(
-              _TrackTrailNew(position: rightTrackPos, angle: angle));
+          game.backBuffer
+              ?.add(_TrackTrailComponent(position: leftTrackPos, angle: angle));
+          game.backBuffer?.add(
+              _TrackTrailComponent(position: rightTrackPos, angle: angle));
         }
         if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
           game.lazyCollisionService
@@ -204,5 +204,16 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
         hidden = true;
       });
     }
+  }
+}
+
+class _TrackTrailComponent extends PositionComponent with HasPaint {
+  _TrackTrailComponent({super.position, super.angle}) {
+    paint.color = material.Colors.black.withOpacity(0.5);
+  }
+
+  @override
+  render(Canvas canvas) {
+    canvas.drawRect(const Rect.fromLTWH(0, 13, 4, 1), paint);
   }
 }

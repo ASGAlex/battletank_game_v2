@@ -16,6 +16,7 @@ import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
+import 'packages/back_buffer/back_buffer.dart';
 import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'packages/collision_quad_tree/lib/src/collision_detection.dart';
 import 'packages/color_filter/lib/color_filter.dart';
@@ -53,6 +54,8 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
   RenderableTiledMap? currentMap;
 
+  BackBuffer? backBuffer;
+
   final hudTextPaintNormal = TextPaint(
       style: const TextStyle(
     fontWeight: FontWeight.bold,
@@ -88,15 +91,13 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     print('loading map...');
     var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
     currentMap = tiledComponent.tileMap;
-    initCollisionDetection(Rect.fromLTWH(
-        0,
-        0,
-        (tiledComponent.tileMap.map.width *
-                tiledComponent.tileMap.map.tileWidth)
-            .toDouble(),
-        (tiledComponent.tileMap.map.height *
-                tiledComponent.tileMap.map.tileHeight)
-            .toDouble()));
+    final mapWidth = (tiledComponent.tileMap.map.width *
+            tiledComponent.tileMap.map.tileWidth)
+        .toDouble();
+    final mapHeight = (tiledComponent.tileMap.map.height *
+            tiledComponent.tileMap.map.tileHeight)
+        .toDouble();
+    initCollisionDetection(Rect.fromLTWH(0, 0, mapWidth, mapHeight));
     print('done.');
 
     print('Compiling ground layer...');
@@ -115,9 +116,8 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     print('done.');
 
     print('Preparing back buffer...');
-    final trackController = TrackTrailController();
-    await trackController.init(tiledComponent.tileMap);
-    add(trackController);
+    backBuffer = BackBuffer(mapWidth.toInt(), mapHeight.toInt(), 2, 10);
+    add(backBuffer!);
     print('done.');
 
     print('Starting lazy collision service...');
