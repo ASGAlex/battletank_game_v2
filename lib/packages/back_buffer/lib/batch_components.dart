@@ -19,6 +19,10 @@ mixin BatchRender on SpriteComponent {
   }
 
   scheduleTreeUpdate() => _treeInitiallyUpdated = false;
+
+  Rect get sourceRect => sprite!.src;
+
+  Vector2 get offsetPosition => position;
 }
 
 class BatchComponentRenderer extends PositionComponent {
@@ -40,17 +44,7 @@ class BatchComponentRenderer extends PositionComponent {
         spriteSheetImg ??= brick.sprite?.image;
         if (spriteSheetImg == null) throw 'SpriteSheet not loaded';
         batch ??= SpriteBatch(spriteSheetImg!);
-
-        var source = brick.sprite!.src;
-        if (brick.size.x < 8) {
-          source = Rect.fromLTWH(
-              source.left, source.top, brick.size.x, source.height);
-        }
-        if (brick.size.y < 8) {
-          source = Rect.fromLTWH(
-              source.left, source.top, source.width, brick.size.y);
-        }
-        batch.add(source: source, offset: brick.position);
+        batch.add(source: brick.sourceRect, offset: brick.offsetPosition);
       }
       final component = SpriteBatchComponent(spriteBatch: batch);
       final recorder = PictureRecorder();

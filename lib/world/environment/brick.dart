@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
@@ -69,5 +70,17 @@ class Brick extends SpriteComponent
     scheduleTreeUpdate();
     removeFromParent();
     game.batchRenderer?.batchedComponents.remove(this);
+  }
+
+  @override
+  Rect get sourceRect {
+    var source = sprite!.src;
+    if (size.x < 8) {
+      source = Rect.fromLTWH(source.left, source.top, size.x, source.height);
+    }
+    if (size.y < 8) {
+      source = Rect.fromLTWH(source.left, source.top, source.width, size.y);
+    }
+    return source;
   }
 }
