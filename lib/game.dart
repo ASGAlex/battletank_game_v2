@@ -129,7 +129,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
             offsetSteps: 2,
             drawShadow: false,
             offsetShadowSteps: 0,
-            offsetDirection: const Offset(2.5, -2.5));
+            offsetDirection: const Offset(2, -2));
         break;
       case GraphicsQuality.walls3dShadows_low:
         batchRenderer = BatchComponentRenderer(
@@ -137,7 +137,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
             offsetSteps: 2,
             drawShadow: true,
             offsetShadowSteps: 2,
-            offsetDirection: const Offset(2.5, -2.5));
+            offsetDirection: const Offset(2, -2));
         break;
       case GraphicsQuality.walls3DShadows_medium:
         batchRenderer = BatchComponentRenderer(
@@ -145,15 +145,15 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
             offsetSteps: 3,
             drawShadow: true,
             offsetShadowSteps: 2,
-            offsetDirection: const Offset(2.5, -2.5));
+            offsetDirection: const Offset(1.3, -1.3));
         break;
       case GraphicsQuality.walls3dShadows_hight:
         batchRenderer = BatchComponentRenderer(
             mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 5,
+            offsetSteps: 4,
             drawShadow: true,
-            offsetShadowSteps: 3,
-            offsetDirection: const Offset(1.5, -1.5));
+            offsetShadowSteps: 4,
+            offsetDirection: const Offset(1.1, -1.1));
         break;
     }
 
