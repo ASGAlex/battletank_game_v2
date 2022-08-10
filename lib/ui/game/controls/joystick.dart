@@ -9,8 +9,8 @@ import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/painting.dart';
 
-import '../game.dart';
-import '../world/world.dart';
+import '../../../game.dart';
+import '../../../world/world.dart';
 
 mixin MyJoystickMix on MyGameFeatures {
   MyJoystick? joystick;

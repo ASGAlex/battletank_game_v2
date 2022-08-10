@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
-import 'package:tank_game/ui/console_messages.dart';
-import 'package:tank_game/ui/joystick.dart';
-import 'package:tank_game/ui/keyboard.dart';
-import 'package:tank_game/ui/visibility_indicator.dart';
+import 'package:tank_game/ui/game/controls/joystick.dart';
+import 'package:tank_game/ui/game/controls/keyboard.dart';
+import 'package:tank_game/ui/game/visibility_indicator.dart';
+import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/tank/tank.dart';
@@ -58,7 +58,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   RenderableTiledMap? currentMap;
 
   BackBuffer? backBuffer;
-  final consoleMessages = ConsoleMessages();
+  final consoleMessages = ConsoleMessagesController();
 
   final hudVisibility = VisibilityIndicator();
 

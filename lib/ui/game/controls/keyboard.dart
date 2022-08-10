@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-import '../game.dart';
-import '../world/tank/tank.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/world/tank/tank.dart';
 
 mixin GameHardwareKeyboard on MyGameFeatures {
   KeyEventResult onKeyEvent(
