@@ -152,6 +152,7 @@ class Player extends Tank {
 
     if (updateAngle) {
       angle = lookDirection.angle;
+      skipUpdateOnAngleChange = true;
     }
     return false;
   }

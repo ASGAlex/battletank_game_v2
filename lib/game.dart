@@ -226,7 +226,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
     consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    // camera.zoom = 1;
+    // camera.zoom = 6;
 
     final playerSpawn = await Spawn.waitFree(true);
     camera.followComponent(playerSpawn);

@@ -16,6 +16,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   Direction lookDirection = Direction.up;
   int speed = 50;
   bool canMoveForward = true;
+  bool skipUpdateOnAngleChange = false;
 
   bool _isHiddenFromEnemy = false;
 
@@ -125,6 +126,10 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     _dtSumTreesCheck += dt;
 
     if (current == MovementState.run && canMoveForward) {
+      if (skipUpdateOnAngleChange) {
+        skipUpdateOnAngleChange = false;
+        return;
+      }
       final innerSpeed = speed * dt;
       Vector2 displacement;
       switch (lookDirection) {
@@ -189,7 +194,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
       ..colorFilter = ColorFilter.mode(color.withOpacity(0.4), BlendMode.srcIn);
     if (settings.graphicsQuality != GraphicsQuality.low) {
       canvas.saveLayer(Rect.largest, shadowPaint);
-      canvas.translate(-1.5,1.5);
+      canvas.translate(-1.5, 1.5);
       canvas.transform(transformMatrix.storage);
       super.render(canvas);
       canvas.restore();

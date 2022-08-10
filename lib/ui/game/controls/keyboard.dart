@@ -72,6 +72,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
 
     if (updateAngle) {
       player.angle = player.lookDirection.angle;
+      player.skipUpdateOnAngleChange = true;
     }
 
     return KeyEventResult.handled;
