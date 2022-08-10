@@ -5,7 +5,7 @@
   "p404_title": "Unknown routing error",
   "graphics_quality": "Graphics quality",
   "graphics_low": "Low",
-  "graphics_treeShadow": "Enhanced trees",
+  "graphics_treeShadow": "Shadows for trees and tanks",
   "graphics_walls3D_low": "Pseudo-3D walls",
   "graphics_walls3dShadows_low": "Pseudo-3D walls with shadows",
   "graphics_walls3DShadows_medium": "Well-detailed 3D",

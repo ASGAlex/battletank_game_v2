@@ -180,6 +180,23 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     }
   }
 
+  @override
+  void renderTree(Canvas canvas) {
+    final settings = SettingsController();
+
+    Color color = material.Colors.black;
+    final shadowPaint = Paint()
+      ..colorFilter = ColorFilter.mode(color.withOpacity(0.4), BlendMode.srcIn);
+    if (settings.graphicsQuality != GraphicsQuality.low) {
+      canvas.saveLayer(Rect.largest, shadowPaint);
+      canvas.translate(-1.5,1.5);
+      canvas.transform(transformMatrix.storage);
+      super.render(canvas);
+      canvas.restore();
+    }
+    super.renderTree(canvas);
+  }
+
   void onHiddenFromEnemyChanged(bool isHidden) {}
 
   @override

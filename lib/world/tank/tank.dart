@@ -12,6 +12,7 @@ import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/sound/lib/sound.dart';
+import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/world/environment/brick.dart';

@@ -27,7 +27,7 @@ enum GraphicsQuality {
       case 4:
         return GraphicsQuality.walls3DShadows_medium;
       case 5:
-        return GraphicsQuality.walls3dShadows_low;
+        return GraphicsQuality.walls3dShadows_hight;
       default:
         return GraphicsQuality.low;
     }
