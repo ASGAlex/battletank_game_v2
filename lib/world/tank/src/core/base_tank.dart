@@ -16,7 +16,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   Direction lookDirection = Direction.up;
   int speed = 50;
   bool canMoveForward = true;
-  bool skipUpdateOnAngleChange = false;
+  bool skipUpdateOnAngleChange = true;
 
   bool _isHiddenFromEnemy = false;
 
