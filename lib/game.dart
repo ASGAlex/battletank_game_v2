@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
@@ -64,8 +63,6 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
   @override
   Future<void> onLoad() async {
-    Flame.device.setLandscape();
-    Flame.device.fullScreen();
     consoleMessages.sendMessage('Start loading!');
     super.onLoad();
     initColorFilter<MyGame>();

@@ -34,7 +34,11 @@ dependencies:
   flame_tiled: ^1.6.0
 #  tiled: 0.8.1
   dart_numerics: ^0.0.6
+  intl: ^0.17.0
+  shared_preferences: ^2.0.15
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
 
@@ -103,3 +107,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true
