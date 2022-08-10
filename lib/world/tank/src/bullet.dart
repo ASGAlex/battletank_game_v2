@@ -114,7 +114,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
         return false;
       }
 
-      if (firedFrom is Enemy && other is Enemy) return false;
+      if (firedFrom is Enemy && other is Enemy && !other.dead) return false;
     }
     return success;
   }
