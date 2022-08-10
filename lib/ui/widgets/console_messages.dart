@@ -32,7 +32,7 @@ class ConsoleMessages extends StatelessWidget {
     });
     return Container(
       color: Colors.black,
-      margin: const EdgeInsets.all(0),
+      margin: const EdgeInsets.fromLTRB(32, 16, 16, 16),
       child: ListView.builder(
         itemExtent: 24,
         controller: msgScrollController,
@@ -44,12 +44,15 @@ class ConsoleMessages extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                game.consoleMessages.gameMessages[index],
+              DefaultTextStyle(
                 style: const TextStyle(
+                    decoration: null,
                     color: Colors.white,
                     fontFamily: 'MonospaceRU',
                     fontSize: 12),
+                child: Text(
+                  game.consoleMessages.gameMessages[index],
+                ),
               ),
             ],
           );

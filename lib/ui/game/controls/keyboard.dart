@@ -15,9 +15,14 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     bool directionButtonPressed = false;
     bool updateAngle = false;
     for (final key in keysPressed) {
-      // if (key == LogicalKeyboardKey.keyK) {
-      //   takeDamage(1);
-      // }
+      if (key == LogicalKeyboardKey.tilde ||
+          key == LogicalKeyboardKey.backquote) {
+        if (overlays.isActive('console')) {
+          overlays.remove('console');
+        } else {
+          overlays.add('console');
+        }
+      }
 
       if (key == LogicalKeyboardKey.keyW) {
         directionButtonPressed = true;
