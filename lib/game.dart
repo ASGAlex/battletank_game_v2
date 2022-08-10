@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
+import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
@@ -111,11 +112,51 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Creating trees and collision tiles...');
-    batchRenderer = BatchComponentRenderer(mapWidth.toInt(), mapHeight.toInt(),
-        offsetSteps: 3,
-        drawShadow: true,
-        offsetShadowSteps: 2,
-        offsetDirection: const Offset(2.5, -2.5));
+    final settings = SettingsController();
+    switch (settings.graphicsQuality) {
+      case GraphicsQuality.low:
+      case GraphicsQuality.treeShadow:
+        batchRenderer = BatchComponentRenderer(
+            mapWidth.toInt(), mapHeight.toInt(),
+            offsetSteps: 0,
+            drawShadow: false,
+            offsetShadowSteps: 0,
+            offsetDirection: null);
+        break;
+      case GraphicsQuality.walls3D_low:
+        batchRenderer = BatchComponentRenderer(
+            mapWidth.toInt(), mapHeight.toInt(),
+            offsetSteps: 2,
+            drawShadow: false,
+            offsetShadowSteps: 0,
+            offsetDirection: const Offset(2.5, -2.5));
+        break;
+      case GraphicsQuality.walls3dShadows_low:
+        batchRenderer = BatchComponentRenderer(
+            mapWidth.toInt(), mapHeight.toInt(),
+            offsetSteps: 2,
+            drawShadow: true,
+            offsetShadowSteps: 2,
+            offsetDirection: const Offset(2.5, -2.5));
+        break;
+      case GraphicsQuality.walls3DShadows_medium:
+        batchRenderer = BatchComponentRenderer(
+            mapWidth.toInt(), mapHeight.toInt(),
+            offsetSteps: 3,
+            drawShadow: true,
+            offsetShadowSteps: 2,
+            offsetDirection: const Offset(2.5, -2.5));
+        break;
+      case GraphicsQuality.walls3dShadows_hight:
+        batchRenderer = BatchComponentRenderer(
+            mapWidth.toInt(), mapHeight.toInt(),
+            offsetSteps: 5,
+            drawShadow: true,
+            offsetShadowSteps: 3,
+            offsetDirection: const Offset(1.5, -1.5));
+        break;
+    }
+
     batchRenderer?.priority = RenderPriority.walls.priority;
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
