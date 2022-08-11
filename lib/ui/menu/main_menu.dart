@@ -17,7 +17,7 @@ class MainMenu extends StatelessWidget {
       child: ListView(children: [
         MenuButton(
           onPressed: () {
-            RouteBuilder.gotoGameProcess(context);
+            RouteBuilder.gotoMissions(context);
           },
           text: context.loc().start_new_game,
         ),

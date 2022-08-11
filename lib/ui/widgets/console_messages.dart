@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ConsoleMessagesController {
-  final _streamController = StreamController<String>();
+  final _streamController = StreamController<String>.broadcast();
 
   Stream<String> get stream => _streamController.stream;
 

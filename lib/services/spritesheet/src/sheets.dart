@@ -169,9 +169,7 @@ class _Target extends SpriteSheetBase {
   @override
   Vector2 get spriteSize => Vector2(16, 16);
 
-  Future<Sprite> get life => getPrecompiledAnimation('life')
-      .then((value) => value.frames.first.sprite);
+  Future<SpriteAnimation> get life => getPrecompiledAnimation('life');
 
-  Future<Sprite> get dead => getPrecompiledAnimation('dead')
-      .then((value) => value.frames.first.sprite);
+  Future<SpriteAnimation> get dead => getPrecompiledAnimation('dead');
 }

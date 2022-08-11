@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/mission/repository.dart';
+import 'package:tank_game/ui/widgets/console_messages.dart';
 
 enum GraphicsQuality {
   low(0),
@@ -43,9 +45,23 @@ class SettingsController with ChangeNotifier {
 
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
   MyGame? gameInstance;
-  String mapName = '';
+  String mapFile = '';
+
+  final consoleMessages = ConsoleMessagesController();
+
+  final _missionRepository = MissionRepository();
+
+  List<MissionDescription> get missions => _missionRepository.missions;
+
+  MyGame startGameWithMission(MissionDescription mission) {
+    mapFile = mission.mapFile;
+    final game = MyGame(mapFile);
+    gameInstance = game;
+    return game;
+  }
 
   loadSettings() async {
+    _missionRepository.initMissionList();
     _graphicsQuality = await prefs.then((value) =>
         GraphicsQuality.fromInt(value.getInt('graphics_quality') ?? 0));
   }

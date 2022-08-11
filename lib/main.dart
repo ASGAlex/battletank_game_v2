@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:args/args.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tank_game/generated/l10n.dart';
@@ -14,16 +13,10 @@ void main(List<String> args) async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
       SettingsController().loadSettings();
-      var parser = ArgParser();
-      parser.addOption('map',
-          defaultsTo:
-              const String.fromEnvironment("map", defaultValue: 'water.tmx'));
-      final results = parser.parse(args);
-      SettingsController().mapName = results['map'];
-
       runApp(const MyApp());
     },
-    (error, st) => print(error),
+    (error, st) =>
+        SettingsController().consoleMessages.sendMessage(error.toString()),
   );
 }
 

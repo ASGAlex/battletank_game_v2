@@ -58,7 +58,8 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   RenderableTiledMap? currentMap;
 
   BackBuffer? backBuffer;
-  final consoleMessages = ConsoleMessagesController();
+  ConsoleMessagesController get consoleMessages =>
+      SettingsController().consoleMessages;
 
   final hudVisibility = VisibilityIndicator();
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tank_game/mission/repository.dart';
 
 import 'game/screen.dart';
 import 'intl.dart';
 import 'menu/main_menu.dart';
+import 'menu/mission_menu.dart';
 import 'menu/settings/setings_view.dart';
 
 typedef RouteItem = Widget Function(BuildContext context);
@@ -11,6 +13,7 @@ class RouteBuilder {
   static final _routeMap = <String, RouteItem>{
     '/': (ctx) => const MainMenu(),
     '/main': (ctx) => const MainMenu(),
+    '/missions': (ctx) => const MissionMenu(),
     '/settings': (ctx) => const SettingsView(),
     '/game': (ctx) => _gameRoute(),
   };
@@ -42,11 +45,13 @@ class RouteBuilder {
     );
   }
 
-  static gotoGameProcess(BuildContext context) {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/game',
-      (route) => false,
-    );
+  static gotoGameProcess(BuildContext context, MissionDescription mission) {
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/game', (route) => false, arguments: mission);
+  }
+
+  static gotoMissions(BuildContext context) {
+    Navigator.of(context).restorablePushNamed('/missions');
   }
 
   static gotoSettings(BuildContext context) {
