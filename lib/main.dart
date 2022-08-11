@@ -1,24 +1,30 @@
+import 'dart:async';
+
 import 'package:args/args.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/ui/route_builder.dart';
 
-import 'game.dart';
 import 'services/settings/controller.dart';
 import 'ui/intl.dart';
 
-void main(List<String> args) {
-  SettingsController().loadSettings();
-  var parser = ArgParser();
-  parser.addOption('map',
-      defaultsTo:
-          const String.fromEnvironment("map", defaultValue: 'water.tmx'));
-  final results = parser.parse(args);
-  final map = results['map'];
+void main(List<String> args) async {
+  await runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      SettingsController().loadSettings();
+      var parser = ArgParser();
+      parser.addOption('map',
+          defaultsTo:
+              const String.fromEnvironment("map", defaultValue: 'water.tmx'));
+      final results = parser.parse(args);
+      SettingsController().mapName = results['map'];
 
-  SettingsController().gameInstance = MyGame(map);
-  runApp(const MyApp());
+      runApp(const MyApp());
+    },
+    (error, st) => print(error),
+  );
 }
 
 class MyApp extends StatelessWidget {

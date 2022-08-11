@@ -279,4 +279,10 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     enemies.add(object);
     return object;
   }
+
+  @override
+  void onDetach() {
+    TileProcessor.clearCache();
+    Spawn.clear();
+  }
 }

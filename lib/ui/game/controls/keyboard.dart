@@ -22,6 +22,14 @@ mixin GameHardwareKeyboard on MyGameFeatures {
         } else {
           overlays.add('console');
         }
+      } else if (key == LogicalKeyboardKey.escape) {
+        if (overlays.isActive('menu')) {
+          overlays.remove('menu');
+          paused = false;
+        } else {
+          overlays.add('menu');
+          paused = true;
+        }
       }
 
       if (key == LogicalKeyboardKey.keyW) {

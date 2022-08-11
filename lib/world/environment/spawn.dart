@@ -51,6 +51,10 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
     _instances.add(this);
   }
 
+  static clear() {
+    _instances.clear();
+  }
+
   @override
   Future<void> onLoad() async {
     animation = await SpriteSheetRegistry().spawn.animation;

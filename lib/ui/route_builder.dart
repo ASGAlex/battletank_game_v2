@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'game/screen.dart';
 import 'intl.dart';
-import 'menu/menu.dart';
+import 'menu/main_menu.dart';
 import 'menu/settings/setings_view.dart';
 
 typedef RouteItem = Widget Function(BuildContext context);
@@ -35,8 +35,18 @@ class RouteBuilder {
     return const GameScreen();
   }
 
+  static gotoMainMenu(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/',
+      (route) => false,
+    );
+  }
+
   static gotoGameProcess(BuildContext context) {
-    Navigator.of(context).restorablePushNamed('/game');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      '/game',
+      (route) => false,
+    );
   }
 
   static gotoSettings(BuildContext context) {

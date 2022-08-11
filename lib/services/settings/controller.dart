@@ -43,6 +43,7 @@ class SettingsController with ChangeNotifier {
 
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
   MyGame? gameInstance;
+  String mapName = '';
 
   loadSettings() async {
     _graphicsQuality = await prefs.then((value) =>

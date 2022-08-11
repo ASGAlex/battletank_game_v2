@@ -34,6 +34,12 @@ class TileProcessor {
     return null;
   }
 
+  static clearCache() {
+    _spriteAnimationCache.clear();
+    _spriteCache.clear();
+    _imageCache.clear();
+  }
+
   Future<Sprite> getSprite([int tileId = -1]) async {
     if (tileId == -1) {
       tileId = tile.localId;

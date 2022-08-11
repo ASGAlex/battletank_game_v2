@@ -6,7 +6,7 @@ class MenuButton extends StatelessWidget {
   const MenuButton(
       {required this.onPressed,
       required this.text,
-      this.stylePreset = MenuButtonStyle.wide,
+      this.stylePreset = MenuButtonStyle.tiny,
       this.color,
       Key? key})
       : super(key: key);
@@ -35,7 +35,7 @@ class MenuButton extends StatelessWidget {
             : _tinyStyle(borderColor, background, minWidth),
         child: Text(
           text,
-          textScaleFactor: 1.5,
+          textScaleFactor: 1,
         ),
       ),
     );

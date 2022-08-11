@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:tank_game/game.dart';
 
 class ConsoleMessagesController {
   final _streamController = StreamController<String>();
@@ -17,9 +16,9 @@ class ConsoleMessagesController {
 }
 
 class ConsoleMessages extends StatelessWidget {
-  const ConsoleMessages({Key? key, required this.game}) : super(key: key);
+  const ConsoleMessages({Key? key, required this.controller}) : super(key: key);
 
-  final MyGame game;
+  final ConsoleMessagesController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +35,7 @@ class ConsoleMessages extends StatelessWidget {
       child: ListView.builder(
         itemExtent: 24,
         controller: msgScrollController,
-        itemCount: game.consoleMessages.gameMessages.length,
+        itemCount: controller.gameMessages.length,
         reverse: false,
         itemBuilder: (BuildContext context, int index) {
           return Row(
@@ -51,7 +50,7 @@ class ConsoleMessages extends StatelessWidget {
                     fontFamily: 'MonospaceRU',
                     fontSize: 12),
                 child: Text(
-                  game.consoleMessages.gameMessages[index],
+                  controller.gameMessages[index],
                 ),
               ),
             ],

@@ -13,7 +13,7 @@ class MainMenu extends StatelessWidget {
     Flame.device.fullScreen();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(top: 24, right: 100, left: 100),
       child: ListView(children: [
         MenuButton(
           onPressed: () {

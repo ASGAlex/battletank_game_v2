@@ -9,5 +9,8 @@
   "graphics_walls3D_low": "Pseudo-3D walls",
   "graphics_walls3dShadows_low": "Pseudo-3D walls with shadows",
   "graphics_walls3DShadows_medium": "Well-detailed 3D",
-  "graphics_walls3dShadows_high": "Highest 3D detalisation"
+  "graphics_walls3dShadows_high": "Highest 3D detalisation",
+  "continue_play": "Continue to play",
+  "exit": "Exit the game"
+
 }
