@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/image_composition.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
@@ -12,8 +13,8 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     with DestroyableComponent, MyGameRef {
   Target(
       {required super.position,
-      required this.primary,
-      required this.protectFromEnemies});
+      this.primary = true,
+      this.protectFromEnemies = false});
 
   bool primary;
   bool protectFromEnemies;
@@ -30,12 +31,14 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     final boom = await SpriteSheetRegistry().boomBig.animation;
     final dead = await SpriteSheetRegistry().target.dead;
     _boomDuration = boom.duration;
+    size = alive.frames.first.sprite.src.size.toVector2();
 
     animations = {
       TargetState.alive: alive,
       TargetState.boom: boom,
       TargetState.dead: dead,
     };
+    current = TargetState.alive;
     add(_hitbox);
 
     return super.onLoad();

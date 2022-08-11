@@ -26,6 +26,7 @@ import 'packages/color_filter/lib/color_filter.dart';
 import 'services/sound/library.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
+import 'world/environment/target.dart';
 import 'world/environment/water.dart';
 
 abstract class MyGameFeatures extends FlameGame
@@ -213,6 +214,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
     consoleMessages.sendMessage('Loading spawns...');
     loadSpawns(tiledComponent);
+    loadTargets(tiledComponent);
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Starting UI');
@@ -260,6 +262,31 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
           }
         }
         addSpawn(newSpawn);
+      }
+    }
+  }
+
+  loadTargets(TiledComponent tiledComponent) {
+    final targets =
+        tiledComponent.tileMap.getLayer<ObjectGroup>('target')?.objects;
+    if (targets != null) {
+      for (final targetObject in targets) {
+        final newTarget = Target(
+          position: Vector2(targetObject.x + targetObject.width / 2,
+              targetObject.y + targetObject.height / 2),
+        );
+        for (final property in targetObject.properties) {
+          switch (property.name) {
+            case 'primary':
+              newTarget.primary = property.value == "true" ? true : false;
+              break;
+            case 'protectFromEnemies':
+              newTarget.protectFromEnemies =
+                  property.value == "true" ? true : false;
+              break;
+          }
+        }
+        addSpawn(newTarget);
       }
     }
   }
