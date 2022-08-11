@@ -84,10 +84,13 @@ class Enemy extends Tank {
   bool _seePlayer() {
     final game = findParent<MyGame>();
     final player = game?.player;
-    if (player == null || player.isHiddenFromEnemy || player.dead) {
+    if (player == null || player.dead) {
       return false;
     }
     final distance = player.position.distanceTo(position);
+    if (player.isHiddenFromEnemy) {
+      return distance < distanceOfReveal;
+    }
     return distance < distanceOfView;
   }
 

@@ -24,6 +24,7 @@ enum RenderPriority {
 
 const distanceOfSilence = 300.0;
 const distanceOfView = 200.0;
+const distanceOfReveal = 30;
 
 mixin ObjectLayers on FlameGame {
   final _tankLayer = Component(priority: RenderPriority.player.priority);
