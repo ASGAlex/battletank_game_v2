@@ -53,9 +53,20 @@ class SettingsController with ChangeNotifier {
 
   List<MissionDescription> get missions => _missionRepository.missions;
 
-  MyGame startGameWithMission(MissionDescription mission) {
+  MissionDescription? _currentMission;
+
+  MissionDescription get currentMission {
+    if (_currentMission == null) {
+      throw 'Mission not set!';
+    }
+    return _currentMission!;
+  }
+
+  MyGame startGameWithMission(
+      MissionDescription mission, BuildContext context) {
+    _currentMission = mission;
     mapFile = mission.mapFile;
-    final game = MyGame(mapFile);
+    final game = MyGame(mapFile, context);
     gameInstance = game;
     return game;
   }

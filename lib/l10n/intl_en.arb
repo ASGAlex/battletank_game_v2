@@ -11,6 +11,70 @@
   "graphics_walls3DShadows_medium": "Well-detailed 3D",
   "graphics_walls3dShadows_high": "Highest 3D detalisation",
   "continue_play": "Continue to play",
-  "exit": "Exit the game"
-
+  "exit": "Exit the game",
+  "mission_objectives": "Mission objectives",
+  "mission_objectives_empty": "This is endless game without any objectives",
+  "ok": "Got it!",
+  "visible": "VISIBLE",
+  "hidden": "HIDDEN",
+  "mo_protect_primary_target": "You must protect {count} primary target(s)",
+  "@mo_protect_primary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_kill_primary_target": "You must destroy {count} primary target(s)",
+  "@mo_kill_primary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_protect_secondary_target": "You must protect {count} secondary target(s)",
+  "@mo_protect_secondary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_kill_secondary_target": "You must destroy {count} secondary target(s)",
+  "@mo_kill_secondary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_target_lost": "Targets lost: {count}",
+  "@mo_target_lost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_target_killed": "Targets killed: {count}",
+  "@mo_target_killed": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_primary_target_just_killed": "Primary target killed!",
+  "mo_secondary_target_just_killed": "Secondary target killed!",
+  "mo_primary_target_just_lost": "Primary target lost!",
+  "mo_secondary_target_just_lost": "Secondary target lost!",
+  "victory": "VICTORY!",
+  "defeat": "DEFEAT!"
 }

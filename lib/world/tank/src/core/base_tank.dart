@@ -205,12 +205,12 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   void onHiddenFromEnemyChanged(bool isHidden) {}
 
   @override
-  onDeath() {
+  onDeath(Component killedBy) {
     if (current != MovementState.wreck) {
       game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
       current = MovementState.die;
 
-      super.onDeath();
+      super.onDeath(killedBy);
 
       Sfx? sfx;
       if (this is Player) {

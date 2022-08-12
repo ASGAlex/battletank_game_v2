@@ -11,5 +11,70 @@
   "graphics_walls3DShadows_medium": "Улучшенная детализация 3D",
   "graphics_walls3dShadows_high": "Максимальная детализация 3D",
   "continue_play": "Продолжить игру",
-  "exit": "Выйти из игры"
+  "exit": "Выйти из игры",
+  "mission_objectives": "Задачи миссии",
+  "mission_objectives_empty": "Это бесконечная игра без каких-либо заданий",
+  "ok": "Так точно!",
+  "visible": "ВИДИМЫЙ",
+  "hidden": "СКРЫТЫЙ",
+  "mo_protect_primary_target": "Необходимо защитить основных целей: {count}",
+  "@mo_protect_primary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_kill_primary_target": "Необходимо уничтожить основных целей: {count}",
+  "@mo_kill_primary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_protect_secondary_target": "Желательно защитить дополнительные цели: {count}",
+  "@mo_protect_secondary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_kill_secondary_target": "Желательно уничтожить дополнительные цели: {count}",
+  "@mo_kill_secondary_target": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_target_lost": "Целей потеряно: {count}",
+  "@mo_target_lost": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_target_killed": "Целей уничтожено: {count}",
+  "@mo_target_killed": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "123"
+      }
+    }
+  },
+  "mo_primary_target_just_killed": "Основная цель уничтожена!",
+  "mo_secondary_target_just_killed": "Дополнительная цель уничтожена!",
+  "mo_primary_target_just_lost": "Основная цель потеряна!",
+  "mo_secondary_target_just_lost": "Дополнительная цель потеряна!",
+  "victory": "Победа!",
+  "defeat": "Поражение!"
 }

@@ -142,7 +142,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     }
 
     if (other is DestroyableComponent) {
-      other.takeDamage(damage);
+      other.takeDamage(damage, firedFrom);
     }
 
     super.onCollision(intersectionPoints, other);

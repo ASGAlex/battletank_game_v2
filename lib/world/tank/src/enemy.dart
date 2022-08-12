@@ -99,8 +99,8 @@ class Enemy extends Tank {
       _lastAvailableDirections.length < currentAvailableDirections.length;
 
   @override
-  onDeath() {
-    super.onDeath();
+  onDeath(Component killedBy) {
+    super.onDeath(killedBy);
     final game = findParent<MyGame>();
     if (game != null) {
       game.enemies.remove(this);

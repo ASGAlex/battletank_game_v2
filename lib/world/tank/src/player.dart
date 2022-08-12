@@ -69,20 +69,20 @@ class Player extends Tank {
   }
 
   @override
-  takeDamage(int damage) {
+  takeDamage(int damage, Component from) {
     game.colorFilter?.animateTo(material.Colors.red,
         blendMode: BlendMode.colorBurn,
         duration: const Duration(milliseconds: 250), onFinish: () {
       game.colorFilter?.config.color = null;
     });
 
-    super.takeDamage(damage);
+    super.takeDamage(damage, from);
   }
 
   @override
-  onDeath() {
+  onDeath(Component killedBy) {
     SoundLibrary().movePlayer.pause();
-    super.onDeath();
+    super.onDeath(killedBy);
   }
 
   bool onJoystickEvent() {
@@ -227,6 +227,6 @@ class Player extends Tank {
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {
-    game.hudVisibility.setVisibility(!isHidden);
+    game.hudVisibility?.setVisibility(!isHidden);
   }
 }

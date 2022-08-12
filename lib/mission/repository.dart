@@ -5,6 +5,8 @@ class MissionDescription {
   String name;
   String description;
   String mapFile;
+
+  List<String> objectives = [];
 }
 
 class MissionRepository {

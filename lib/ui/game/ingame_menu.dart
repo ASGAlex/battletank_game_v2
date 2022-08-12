@@ -15,7 +15,6 @@ class InGameMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQueryData = MediaQuery.of(context);
     return Container(
       alignment: Alignment.center,
       color: Colors.black26.withOpacity(0.5),
@@ -28,7 +27,7 @@ class InGameMenu extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           width: 300,
-          padding: const EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.only(top: 50),
           child: ListView(children: [
             MenuButton(
               onPressed: () {
@@ -39,11 +38,20 @@ class InGameMenu extends StatelessWidget {
             ),
             MenuButton(
               onPressed: () {
-                game.paused = true;
-                SettingsController().gameInstance = null;
-                RouteBuilder.gotoMainMenu(context);
+                game.overlays.add('mission_objectives');
               },
-              text: context.loc().exit,
+              text: context.loc().mission_objectives,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: MenuButton(
+                onPressed: () {
+                  game.paused = true;
+                  SettingsController().gameInstance = null;
+                  RouteBuilder.gotoMainMenu(context);
+                },
+                text: context.loc().exit,
+              ),
             ),
           ]),
         ),

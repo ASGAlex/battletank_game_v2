@@ -106,15 +106,15 @@ mixin DestroyableComponent on PositionComponent {
   bool dead = false;
 
   @mustCallSuper
-  takeDamage(int damage) {
+  takeDamage(int damage, Component from) {
     health -= damage;
     if (health <= 0) {
-      onDeath();
+      onDeath(from);
     }
   }
 
   @mustCallSuper
-  onDeath() {
+  onDeath(Component killedBy) {
     dead = true;
   }
 }

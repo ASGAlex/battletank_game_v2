@@ -6,13 +6,16 @@ import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
+import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
+import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
@@ -41,13 +44,14 @@ abstract class MyGameFeatures extends FlameGame
         ObjectLayers {}
 
 class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
-  MyGame(this.mapFile);
+  MyGame(this.mapFile, this.context);
 
   static final fpsTextPaint = TextPaint(
     style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
   );
 
-  String mapFile;
+  final String mapFile;
+  final BuildContext context;
 
   final lazyCollisionService = LazyCollisionsService();
 
@@ -59,10 +63,12 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   RenderableTiledMap? currentMap;
 
   BackBuffer? backBuffer;
+
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
 
-  final hudVisibility = VisibilityIndicator();
+  VisibilityIndicator? hudVisibility;
+  FlashMessage? hudFlashMessage;
 
   @override
   Future<void> onLoad() async {
@@ -221,10 +227,16 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     initJoystick(() {
       player?.onFire();
     });
-    hudVisibility.setVisibility(true);
-    hudVisibility.x = 2;
-    hudVisibility.y = 2;
-    add(hudVisibility);
+    hudVisibility = VisibilityIndicator(this);
+    hudVisibility!.setVisibility(true);
+    hudVisibility!.x = 2;
+    hudVisibility!.y = 2;
+    add(hudVisibility!);
+
+    hudFlashMessage =
+        FlashMessage(position: hudVisibility!.position.translate(100, 0));
+    add(hudFlashMessage!);
+
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Spawning the Player...');
@@ -271,22 +283,39 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
         tiledComponent.tileMap.getLayer<ObjectGroup>('target')?.objects;
     if (targets != null) {
       for (final targetObject in targets) {
-        final newTarget = Target(
-          position: Vector2(targetObject.x + targetObject.width / 2,
-              targetObject.y + targetObject.height / 2),
-        );
+        var primary = true;
+        var protectFromEnemies = false;
         for (final property in targetObject.properties) {
           switch (property.name) {
             case 'primary':
-              newTarget.primary = property.value == "true" ? true : false;
+              primary = property.value == "true" ? true : false;
               break;
             case 'protectFromEnemies':
-              newTarget.protectFromEnemies =
-                  property.value == "true" ? true : false;
+              protectFromEnemies = property.value == "true" ? true : false;
               break;
           }
         }
+        final newTarget = Target(
+            position: Vector2(targetObject.x + targetObject.width / 2,
+                targetObject.y + targetObject.height / 2),
+            primary: primary,
+            protectFromEnemies: protectFromEnemies);
         addSpawn(newTarget);
+      }
+      final objectives = Target.checkMissionObjectives(context.loc());
+      SettingsController().currentMission.objectives = objectives;
+    }
+  }
+
+  onObjectivesStateChange(String message, FlashMessageType type,
+      [bool finishGame = false]) {
+    hudFlashMessage?.showMessage(message, type);
+    if (finishGame) {
+      paused = true;
+      if (type == FlashMessageType.good) {
+        overlays.add('game_over_success');
+      } else {
+        overlays.add('game_over_fail');
       }
     }
   }
@@ -312,5 +341,6 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
   void onDetach() {
     TileProcessor.clearCache();
     Spawn.clear();
+    Target.clear();
   }
 }

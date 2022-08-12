@@ -3,9 +3,11 @@ import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/ui/game/gameover_screen.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 
-import '../menu/ingame_menu.dart';
+import 'ingame_menu.dart';
+import 'mission_objectives.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -25,7 +27,8 @@ class GameScreen extends StatelessWidget {
       },
       child: GameWidget.controlled(
         gameFactory: () {
-          return SettingsController().startGameWithMission(selectedMission);
+          return SettingsController()
+              .startGameWithMission(selectedMission, context);
         },
         overlayBuilderMap: {
           'console': (BuildContext context, MyGame game) {
@@ -35,6 +38,15 @@ class GameScreen extends StatelessWidget {
           },
           'menu': (BuildContext context, MyGame game) {
             return InGameMenu(game: game);
+          },
+          'mission_objectives': (BuildContext context, MyGame game) {
+            return MissionObjectives(game: game);
+          },
+          'game_over_success': (BuildContext context, MyGame game) {
+            return GameOver(game: game, success: true);
+          },
+          'game_over_fail': (BuildContext context, MyGame game) {
+            return GameOver(game: game, success: false);
           }
         },
         loadingBuilder: (BuildContext ctx) {
