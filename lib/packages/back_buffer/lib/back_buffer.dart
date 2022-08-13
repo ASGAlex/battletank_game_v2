@@ -46,11 +46,13 @@ class BackBuffer extends PositionComponent with HasPaint {
     canvas.drawPicture(buffer);
   }
 
+  @override
   add(Component component) {
     if (component is! PositionComponent) {
       throw "backBuffer can work with position components only!";
     }
     _children.add(component);
+    return null;
   }
 
   @override
