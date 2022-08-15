@@ -124,22 +124,22 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     final List<String> mission = [];
     if (_primaryProtectTargetsMax != 0) {
       mission.add(
-          "${loc.mo_protect_primary_target(_primaryProtectTargetsMax)}.\r\n ${loc.mo_target_lost(_primaryProtectTargets)}");
+          "${loc.mo_protect_primary_target(_primaryProtectTargetsMax)}.\r\n ${loc.mo_target_lost(_primaryProtectTargetsMax - _primaryProtectTargets)}");
     }
 
     if (_primaryKillTargetsMax != 0) {
       mission.add(
-          "${loc.mo_kill_primary_target(_primaryKillTargetsMax)}.\r\n ${loc.mo_target_killed(_primaryKillTargets)}");
+          "${loc.mo_kill_primary_target(_primaryKillTargetsMax)}.\r\n ${loc.mo_target_killed(_primaryKillTargetsMax - _primaryKillTargets)}");
     }
 
     if (_secondaryProtectTargetsMax != 0) {
       mission.add(
-          "${loc.mo_protect_secondary_target(_secondaryProtectTargetsMax)}.\r\n ${loc.mo_target_lost(_secondaryProtectTargets)}");
+          "${loc.mo_protect_secondary_target(_secondaryProtectTargetsMax)}.\r\n ${loc.mo_target_lost(_secondaryProtectTargetsMax - _secondaryProtectTargets)}");
     }
 
     if (_secondaryKillTargetsMax != 0) {
       mission.add(
-          "${loc.mo_kill_secondary_target(_secondaryKillTargetsMax)}.\r\n ${loc.mo_target_killed(_secondaryKillTargets)}");
+          "${loc.mo_kill_secondary_target(_secondaryKillTargetsMax)}.\r\n ${loc.mo_target_killed(_secondaryKillTargetsMax - _secondaryKillTargets)}");
     }
 
     return mission;
