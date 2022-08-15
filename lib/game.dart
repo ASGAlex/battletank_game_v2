@@ -15,7 +15,6 @@ import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
-import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
@@ -296,14 +295,11 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
           }
         }
         final newTarget = Target(
-            position: Vector2(targetObject.x + targetObject.width / 2,
-                targetObject.y + targetObject.height / 2),
+            position: Vector2(targetObject.x, targetObject.y),
             primary: primary,
             protectFromEnemies: protectFromEnemies);
         addSpawn(newTarget);
       }
-      final objectives = Target.checkMissionObjectives(context.loc());
-      SettingsController().currentMission.objectives = objectives;
     }
   }
 
@@ -311,12 +307,15 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
       [bool finishGame = false]) {
     hudFlashMessage?.showMessage(message, type);
     if (finishGame) {
-      paused = true;
-      if (type == FlashMessageType.good) {
-        overlays.add('game_over_success');
-      } else {
-        overlays.add('game_over_fail');
-      }
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        paused = true;
+        if (type == FlashMessageType.good) {
+          overlays.add('game_over_success');
+        } else {
+          overlays.add('game_over_fail');
+        }
+        onEndGame();
+      });
     }
   }
 
@@ -339,8 +338,14 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
   @override
   void onDetach() {
+    onEndGame();
+  }
+
+  void onEndGame() {
     TileProcessor.clearCache();
     Spawn.clear();
     Target.clear();
+    player?.onRemove();
+    lazyCollisionService.stop();
   }
 }

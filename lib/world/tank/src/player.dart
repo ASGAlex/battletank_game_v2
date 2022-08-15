@@ -229,4 +229,9 @@ class Player extends Tank {
   onHiddenFromEnemyChanged(bool isHidden) {
     game.hudVisibility?.setVisibility(!isHidden);
   }
+
+  @override
+  onRemove() {
+    _moveEnemiesAmbientSound?.pause();
+  }
 }

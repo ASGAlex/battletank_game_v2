@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/widgets/button.dart';
+import 'package:tank_game/world/environment/target.dart';
 
 import '../widgets/button.dart';
 
@@ -14,7 +14,7 @@ class MissionObjectives extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final objectives = SettingsController().currentMission.objectives;
+    final objectives = Target.checkMissionObjectives(context.loc());
     final widgets = <Widget>[];
     for (final obj in objectives) {
       widgets.add(Row(
