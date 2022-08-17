@@ -19,9 +19,9 @@ import '../player.dart';
 import 'direction.dart';
 import 'hitbox_movement.dart';
 
-enum MovementState { run, idle, die, wreck }
+enum TankState { run, idle, die, wreck }
 
-class Tank extends SpriteAnimationGroupComponent<MovementState>
+class Tank extends SpriteAnimationGroupComponent<TankState>
     with
         KeyboardHandler,
         CollisionCallbacks,
@@ -84,13 +84,13 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     _boomDuration = animationDie!.duration;
 
     animations = {
-      MovementState.run: animationRun!,
-      MovementState.idle: animationIdle!,
-      MovementState.die: animationDie!,
-      MovementState.wreck: animationWreck!
+      TankState.run: animationRun!,
+      TankState.idle: animationIdle!,
+      TankState.die: animationDie!,
+      TankState.wreck: animationWreck!
     };
 
-    current = MovementState.idle;
+    current = TankState.idle;
     add(boundingHitbox);
     add(movementHitbox);
     updateSize();
@@ -144,7 +144,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   void update(double dt) {
     _dtSumTreesCheck += dt;
 
-    if (current == MovementState.run && canMoveForward) {
+    if (current == TankState.run && canMoveForward) {
       if (skipUpdateOnAngleChange) {
         skipUpdateOnAngleChange = false;
         return;
@@ -199,7 +199,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
         }
       }
     }
-    if (current != MovementState.idle) {
+    if (current != TankState.idle) {
       super.update(dt);
     }
   }
@@ -225,9 +225,9 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
   @override
   onDeath(Component killedBy) {
-    if (current != MovementState.wreck) {
+    if (current != TankState.wreck) {
       game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
-      current = MovementState.die;
+      current = TankState.die;
 
       super.onDeath(killedBy);
 
@@ -247,7 +247,7 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
 
       if (_boomDuration != null) {
         Future.delayed(_boomDuration!).then((value) {
-          current = MovementState.wreck;
+          current = TankState.wreck;
           health = 1;
         });
       }

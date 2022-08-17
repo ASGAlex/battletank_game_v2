@@ -9,7 +9,7 @@ import 'behaviors/random_movement.dart';
 import 'core/base_tank.dart';
 import 'core/direction.dart';
 
-enum _MovementMode { random, randomWithFire, toPlayerBlind, target }
+enum _MovementMode { wait, random, attack }
 
 class Enemy extends Tank {
   Enemy({super.position});
@@ -44,31 +44,30 @@ class Enemy extends Tank {
 
     await super.onLoad();
 
-    _movementMode = _MovementMode.random;
-    current = MovementState.run;
+    _movementMode = _MovementMode.wait;
+    current = TankState.idle;
   }
 
   @override
   void update(double dt) {
-    if (current == MovementState.wreck) return;
-    if (current != MovementState.die) {
-      if ((_hearPlayer() || _seePlayer()) &&
-          _movementMode != _MovementMode.target) {
-        _movementMode = _MovementMode.toPlayerBlind;
-      } else {
-        _movementMode = _MovementMode.random;
-      }
-      _randomMovementController?.runRandomMovement(dt);
-
+    if (current == TankState.wreck) return;
+    if (current != TankState.die) {
       switch (_movementMode) {
+        case _MovementMode.wait:
+          if (_hearPlayer()) {
+            _movementMode = _MovementMode.random;
+          } else if (_seePlayer()) {
+            _movementMode = _MovementMode.attack;
+          }
+          break;
         case _MovementMode.random:
-        case _MovementMode.randomWithFire:
-          // _moveRandom(dt);
+          _randomMovementController?.runRandomMovement(dt);
+          if (_seePlayer()) {
+            _movementMode = _MovementMode.attack;
+          }
           break;
-        case _MovementMode.toPlayerBlind:
-          break;
-        case _MovementMode.target:
-          print('not implemented');
+        case _MovementMode.attack:
+          _randomMovementController?.runRandomMovement(dt);
           break;
       }
     }
@@ -83,7 +82,7 @@ class Enemy extends Tank {
   bool _hearPlayer() {
     final game = findParent<MyGame>();
     final player = game?.player;
-    if (player == null || player.current == MovementState.idle || player.dead) {
+    if (player == null || player.current == TankState.idle || player.dead) {
       return false;
     }
     final distance = player.position.distanceTo(position);

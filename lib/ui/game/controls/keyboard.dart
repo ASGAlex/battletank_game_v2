@@ -68,7 +68,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     }
 
     if (directionButtonPressed && player.canMoveForward) {
-      player.current = MovementState.run;
+      player.current = TankState.run;
       if (player.movePlayerSoundPaused) {
         player.movePlayerSound?.controller?.setVolume(0.5);
         player.movePlayerSound?.play();
@@ -76,7 +76,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
       }
     } else {
       if (!player.dead) {
-        player.current = MovementState.idle;
+        player.current = TankState.idle;
       }
       if (!player.movePlayerSoundPaused) {
         player.movePlayerSound?.pause();

@@ -61,7 +61,7 @@ class RandomMovementController {
     parent.lookDirection = _plannedDirection;
     parent.angle = _plannedDirection.angle;
     parent.skipUpdateOnAngleChange = true;
-    parent.current = MovementState.run;
+    parent.current = TankState.run;
     var count = _directionFreq[_plannedDirection] ?? 0;
     count++;
     _directionFreq[_plannedDirection] = count;
