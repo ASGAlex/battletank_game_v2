@@ -1,4 +1,23 @@
-part of tank;
+import 'dart:ui';
+
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart' as material;
+import 'package:tank_game/extensions.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'package:tank_game/packages/sound/lib/sound.dart';
+import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/services/sound/library.dart';
+import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/world/world.dart';
+
+import '../bullet.dart';
+import '../enemy.dart';
+import '../player.dart';
+import 'direction.dart';
+import 'hitbox_movement.dart';
 
 enum MovementState { run, idle, die, wreck }
 
@@ -33,8 +52,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
   int health = 1;
 
   int _lazyTreeHitboxId = -1;
-  final _movementHitbox = _MovementHitbox();
-  final _boundingHitbox = RectangleHitbox();
+  final movementHitbox = MovementHitbox();
+  final boundingHitbox = RectangleHitbox();
 
   SpriteAnimation? animationRun;
   SpriteAnimation? animationIdle;
@@ -72,8 +91,8 @@ class Tank extends SpriteAnimationGroupComponent<MovementState>
     };
 
     current = MovementState.idle;
-    add(_boundingHitbox);
-    add(_movementHitbox);
+    add(boundingHitbox);
+    add(movementHitbox);
     updateSize();
     await super.onLoad();
 

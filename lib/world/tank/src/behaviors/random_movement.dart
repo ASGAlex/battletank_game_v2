@@ -1,7 +1,12 @@
-part of tank;
+import 'dart:math';
+import 'dart:ui';
 
-class _RandomMovementController {
-  _RandomMovementController(
+import '../core/base_tank.dart';
+import '../core/direction.dart';
+import 'available_directions.dart';
+
+class RandomMovementController {
+  RandomMovementController(
       {required this.parent, required this.directionsChecker});
 
   Direction _plannedDirection = Direction.up;
@@ -21,7 +26,7 @@ class _RandomMovementController {
       _plannedDistance <= 0 ||
       !parent.canMoveForward;
 
-  final _AvailableDirectionsChecker directionsChecker;
+  final AvailableDirectionsChecker directionsChecker;
   final Tank parent;
 
   final _directionFreq = <Direction, int>{};

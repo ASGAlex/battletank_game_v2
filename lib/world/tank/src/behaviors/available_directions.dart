@@ -1,6 +1,10 @@
-part of tank;
+import 'package:flame/collisions.dart';
 
-class _AvailableDirectionsChecker {
+import '../core/base_tank.dart';
+import '../core/direction.dart';
+import '../core/hitbox_movement_side.dart';
+
+class AvailableDirectionsChecker {
   bool _sideHitboxesEnabled = true;
 
   bool get hitboxesEnabled => _sideHitboxesEnabled;
@@ -11,10 +15,10 @@ class _AvailableDirectionsChecker {
     parent.addAll(_movementSideHitboxes);
   }
 
-  final _movementSideHitboxes = <_MovementSideHitbox>[
-    _MovementSideHitbox(direction: Direction.left),
-    _MovementSideHitbox(direction: Direction.right),
-    _MovementSideHitbox(direction: Direction.down)
+  final _movementSideHitboxes = <MovementSideHitbox>[
+    MovementSideHitbox(direction: Direction.left),
+    MovementSideHitbox(direction: Direction.right),
+    MovementSideHitbox(direction: Direction.down)
   ];
 
   List<Direction> getAvailableDirections() {

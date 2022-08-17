@@ -1,4 +1,25 @@
-part of tank;
+import 'dart:ui';
+
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart' as material;
+import 'package:tank_game/extensions.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'package:tank_game/packages/sound/lib/sound.dart';
+import 'package:tank_game/services/sound/library.dart';
+import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/world/environment/brick.dart';
+import 'package:tank_game/world/environment/heavy_brick.dart';
+import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/water.dart';
+
+import '../../world.dart';
+import 'core/direction.dart';
+import 'core/hitbox_movement.dart';
+import 'core/hitbox_movement_side.dart';
+import 'enemy.dart';
 
 enum BulletState { fly, boom, crater }
 
@@ -177,7 +198,7 @@ class _BulletHitbox extends RectangleHitbox
   @override
   bool broadPhaseCheck(PositionComponent other) {
     final success = super.broadPhaseCheck(other);
-    if (success && (other is _MovementSideHitbox || other is _MovementHitbox)) {
+    if (success && (other is MovementSideHitbox || other is MovementHitbox)) {
       return false;
     }
     return success;

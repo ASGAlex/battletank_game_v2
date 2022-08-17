@@ -1,4 +1,13 @@
-part of tank;
+import 'package:flame/components.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/world/world.dart';
+
+import 'behaviors/available_directions.dart';
+import 'behaviors/fire.dart';
+import 'behaviors/random_movement.dart';
+import 'core/base_tank.dart';
+import 'core/direction.dart';
 
 enum _MovementMode { random, randomWithFire, toPlayerBlind, target }
 
@@ -15,18 +24,18 @@ class Enemy extends Tank {
 
   final _lastAvailableDirections = <Direction>[];
 
-  final _directionsChecker = _AvailableDirectionsChecker();
-  _RandomMovementController? _randomMovementController;
-  _FireController? _fireController;
+  final _directionsChecker = AvailableDirectionsChecker();
+  RandomMovementController? _randomMovementController;
+  FireController? _fireController;
 
   @override
   Future<void> onLoad() async {
     animationRun = await SpriteSheetRegistry().tankBasic.animationRun;
     animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
     _directionsChecker.onLoad(this);
-    _randomMovementController = _RandomMovementController(
+    _randomMovementController = RandomMovementController(
         directionsChecker: _directionsChecker, parent: this);
-    _fireController = _FireController(this);
+    _fireController = FireController(this);
     _randomMovementController?.onDirectionChanged = () {
       if (_hearPlayer()) {
         _fireController?.fireASAP();

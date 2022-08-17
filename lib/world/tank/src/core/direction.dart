@@ -1,4 +1,4 @@
-part of tank;
+import 'dart:math';
 
 const PI_180 = (180 / pi);
 

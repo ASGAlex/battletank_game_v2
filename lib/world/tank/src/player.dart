@@ -1,4 +1,17 @@
-part of tank;
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flutter/material.dart' as material;
+import 'package:tank_game/packages/sound/lib/sfx.dart';
+import 'package:tank_game/services/sound/library.dart';
+import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/ui/game/controls/joystick.dart';
+import 'package:tank_game/world/world.dart';
+
+import 'core/base_tank.dart';
+import 'core/direction.dart';
 
 class Player extends Tank {
   Player({super.position});
@@ -131,8 +144,8 @@ class Player extends Tank {
 
     if (directionButtonPressed && canMoveForward) {
       current = MovementState.run;
-      if (_movementHitbox.collisionType != CollisionType.active) {
-        changeCollisionType(_movementHitbox, CollisionType.active);
+      if (movementHitbox.collisionType != CollisionType.active) {
+        changeCollisionType(movementHitbox, CollisionType.active);
       }
       if (movePlayerSoundPaused) {
         movePlayerSound?.controller?.setVolume(0.5);
@@ -142,7 +155,7 @@ class Player extends Tank {
     } else {
       if (!dead) {
         current = MovementState.idle;
-        changeCollisionType(_movementHitbox, CollisionType.active);
+        changeCollisionType(movementHitbox, CollisionType.active);
       }
       if (!movePlayerSoundPaused) {
         movePlayerSound?.pause();

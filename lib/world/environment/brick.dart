@@ -5,7 +5,8 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
-import 'package:tank_game/world/tank/tank.dart';
+import 'package:tank_game/world/tank/src/bullet.dart';
+import 'package:tank_game/world/tank/src/core/direction.dart';
 import 'package:tank_game/world/world.dart';
 
 class Brick extends SpriteComponent

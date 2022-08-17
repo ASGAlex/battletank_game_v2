@@ -18,7 +18,6 @@ import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
-import 'package:tank_game/world/tank/tank.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
@@ -30,6 +29,8 @@ import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
 import 'world/environment/water.dart';
+import 'world/tank/src/enemy.dart';
+import 'world/tank/src/player.dart';
 
 abstract class MyGameFeatures extends FlameGame
     with

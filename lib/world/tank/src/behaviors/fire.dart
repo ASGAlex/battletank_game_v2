@@ -1,9 +1,9 @@
-part of tank;
+import '../core/base_tank.dart';
 
 typedef FireFunc = bool Function();
 
-class _FireController {
-  _FireController(this.parent) : _fire = parent.onFire;
+class FireController {
+  FireController(this.parent) : _fire = parent.onFire;
 
   FireFunc _fire;
 

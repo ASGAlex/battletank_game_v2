@@ -1,8 +1,18 @@
-part of tank;
+import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/extensions.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'package:tank_game/world/environment/spawn.dart';
 
-class _MovementSideHitbox extends _HitboxMapBounds
-    with DebugRender, CollisionQuadTreeController<MyGame> {
-  _MovementSideHitbox(
+import 'base_tank.dart';
+import 'direction.dart';
+import 'hitbox_map_bounds.dart';
+import 'hitbox_movement.dart';
+
+class MovementSideHitbox extends HitboxMapBounds
+    with CollisionQuadTreeController<MyGame> {
+  MovementSideHitbox(
       {required this.direction, super.angle, super.anchor, super.priority})
       : super(position: Vector2(0, 0));
 
@@ -12,7 +22,7 @@ class _MovementSideHitbox extends _HitboxMapBounds
 
   int _collisions = 0;
 
-  bool get canMoveToDirection => !_outOfBounds && _collisions == 0;
+  bool get canMoveToDirection => !outOfBounds && _collisions == 0;
 
   Direction get globalMapDirection {
     var globalValue = direction.value + tank.lookDirection.value;
@@ -52,7 +62,7 @@ class _MovementSideHitbox extends _HitboxMapBounds
   @override
   bool broadPhaseCheck(PositionComponent other) {
     final success = super.broadPhaseCheck(other);
-    if (success && (other.parent is Spawn || other is _MovementHitbox)) {
+    if (success && (other.parent is Spawn || other is MovementHitbox)) {
       return false;
     }
     return success;
