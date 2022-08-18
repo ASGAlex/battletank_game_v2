@@ -2,7 +2,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/tank/src/enemy.dart';
+import 'package:tank_game/world/tank/enemy.dart';
 import 'package:tank_game/world/world.dart';
 
 import '../../services/spritesheet/spritesheet.dart';

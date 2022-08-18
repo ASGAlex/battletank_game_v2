@@ -29,8 +29,8 @@ import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
 import 'world/environment/water.dart';
-import 'world/tank/src/enemy.dart';
-import 'world/tank/src/player.dart';
+import 'world/tank/enemy.dart';
+import 'world/tank/player.dart';
 
 abstract class MyGameFeatures extends FlameGame
     with

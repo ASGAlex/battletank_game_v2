@@ -15,7 +15,7 @@ import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/water.dart';
 
-import '../../world.dart';
+import '../world.dart';
 import 'core/direction.dart';
 import 'core/hitbox_movement.dart';
 import 'core/hitbox_movement_side.dart';

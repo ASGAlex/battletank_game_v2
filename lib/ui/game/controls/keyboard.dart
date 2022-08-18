@@ -1,10 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/tank/src/core/base_tank.dart';
-import 'package:tank_game/world/tank/src/core/direction.dart';
+import 'package:tank_game/world/tank/core/base_tank.dart';
+import 'package:tank_game/world/tank/core/direction.dart';
 
 mixin GameHardwareKeyboard on MyGameFeatures {
+  @override
   KeyEventResult onKeyEvent(
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
