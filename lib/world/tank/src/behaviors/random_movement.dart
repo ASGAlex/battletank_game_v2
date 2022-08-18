@@ -16,6 +16,7 @@ class RandomMovementController {
   double _plannedMinDistanceForChange = 0.0;
   double _plannedDefaultMin = 10.0;
   double _plannedDefaultMax = 25.0;
+  bool _directionFreqCheck = true;
 
   bool _hasPlan = false;
 
@@ -43,7 +44,9 @@ class RandomMovementController {
     return _hasPlan;
   }
 
-  runRandomMovement(double dt, [List<Direction> except = const []]) {
+  runRandomMovement(double dt,
+      [bool directionFreqCheck = true, List<Direction> except = const []]) {
+    _directionFreqCheck = directionFreqCheck;
     bool planChanged = false;
     if (!_hasPlan) {
       planChanged = _createMovementPlan();
@@ -77,7 +80,7 @@ class RandomMovementController {
     }
 
     final random = Random();
-    if (total > 0 && availableDirections.length > 1) {
+    if (_directionFreqCheck && total > 0 && availableDirections.length > 1) {
       final range = <Direction, List<int>>{};
       var value = 0;
       for (final direction in availableDirections) {

@@ -155,8 +155,8 @@
 </data>
  </layer>
  <objectgroup id="5" name="spawn">
-  <object id="1" name="spawn_player" x="46.508" y="109.977" width="16" height="16"/>
-  <object id="2" name="spawn" x="216.091" y="208.227" width="16" height="16">
+  <object id="1" name="spawn_player" x="79.508" y="126.977" width="16" height="16"/>
+  <object id="2" name="spawn" x="131.758" y="183.894" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="int" value="5"/>
     <property name="tanks_inside" type="int" value="99999"/>
@@ -165,17 +165,17 @@
   </object>
  </objectgroup>
  <objectgroup id="7" name="target">
-  <object id="27" name="target" x="174.999" y="87.3333" width="16" height="16">
+  <object id="27" name="target" x="272.332" y="207.667" width="16" height="16">
    <properties>
     <property name="primary" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="28" name="target" x="79.6665" y="49" width="16" height="16">
+  <object id="28" name="target" x="159.666" y="209" width="16" height="16">
    <properties>
     <property name="primary" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="29" name="target" x="256.333" y="32.6666" width="16" height="16">
+  <object id="29" name="target" x="217" y="209" width="16" height="16">
    <properties>
     <property name="primary" type="bool" value="true"/>
     <property name="protectFromEnemies" type="bool" value="true"/>

@@ -17,20 +17,24 @@ class AttackMovementController {
 
   bool shouldFire = false;
   Direction? _prevDirection;
-  Direction? _failedDirection;
-  final Set<Direction> _failedAlternatives = {};
+
   List<Direction>? _availableDirections;
-  bool _needAlternativeDirection = false;
-  double _randomMovementTicks = -1;
-  static const double _randomMovementTicksMax = 30;
+
+  bool _randomMovement = false;
 
   double diffX = 0;
   double diffY = 0;
 
+  _startRandomMovement() {
+    _randomMovement = true;
+    Future.delayed(const Duration(seconds: 5)).then((_) {
+      _randomMovement = false;
+    });
+  }
+
   bool runAttackMovement(double dt) {
-    if (_randomMovementTicks > 0) {
+    if (_randomMovement) {
       randomMovementController.runRandomMovement(dt);
-      _randomMovementTicks--;
       return true;
     } else {
       final target = parent.game.player;
@@ -39,16 +43,8 @@ class AttackMovementController {
       diffY = target.y - parent.y;
 
       Direction? direction;
-      if (_needAlternativeDirection) {
-        _availableDirections = directionsChecker.getAvailableDirections();
-        direction = _findAlternativeDirection();
-        final canMoveNormal = _availableDirections!.contains(_failedDirection);
-        if (canMoveNormal) {
-          _failedDirection = null;
-          _needAlternativeDirection = false;
-          _failedAlternatives.clear();
-        }
-      } else {
+      _availableDirections = directionsChecker.getAvailableDirections();
+      {
         direction = _findShortestDirection();
       }
       if (direction == null) {
@@ -67,44 +63,9 @@ class AttackMovementController {
         parent.angle = direction.angle;
         parent.skipUpdateOnAngleChange = true;
       } else if (!parent.canMoveForward) {
-        if (_failedDirection != null) {
-          _failedDirection = direction;
-        } else {
-          _failedAlternatives.add(direction);
-        }
-        directionsChecker.enableSideHitboxes();
-        _needAlternativeDirection = true;
+        _startRandomMovement();
       }
       return true;
-    }
-  }
-
-  Direction? _findAlternativeDirection() {
-    if (_failedAlternatives.length >= 2) {
-      _randomMovementTicks = _randomMovementTicksMax;
-      _failedDirection = null;
-      _needAlternativeDirection = false;
-      _failedAlternatives.clear();
-    }
-
-    if ([Direction.left, Direction.right].contains(_failedDirection)) {
-      final direction = _upOrDown(diffY);
-      if (_availableDirections!.contains(direction) &&
-          !_failedAlternatives.contains(direction)) {
-        return direction;
-      } else {
-        _failedAlternatives.add(direction);
-        return direction.opposite;
-      }
-    } else {
-      final direction = _leftOrRight(diffX);
-      if (_availableDirections!.contains(direction) &&
-          !_failedAlternatives.contains(direction)) {
-        return direction;
-      } else {
-        _failedAlternatives.add(direction);
-        return direction.opposite;
-      }
     }
   }
 
