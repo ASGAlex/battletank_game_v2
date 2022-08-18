@@ -26,17 +26,28 @@ abstract class SpriteSheetBase {
 
   /// Call in constructor to create new animation template from sprite sheet
   /// @see [SpriteSheet.createAnimation]
-  Future<SpriteAnimation> compileAnimation({
-    required String name,
-    required double stepTime,
-    int row = 0,
-    bool loop = true,
-    int from = 0,
-    int? to,
-  }) =>
+  Future<SpriteAnimation> compileAnimation(
+          {required String name,
+          required double stepTime,
+          int row = 0,
+          bool loop = true,
+          int from = 0,
+          int? to,
+          Rect? frameClipRect}) =>
       awaitAnimation(spriteSheet.then((value) {
-        final animation = value.createAnimation(
+        var animation = value.createAnimation(
             row: row, stepTime: stepTime, loop: loop, from: from, to: to);
+        if (frameClipRect != null) {
+          for (final frame in animation.frames) {
+            final srcRect = frame.sprite.src;
+            frameClipRect = Rect.fromLTWH(
+                srcRect.left + frameClipRect!.left,
+                srcRect.top + frameClipRect!.top,
+                frameClipRect!.width,
+                frameClipRect!.height);
+            frame.sprite.src = frameClipRect!;
+          }
+        }
         _compiledAnimations[name] = animation;
         return animation;
       }));

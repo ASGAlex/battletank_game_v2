@@ -1,5 +1,7 @@
 library spritesheet;
 
+import 'dart:ui';
+
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/sprite.dart';
@@ -19,6 +21,7 @@ class SpriteSheetRegistry {
   final boom = _Boom();
   final boomBig = _BoomBig();
   final tankBasic = _TankBasic();
+  final tankBasic1 = _TankBasic1();
   final bullet = _Bullet();
   final ground = _Ground();
   final spawn = _Spawn();
