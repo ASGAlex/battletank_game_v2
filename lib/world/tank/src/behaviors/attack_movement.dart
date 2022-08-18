@@ -18,23 +18,20 @@ class AttackMovementController {
   bool shouldFire = false;
   Direction? _prevDirection;
 
-  List<Direction>? _availableDirections;
-
-  bool _randomMovement = false;
+  bool get _randomMovement => _randomMovementTimer > 0;
+  double _randomMovementTimer = 0;
 
   double diffX = 0;
   double diffY = 0;
 
   _startRandomMovement() {
-    _randomMovement = true;
-    Future.delayed(const Duration(seconds: 5)).then((_) {
-      _randomMovement = false;
-    });
+    _randomMovementTimer = 5;
   }
 
   bool runAttackMovement(double dt) {
     if (_randomMovement) {
-      randomMovementController.runRandomMovement(dt);
+      randomMovementController.runRandomMovement(dt, false);
+      _randomMovementTimer -= dt;
       return true;
     } else {
       final target = parent.game.player;
@@ -42,11 +39,8 @@ class AttackMovementController {
       diffX = target.x - parent.x;
       diffY = target.y - parent.y;
 
-      Direction? direction;
-      _availableDirections = directionsChecker.getAvailableDirections();
-      {
-        direction = _findShortestDirection();
-      }
+      final direction = _findShortestDirection();
+
       if (direction == null) {
         return false;
       }
