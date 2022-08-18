@@ -272,6 +272,9 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
             case 'trigger_distance':
               newSpawn.triggerDistance = double.parse(property.value);
               break;
+            case 'tank_type':
+              newSpawn.tankTypeFactory.typeName = property.value;
+              break;
           }
         }
         addSpawn(newSpawn);

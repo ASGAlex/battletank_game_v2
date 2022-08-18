@@ -37,3 +37,22 @@ class TankType0 extends TankType {
     animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
   }
 }
+
+class TankType1 extends TankType {
+  @override
+  int get health => 2;
+
+  @override
+  int get speed => 50;
+
+  @override
+  Vector2 get size => Vector2(14, 16);
+
+  @override
+  Future<void> onLoad() async {
+    animationDie = await SpriteSheetRegistry().boomBig.animation;
+    animationWreck = await SpriteSheetRegistry().tankBasic1.animationWreck;
+    animationRun = await SpriteSheetRegistry().tankBasic1.animationRun;
+    animationIdle = await SpriteSheetRegistry().tankBasic1.animationIdle;
+  }
+}

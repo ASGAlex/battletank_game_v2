@@ -17,13 +17,7 @@ class Player extends Tank {
 
   double _dtAmbientEnemySoundCheck = 0;
 
-  @override
-  int health = 1;
-
   static int respawnCount = 3;
-
-  @override
-  int speed = 80;
 
   MyJoystick? joystick;
 

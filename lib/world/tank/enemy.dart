@@ -15,9 +15,6 @@ class Enemy extends Tank {
   Enemy({super.position});
 
   @override
-  int health = 1;
-
-  @override
   bool get trackTreeCollisions => false;
 
   var _movementMode = _MovementMode.random;

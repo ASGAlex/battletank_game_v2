@@ -155,10 +155,15 @@
 </data>
  </layer>
  <objectgroup id="5" name="spawn">
-  <object id="1" name="spawn_player" x="79.508" y="126.977" width="16" height="16"/>
+  <object id="1" name="spawn_player" x="79.508" y="126.977" width="16" height="16">
+   <properties>
+    <property name="tank_type" value="type0"/>
+   </properties>
+  </object>
   <object id="2" name="spawn" x="131.758" y="183.894" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="int" value="5"/>
+    <property name="tank_type" value="any"/>
     <property name="tanks_inside" type="int" value="99999"/>
     <property name="trigger_distance" type="float" value="50"/>
    </properties>

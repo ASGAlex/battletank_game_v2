@@ -1,13 +1,42 @@
+import 'dart:math';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/enemy.dart';
+import 'package:tank_game/world/tank/type/types.dart';
 import 'package:tank_game/world/world.dart';
 
 import '../../services/spritesheet/spritesheet.dart';
 
-class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
+typedef _SpawnTankType = TankType Function();
+
+class SpawnTankFactory {
+  static final _typesByName = <String, _SpawnTankType>{
+    'any': () {
+      final types = <TankType>[TankType0(), TankType1()];
+      final i = Random().nextInt(types.length);
+      return types[i];
+    },
+    'type0': () => TankType0(),
+    'type1': () => TankType1(),
+  };
+
+  String typeName = 'any';
+
+  TankType create() {
+    final func = _typesByName[typeName];
+    if (func == null) {
+      throw 'No such type';
+    }
+    return func();
+  }
+}
+
+class Spawn extends SpriteAnimationComponent
+    with CollisionCallbacks, MyGameRef {
   static final _instances = <Spawn>[];
   static const spawnDurationSec = 2;
 
@@ -32,6 +61,8 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
     }
     return Future.value(spawn);
   }
+
+  final tankTypeFactory = SpawnTankFactory();
 
   bool busy = false;
   bool isForPlayer = false;
@@ -73,6 +104,9 @@ class Spawn extends SpriteAnimationComponent with CollisionCallbacks {
     animation?.reset();
     _currentObject = object;
     _canTryCreate = false;
+    if (_currentObject is Tank) {
+      (_currentObject as Tank).typeController.type = tankTypeFactory.create();
+    }
     return Future.delayed(const Duration(seconds: spawnDurationSec))
         .then((value) {
       _currentObject?.position = position.clone();
