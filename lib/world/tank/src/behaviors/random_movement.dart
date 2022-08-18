@@ -43,7 +43,7 @@ class RandomMovementController {
     return _hasPlan;
   }
 
-  runRandomMovement(double dt) {
+  runRandomMovement(double dt, [List<Direction> except = const []]) {
     bool planChanged = false;
     if (!_hasPlan) {
       planChanged = _createMovementPlan();

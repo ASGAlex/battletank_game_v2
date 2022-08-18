@@ -50,7 +50,9 @@ class Enemy extends Tank {
     };
 
     _attackMovementController = AttackMovementController(
-        parent: this, directionsChecker: _directionsChecker);
+        parent: this,
+        directionsChecker: _directionsChecker,
+        randomMovementController: _randomMovementController!);
 
     await super.onLoad();
 
@@ -77,6 +79,7 @@ class Enemy extends Tank {
           bool eventHappen = false;
           if (seePlayer) {
             _movementMode = _MovementMode.attack;
+            _directionsChecker.disableSideHitboxes();
             eventHappen = true;
           }
           if (hearPlayer) {
@@ -87,6 +90,7 @@ class Enemy extends Tank {
           }
           if (_noEventsTimer >= _noEventsMax) {
             _movementMode = _MovementMode.wait;
+            _directionsChecker.disableSideHitboxes();
             _noEventsTimer = 0;
           }
           break;

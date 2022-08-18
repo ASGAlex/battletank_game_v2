@@ -37,6 +37,19 @@ enum Direction {
     return Direction.fromValue(newVal);
   }
 
+  Direction get opposite {
+    switch (this) {
+      case Direction.up:
+        return Direction.down;
+      case Direction.left:
+        return Direction.right;
+      case Direction.down:
+        return Direction.up;
+      case Direction.right:
+        return Direction.left;
+    }
+  }
+
   double get angle {
     switch (this) {
       case Direction.down:

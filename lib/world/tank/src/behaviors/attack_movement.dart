@@ -3,37 +3,112 @@ import 'dart:math';
 import '../core/base_tank.dart';
 import '../core/direction.dart';
 import 'available_directions.dart';
+import 'random_movement.dart';
 
 class AttackMovementController {
   AttackMovementController(
-      {required this.parent, required this.directionsChecker});
+      {required this.parent,
+      required this.directionsChecker,
+      required this.randomMovementController});
 
   final AvailableDirectionsChecker directionsChecker;
+  final RandomMovementController randomMovementController;
   final Tank parent;
 
   bool shouldFire = false;
   Direction? _prevDirection;
+  Direction? _failedDirection;
+  final Set<Direction> _failedAlternatives = {};
+  List<Direction>? _availableDirections;
+  bool _needAlternativeDirection = false;
+  double _randomMovementTicks = -1;
+  static const double _randomMovementTicksMax = 30;
+
+  double diffX = 0;
+  double diffY = 0;
 
   bool runAttackMovement(double dt) {
-    final direction = findShortestDirection();
-    if (direction == null) {
-      return false;
+    if (_randomMovementTicks > 0) {
+      randomMovementController.runRandomMovement(dt);
+      _randomMovementTicks--;
+      return true;
+    } else {
+      final target = parent.game.player;
+      if (target == null || target.dead) return false;
+      diffX = target.x - parent.x;
+      diffY = target.y - parent.y;
+
+      Direction? direction;
+      if (_needAlternativeDirection) {
+        _availableDirections = directionsChecker.getAvailableDirections();
+        direction = _findAlternativeDirection();
+        final canMoveNormal = _availableDirections!.contains(_failedDirection);
+        if (canMoveNormal) {
+          _failedDirection = null;
+          _needAlternativeDirection = false;
+          _failedAlternatives.clear();
+        }
+      } else {
+        direction = _findShortestDirection();
+      }
+      if (direction == null) {
+        return false;
+      }
+
+      if (shouldFire && (diffY.abs() < 80 && diffX.abs() < 80)) {
+        parent.current = TankState.idle;
+      } else {
+        parent.current = TankState.run;
+      }
+
+      if (direction != _prevDirection) {
+        _prevDirection = direction;
+        parent.lookDirection = direction;
+        parent.angle = direction.angle;
+        parent.skipUpdateOnAngleChange = true;
+      } else if (!parent.canMoveForward) {
+        if (_failedDirection != null) {
+          _failedDirection = direction;
+        } else {
+          _failedAlternatives.add(direction);
+        }
+        directionsChecker.enableSideHitboxes();
+        _needAlternativeDirection = true;
+      }
+      return true;
     }
-    if (direction != _prevDirection) {
-      _prevDirection = direction;
-      parent.lookDirection = direction;
-      parent.angle = direction.angle;
-      parent.skipUpdateOnAngleChange = true;
-      parent.current = TankState.run;
-    }
-    return true;
   }
 
-  Direction? findShortestDirection() {
-    final target = parent.game.player;
-    if (target == null || target.dead) return null;
-    final diffX = target.x - parent.x;
-    final diffY = target.y - parent.y;
+  Direction? _findAlternativeDirection() {
+    if (_failedAlternatives.length >= 2) {
+      _randomMovementTicks = _randomMovementTicksMax;
+      _failedDirection = null;
+      _needAlternativeDirection = false;
+      _failedAlternatives.clear();
+    }
+
+    if ([Direction.left, Direction.right].contains(_failedDirection)) {
+      final direction = _upOrDown(diffY);
+      if (_availableDirections!.contains(direction) &&
+          !_failedAlternatives.contains(direction)) {
+        return direction;
+      } else {
+        _failedAlternatives.add(direction);
+        return direction.opposite;
+      }
+    } else {
+      final direction = _leftOrRight(diffX);
+      if (_availableDirections!.contains(direction) &&
+          !_failedAlternatives.contains(direction)) {
+        return direction;
+      } else {
+        _failedAlternatives.add(direction);
+        return direction.opposite;
+      }
+    }
+  }
+
+  Direction? _findShortestDirection() {
     var diffBetweenAxis = diffX.abs() - diffY.abs();
 
     if (diffBetweenAxis.abs() <= 4) {
