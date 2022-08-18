@@ -10,7 +10,7 @@ import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.d
 import 'package:tank_game/packages/sound/lib/sound.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/services/sound/library.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
 import '../bullet.dart';
@@ -30,8 +30,11 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         MyGameRef,
         HideableComponent {
   Tank({super.position})
-      : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center);
+      : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
+    typeController = TankTypeController(this);
+  }
 
+  late final TankTypeController typeController;
   Direction lookDirection = Direction.up;
   int speed = 50;
   bool canMoveForward = true;
@@ -55,11 +58,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   final movementHitbox = MovementHitbox();
   final boundingHitbox = RectangleHitbox();
 
-  SpriteAnimation? animationRun;
-  SpriteAnimation? animationIdle;
-  SpriteAnimation? animationDie;
-  SpriteAnimation? animationWreck;
-
   final distantAudioPlayer = DistantSfxPlayer(distanceOfSilence);
 
   Duration? _boomDuration;
@@ -74,21 +72,9 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   @override
   Future<void> onLoad() async {
-    if (animationRun == null || animationIdle == null) {
-      throw 'Animations required!';
-    }
+    await typeController.onLoad();
 
-    animationDie ??= await SpriteSheetRegistry().boomBig.animation;
-    animationWreck ??= await SpriteSheetRegistry().tankBasic.animationWreck;
-
-    _boomDuration = animationDie!.duration;
-
-    animations = {
-      TankState.run: animationRun!,
-      TankState.idle: animationIdle!,
-      TankState.die: animationDie!,
-      TankState.wreck: animationWreck!
-    };
+    _boomDuration = typeController.type.animationDie.duration;
 
     current = TankState.idle;
     add(boundingHitbox);

@@ -6,7 +6,6 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/packages/sound/lib/sfx.dart';
 import 'package:tank_game/services/sound/library.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -68,8 +67,6 @@ class Player extends Tank {
 
   @override
   Future<void> onLoad() async {
-    animationRun = await SpriteSheetRegistry().tankBasic.animationRun;
-    animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
     await super.onLoad();
     joystick = game.joystick;
     movePlayerSound = SoundLibrary().movePlayer;

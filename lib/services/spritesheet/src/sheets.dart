@@ -56,21 +56,21 @@ class _TankBasic extends SpriteSheetBase {
       name: 'run',
       from: 0,
       to: 2,
-      frameClipRect: Rect.fromLTWH(0, 1, 14, 14),
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 14),
       stepTime: 0.2,
     );
     compileAnimation(
       name: 'idle',
       from: 0,
       to: 1,
-      frameClipRect: Rect.fromLTWH(0, 1, 14, 14),
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 14),
       stepTime: 10,
     );
     compileAnimation(
       name: 'wreck',
       from: 2,
       to: 3,
-      frameClipRect: Rect.fromLTWH(0, 1, 14, 14),
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 14),
       stepTime: 10,
     );
   }

@@ -24,6 +24,13 @@ abstract class SpriteSheetBase {
 
   final List<Future> _awaitList = [];
 
+  static final HashSet<Sprite> _resizedSprites = HashSet();
+
+  static clearCaches() {
+    _resizedSprites.clear();
+    _allLoaded = false;
+  }
+
   /// Call in constructor to create new animation template from sprite sheet
   /// @see [SpriteSheet.createAnimation]
   Future<SpriteAnimation> compileAnimation(
@@ -39,6 +46,7 @@ abstract class SpriteSheetBase {
             row: row, stepTime: stepTime, loop: loop, from: from, to: to);
         if (frameClipRect != null) {
           for (final frame in animation.frames) {
+            if (_resizedSprites.contains(frame.sprite)) continue;
             final srcRect = frame.sprite.src;
             frameClipRect = Rect.fromLTWH(
                 srcRect.left + frameClipRect!.left,
@@ -46,6 +54,7 @@ abstract class SpriteSheetBase {
                 frameClipRect!.width,
                 frameClipRect!.height);
             frame.sprite.src = frameClipRect!;
+            _resizedSprites.add(frame.sprite);
           }
         }
         _compiledAnimations[name] = animation;

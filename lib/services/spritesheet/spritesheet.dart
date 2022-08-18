@@ -1,5 +1,6 @@
 library spritesheet;
 
+import 'dart:collection';
 import 'dart:ui';
 
 import 'package:flame/flame.dart';

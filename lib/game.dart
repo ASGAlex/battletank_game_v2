@@ -11,6 +11,7 @@ import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
@@ -356,5 +357,6 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     Target.clear();
     player?.onRemove();
     lazyCollisionService.stop();
+    SpriteSheetBase.clearCaches();
   }
 }

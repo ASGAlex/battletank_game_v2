@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/world.dart';
 
 import 'behaviors/attack_movement.dart';
@@ -37,8 +36,7 @@ class Enemy extends Tank {
 
   @override
   Future<void> onLoad() async {
-    animationRun = await SpriteSheetRegistry().tankBasic.animationRun;
-    animationIdle = await SpriteSheetRegistry().tankBasic.animationIdle;
+    await super.onLoad();
     _directionsChecker.onLoad(this);
     _randomMovementController = RandomMovementController(
         directionsChecker: _directionsChecker, parent: this);
@@ -53,8 +51,6 @@ class Enemy extends Tank {
         parent: this,
         directionsChecker: _directionsChecker,
         randomMovementController: _randomMovementController!);
-
-    await super.onLoad();
 
     _movementMode = _MovementMode.random;
     current = TankState.run;
