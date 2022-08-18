@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import '../core/base_tank.dart';
 import '../core/direction.dart';
@@ -20,15 +21,18 @@ class AttackMovementController {
 
   bool get _randomMovement => _randomMovementTimer > 0;
   double _randomMovementTimer = 0;
+  static const _stopMovementDistance = 80;
 
   double diffX = 0;
   double diffY = 0;
+
+  Offset? _lastKnownPosition;
 
   _startRandomMovement() {
     _randomMovementTimer = 5;
   }
 
-  bool runAttackMovement(double dt) {
+  bool runAttackMovement(double dt, bool seePlayer) {
     if (_randomMovement) {
       randomMovementController.runRandomMovement(dt, false);
       _randomMovementTimer -= dt;
@@ -36,8 +40,18 @@ class AttackMovementController {
     } else {
       final target = parent.game.player;
       if (target == null || target.dead) return false;
-      diffX = target.x - parent.x;
-      diffY = target.y - parent.y;
+      if (seePlayer) {
+        _lastKnownPosition = Offset(target.x, target.y);
+        diffX = target.x - parent.x;
+        diffY = target.y - parent.y;
+      } else {
+        if (_lastKnownPosition == null) return false;
+        diffX = _lastKnownPosition!.dx - parent.x;
+        diffY = _lastKnownPosition!.dy - parent.y;
+        if (diffX.abs() <= 16 && diffY.abs() <= 16) {
+          return false;
+        }
+      }
 
       final direction = _findShortestDirection();
 
@@ -45,7 +59,10 @@ class AttackMovementController {
         return false;
       }
 
-      if (shouldFire && (diffY.abs() < 80 && diffX.abs() < 80)) {
+      if (shouldFire &&
+          seePlayer &&
+          (diffY.abs() < _stopMovementDistance &&
+              diffX.abs() < _stopMovementDistance)) {
         parent.current = TankState.idle;
       } else {
         parent.current = TankState.run;

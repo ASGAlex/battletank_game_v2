@@ -241,7 +241,7 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
 
     consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    // camera.zoom = 6;
+    camera.zoom = 0.7;
 
     final playerSpawn = await Spawn.waitFree(true);
     camera.followComponent(playerSpawn);
@@ -320,13 +320,21 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     }
   }
 
-  Future<Player> restorePlayer([Spawn? spawn]) async {
-    spawn ??= await Spawn.waitFree(true);
-    final object = Player(position: spawn.position.clone());
-    await spawn.createTank(object, true);
-    camera.followComponent(object);
-    player = object;
-    return object;
+  Future<Player?> restorePlayer([Spawn? spawn]) async {
+    if (Player.respawnCount > 0) {
+      spawn ??= await Spawn.waitFree(true);
+      camera.followComponent(spawn);
+      final object = Player(position: spawn.position.clone());
+      await spawn.createTank(object, true);
+      camera.followComponent(object);
+      player = object;
+      Player.respawnCount--;
+      return object;
+    } else {
+      overlays.add('game_over_fail');
+      onEndGame();
+      return null;
+    }
   }
 
   Future<Enemy> spawnEnemy() async {

@@ -96,8 +96,8 @@ class Enemy extends Tank {
           break;
         case _MovementMode.attack:
           final foundDirection =
-              _attackMovementController?.runAttackMovement(dt);
-          if (foundDirection == null) {
+              _attackMovementController!.runAttackMovement(dt, seePlayer);
+          if (!foundDirection) {
             _movementMode = _MovementMode.random;
           } else if (_attackMovementController?.shouldFire == true) {
             _fireController?.fireASAP();

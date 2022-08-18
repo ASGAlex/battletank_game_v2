@@ -19,7 +19,9 @@ class Player extends Tank {
   double _dtAmbientEnemySoundCheck = 0;
 
   @override
-  int health = 100000;
+  int health = 1;
+
+  static int respawnCount = 3;
 
   @override
   int speed = 80;
@@ -83,18 +85,23 @@ class Player extends Tank {
 
   @override
   takeDamage(int damage, Component from) {
-    game.colorFilter?.animateTo(material.Colors.red,
-        blendMode: BlendMode.colorBurn,
-        duration: const Duration(milliseconds: 250), onFinish: () {
-      game.colorFilter?.config.color = null;
-    });
+    if (!dead) {
+      game.colorFilter?.animateTo(material.Colors.red,
+          blendMode: BlendMode.colorBurn,
+          duration: const Duration(milliseconds: 250), onFinish: () {
+        game.colorFilter?.config.color = null;
+      });
+    }
 
     super.takeDamage(damage, from);
   }
 
   @override
   onDeath(Component killedBy) {
-    SoundLibrary().movePlayer.pause();
+    if (!dead) {
+      SoundLibrary().movePlayer.pause();
+      game.restorePlayer();
+    }
     super.onDeath(killedBy);
   }
 
@@ -102,7 +109,6 @@ class Player extends Tank {
     if (dead) return false;
     bool directionButtonPressed = false;
     bool updateAngle = false;
-    // return false;
 
     final angleDegrees = joystick?.knobAngleDegrees;
 
@@ -169,74 +175,6 @@ class Player extends Tank {
     }
     return false;
   }
-
-  // @override
-  // bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-  //   if (dead) return false;
-  //   bool directionButtonPressed = false;
-  //   bool updateAngle = false;
-  //   for (final key in keysPressed) {
-  //     // if (key == LogicalKeyboardKey.keyK) {
-  //     //   takeDamage(1);
-  //     // }
-  //
-  //     if (key == LogicalKeyboardKey.keyW) {
-  //       directionButtonPressed = true;
-  //       if (lookDirection != Direction.up) {
-  //         lookDirection = Direction.up;
-  //         updateAngle = true;
-  //       }
-  //     }
-  //     if (key == LogicalKeyboardKey.keyA) {
-  //       directionButtonPressed = true;
-  //       if (lookDirection != Direction.left) {
-  //         lookDirection = Direction.left;
-  //         updateAngle = true;
-  //       }
-  //     }
-  //     if (key == LogicalKeyboardKey.keyS) {
-  //       directionButtonPressed = true;
-  //       if (lookDirection != Direction.down) {
-  //         lookDirection = Direction.down;
-  //         updateAngle = true;
-  //       }
-  //     }
-  //     if (key == LogicalKeyboardKey.keyD) {
-  //       directionButtonPressed = true;
-  //       if (lookDirection != Direction.right) {
-  //         lookDirection = Direction.right;
-  //         updateAngle = true;
-  //       }
-  //     }
-  //
-  //     if (key == LogicalKeyboardKey.space) {
-  //       onFire();
-  //     }
-  //   }
-  //
-  //   if (directionButtonPressed && canMoveForward) {
-  //     current = MovementState.run;
-  //     if (movePlayerSoundPaused) {
-  //       movePlayerSound?.controller?.setVolume(0.5);
-  //       movePlayerSound?.play();
-  //       movePlayerSoundPaused = false;
-  //     }
-  //   } else {
-  //     if (!dead) {
-  //       current = MovementState.idle;
-  //     }
-  //     if (!movePlayerSoundPaused) {
-  //       movePlayerSound?.pause();
-  //       movePlayerSoundPaused = true;
-  //     }
-  //   }
-  //
-  //   if (updateAngle) {
-  //     angle = lookDirection.angle;
-  //   }
-  //
-  //   return false;
-  // }
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {
