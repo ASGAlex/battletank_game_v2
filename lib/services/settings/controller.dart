@@ -47,7 +47,7 @@ class SettingsController with ChangeNotifier {
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
   MyGame? gameInstance;
   String mapFile = '';
-  final xInputGamePadController = XInputGamePadController();
+  var xInputGamePadController = XInputGamePadController();
 
   final consoleMessages = ConsoleMessagesController();
 

@@ -1,12 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:win32/win32.dart';
 import 'package:xinput_gamepad/xinput_gamepad.dart';
 
-class XInputGamePadController {
+class XInputGamePadController extends ChangeNotifier {
   XInputGamePadController() {
     initXInputGamePad();
   }
@@ -17,8 +18,6 @@ class XInputGamePadController {
 
   initXInputGamePad() {
     if (Platform.isWindows) {
-      XInputManager.enableXInput();
-
       XInputManager.enableXInput();
       xinputController = Controller(
           index: 0,
@@ -52,6 +51,9 @@ class XInputGamePadController {
     }
     if (bitmask & XINPUT_GAMEPAD_START > 0) {
       keysPressed.add(LogicalKeyboardKey.backquote);
+    }
+    if (keysPressed.isNotEmpty) {
+      notifyListeners();
     }
   }
 }

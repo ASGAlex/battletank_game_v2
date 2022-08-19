@@ -1,4 +1,3 @@
-import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/route_builder.dart';
@@ -9,9 +8,6 @@ class MainMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Flame.device.setLandscape();
-    Flame.device.fullScreen();
-
     return Container(
       padding: const EdgeInsets.only(top: 24, right: 100, left: 100),
       child: ListView(children: [

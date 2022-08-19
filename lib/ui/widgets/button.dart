@@ -8,6 +8,7 @@ class MenuButton extends StatelessWidget {
       required this.text,
       this.stylePreset = MenuButtonStyle.tiny,
       this.color,
+      this.focusNode,
       Key? key})
       : super(key: key);
 
@@ -15,6 +16,7 @@ class MenuButton extends StatelessWidget {
   final String text;
   final Color? color;
   final MenuButtonStyle stylePreset;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class MenuButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
+        focusNode: focusNode,
         onPressed: onPressed,
         style: stylePreset == MenuButtonStyle.wide
             ? _wideStyle(borderColor, background, minWidth)
