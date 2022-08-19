@@ -23,9 +23,9 @@ enum RenderPriority {
   const RenderPriority(this.priority);
 }
 
-const distanceOfSilence = 300.0;
-const distanceOfView = 200.0;
-const distanceOfReveal = 30;
+const distanceOfSilenceSquared = 300.0 * 300;
+const distanceOfViewSquared = 200.0 * 200;
+const distanceOfRevealSquared = 30 * 30;
 
 mixin ObjectLayers on FlameGame {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);

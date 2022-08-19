@@ -272,7 +272,8 @@ class MyGame extends MyGameFeatures
               newSpawn.tanksInside = int.parse(property.value);
               break;
             case 'trigger_distance':
-              newSpawn.triggerDistance = double.parse(property.value);
+              final distance = double.parse(property.value);
+              newSpawn.triggerDistanceSquared = distance * distance;
               break;
             case 'tank_type':
               newSpawn.tankTypeFactory.typeName = property.value;

@@ -38,21 +38,21 @@ class Player extends Tank {
       _dtAmbientEnemySoundCheck += dt;
       if (_dtAmbientEnemySoundCheck > 2) {
         _dtAmbientEnemySoundCheck = 0;
-        var minDistance = distanceOfSilence;
+        var minDistance = distanceOfSilenceSquared;
         for (final enemy in game.enemies) {
-          final distance = enemy.position.distanceTo(position);
+          final distance = enemy.position.distanceToSquared(position);
           if (distance < minDistance) {
             minDistance = distance;
           }
         }
-        if (minDistance >= distanceOfSilence) {
+        if (minDistance >= distanceOfSilenceSquared) {
           if (!_moveEnemiesAmbientSoundPaused) {
             _moveEnemiesAmbientSound?.pause();
             _moveEnemiesAmbientSoundPaused = true;
           }
         } else {
           _moveEnemiesAmbientSound?.controller
-              ?.setVolume(1 - (minDistance / distanceOfSilence));
+              ?.setVolume(1 - (minDistance / distanceOfSilenceSquared));
           if (_moveEnemiesAmbientSoundPaused) {
             _moveEnemiesAmbientSound?.play();
             _moveEnemiesAmbientSoundPaused = false;

@@ -44,7 +44,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   PositionComponent firedFrom;
 
-  final audioPlayer = DistantSfxPlayer(distanceOfSilence);
+  final audioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
   double _distance = 0;
   final _maxDistance = 300;
 
@@ -157,8 +157,8 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     if (sfx != null) {
       final game = findParent<MyGame>();
       audioPlayer.actualDistance =
-          (game?.player?.position.distanceTo(position) ??
-              distanceOfSilence + 1);
+          (game?.player?.position.distanceToSquared(position) ??
+              distanceOfSilenceSquared + 1);
       audioPlayer.play(sfx);
     }
 

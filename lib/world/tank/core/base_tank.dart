@@ -62,7 +62,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   final movementHitbox = MovementHitbox();
   final boundingHitbox = RectangleHitbox();
 
-  final distantAudioPlayer = DistantSfxPlayer(distanceOfSilence);
+  final distantAudioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
 
   Duration? _boomDuration;
 
@@ -122,8 +122,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         sfx.play(volume: 1);
       } else {
         distantAudioPlayer.actualDistance =
-            (game.player?.position.distanceTo(position) ??
-                distanceOfSilence + 1);
+            (game.player?.position.distanceToSquared(position) ??
+                distanceOfSilenceSquared + 1);
         distantAudioPlayer.play(sfx);
       }
       return true;
@@ -260,8 +260,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
       if (sfx != null) {
         distantAudioPlayer.actualDistance =
-            (game.player?.position.distanceTo(position) ??
-                distanceOfSilence + 1);
+            (game.player?.position.distanceToSquared(position) ??
+                distanceOfSilenceSquared + 1);
         distantAudioPlayer.play(sfx);
       }
 

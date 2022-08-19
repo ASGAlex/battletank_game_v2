@@ -199,8 +199,8 @@ class Enemy extends Tank {
     if (player == null || player.current == TankState.idle || player.dead) {
       return false;
     }
-    final distance = player.position.distanceTo(position);
-    return distance < distanceOfSilence;
+    final distance = player.position.distanceToSquared(position);
+    return distance < distanceOfSilenceSquared;
   }
 
   bool _seePlayer() {
@@ -208,11 +208,11 @@ class Enemy extends Tank {
     if (player == null || player.dead) {
       return false;
     }
-    final distance = player.position.distanceTo(position);
+    final distance = player.position.distanceToSquared(position);
     if (player.isHiddenFromEnemy) {
-      return distance < distanceOfReveal;
+      return distance < distanceOfRevealSquared;
     }
-    return distance < distanceOfView;
+    return distance < distanceOfViewSquared;
   }
 
   bool isCollisionLandscapeChanged(

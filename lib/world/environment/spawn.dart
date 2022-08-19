@@ -81,9 +81,10 @@ class Spawn extends SpriteAnimationComponent
   Duration cooldown = const Duration(seconds: 60);
   bool _inactive = false;
   int tanksInside = -1;
-  double triggerDistance = -1;
+  double triggerDistanceSquared = -1;
 
-  bool get canSpawnAnything => tanksInside == -1 && triggerDistance == -1;
+  bool get canSpawnAnything =>
+      tanksInside == -1 && triggerDistanceSquared == -1;
 
   Spawn({required Vector2 position, this.isForPlayer = false})
       : super(
@@ -157,8 +158,8 @@ class Spawn extends SpriteAnimationComponent
     final player = game.player;
     if (player == null || player.dead) return;
 
-    final distance = position.distanceTo(player.position);
-    if (distance > triggerDistance) return;
+    final distance = position.distanceToSquared(player.position);
+    if (distance > triggerDistanceSquared) return;
 
     _inactive = true;
     tanksInside--;

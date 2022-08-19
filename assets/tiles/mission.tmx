@@ -403,7 +403,11 @@
 </data>
  </layer>
  <objectgroup id="5" name="spawn">
-  <object id="1" name="spawn_player" x="378.508" y="731.977" width="16" height="16"/>
+  <object id="1" name="spawn_player" x="378.508" y="731.977" width="16" height="16">
+   <properties>
+    <property name="tank_type" value="fast"/>
+   </properties>
+  </object>
   <object id="2" name="spawn" x="448.091" y="376.227" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="int" value="20"/>
@@ -413,7 +417,7 @@
   </object>
   <object id="3" name="spawn" x="391.909" y="375.818" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="5"/>
+    <property name="cooldown_seconds" type="int" value="1"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="20"/>
     <property name="trigger_distance" type="float" value="100"/>
@@ -475,7 +479,7 @@
   </object>
   <object id="12" name="spawn" x="1019" y="57.3333" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="120"/>
+    <property name="cooldown_seconds" type="int" value="1"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="5"/>
     <property name="trigger_distance" type="float" value="128"/>
@@ -490,8 +494,8 @@
   </object>
   <object id="14" name="spawn" x="557.333" y="323.667" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="120"/>
-    <property name="tank_type" value="junior"/>
+    <property name="cooldown_seconds" type="int" value="1"/>
+    <property name="tank_type" value="simple"/>
     <property name="tanks_inside" type="int" value="2"/>
     <property name="trigger_distance" type="float" value="40"/>
    </properties>
@@ -506,7 +510,7 @@
   </object>
   <object id="16" name="spawn" x="687.333" y="503.667" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="5"/>
+    <property name="cooldown_seconds" type="int" value="1"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="20"/>
     <property name="trigger_distance" type="float" value="80"/>
@@ -514,7 +518,7 @@
   </object>
   <object id="17" name="spawn" x="687.667" y="478.667" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="5"/>
+    <property name="cooldown_seconds" type="int" value="1"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="20"/>
     <property name="trigger_distance" type="float" value="80"/>
