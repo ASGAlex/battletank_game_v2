@@ -26,10 +26,16 @@ class HeavyBrick extends SpriteComponent
 
   @override
   onDeath(Component killedBy) {
-    game.batchRenderer?.batchedComponents.remove(this);
-    removeFromParent();
-    scheduleTreeUpdate();
+    _die();
     return super.onDeath(killedBy);
+  }
+
+  _die() {
+    if (isRemoving) return;
+    scheduleTreeUpdate();
+    removeFromParent();
+    game.batchRenderer?.batchedComponents.remove(this);
+    game.batchRenderer?.imageChanged = true;
   }
 
   @override
