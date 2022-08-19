@@ -1,8 +1,10 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame/particles.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
@@ -72,6 +74,9 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     _halfSizeY = size.y / 2;
   }
 
+  static const _nextSmokeParticleMax = 0.15;
+  double _nextSmokeParticle = 0;
+
   @override
   Future<void> onLoad() async {
     await typeController.onLoad();
@@ -131,65 +136,91 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   @override
   void update(double dt) {
-    _dtSumTreesCheck += dt;
-
-    if (current == TankState.run && canMoveForward) {
-      if (skipUpdateOnAngleChange) {
-        skipUpdateOnAngleChange = false;
-        return;
+    if (current == TankState.wreck) {
+      if (_nextSmokeParticle <= 0) {
+        final r = Random();
+        final newPos = position.translate(
+            8 - r.nextInt(16).toDouble(), 8 - r.nextInt(16).toDouble());
+        game.addSky(ParticleSystemComponent(
+            position: newPos,
+            particle: AcceleratedParticle(
+                acceleration:
+                    Vector2(r.nextDouble() * 15, -r.nextDouble() * 15),
+                speed: Vector2(r.nextDouble() * 30, -r.nextDouble() * 30),
+                child: ComputedParticle(
+                    lifespan: 5,
+                    renderer: (Canvas c, Particle particle) {
+                      final paint = Paint()
+                        ..color = material.Colors.grey
+                            .withOpacity(1 - particle.progress);
+                      c.drawCircle(Offset.zero, particle.progress * 8, paint);
+                    }))));
+        _nextSmokeParticle = _nextSmokeParticleMax;
+      } else {
+        _nextSmokeParticle -= dt;
       }
-      final innerSpeed = speed * dt;
-      Vector2 displacement;
-      switch (lookDirection) {
-        case Direction.left:
-          displacement = position.translate(-innerSpeed, 0);
-          break;
-        case Direction.right:
-          displacement = position.translate(innerSpeed, 0);
-          break;
-        case Direction.up:
-          displacement = position.translate(0, -innerSpeed);
-          break;
-        case Direction.down:
-          displacement = position.translate(0, innerSpeed);
-          break;
-      }
-      if (!displacement.isZero()) {
-        position = displacement;
-        if (trackTreeCollisions) {
-          game.lazyCollisionService.updateHitbox(
-              id: _lazyTreeHitboxId,
-              position: position.translate(-_halfSizeX, -_halfSizeY),
-              layer: 'tree',
-              size: size);
-        }
-        _trackDistance += innerSpeed;
-        if (_trackDistance > 2) {
-          _trackDistance = 0;
-          final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
-          final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
+      return;
+    } else {
+      _dtSumTreesCheck += dt;
 
-          game.backBuffer
-              ?.add(_TrackTrailComponent(position: leftTrackPos, angle: angle));
-          game.backBuffer?.add(
-              _TrackTrailComponent(position: rightTrackPos, angle: angle));
+      if (current == TankState.run && canMoveForward) {
+        if (skipUpdateOnAngleChange) {
+          skipUpdateOnAngleChange = false;
+          return;
         }
-        if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
-          game.lazyCollisionService
-              .getCollisionsCount(_lazyTreeHitboxId, 'tree')
-              .then((value) {
-            final isHidden = value >= 4;
+        final innerSpeed = speed * dt;
+        Vector2 displacement;
+        switch (lookDirection) {
+          case Direction.left:
+            displacement = position.translate(-innerSpeed, 0);
+            break;
+          case Direction.right:
+            displacement = position.translate(innerSpeed, 0);
+            break;
+          case Direction.up:
+            displacement = position.translate(0, -innerSpeed);
+            break;
+          case Direction.down:
+            displacement = position.translate(0, innerSpeed);
+            break;
+        }
+        if (!displacement.isZero()) {
+          position = displacement;
+          if (trackTreeCollisions) {
+            game.lazyCollisionService.updateHitbox(
+                id: _lazyTreeHitboxId,
+                position: position.translate(-_halfSizeX, -_halfSizeY),
+                layer: 'tree',
+                size: size);
+          }
+          _trackDistance += innerSpeed;
+          if (_trackDistance > 2) {
+            _trackDistance = 0;
+            final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
+            final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-            if (isHidden != _isHiddenFromEnemy) {
-              _isHiddenFromEnemy = isHidden;
-              onHiddenFromEnemyChanged(isHidden);
-            }
-          });
+            game.backBuffer?.add(
+                _TrackTrailComponent(position: leftTrackPos, angle: angle));
+            game.backBuffer?.add(
+                _TrackTrailComponent(position: rightTrackPos, angle: angle));
+          }
+          if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
+            game.lazyCollisionService
+                .getCollisionsCount(_lazyTreeHitboxId, 'tree')
+                .then((value) {
+              final isHidden = value >= 4;
+
+              if (isHidden != _isHiddenFromEnemy) {
+                _isHiddenFromEnemy = isHidden;
+                onHiddenFromEnemyChanged(isHidden);
+              }
+            });
+          }
         }
       }
-    }
-    if (current != TankState.idle) {
-      super.update(dt);
+      if (current != TankState.idle) {
+        super.update(dt);
+      }
     }
   }
 
@@ -237,6 +268,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
       if (_boomDuration != null) {
         Future.delayed(_boomDuration!).then((value) {
           current = TankState.wreck;
+          _nextSmokeParticle = _nextSmokeParticleMax;
           health = 1;
         });
       }

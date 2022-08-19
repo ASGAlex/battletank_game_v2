@@ -34,27 +34,29 @@ class Player extends Tank {
     if (Platform.isAndroid || Platform.isIOS) {
       onJoystickEvent();
     }
-    _dtAmbientEnemySoundCheck += dt;
-    if (_dtAmbientEnemySoundCheck > 2) {
-      _dtAmbientEnemySoundCheck = 0;
-      var minDistance = distanceOfSilence;
-      for (final enemy in game.enemies) {
-        final distance = enemy.position.distanceTo(position);
-        if (distance < minDistance) {
-          minDistance = distance;
+    if (!dead) {
+      _dtAmbientEnemySoundCheck += dt;
+      if (_dtAmbientEnemySoundCheck > 2) {
+        _dtAmbientEnemySoundCheck = 0;
+        var minDistance = distanceOfSilence;
+        for (final enemy in game.enemies) {
+          final distance = enemy.position.distanceTo(position);
+          if (distance < minDistance) {
+            minDistance = distance;
+          }
         }
-      }
-      if (minDistance >= distanceOfSilence) {
-        if (!_moveEnemiesAmbientSoundPaused) {
-          _moveEnemiesAmbientSound?.pause();
-          _moveEnemiesAmbientSoundPaused = true;
-        }
-      } else {
-        _moveEnemiesAmbientSound?.controller
-            ?.setVolume(1 - (minDistance / distanceOfSilence));
-        if (_moveEnemiesAmbientSoundPaused) {
-          _moveEnemiesAmbientSound?.play();
-          _moveEnemiesAmbientSoundPaused = false;
+        if (minDistance >= distanceOfSilence) {
+          if (!_moveEnemiesAmbientSoundPaused) {
+            _moveEnemiesAmbientSound?.pause();
+            _moveEnemiesAmbientSoundPaused = true;
+          }
+        } else {
+          _moveEnemiesAmbientSound?.controller
+              ?.setVolume(1 - (minDistance / distanceOfSilence));
+          if (_moveEnemiesAmbientSoundPaused) {
+            _moveEnemiesAmbientSound?.play();
+            _moveEnemiesAmbientSoundPaused = false;
+          }
         }
       }
     }
@@ -96,6 +98,7 @@ class Player extends Tank {
   onDeath(Component killedBy) {
     if (!dead) {
       SoundLibrary().movePlayer.pause();
+      _moveEnemiesAmbientSound?.pause();
       game.restorePlayer();
     }
     super.onDeath(killedBy);

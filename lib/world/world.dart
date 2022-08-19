@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 
 enum RenderPriority {
+  sky(25),
   walls(20),
   tree(15),
   bullet(12),
@@ -27,10 +28,15 @@ const distanceOfView = 200.0;
 const distanceOfReveal = 30;
 
 mixin ObjectLayers on FlameGame {
+  final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final _spawnLayer = Component(priority: RenderPriority.spawn.priority);
   final _trackLayer = Component(priority: RenderPriority.trackTrail.priority);
+
+  addSky(Component component) {
+    _skyLayer.add(component);
+  }
 
   addTank(Component component) {
     _tankLayer.add(component);
@@ -50,6 +56,7 @@ mixin ObjectLayers on FlameGame {
 
   @override
   Future<void>? onLoad() {
+    add(_skyLayer);
     add(_tankLayer);
     add(_bulletLayer);
     add(_spawnLayer);

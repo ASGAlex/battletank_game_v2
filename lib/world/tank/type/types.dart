@@ -34,7 +34,7 @@ class TankType0 extends TankType {
   int get speed => 55;
 
   @override
-  Duration get fireDelay => const Duration(microseconds: 1500);
+  Duration get fireDelay => const Duration(milliseconds: 1500);
 
   @override
   Vector2 get size => Vector2(14, 14);

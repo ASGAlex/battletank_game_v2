@@ -244,7 +244,7 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    camera.zoom = 0.7;
+    // camera.zoom = 0.7;
 
     final playerSpawn = await Spawn.waitFree(true);
     camera.followComponent(playerSpawn);

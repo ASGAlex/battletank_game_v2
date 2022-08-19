@@ -138,7 +138,10 @@ class Enemy extends Tank {
 
   @override
   void update(double dt) {
-    if (current == TankState.wreck) return;
+    if (current == TankState.wreck) {
+      super.update(dt);
+      return;
+    }
     if (current != TankState.die) {
       hearPlayer = _hearPlayer();
       seePlayer = _seePlayer();
