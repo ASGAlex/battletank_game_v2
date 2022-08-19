@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -12,6 +13,7 @@ import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
+import 'package:tank_game/ui/game/controls/gamepad.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
@@ -44,7 +46,8 @@ abstract class MyGameFeatures extends FlameGame
         HasTappables,
         ObjectLayers {}
 
-class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
+class MyGame extends MyGameFeatures
+    with MyJoystickMix, GameHardwareKeyboard, XInputGamePad {
   MyGame(this.mapFile, this.context);
 
   static final fpsTextPaint = TextPaint(
@@ -228,6 +231,9 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     initJoystick(() {
       player?.onFire();
     });
+    if (Platform.isWindows) {
+      initXInputGamePad();
+    }
     hudVisibility = VisibilityIndicator(this);
     hudVisibility!.setVisibility(true);
     hudVisibility!.x = 2;
@@ -361,5 +367,6 @@ class MyGame extends MyGameFeatures with MyJoystickMix, GameHardwareKeyboard {
     player?.onRemove();
     lazyCollisionService.stop();
     SpriteSheetBase.clearCaches();
+    Player.respawnCount = 3;
   }
 }

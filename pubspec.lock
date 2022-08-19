@@ -147,7 +147,7 @@ packages:
       name: file
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.2"
+    version: "6.1.4"
   flame:
     dependency: "direct main"
     description:
@@ -161,7 +161,7 @@ packages:
       name: flame_tiled
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.7.0"
+    version: "1.7.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -272,7 +272,7 @@ packages:
       name: path_provider_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.17"
+    version: "2.0.19"
   path_provider_ios:
     dependency: transitive
     description:
@@ -495,6 +495,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0+1"
+  xinput_gamepad:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "4462bf281a8a7ad5ba4a881bf5e9fb8d1642fdec"
+      url: "git@github.com:ASGAlex/xinput_gamepad.git"
+    source: git
+    version: "1.1.0"
   xml:
     dependency: transitive
     description:

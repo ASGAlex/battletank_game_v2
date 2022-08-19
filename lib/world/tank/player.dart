@@ -82,6 +82,9 @@ class Player extends Tank {
           duration: const Duration(milliseconds: 250), onFinish: () {
         game.colorFilter?.config.color = null;
       });
+      if (Platform.isWindows) {
+        game.xinputController.vibrate(const Duration(milliseconds: 250));
+      }
     }
 
     super.takeDamage(damage, from);
