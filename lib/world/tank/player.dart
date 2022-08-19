@@ -182,6 +182,7 @@ class Player extends Tank {
 
   @override
   onRemove() {
+    movePlayerSound?.pause();
     _moveEnemiesAmbientSound?.pause();
   }
 }

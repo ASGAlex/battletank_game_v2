@@ -26,11 +26,11 @@ class SpawnTankFactory {
       final i = Random().nextInt(types.length);
       return types[i];
     },
-    'type0': () => TankType0(),
-    'type1': () => TankType1(),
-    'type2': () => TankType2(),
-    'type3': () => TankType3(),
-    'type4': () => TankType4(),
+    'simple': () => TankType0(),
+    'middle': () => TankType1(),
+    'advanced': () => TankType2(),
+    'heavy': () => TankType3(),
+    'fast': () => TankType4(),
   };
 
   String typeName = 'any';

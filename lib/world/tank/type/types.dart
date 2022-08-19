@@ -81,7 +81,7 @@ class TankType2 extends TankType {
   double get damage => 1;
 
   @override
-  Duration get fireDelay => const Duration(milliseconds: 1000);
+  Duration get fireDelay => const Duration(milliseconds: 850);
 
   @override
   int get speed => 45;
@@ -106,7 +106,7 @@ class TankType3 extends TankType {
   double get damage => 2;
 
   @override
-  Duration get fireDelay => const Duration(milliseconds: 950);
+  Duration get fireDelay => const Duration(milliseconds: 1000);
 
   @override
   int get speed => 35;

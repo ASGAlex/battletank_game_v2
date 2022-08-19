@@ -6,7 +6,7 @@ import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/world.dart';
 
 class HeavyBrick extends SpriteComponent
-    with CollisionCallbacks, DestroyableComponent, BatchRender {
+    with CollisionCallbacks, DestroyableComponent, BatchRender, MyGameRef {
   HeavyBrick(this.tileProcessor, {super.position, super.size})
       : super(priority: RenderPriority.walls.priority);
 
@@ -25,6 +25,14 @@ class HeavyBrick extends SpriteComponent
   }
 
   @override
+  onDeath(Component killedBy) {
+    game.batchRenderer?.batchedComponents.remove(this);
+    removeFromParent();
+    scheduleTreeUpdate();
+    return super.onDeath(killedBy);
+  }
+
+  @override
   Future<void> onLoad() async {
     sprite = await tileProcessor.getSprite();
     final collision = tileProcessor.getCollisionRect();
@@ -33,6 +41,7 @@ class HeavyBrick extends SpriteComponent
       _hitbox = StaticCollision(collision);
       add(_hitbox);
     }
+    super.onLoad();
   }
 
   @override

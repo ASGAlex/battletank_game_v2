@@ -269,7 +269,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         Future.delayed(_boomDuration!).then((value) {
           current = TankState.wreck;
           _nextSmokeParticle = _nextSmokeParticleMax;
-          health = 1;
+          health = 0.1;
         });
       }
     } else {
