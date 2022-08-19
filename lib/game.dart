@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -231,9 +230,6 @@ class MyGame extends MyGameFeatures
     initJoystick(() {
       player?.onFire();
     });
-    if (Platform.isWindows) {
-      initXInputGamePad();
-    }
     hudVisibility = VisibilityIndicator(this);
     hudVisibility!.setVisibility(true);
     hudVisibility!.x = 2;

@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/packages/sound/lib/sfx.dart';
+import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/world/world.dart';
@@ -83,7 +84,10 @@ class Player extends Tank {
         game.colorFilter?.config.color = null;
       });
       if (Platform.isWindows) {
-        game.xinputController.vibrate(const Duration(milliseconds: 250));
+        SettingsController()
+            .xInputGamePadController
+            .xinputController
+            .vibrate(const Duration(milliseconds: 250));
       }
     }
 
