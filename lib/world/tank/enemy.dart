@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/world.dart';
@@ -13,6 +16,84 @@ enum _MovementMode { wait, random, attack }
 
 class Enemy extends Tank {
   Enemy({super.position});
+
+  final colorFilters = <ColorFilter>[
+    //red
+    const ColorFilter.matrix(<double>[
+      1.000,
+      0.000,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.200,
+      1.000,
+      0.000,
+      0.000,
+      1.000,
+      3.000,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      1.000,
+      0.000,
+    ]),
+
+    //green
+    const ColorFilter.matrix(<double>[
+      0.000,
+      0.000,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      1.000,
+      2.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      1.000,
+      0.000,
+    ]),
+    // white
+    const ColorFilter.matrix(<double>[
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      0.500,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.500,
+      1.000,
+      1.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      0.000,
+      1.000,
+      0.000
+    ]),
+  ];
+
+  ColorFilter get randomColorFilter {
+    final i = Random().nextInt(colorFilters.length);
+    return colorFilters[i];
+  }
 
   @override
   bool get trackTreeCollisions => false;
@@ -51,6 +132,8 @@ class Enemy extends Tank {
 
     _movementMode = _MovementMode.random;
     current = TankState.run;
+
+    getPaint().colorFilter = randomColorFilter;
   }
 
   @override
@@ -133,7 +216,14 @@ class Enemy extends Tank {
       _lastAvailableDirections.length < currentAvailableDirections.length;
 
   @override
+  takeDamage(int damage, Component from) {
+    getPaint().colorFilter = randomColorFilter;
+    super.takeDamage(damage, from);
+  }
+
+  @override
   onDeath(Component killedBy) {
+    getPaint().colorFilter = null;
     super.onDeath(killedBy);
     final game = findParent<MyGame>();
     if (game != null) {
