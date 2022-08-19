@@ -23,6 +23,9 @@ class SpriteSheetRegistry {
   final boomBig = _BoomBig();
   final tankBasic = _TankBasic();
   final tankBasic1 = _TankBasic1();
+  final tankBasic2 = _TankBasic2();
+  final tankBasic3 = _TankBasic3();
+  final tankBasic4 = _TankBasic4();
   final bullet = _Bullet();
   final ground = _Ground();
   final spawn = _Spawn();

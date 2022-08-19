@@ -15,7 +15,14 @@ class HeavyBrick extends SpriteComponent
   late StaticCollision _hitbox;
 
   @override
-  int health = 10000;
+  double health = 2;
+
+  @override
+  takeDamage(double damage, Component from) {
+    if (damage >= health) {
+      super.takeDamage(damage, from);
+    }
+  }
 
   @override
   Future<void> onLoad() async {

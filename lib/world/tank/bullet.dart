@@ -39,7 +39,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   }
 
   final Direction direction;
-  int damage = 1;
+  double damage = 1;
   int speed = 150;
 
   PositionComponent firedFrom;

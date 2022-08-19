@@ -18,7 +18,7 @@ class Player extends Tank {
 
   double _dtAmbientEnemySoundCheck = 0;
 
-  static int respawnCount = 3;
+  static int respawnCount = 30;
 
   MyJoystick? joystick;
 
@@ -76,18 +76,16 @@ class Player extends Tank {
   }
 
   @override
-  takeDamage(int damage, Component from) {
+  takeDamage(double damage, Component from) {
     if (!dead) {
       game.colorFilter?.animateTo(material.Colors.red,
           blendMode: BlendMode.colorBurn,
           duration: const Duration(milliseconds: 250), onFinish: () {
         game.colorFilter?.config.color = null;
       });
-      if (Platform.isWindows) {
-        SettingsController()
-            .xInputGamePadController
-            .xinputController
-            .vibrate(const Duration(milliseconds: 250));
+      final xinput = SettingsController().xInputGamePadController;
+      if (Platform.isWindows && xinput.useController) {
+        xinput.xinputController.vibrate(const Duration(milliseconds: 250));
       }
     }
 

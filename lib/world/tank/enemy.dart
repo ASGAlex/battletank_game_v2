@@ -166,6 +166,7 @@ class Enemy extends Tank {
           }
           if (_noEventsTimer >= _noEventsMax) {
             _movementMode = _MovementMode.wait;
+            current = TankState.idle;
             _directionsChecker.disableSideHitboxes();
             _noEventsTimer = 0;
           }
@@ -216,7 +217,7 @@ class Enemy extends Tank {
       _lastAvailableDirections.length < currentAvailableDirections.length;
 
   @override
-  takeDamage(int damage, Component from) {
+  takeDamage(double damage, Component from) {
     getPaint().colorFilter = randomColorFilter;
     super.takeDamage(damage, from);
   }

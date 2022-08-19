@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 
@@ -13,6 +14,10 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     final player = (this as MyGame).player;
     if (player == null) return KeyEventResult.handled;
     if (player.dead == true) return KeyEventResult.handled;
+    final isGamepad = (event.character == 'xinput');
+    if (!isGamepad) {
+      SettingsController().xInputGamePadController.useController = false;
+    }
 
     bool directionButtonPressed = false;
     bool updateAngle = false;

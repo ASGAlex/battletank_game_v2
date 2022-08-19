@@ -16,12 +16,21 @@ typedef _SpawnTankType = TankType Function();
 class SpawnTankFactory {
   static final _typesByName = <String, _SpawnTankType>{
     'any': () {
-      final types = <TankType>[TankType0(), TankType1()];
+      final types = <TankType>[
+        TankType0(),
+        TankType1(),
+        TankType2(),
+        TankType3(),
+        TankType4()
+      ];
       final i = Random().nextInt(types.length);
       return types[i];
     },
     'type0': () => TankType0(),
     'type1': () => TankType1(),
+    'type2': () => TankType2(),
+    'type3': () => TankType3(),
+    'type4': () => TankType4(),
   };
 
   String typeName = 'any';

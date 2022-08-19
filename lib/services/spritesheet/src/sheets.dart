@@ -128,6 +128,132 @@ class _TankBasic1 extends SpriteSheetBase {
       getPrecompiledAnimation('wreck');
 }
 
+class _TankBasic2 extends SpriteSheetBase {
+  _TankBasic2() : super() {
+    compileAnimation(
+      name: 'run',
+      row: 2,
+      from: 0,
+      to: 2,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 0.2,
+    );
+    compileAnimation(
+      name: 'idle',
+      row: 2,
+      from: 0,
+      to: 1,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+    compileAnimation(
+      name: 'wreck',
+      row: 2,
+      from: 2,
+      to: 3,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+  }
+
+  @override
+  String get fileName => 'spritesheets/tank_basic2.png';
+
+  @override
+  Vector2 get spriteSize => Vector2(14, 16);
+
+  Future<SpriteAnimation> get animationRun => getPrecompiledAnimation('run');
+
+  Future<SpriteAnimation> get animationIdle => getPrecompiledAnimation('idle');
+
+  Future<SpriteAnimation> get animationWreck =>
+      getPrecompiledAnimation('wreck');
+}
+
+class _TankBasic3 extends SpriteSheetBase {
+  _TankBasic3() : super() {
+    compileAnimation(
+      name: 'run',
+      row: 3,
+      from: 0,
+      to: 2,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 0.2,
+    );
+    compileAnimation(
+      name: 'idle',
+      row: 3,
+      from: 0,
+      to: 1,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+    compileAnimation(
+      name: 'wreck',
+      row: 3,
+      from: 2,
+      to: 3,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+  }
+
+  @override
+  String get fileName => 'spritesheets/tank_basic2.png';
+
+  @override
+  Vector2 get spriteSize => Vector2(14, 16);
+
+  Future<SpriteAnimation> get animationRun => getPrecompiledAnimation('run');
+
+  Future<SpriteAnimation> get animationIdle => getPrecompiledAnimation('idle');
+
+  Future<SpriteAnimation> get animationWreck =>
+      getPrecompiledAnimation('wreck');
+}
+
+class _TankBasic4 extends SpriteSheetBase {
+  _TankBasic4() : super() {
+    compileAnimation(
+      name: 'run',
+      row: 4,
+      from: 0,
+      to: 2,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 0.2,
+    );
+    compileAnimation(
+      name: 'idle',
+      row: 4,
+      from: 0,
+      to: 1,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+    compileAnimation(
+      name: 'wreck',
+      row: 4,
+      from: 2,
+      to: 3,
+      frameClipRect: const Rect.fromLTWH(0, 1, 14, 15),
+      stepTime: 10,
+    );
+  }
+
+  @override
+  String get fileName => 'spritesheets/tank_basic2.png';
+
+  @override
+  Vector2 get spriteSize => Vector2(14, 16);
+
+  Future<SpriteAnimation> get animationRun => getPrecompiledAnimation('run');
+
+  Future<SpriteAnimation> get animationIdle => getPrecompiledAnimation('idle');
+
+  Future<SpriteAnimation> get animationWreck =>
+      getPrecompiledAnimation('wreck');
+}
+
 class _Bullet extends SpriteSheetBase {
   _Bullet() : super() {
     compileAnimation(

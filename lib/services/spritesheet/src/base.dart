@@ -48,12 +48,12 @@ abstract class SpriteSheetBase {
           for (final frame in animation.frames) {
             if (_resizedSprites.contains(frame.sprite)) continue;
             final srcRect = frame.sprite.src;
-            frameClipRect = Rect.fromLTWH(
-                srcRect.left + frameClipRect!.left,
-                srcRect.top + frameClipRect!.top,
-                frameClipRect!.width,
-                frameClipRect!.height);
-            frame.sprite.src = frameClipRect!;
+            final newRect = Rect.fromLTWH(
+                srcRect.left + frameClipRect.left,
+                srcRect.top + frameClipRect.top,
+                frameClipRect.width,
+                frameClipRect.height);
+            frame.sprite.src = newRect;
             _resizedSprites.add(frame.sprite);
           }
         }

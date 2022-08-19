@@ -102,11 +102,11 @@ mixin MyGameRef on Component {
 }
 
 mixin DestroyableComponent on PositionComponent {
-  int health = 0;
+  double health = 0;
   bool dead = false;
 
   @mustCallSuper
-  takeDamage(int damage, Component from) {
+  takeDamage(double damage, Component from) {
     health -= damage;
     if (health <= 0) {
       onDeath(from);

@@ -20,6 +20,8 @@ class TankTypeController {
     parent.health = _type.health;
     parent.speed = _type.speed;
     parent.size = _type.size;
+    parent.damage = _type.damage;
+    parent.fireDelay = _type.fireDelay;
     parent.updateSize();
 
     parent.animations = {

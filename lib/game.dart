@@ -363,6 +363,6 @@ class MyGame extends MyGameFeatures
     player?.onRemove();
     lazyCollisionService.stop();
     SpriteSheetBase.clearCaches();
-    Player.respawnCount = 3;
+    Player.respawnCount = 30;
   }
 }

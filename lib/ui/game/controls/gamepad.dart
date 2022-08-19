@@ -15,6 +15,7 @@ class XInputGamePadController extends ChangeNotifier {
   late final Controller xinputController;
   var spaceHold = false;
   final keysPressed = <LogicalKeyboardKey>{};
+  bool useController = false;
 
   initXInputGamePad() {
     if (Platform.isWindows) {
@@ -29,6 +30,7 @@ class XInputGamePadController extends ChangeNotifier {
   }
 
   onRawButtonEvent(int bitmask) {
+    useController = true;
     keysPressed.clear();
     if (bitmask & XINPUT_GAMEPAD_DPAD_UP > 0) {
       keysPressed.add(LogicalKeyboardKey.keyW);
@@ -59,15 +61,18 @@ class XInputGamePadController extends ChangeNotifier {
 }
 
 mixin XInputGamePad on MyGameFeatures {
-  static const _raw = RawKeyUpEvent(data: RawKeyEventDataWindows());
+  static const _raw =
+      RawKeyUpEvent(character: 'xinput', data: RawKeyEventDataWindows());
 
   @override
   void update(double dt) {
     final controller = SettingsController().xInputGamePadController;
-    if (controller.spaceHold) {
-      controller.keysPressed.add(LogicalKeyboardKey.space);
+    if (controller.useController) {
+      if (controller.spaceHold) {
+        controller.keysPressed.add(LogicalKeyboardKey.space);
+      }
+      onKeyEvent(_raw, controller.keysPressed);
     }
-    onKeyEvent(_raw, controller.keysPressed);
     super.update(dt);
   }
 }

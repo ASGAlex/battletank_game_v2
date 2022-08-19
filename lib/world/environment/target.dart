@@ -36,7 +36,7 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
   bool protectFromEnemies;
 
   @override
-  int health = 1;
+  double health = 1;
 
   final _hitbox = RectangleHitbox();
   Duration? _boomDuration;

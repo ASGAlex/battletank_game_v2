@@ -52,7 +52,9 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   bool get trackTreeCollisions => true;
 
   @override
-  int health = 1;
+  double health = 1;
+
+  double damage = 1;
 
   int _lazyTreeHitboxId = -1;
   final movementHitbox = MovementHitbox();
@@ -107,6 +109,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           direction: lookDirection,
           angle: angle,
           position: position,
+          damage: damage,
           firedFrom: this);
       game.addBullet(bullet);
       final sfx = SoundLibrary().playerFireBullet;
