@@ -403,11 +403,7 @@
 </data>
  </layer>
  <objectgroup id="5" name="spawn">
-  <object id="1" name="spawn_player" x="378.508" y="731.977" width="16" height="16">
-   <properties>
-    <property name="tank_type" value="fast"/>
-   </properties>
-  </object>
+  <object id="1" name="spawn_player" x="378.508" y="731.977" width="16" height="16"/>
   <object id="2" name="spawn" x="448.091" y="376.227" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="int" value="20"/>

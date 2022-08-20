@@ -72,8 +72,6 @@ class Player extends Tank {
   Future<void> onLoad() async {
     await super.onLoad();
     joystick = gameRef.joystick;
-    health = 50;
-    damage = 5;
   }
 
   @override
