@@ -52,6 +52,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   double _dtSumTreesCheck = 0;
 
   bool get trackTreeCollisions => true;
+  bool renderTrackTrail = true;
 
   @override
   double health = 1;
@@ -194,7 +195,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
                 size: size);
           }
           _trackDistance += innerSpeed;
-          if (_trackDistance > 2) {
+          if (_trackDistance > 2 && renderTrackTrail) {
             _trackDistance = 0;
             final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
             final rightTrackPos = transform.localToGlobal(Vector2(12, 0));

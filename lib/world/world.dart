@@ -23,6 +23,7 @@ enum RenderPriority {
   const RenderPriority(this.priority);
 }
 
+const distanceOfSuspendingSquared = 250.0 * 250;
 const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
