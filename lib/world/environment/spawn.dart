@@ -45,7 +45,7 @@ class SpawnTankFactory {
 }
 
 class Spawn extends SpriteAnimationComponent
-    with CollisionCallbacks, MyGameRef {
+    with CollisionCallbacks, HasGameRef<MyGame> {
   static final _instances = <Spawn>[];
   static const spawnDurationSec = 2;
 

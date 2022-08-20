@@ -12,6 +12,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     Set<LogicalKeyboardKey> keysPressed,
   ) {
     final player = (this as MyGame).player;
+
     if (player == null) return KeyEventResult.handled;
     if (player.dead == true) return KeyEventResult.handled;
     final isGamepad = (event.character == 'xinput');
@@ -76,8 +77,8 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     if (directionButtonPressed && player.canMoveForward) {
       player.current = TankState.run;
       if (player.movePlayerSoundPaused) {
-        player.movePlayerSound?.controller?.setVolume(0.5);
-        player.movePlayerSound?.play();
+        player.movePlayerSound.setVolume(1.5);
+        player.movePlayerSound.resume();
         player.movePlayerSoundPaused = false;
       }
     } else {
@@ -85,7 +86,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
         player.current = TankState.idle;
       }
       if (!player.movePlayerSoundPaused) {
-        player.movePlayerSound?.pause();
+        player.movePlayerSound.pause();
         player.movePlayerSoundPaused = true;
       }
     }

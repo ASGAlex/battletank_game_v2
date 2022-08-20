@@ -13,7 +13,7 @@ class Brick extends SpriteComponent
     with
         CollisionCallbacks,
         CollisionQuadTreeController<MyGame>,
-        MyGameRef,
+        HasGameRef<MyGame>,
         BatchRender {
   Brick(this.tileProcessor, {super.position, super.size})
       : super(priority: RenderPriority.walls.priority);
@@ -40,7 +40,7 @@ class Brick extends SpriteComponent
 
   void collideWithBullet(Bullet bullet) {
     if (bullet.current == BulletState.boom) return;
-    game.batchRenderer?.imageChanged = true;
+    gameRef.batchRenderer?.imageChanged = true;
     if (_hitsByBullet >= 1) {
       _die();
     } else {
@@ -70,7 +70,7 @@ class Brick extends SpriteComponent
     if (isRemoving) return;
     scheduleTreeUpdate();
     removeFromParent();
-    game.batchRenderer?.batchedComponents.remove(this);
+    gameRef.batchRenderer?.batchedComponents.remove(this);
   }
 
   @override

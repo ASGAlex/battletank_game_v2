@@ -2,19 +2,20 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
 import 'package:tank_game/extensions.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/intl.dart';
+import 'package:tank_game/world/sound.dart';
 
 import '../world.dart';
 
 enum TargetState { alive, boom, dead }
 
 class Target extends SpriteAnimationGroupComponent<TargetState>
-    with DestroyableComponent, MyGameRef {
+    with DestroyableComponent, HasGameRef<MyGame> {
   static int _primaryProtectTargets = 0;
   static int _primaryProtectTargetsMax = 0;
 
@@ -81,7 +82,7 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
   }
 
   decreaseCounters() {
-    final loc = game.buildContext?.loc();
+    final loc = gameRef.buildContext?.loc();
     if (loc == null) {
       throw "Unexpected null locale";
     }
@@ -92,7 +93,7 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
         if (_primaryProtectTargets == 0) {
           finishGame = true;
         }
-        game.onObjectivesStateChange(loc.mo_primary_target_just_lost,
+        gameRef.onObjectivesStateChange(loc.mo_primary_target_just_lost,
             FlashMessageType.danger, finishGame);
       } else {
         _primaryKillTargets--;
@@ -100,23 +101,23 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
         if (_primaryKillTargets == 0) {
           finishGame = true;
         }
-        game.onObjectivesStateChange(loc.mo_primary_target_just_killed,
+        gameRef.onObjectivesStateChange(loc.mo_primary_target_just_killed,
             FlashMessageType.good, finishGame);
       }
       SettingsController().currentMission.objectives =
-          checkMissionObjectives(game.context.loc());
+          checkMissionObjectives(gameRef.context.loc());
     } else {
       if (protectFromEnemies) {
         _secondaryProtectTargets--;
-        game.onObjectivesStateChange(
+        gameRef.onObjectivesStateChange(
             loc.mo_secondary_target_just_lost, FlashMessageType.danger);
       } else {
         _secondaryKillTargets--;
-        game.onObjectivesStateChange(
+        gameRef.onObjectivesStateChange(
             loc.mo_secondary_target_just_killed, FlashMessageType.good);
       }
       SettingsController().currentMission.objectives =
-          checkMissionObjectives(game.context.loc());
+          checkMissionObjectives(gameRef.context.loc());
     }
   }
 
@@ -150,12 +151,11 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     remove(_hitbox);
     super.onDeath(killedBy);
     current = TargetState.boom;
-    final sfx = SoundLibrary().explosionPlayer;
-    sfx.play();
+    SoundLibrary.createSfxPlayer('explosion_player.m4a').resume();
     decreaseCounters();
     Future.delayed(_boomDuration!).then((value) {
       current = TargetState.dead;
-      game.backBuffer?.add(this);
+      gameRef.backBuffer?.add(this);
       removeFromParent();
     });
   }

@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:tank_game/packages/sound/lib/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/world/world.dart';
 
+import '../sound.dart';
 import 'core/base_tank.dart';
 import 'core/direction.dart';
 
@@ -22,10 +22,16 @@ class Player extends Tank {
 
   MyJoystick? joystick;
 
-  Sfx? movePlayerSound;
+  final movePlayerSound = SoundLibrary.createMusicPlayer('move_player.m4a',
+      playerId: 'firstPlayerSelf')
+    ..setReleaseMode(ReleaseMode.loop);
+
   bool movePlayerSoundPaused = true;
 
-  Sfx? _moveEnemiesAmbientSound;
+  final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
+      'move_enemies.m4a',
+      playerId: 'firstPlayerEnemies')
+    ..setReleaseMode(ReleaseMode.loop);
   bool _moveEnemiesAmbientSoundPaused = true;
 
   @override
@@ -36,10 +42,10 @@ class Player extends Tank {
     }
     if (!dead) {
       _dtAmbientEnemySoundCheck += dt;
-      if (_dtAmbientEnemySoundCheck > 2) {
+      if (_dtAmbientEnemySoundCheck > 0.6) {
         _dtAmbientEnemySoundCheck = 0;
         var minDistance = distanceOfSilenceSquared;
-        for (final enemy in game.enemies) {
+        for (final enemy in gameRef.enemies) {
           final distance = enemy.position.distanceToSquared(position);
           if (distance < minDistance) {
             minDistance = distance;
@@ -47,14 +53,14 @@ class Player extends Tank {
         }
         if (minDistance >= distanceOfSilenceSquared) {
           if (!_moveEnemiesAmbientSoundPaused) {
-            _moveEnemiesAmbientSound?.pause();
+            _moveEnemiesAmbientSound.pause();
             _moveEnemiesAmbientSoundPaused = true;
           }
         } else {
-          _moveEnemiesAmbientSound?.controller
-              ?.setVolume(1 - (minDistance / distanceOfSilenceSquared));
+          _moveEnemiesAmbientSound
+              .setVolume(1 - (minDistance / distanceOfSilenceSquared));
           if (_moveEnemiesAmbientSoundPaused) {
-            _moveEnemiesAmbientSound?.play();
+            _moveEnemiesAmbientSound.resume();
             _moveEnemiesAmbientSoundPaused = false;
           }
         }
@@ -65,25 +71,25 @@ class Player extends Tank {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    joystick = game.joystick;
-    movePlayerSound = SoundLibrary().movePlayer;
-    _moveEnemiesAmbientSound = SoundLibrary().moveEnemies;
+    joystick = gameRef.joystick;
+    health = 50;
+    damage = 5;
   }
 
   @override
   onHiddenChange(bool hidden) {
     if (hidden == true && dead == true) {
-      game.restorePlayer();
+      gameRef.restorePlayer();
     }
   }
 
   @override
   takeDamage(double damage, Component from) {
     if (!dead) {
-      game.colorFilter?.animateTo(material.Colors.red,
+      gameRef.colorFilter?.animateTo(material.Colors.red,
           blendMode: BlendMode.colorBurn,
           duration: const Duration(milliseconds: 250), onFinish: () {
-        game.colorFilter?.config.color = null;
+        gameRef.colorFilter?.config.color = null;
       });
       final xinput = SettingsController().xInputGamePadController;
       if (Platform.isWindows && xinput.useController) {
@@ -97,9 +103,9 @@ class Player extends Tank {
   @override
   onDeath(Component killedBy) {
     if (!dead) {
-      SoundLibrary().movePlayer.pause();
-      _moveEnemiesAmbientSound?.pause();
-      game.restorePlayer();
+      _moveEnemiesAmbientSound.pause();
+      movePlayerSound.pause();
+      gameRef.restorePlayer();
     }
     super.onDeath(killedBy);
   }
@@ -153,8 +159,8 @@ class Player extends Tank {
         changeCollisionType(movementHitbox, CollisionType.active);
       }
       if (movePlayerSoundPaused) {
-        movePlayerSound?.controller?.setVolume(0.5);
-        movePlayerSound?.play();
+        movePlayerSound.setVolume(0.5);
+        movePlayerSound.resume();
         movePlayerSoundPaused = false;
       }
     } else {
@@ -163,7 +169,7 @@ class Player extends Tank {
         changeCollisionType(movementHitbox, CollisionType.active);
       }
       if (!movePlayerSoundPaused) {
-        movePlayerSound?.pause();
+        movePlayerSound.pause();
         movePlayerSoundPaused = true;
       }
     }
@@ -177,12 +183,12 @@ class Player extends Tank {
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {
-    game.hudVisibility?.setVisibility(!isHidden);
+    gameRef.hudVisibility?.setVisibility(!isHidden);
   }
 
   @override
   onRemove() {
-    movePlayerSound?.pause();
-    _moveEnemiesAmbientSound?.pause();
+    movePlayerSound.pause();
+    _moveEnemiesAmbientSound.pause();
   }
 }

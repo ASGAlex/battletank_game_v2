@@ -1,7 +1,8 @@
 import 'package:flame/collisions.dart';
-import 'package:tank_game/world/world.dart';
+import 'package:flame/components.dart';
+import 'package:tank_game/game.dart';
 
-class HitboxMapBounds extends RectangleHitbox with MyGameRef {
+class HitboxMapBounds extends RectangleHitbox with HasGameRef<MyGame> {
   HitboxMapBounds({super.angle, super.anchor, super.priority, super.position});
 
   bool _outOfBounds = false;
@@ -13,11 +14,11 @@ class HitboxMapBounds extends RectangleHitbox with MyGameRef {
 
   @override
   onLoad() {
-    mapWidth = (game.currentMap?.map.width ?? 0) *
-        (game.currentMap?.map.tileWidth ?? 0);
+    mapWidth = (gameRef.currentMap?.map.width ?? 0) *
+        (gameRef.currentMap?.map.tileWidth ?? 0);
 
-    mapHeight = (game.currentMap?.map.height ?? 0) *
-        (game.currentMap?.map.tileHeight ?? 0);
+    mapHeight = (gameRef.currentMap?.map.height ?? 0) *
+        (gameRef.currentMap?.map.tileHeight ?? 0);
     return null;
   }
 

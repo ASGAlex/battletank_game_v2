@@ -9,15 +9,10 @@ import 'has_quad_tree_collision_detection.dart';
 mixin CollisionQuadTreeController<T extends HasQuadTreeCollisionDetection>
     on PositionComponent {
   final _listenerByComponent = <ShapeHitbox, VoidCallback>{};
-  T? _game;
-
-  T get game {
-    _game ??= findParent<T>();
-    return _game as T;
-  }
 
   QuadTreeBroadphase get _quadBroadphase {
-    final bf = game.collisionDetection as QuadTreeCollisionDetection;
+    final bf = (this as HasGameRef<T>).gameRef.collisionDetection
+        as QuadTreeCollisionDetection;
     return bf.quadBroadphase;
   }
 
@@ -43,7 +38,7 @@ mixin CollisionQuadTreeController<T extends HasQuadTreeCollisionDetection>
     final result = super.add(component);
     if (component is ShapeHitbox) {
       final listener = () {
-        game.scheduleHitboxUpdate(component);
+        (this as HasGameRef<T>).gameRef.scheduleHitboxUpdate(component);
       };
       position.addListener(listener);
       size.addListener(listener);

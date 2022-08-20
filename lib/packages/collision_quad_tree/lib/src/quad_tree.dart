@@ -1,9 +1,5 @@
 import 'package:flame/collisions.dart';
-import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
-import 'package:flame/src/collisions/hitboxes/hitbox.dart';
-import 'package:flutter/widgets.dart';
 
 extension _QuadMethods on Rect {
   bool containsRect(Rect box) =>

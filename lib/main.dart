@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/ui/route_builder.dart';
+import 'package:tank_game/world/sound.dart';
 
 import 'services/settings/controller.dart';
 import 'ui/intl.dart';
@@ -55,6 +56,7 @@ class _MyAppState extends State<MyApp> {
   onXInputKeyPressed() {
     for (final logicalKey in xinput.keysPressed) {
       final event = RawKeyEventSim(logicalKey);
+      // ignore: invalid_use_of_protected_member
       manager.handleKeypress(context, event);
     }
   }
@@ -69,6 +71,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     Flame.device.setLandscape();
     Flame.device.fullScreen();
+    SoundLibrary.loadSounds();
     xinput.addListener(onXInputKeyPressed);
     super.initState();
   }

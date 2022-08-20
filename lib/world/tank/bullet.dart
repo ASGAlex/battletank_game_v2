@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -7,14 +8,13 @@ import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
-import 'package:tank_game/packages/sound/lib/sound.dart';
-import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/water.dart';
 
+import '../sound.dart';
 import '../world.dart';
 import 'core/direction.dart';
 import 'core/hitbox_movement.dart';
@@ -27,7 +27,8 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     with
         CollisionCallbacks,
         HideableComponent,
-        CollisionQuadTreeController<MyGame> {
+        CollisionQuadTreeController<MyGame>,
+        HasGameRef<MyGame> {
   Bullet(
       {required this.direction,
       required this.firedFrom,
@@ -44,7 +45,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   PositionComponent firedFrom;
 
-  final audioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
+  final distantSfxPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
   double _distance = 0;
   final _maxDistance = 300;
 
@@ -86,6 +87,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     }
     position = displacement;
     angle = direction.angle;
+    super.onLoad();
   }
 
   @override
@@ -115,7 +117,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
           break;
       }
       position = displacement;
-      // updateQuadTreeCollision(_hitbox);
       _distance += innerSpeed;
       if (_distance > _maxDistance) {
         die(noHit: true);
@@ -144,22 +145,21 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     removeQuadTreeCollision(_hitbox);
 
-    Sfx? sfx;
+    AudioPlayer? sfx;
     if (other is Brick) {
       other.collideWithBullet(this);
-      sfx = SoundLibrary().playerBulletWall;
+      sfx = SoundLibrary.createSfxPlayer('player_bullet_wall.m4a');
     } else if (other is HeavyBrick) {
-      sfx = SoundLibrary().playerBulletStrongWall;
+      sfx = SoundLibrary.createSfxPlayer('player_bullet_strong_wall.m4a');
     }
 
     die(skipRemove: true);
 
     if (sfx != null) {
-      final game = findParent<MyGame>();
-      audioPlayer.actualDistance =
-          (game?.player?.position.distanceToSquared(position) ??
+      distantSfxPlayer.actualDistance =
+          (gameRef.player?.position.distanceToSquared(position) ??
               distanceOfSilenceSquared + 1);
-      audioPlayer.play(sfx);
+      distantSfxPlayer.play(sfx);
     }
 
     if (other is DestroyableComponent) {
@@ -183,7 +183,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       Future.delayed(_boomDuration!).then((value) {
         if (noHit) {
           current = BulletState.crater;
-          game.backBuffer?.add(this);
+          gameRef.backBuffer?.add(this);
         }
         removeFromParent();
       });

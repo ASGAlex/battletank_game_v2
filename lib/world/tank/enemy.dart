@@ -217,7 +217,7 @@ class Enemy extends Tank {
   }
 
   bool _shouldSuspend() {
-    final player = game.player;
+    final player = gameRef.player;
     if (player == null || player.dead) {
       return false;
     }
@@ -226,7 +226,7 @@ class Enemy extends Tank {
   }
 
   bool _hearPlayer() {
-    final player = game.player;
+    final player = gameRef.player;
     if (player == null || player.current == TankState.idle || player.dead) {
       return false;
     }
@@ -235,7 +235,7 @@ class Enemy extends Tank {
   }
 
   bool _seePlayer() {
-    final player = game.player;
+    final player = gameRef.player;
     if (player == null || player.dead) {
       return false;
     }

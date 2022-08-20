@@ -1,13 +1,13 @@
-import 'dart:ui';
-
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
+import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
+import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
+import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
@@ -23,10 +23,6 @@ import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
-import 'packages/back_buffer/lib/back_buffer.dart';
-import 'packages/collision_quad_tree/lib/collision_quad_tree.dart';
-import 'packages/color_filter/lib/color_filter.dart';
-import 'services/sound/library.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
@@ -80,7 +76,7 @@ class MyGame extends MyGameFeatures
     initColorFilter<MyGame>();
 
     consoleMessages.sendMessage('loading sounds...');
-    SoundLibrary().init();
+    // SoundLibrary().init();
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('loading map...');
@@ -244,12 +240,12 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    // camera.zoom = 0.7;
+    // camera.zoom = 0.3;
 
     final playerSpawn = await Spawn.waitFree(true);
     camera.followComponent(playerSpawn);
     restorePlayer(playerSpawn);
-    SoundLibrary().playIntro();
+    // SoundLibrary().playIntro();
     consoleMessages.sendMessage('done.');
     consoleMessages.sendMessage('All done, game started!');
   }

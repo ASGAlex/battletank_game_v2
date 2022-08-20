@@ -38,7 +38,7 @@ class AttackMovementController {
       _randomMovementTimer -= dt;
       return true;
     } else {
-      final target = parent.game.player;
+      final target = parent.gameRef.player;
       if (target == null || target.dead) return false;
       if (seePlayer) {
         _lastKnownPosition = Offset(target.x, target.y);

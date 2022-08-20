@@ -1,12 +1,17 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/world.dart';
 
 class HeavyBrick extends SpriteComponent
-    with CollisionCallbacks, DestroyableComponent, BatchRender, MyGameRef {
+    with
+        CollisionCallbacks,
+        DestroyableComponent,
+        BatchRender,
+        HasGameRef<MyGame> {
   HeavyBrick(this.tileProcessor, {super.position, super.size})
       : super(priority: RenderPriority.walls.priority);
 
@@ -34,8 +39,8 @@ class HeavyBrick extends SpriteComponent
     if (isRemoving) return;
     scheduleTreeUpdate();
     removeFromParent();
-    game.batchRenderer?.batchedComponents.remove(this);
-    game.batchRenderer?.imageChanged = true;
+    gameRef.batchRenderer?.batchedComponents.remove(this);
+    gameRef.batchRenderer?.imageChanged = true;
   }
 
   @override

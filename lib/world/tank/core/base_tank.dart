@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -9,12 +10,11 @@ import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
-import 'package:tank_game/packages/sound/lib/sound.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/services/sound/library.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
+import '../../sound.dart';
 import '../bullet.dart';
 import '../enemy.dart';
 import '../player.dart';
@@ -29,7 +29,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         CollisionCallbacks,
         CollisionQuadTreeController<MyGame>,
         DestroyableComponent,
-        MyGameRef,
+        HasGameRef<MyGame>,
         HideableComponent {
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
@@ -91,7 +91,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     await super.onLoad();
 
     if (trackTreeCollisions) {
-      game.lazyCollisionService
+      gameRef.lazyCollisionService
           .addHitbox(
               position: position,
               size: size,
@@ -117,13 +117,13 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           position: position,
           damage: damage,
           firedFrom: this);
-      game.addBullet(bullet);
-      final sfx = SoundLibrary().playerFireBullet;
+      gameRef.addBullet(bullet);
+      final sfx = SoundLibrary.createSfxPlayer('player_fire_bullet.m4a');
       if (this is Player) {
-        sfx.play(volume: 1);
+        sfx.resume();
       } else {
         distantAudioPlayer.actualDistance =
-            (game.player?.position.distanceToSquared(position) ??
+            (gameRef.player?.position.distanceToSquared(position) ??
                 distanceOfSilenceSquared + 1);
         distantAudioPlayer.play(sfx);
       }
@@ -142,7 +142,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         final r = Random();
         final newPos = position.translate(
             8 - r.nextInt(16).toDouble(), 8 - r.nextInt(16).toDouble());
-        game.addSky(ParticleSystemComponent(
+        gameRef.addSky(ParticleSystemComponent(
             position: newPos,
             particle: AcceleratedParticle(
                 acceleration:
@@ -188,7 +188,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         if (!displacement.isZero()) {
           position = displacement;
           if (trackTreeCollisions) {
-            game.lazyCollisionService.updateHitbox(
+            gameRef.lazyCollisionService.updateHitbox(
                 id: _lazyTreeHitboxId,
                 position: position.translate(-_halfSizeX, -_halfSizeY),
                 layer: 'tree',
@@ -200,13 +200,13 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
             final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
             final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-            game.backBuffer?.add(
+            gameRef.backBuffer?.add(
                 _TrackTrailComponent(position: leftTrackPos, angle: angle));
-            game.backBuffer?.add(
+            gameRef.backBuffer?.add(
                 _TrackTrailComponent(position: rightTrackPos, angle: angle));
           }
           if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
-            game.lazyCollisionService
+            gameRef.lazyCollisionService
                 .getCollisionsCount(_lazyTreeHitboxId, 'tree')
                 .then((value) {
               final isHidden = value >= 4;
@@ -247,23 +247,27 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   @override
   onDeath(Component killedBy) {
     if (current != TankState.wreck) {
-      game.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
+      gameRef.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
       current = TankState.die;
 
       super.onDeath(killedBy);
 
-      Sfx? sfx;
+      AudioPlayer? sfx;
       if (this is Player) {
-        sfx = SoundLibrary().explosionPlayer;
+        sfx = SoundLibrary.createSfxPlayer('explosion_player.m4a');
       } else if (this is Enemy) {
-        sfx = SoundLibrary().explosionEnemy;
+        sfx = SoundLibrary.createSfxPlayer('explosion_enemy.m4a');
       }
 
       if (sfx != null) {
-        distantAudioPlayer.actualDistance =
-            (game.player?.position.distanceToSquared(position) ??
-                distanceOfSilenceSquared + 1);
-        distantAudioPlayer.play(sfx);
+        if (this is Player) {
+          sfx.resume();
+        } else {
+          distantAudioPlayer.actualDistance =
+              (gameRef.player?.position.distanceToSquared(position) ??
+                  distanceOfSilenceSquared + 1);
+          distantAudioPlayer.play(sfx);
+        }
       }
 
       if (_boomDuration != null) {
@@ -274,7 +278,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         });
       }
     } else {
-      game.backBuffer?.add(this);
+      gameRef.backBuffer?.add(this);
       removeFromParent();
     }
   }

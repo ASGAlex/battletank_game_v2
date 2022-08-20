@@ -9,10 +9,11 @@ import 'collision_controller.dart';
 
 mixin HasQuadTreeCollisionDetection on FlameGame
     implements HasCollisionDetection {
-  CollisionDetection<Hitbox>? _collisionDetection;
+  CollisionDetection<ShapeHitbox>? _collisionDetection;
 
   @override
-  CollisionDetection<Hitbox> get collisionDetection => _collisionDetection!;
+  CollisionDetection<ShapeHitbox> get collisionDetection =>
+      _collisionDetection!;
 
   final _scheduledUpdate = <ShapeHitbox>{};
 

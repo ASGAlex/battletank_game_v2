@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/extensions.dart';
 
 extension Vector2Ext on Vector2 {
   Vector2 translate(double x, double y) {

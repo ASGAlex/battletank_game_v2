@@ -2,9 +2,6 @@ import 'dart:collection';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/src/collisions/broadphase.dart';
-import 'package:flame/src/collisions/collision_callbacks.dart';
-import 'package:flame/src/collisions/hitboxes/hitbox.dart';
 import 'package:tank_game/world/world.dart';
 
 import 'quad_tree.dart';
