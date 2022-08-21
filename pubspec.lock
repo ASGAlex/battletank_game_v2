@@ -500,7 +500,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "4462bf281a8a7ad5ba4a881bf5e9fb8d1642fdec"
+      resolved-ref: cb6b80d820283c0722320a3133b10ef8e9c9df3b
       url: "git@github.com:ASGAlex/xinput_gamepad.git"
     source: git
     version: "1.1.0"

@@ -26,13 +26,10 @@ class Player extends Tank {
       playerId: 'firstPlayerSelf')
     ..setReleaseMode(ReleaseMode.loop);
 
-  bool movePlayerSoundPaused = true;
-
   final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
       'move_enemies.m4a',
       playerId: 'firstPlayerEnemies')
     ..setReleaseMode(ReleaseMode.loop);
-  bool _moveEnemiesAmbientSoundPaused = true;
 
   @override
   void update(double dt) {
@@ -52,16 +49,14 @@ class Player extends Tank {
           }
         }
         if (minDistance >= distanceOfSilenceSquared) {
-          if (!_moveEnemiesAmbientSoundPaused) {
+          if (_moveEnemiesAmbientSound.state == PlayerState.playing) {
             _moveEnemiesAmbientSound.pause();
-            _moveEnemiesAmbientSoundPaused = true;
           }
         } else {
           _moveEnemiesAmbientSound
               .setVolume(1 - (minDistance / distanceOfSilenceSquared));
-          if (_moveEnemiesAmbientSoundPaused) {
+          if (_moveEnemiesAmbientSound.state == PlayerState.paused) {
             _moveEnemiesAmbientSound.resume();
-            _moveEnemiesAmbientSoundPaused = false;
           }
         }
       }
@@ -156,19 +151,17 @@ class Player extends Tank {
       if (movementHitbox.collisionType != CollisionType.active) {
         changeCollisionType(movementHitbox, CollisionType.active);
       }
-      if (movePlayerSoundPaused) {
+      if (movePlayerSound.state == PlayerState.paused) {
         movePlayerSound.setVolume(0.5);
         movePlayerSound.resume();
-        movePlayerSoundPaused = false;
       }
     } else {
       if (!dead) {
         current = TankState.idle;
         changeCollisionType(movementHitbox, CollisionType.active);
       }
-      if (!movePlayerSoundPaused) {
+      if (movePlayerSound.state == PlayerState.playing) {
         movePlayerSound.pause();
-        movePlayerSoundPaused = true;
       }
     }
 
