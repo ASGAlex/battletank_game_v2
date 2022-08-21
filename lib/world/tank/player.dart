@@ -26,8 +26,6 @@ class Player extends Tank {
       playerId: 'firstPlayerSelf')
     ..setReleaseMode(ReleaseMode.loop);
 
-  bool movePlayerSoundPaused = true;
-
   final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
       'move_enemies.m4a',
       playerId: 'firstPlayerEnemies')
@@ -156,19 +154,17 @@ class Player extends Tank {
       if (movementHitbox.collisionType != CollisionType.active) {
         changeCollisionType(movementHitbox, CollisionType.active);
       }
-      if (movePlayerSoundPaused) {
+      if (movePlayerSound.state == PlayerState.paused) {
         movePlayerSound.setVolume(0.5);
         movePlayerSound.resume();
-        movePlayerSoundPaused = false;
       }
     } else {
       if (!dead) {
         current = TankState.idle;
         changeCollisionType(movementHitbox, CollisionType.active);
       }
-      if (!movePlayerSoundPaused) {
+      if (movePlayerSound.state == PlayerState.playing) {
         movePlayerSound.pause();
-        movePlayerSoundPaused = true;
       }
     }
 
