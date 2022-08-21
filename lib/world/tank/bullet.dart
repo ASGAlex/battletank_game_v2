@@ -145,7 +145,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     removeQuadTreeCollision(_hitbox);
 
-    AudioPlayer? sfx;
+    Future<AudioPlayer>? sfx;
     if (other is Brick) {
       other.collideWithBullet(this);
       sfx = SoundLibrary.createSfxPlayer('player_bullet_wall.m4a');
@@ -153,14 +153,14 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       sfx = SoundLibrary.createSfxPlayer('player_bullet_strong_wall.m4a');
     }
 
-    die(skipRemove: true);
-
-    if (sfx != null) {
+    sfx?.then((player) {
       distantSfxPlayer.actualDistance =
           (gameRef.player?.position.distanceToSquared(position) ??
               distanceOfSilenceSquared + 1);
-      distantSfxPlayer.play(sfx);
-    }
+      distantSfxPlayer.play(player);
+    });
+
+    die(skipRemove: true);
 
     if (other is DestroyableComponent) {
       other.takeDamage(damage, firedFrom);

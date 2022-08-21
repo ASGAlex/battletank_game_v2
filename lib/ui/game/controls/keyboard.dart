@@ -77,8 +77,9 @@ mixin GameHardwareKeyboard on MyGameFeatures {
 
     if (directionButtonPressed && player.canMoveForward) {
       player.current = TankState.run;
-      if (player.movePlayerSound.state == PlayerState.paused) {
-        player.movePlayerSound.setVolume(1.5);
+      if ([PlayerState.paused, PlayerState.stopped]
+          .contains(player.movePlayerSound.state)) {
+        player.movePlayerSound.setVolume(0.5);
         player.movePlayerSound.resume();
       }
     } else {

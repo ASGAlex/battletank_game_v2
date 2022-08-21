@@ -21,16 +21,18 @@ class SoundLibrary {
     AudioCache.instance.loadAll(music.map((e) => 'audio/music/$e').toList());
   }
 
-  static AudioPlayer createSfxPlayer(String fileName, {String? playerId}) {
+  static Future<AudioPlayer> createSfxPlayer(String fileName,
+      {String? playerId}) async {
     final player = AudioPlayer(playerId: playerId);
-    player.setSource(AssetSource('audio/sfx/$fileName'));
+    await player.setSource(AssetSource('audio/sfx/$fileName'));
     player.setPlayerMode(PlayerMode.lowLatency);
     return player;
   }
 
-  static AudioPlayer createMusicPlayer(String fileName, {String? playerId}) {
+  static Future<AudioPlayer> createMusicPlayer(String fileName,
+      {String? playerId}) async {
     final player = AudioPlayer(playerId: playerId);
-    player.setSource(AssetSource('audio/music/$fileName'));
+    await player.setSource(AssetSource('audio/music/$fileName'));
     return player;
   }
 }

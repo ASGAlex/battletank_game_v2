@@ -118,15 +118,16 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           damage: damage,
           firedFrom: this);
       gameRef.addBullet(bullet);
-      final sfx = SoundLibrary.createSfxPlayer('player_fire_bullet.m4a');
-      if (this is Player) {
-        sfx.resume();
-      } else {
-        distantAudioPlayer.actualDistance =
-            (gameRef.player?.position.distanceToSquared(position) ??
-                distanceOfSilenceSquared + 1);
-        distantAudioPlayer.play(sfx);
-      }
+      SoundLibrary.createSfxPlayer('player_fire_bullet.m4a').then((player) {
+        if (this is Player) {
+          player.resume();
+        } else {
+          distantAudioPlayer.actualDistance =
+              (gameRef.player?.position.distanceToSquared(position) ??
+                  distanceOfSilenceSquared + 1);
+          distantAudioPlayer.play(player);
+        }
+      });
       return true;
     }
 
@@ -252,23 +253,23 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
       super.onDeath(killedBy);
 
-      AudioPlayer? sfx;
+      Future<AudioPlayer>? sfx;
       if (this is Player) {
         sfx = SoundLibrary.createSfxPlayer('explosion_player.m4a');
       } else if (this is Enemy) {
         sfx = SoundLibrary.createSfxPlayer('explosion_enemy.m4a');
       }
 
-      if (sfx != null) {
+      sfx?.then((player) {
         if (this is Player) {
-          sfx.resume();
+          player.resume();
         } else {
           distantAudioPlayer.actualDistance =
               (gameRef.player?.position.distanceToSquared(position) ??
                   distanceOfSilenceSquared + 1);
-          distantAudioPlayer.play(sfx);
+          distantAudioPlayer.play(player);
         }
-      }
+      });
 
       if (_boomDuration != null) {
         Future.delayed(_boomDuration!).then((value) {
