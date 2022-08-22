@@ -79,7 +79,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   double _nextSmokeParticle = 0;
 
   @override
-  Future<void> onLoad() async {
+  Future<void>? onLoad() async {
     await typeController.onLoad();
 
     _boomDuration = typeController.type.animationDie.duration;

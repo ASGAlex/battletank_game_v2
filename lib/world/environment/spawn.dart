@@ -127,7 +127,7 @@ class Spawn extends SpriteAnimationComponent
 
   void _createObject() {
     if (_currentObject == null) return;
-    findParent<MyGame>()?.addTank(_currentObject!);
+    gameRef.addTank(_currentObject!);
     _currentObject = null;
     Future.delayed(const Duration(seconds: spawnDurationSec)).then((value) {
       busy = false;

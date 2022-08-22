@@ -140,6 +140,10 @@ class Enemy extends Tank {
 
   @override
   void update(double dt) {
+    if (current == TankState.wreck) {
+      super.update(dt);
+      return;
+    }
     shouldSuspend = _shouldSuspend();
     if (shouldSuspend &&
         boundingHitbox.collisionType != CollisionType.inactive) {
@@ -151,15 +155,18 @@ class Enemy extends Tank {
       renderTrackTrail = true;
     }
 
-    if (current == TankState.wreck) {
-      if (!shouldSuspend) {
-        super.update(dt);
-      }
-      return;
-    }
     if (current != TankState.die) {
-      hearPlayer = _hearPlayer();
-      seePlayer = _seePlayer();
+      if (shouldSuspend) {
+        hearPlayer = false;
+        seePlayer = false;
+      } else {
+        hearPlayer = _hearPlayer();
+      }
+      if (!hearPlayer) {
+        seePlayer = false;
+      } else {
+        seePlayer = _seePlayer();
+      }
       switch (_movementMode) {
         case _MovementMode.wait:
           if (hearPlayer) {

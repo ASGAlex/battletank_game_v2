@@ -29,7 +29,7 @@ class Player extends Tank {
     return value;
   });
 
-  late final AudioPlayer movePlayerSound;
+  AudioPlayer? movePlayerSound;
 
   final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
           'move_enemies.m4a',
@@ -39,7 +39,7 @@ class Player extends Tank {
     return value;
   });
 
-  late final AudioPlayer moveEnemiesAmbientSound;
+  AudioPlayer? moveEnemiesAmbientSound;
 
   @override
   void update(double dt) {
@@ -59,15 +59,15 @@ class Player extends Tank {
           }
         }
         if (minDistance >= distanceOfSilenceSquared) {
-          if (moveEnemiesAmbientSound.state == PlayerState.playing) {
-            moveEnemiesAmbientSound.pause();
+          if (moveEnemiesAmbientSound?.state == PlayerState.playing) {
+            moveEnemiesAmbientSound?.pause();
           }
         } else {
           moveEnemiesAmbientSound
-              .setVolume(1 - (minDistance / distanceOfSilenceSquared));
+              ?.setVolume(1 - (minDistance / distanceOfSilenceSquared));
           if ([PlayerState.paused, PlayerState.stopped]
-              .contains(moveEnemiesAmbientSound.state)) {
-            moveEnemiesAmbientSound.resume();
+              .contains(moveEnemiesAmbientSound?.state)) {
+            moveEnemiesAmbientSound?.resume();
           }
         }
       }
@@ -75,7 +75,7 @@ class Player extends Tank {
   }
 
   @override
-  Future<void> onLoad() async {
+  Future<void>? onLoad() async {
     movePlayerSound = await _movePlayerSound;
     moveEnemiesAmbientSound = await _moveEnemiesAmbientSound;
     await super.onLoad();
@@ -109,8 +109,8 @@ class Player extends Tank {
   @override
   onDeath(Component killedBy) {
     if (!dead) {
-      moveEnemiesAmbientSound.pause();
-      movePlayerSound.pause();
+      moveEnemiesAmbientSound?.pause();
+      movePlayerSound?.pause();
       gameRef.restorePlayer();
     }
     super.onDeath(killedBy);
@@ -165,17 +165,17 @@ class Player extends Tank {
         changeCollisionType(movementHitbox, CollisionType.active);
       }
       if ([PlayerState.paused, PlayerState.stopped]
-          .contains(movePlayerSound.state)) {
-        movePlayerSound.setVolume(0.5);
-        movePlayerSound.resume();
+          .contains(movePlayerSound?.state)) {
+        movePlayerSound?.setVolume(0.5);
+        movePlayerSound?.resume();
       }
     } else {
       if (!dead) {
         current = TankState.idle;
         changeCollisionType(movementHitbox, CollisionType.active);
       }
-      if (movePlayerSound.state == PlayerState.playing) {
-        movePlayerSound.pause();
+      if (movePlayerSound?.state == PlayerState.playing) {
+        movePlayerSound?.pause();
       }
     }
 
@@ -193,7 +193,7 @@ class Player extends Tank {
 
   @override
   onRemove() {
-    movePlayerSound.pause();
-    moveEnemiesAmbientSound.pause();
+    movePlayerSound?.pause();
+    moveEnemiesAmbientSound?.pause();
   }
 }

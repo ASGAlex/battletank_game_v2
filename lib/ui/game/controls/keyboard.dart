@@ -78,16 +78,16 @@ mixin GameHardwareKeyboard on MyGameFeatures {
     if (directionButtonPressed && player.canMoveForward) {
       player.current = TankState.run;
       if ([PlayerState.paused, PlayerState.stopped]
-          .contains(player.movePlayerSound.state)) {
-        player.movePlayerSound.setVolume(0.5);
-        player.movePlayerSound.resume();
+          .contains(player.movePlayerSound?.state)) {
+        player.movePlayerSound?.setVolume(0.5);
+        player.movePlayerSound?.resume();
       }
     } else {
       if (!player.dead) {
         player.current = TankState.idle;
       }
-      if (player.movePlayerSound.state == PlayerState.playing) {
-        player.movePlayerSound.pause();
+      if (player.movePlayerSound?.state == PlayerState.playing) {
+        player.movePlayerSound?.pause();
       }
     }
 
