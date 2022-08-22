@@ -64,6 +64,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     xinput.dispose();
+    SoundLibrary.dispose();
     super.dispose();
   }
 

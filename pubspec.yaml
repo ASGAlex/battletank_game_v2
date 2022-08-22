@@ -31,6 +31,7 @@ dependencies:
   flame: ^1.2.1
   audioplayers: ^1.0.1
   audioplayers_windows: ^1.0.0
+  soundpool: ^2.3.0
   flame_tiled: ^1.6.0
   xinput_gamepad:
     git: git@github.com:ASGAlex/xinput_gamepad.git
