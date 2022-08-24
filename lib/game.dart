@@ -39,7 +39,19 @@ abstract class MyGameFeatures extends FlameGame
         ScrollDetector,
         HasDraggables,
         HasTappables,
-        ObjectLayers {}
+        ObjectLayers {
+  static const zoomPerScrollUnit = 0.02;
+
+  @override
+  void onScroll(PointerScrollInfo info) {
+    camera.zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
+    clampZoom();
+  }
+
+  void clampZoom() {
+    camera.zoom = camera.zoom.clamp(0.05, 5.0);
+  }
+}
 
 class MyGame extends MyGameFeatures
     with MyJoystickMix, GameHardwareKeyboard, XInputGamePad {
@@ -95,16 +107,21 @@ class MyGame extends MyGameFeatures
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']);
-    ground.priority = RenderPriority.ground.priority;
-    add(ground);
+    for (final g in ground) {
+      g.priority = RenderPriority.ground.priority;
+      add(g);
+    }
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Compiling tree layer...');
     final tree = await imageCompiler
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
-    final treeWithShadow = TreeLayer(tree, mapWidth.toInt(), mapHeight.toInt());
-    treeWithShadow.priority = RenderPriority.tree.priority;
-    add(treeWithShadow);
+    for (final t in tree) {
+      final treeWithShadow = TreeLayer(t, t.image.width, t.image.height);
+      treeWithShadow.priority = RenderPriority.tree.priority;
+      treeWithShadow.position = t.position;
+      add(treeWithShadow);
+    }
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Preparing back buffer...');
@@ -240,7 +257,8 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('Spawning the Player...');
     camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    // camera.zoom = 0.3;
+    camera.worldBounds = Rect.fromLTWH(0, 0, mapWidth, mapHeight);
+    camera.zoom = 0.3;
 
     final playerSpawn = await Spawn.waitFree(true);
     camera.followComponent(playerSpawn);

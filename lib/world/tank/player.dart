@@ -44,10 +44,10 @@ class Player extends Tank {
   @override
   void update(double dt) {
     super.update(dt);
-    if (Platform.isAndroid || Platform.isIOS) {
-      onJoystickEvent();
-    }
     if (!dead) {
+      if (Platform.isAndroid || Platform.isIOS) {
+        onJoystickEvent();
+      }
       _dtAmbientEnemySoundCheck += dt;
       if (_dtAmbientEnemySoundCheck > 0.6) {
         _dtAmbientEnemySoundCheck = 0;
@@ -76,8 +76,12 @@ class Player extends Tank {
 
   @override
   Future<void>? onLoad() async {
-    movePlayerSound = await _movePlayerSound;
-    moveEnemiesAmbientSound = await _moveEnemiesAmbientSound;
+    _movePlayerSound.then((value) {
+      movePlayerSound = value;
+    });
+    _moveEnemiesAmbientSound.then((value) {
+      moveEnemiesAmbientSound = value;
+    });
     await super.onLoad();
     joystick = gameRef.joystick;
   }
