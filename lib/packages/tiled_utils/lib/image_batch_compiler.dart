@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_component.dart';
 import 'package:tiled/tiled.dart';
 
 class ImageBatchCompiler {
@@ -48,7 +48,7 @@ class ImageBatchCompiler {
   }
 }
 
-class ImageComponent extends PositionComponent with HasVisibility {
+class ImageComponent extends PositionComponent with ClusterizedComponent {
   ImageComponent(this.image, {required super.position});
 
   final Image image;

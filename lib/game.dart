@@ -8,7 +8,6 @@ import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
-import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
@@ -24,6 +23,8 @@ import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
+import 'packages/flame_clusterizer/lib/clusterized_game.dart';
+import 'packages/flame_clusterizer/lib/fragment.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
@@ -40,7 +41,8 @@ abstract class MyGameFeatures extends FlameGame
         ScrollDetector,
         HasDraggables,
         HasTappables,
-        ObjectLayers {
+        ObjectLayers,
+        ClusterizedGame {
   static const zoomPerScrollUnit = 0.02;
 
   @override
@@ -81,7 +83,6 @@ class MyGame extends MyGameFeatures
 
   VisibilityIndicator? hudVisibility;
   FlashMessage? hudFlashMessage;
-  Clusterizer? clusterizer;
 
   @override
   Future<void> onLoad() async {
@@ -105,8 +106,7 @@ class MyGame extends MyGameFeatures
     initCollisionDetection(Rect.fromLTWH(0, 0, mapWidth, mapHeight));
     consoleMessages.sendMessage('done.');
 
-    clusterizer = Clusterizer(Vector2(mapWidth, mapHeight), Vector2(200, 200),
-        this, isFragmentVisible);
+    initClusterizer(mapWidth, mapHeight, 200, 200);
     consoleMessages.sendMessage('Compiling ground layer...');
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
@@ -115,7 +115,7 @@ class MyGame extends MyGameFeatures
     final groundMap = await clusterizer?.splitImageComponent(ground);
     if (groundMap != null) {
       for (final g in groundMap.entries) {
-        g.key.components.addAll(g.value);
+        // g.key.components.addAll(g.value);
         addAll(g.value);
       }
     }
@@ -132,7 +132,7 @@ class MyGame extends MyGameFeatures
           treeWithShadow.priority = RenderPriority.tree.priority;
           treeWithShadow.position = t.position;
           add(treeWithShadow);
-          entry.key.components.add(treeWithShadow);
+          // entry.key.components.add(treeWithShadow);
         }
       }
     }
@@ -256,7 +256,7 @@ class MyGame extends MyGameFeatures
       final animatedWater = await compiler.compile();
       animatedWater.priority = RenderPriority.water.priority;
       add(animatedWater);
-      fragment.components.add(animatedWater);
+      // fragment.components.add(animatedWater);
     }
     consoleMessages.sendMessage('done.');
 
@@ -395,18 +395,6 @@ class MyGame extends MyGameFeatures
   @override
   void onDetach() {
     onEndGame();
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-    clusterizer?.findCurrentFragment();
-  }
-
-  bool isFragmentVisible(Fragment fragment) {
-    final pos = camera.follow ?? camera.position;
-    final center = Vector2(pos.x, pos.y);
-    return fragment.rect.containsPoint(center);
   }
 
   void onEndGame() {

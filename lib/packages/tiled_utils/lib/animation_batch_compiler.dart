@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
-import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_component.dart';
 
 import 'tile_processor.dart';
 
@@ -55,7 +55,7 @@ class AnimationBatchCompiler {
 }
 
 class SpriteAnimationComponentVis extends SpriteAnimationComponent
-    with HasVisibility {
+    with ClusterizedComponent {
   SpriteAnimationComponentVis({
     super.animation,
     super.removeOnFinish,
