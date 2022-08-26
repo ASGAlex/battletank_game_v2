@@ -9,6 +9,7 @@ class TreeLayer extends PositionComponent {
     Color color = material.Colors.black;
     final shadowPaint = Paint()
       ..colorFilter = ColorFilter.mode(color.withOpacity(0.4), BlendMode.srcIn);
+    shadowPaint.imageFilter = ImageFilter.blur(sigmaX: 1, sigmaY: 1);
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     final settings = SettingsController();

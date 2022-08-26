@@ -8,6 +8,7 @@ import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
@@ -80,6 +81,7 @@ class MyGame extends MyGameFeatures
 
   VisibilityIndicator? hudVisibility;
   FlashMessage? hudFlashMessage;
+  Clusterizer? clusterizer;
 
   @override
   Future<void> onLoad() async {
@@ -103,24 +105,32 @@ class MyGame extends MyGameFeatures
     initCollisionDetection(Rect.fromLTWH(0, 0, mapWidth, mapHeight));
     consoleMessages.sendMessage('done.');
 
+    clusterizer = Clusterizer(Vector2(mapWidth, mapHeight), Vector2(200, 200),
+        this, isFragmentVisible);
     consoleMessages.sendMessage('Compiling ground layer...');
     final imageCompiler = ImageBatchCompiler();
     final ground = await imageCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']);
-    for (final g in ground) {
-      g.priority = RenderPriority.ground.priority;
-      add(g);
+    ground.priority = RenderPriority.ground.priority;
+    final groundList = await clusterizer?.splitImageComponent(ground);
+    if (groundList != null) {
+      for (final g in groundList) {
+        add(g);
+      }
     }
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Compiling tree layer...');
     final tree = await imageCompiler
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
-    for (final t in tree) {
-      final treeWithShadow = TreeLayer(t, t.image.width, t.image.height);
-      treeWithShadow.priority = RenderPriority.tree.priority;
-      treeWithShadow.position = t.position;
-      add(treeWithShadow);
+    final trees = await clusterizer?.splitImageComponent(tree);
+    if (trees != null) {
+      for (final t in trees) {
+        final treeWithShadow = TreeLayer(t, t.image.width, t.image.height);
+        treeWithShadow.priority = RenderPriority.tree.priority;
+        treeWithShadow.position = t.position;
+        add(treeWithShadow);
+      }
     }
     consoleMessages.sendMessage('done.');
 
@@ -369,6 +379,18 @@ class MyGame extends MyGameFeatures
   @override
   void onDetach() {
     onEndGame();
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    clusterizer?.findCurrentFragment();
+  }
+
+  bool isFragmentVisible(Fragment fragment) {
+    final pos = camera.follow ?? camera.position;
+    final center = Vector2(pos.x, pos.y);
+    return fragment.rect.containsPoint(center);
   }
 
   void onEndGame() {

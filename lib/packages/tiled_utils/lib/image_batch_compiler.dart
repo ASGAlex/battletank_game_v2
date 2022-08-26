@@ -3,10 +3,11 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 import 'package:tiled/tiled.dart';
 
 class ImageBatchCompiler {
-  Future<List<ImageComponent>> compileMapLayer(
+  Future<ImageComponent> compileMapLayer(
       {required RenderableTiledMap tileMap, List<String>? layerNames}) async {
     layerNames ??= [];
     _unlistedLayers(tileMap, layerNames).forEach((element) {
@@ -16,8 +17,8 @@ class ImageBatchCompiler {
       rl.refreshCache();
     }
 
-    var recorder = PictureRecorder();
-    var canvas = Canvas(recorder);
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
     tileMap.render(canvas);
     final picture = recorder.endRecording();
 
@@ -32,43 +33,7 @@ class ImageBatchCompiler {
         tileMap.map.width * tileMap.map.tileWidth,
         tileMap.map.height * tileMap.map.tileHeight);
 
-    double fragmentWidth = image.width.toDouble();
-    double fragmentHeight = image.height.toDouble();
-    while (fragmentWidth > 200) {
-      fragmentWidth = fragmentWidth / 2;
-    }
-    while (fragmentHeight > 200) {
-      fragmentHeight = fragmentHeight / 2;
-    }
-
-    final componentList = <ImageComponent>[];
-    final totalColumns = image.width / fragmentWidth;
-    final totalRows = image.height / fragmentHeight;
-    var col = 0;
-    var row = 0;
-    final paint = Paint();
-    while (row < totalRows) {
-      while (col < totalColumns) {
-        recorder = PictureRecorder();
-        canvas = Canvas(recorder);
-        canvas.drawImageRect(
-            image,
-            Rect.fromLTWH(col * fragmentWidth, row * fragmentHeight,
-                fragmentWidth + 10, fragmentHeight + 10),
-            Rect.fromLTWH(0, 0, fragmentWidth + 10, fragmentHeight + 10),
-            paint);
-        final picture = recorder.endRecording();
-        final img = await picture.toImage(
-            fragmentWidth.toInt(), fragmentHeight.toInt());
-        componentList.add(ImageComponent(img,
-            position: Vector2(col * fragmentWidth, row * fragmentHeight)));
-        col++;
-      }
-      col = 0;
-      row++;
-    }
-
-    return componentList;
+    return ImageComponent(image, position: Vector2(0, 0));
   }
 
   static List<Layer> _unlistedLayers(
@@ -83,7 +48,7 @@ class ImageBatchCompiler {
   }
 }
 
-class ImageComponent extends PositionComponent {
+class ImageComponent extends PositionComponent with HasVisibility {
   ImageComponent(this.image, {required super.position});
 
   final Image image;
