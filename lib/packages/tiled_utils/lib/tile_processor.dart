@@ -135,6 +135,8 @@ class TileProcessor {
       required Map<String, TileProcessorFunc> processorByType,
       required List<String> layersToLoad,
       bool clear = true}) {
+    final tileSize = Vector2(
+        tileMap.map.tileWidth.toDouble(), tileMap.map.tileWidth.toDouble());
     for (final layer in layersToLoad) {
       final tileLayer = tileMap.getLayer<TileLayer>(layer);
       final tileData = tileLayer?.data;
@@ -154,12 +156,8 @@ class TileProcessor {
                 yOffset.toDouble() * tileMap.map.tileWidth);
             final processor = processorByType[tileData.type];
             if (processor != null) {
-              final tileProcessor = TileProcessor(
-                  tileData,
-                  tileset,
-                  position,
-                  Vector2(tileMap.map.tileWidth.toDouble(),
-                      tileMap.map.tileWidth.toDouble()));
+              final tileProcessor =
+                  TileProcessor(tileData, tileset, position, tileSize);
               processor(tileProcessor);
             }
           }

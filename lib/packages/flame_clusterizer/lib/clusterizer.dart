@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
-import 'package:tank_game/packages/tiled_utils/lib/image_batch_compiler.dart';
 
 import 'fragment.dart';
 
@@ -117,30 +116,15 @@ class Clusterizer {
     }
     return null;
   }
+}
 
-  Future<Map<Fragment, List<ImageComponent>>> splitImageComponent(
-      ImageComponent component) async {
-    final paint = Paint();
-    final componentMap = <Fragment, List<ImageComponent>>{};
-    for (final fragment in fragments) {
-      final recorder = PictureRecorder();
-      final canvas = Canvas(recorder);
-      canvas.drawImageRect(
-          component.image,
-          fragment.rect,
-          Rect.fromLTWH(0, 0, fragment.rect.width, fragment.rect.height),
-          paint);
-      final picture = recorder.endRecording();
-      final img = await picture.toImage(
-          fragment.rect.width.toInt(), fragment.rect.height.toInt());
-      final imgComp = ImageComponent(img,
-          position: Vector2(fragment.rect.left, fragment.rect.top));
-      imgComp.priority = component.priority;
-      if (componentMap[fragment] == null) {
-        componentMap[fragment] = [];
-      }
-      componentMap[fragment]!.add(imgComp);
-    }
-    return componentMap;
+extension Crop on Image {
+  Future<Image> crop(Rect rect) {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.drawImageRect(
+        this, rect, Rect.fromLTWH(0, 0, rect.width, rect.height), Paint());
+    final picture = recorder.endRecording();
+    return picture.toImage(rect.width.toInt(), rect.height.toInt());
   }
 }

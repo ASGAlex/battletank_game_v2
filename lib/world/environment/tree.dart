@@ -3,10 +3,14 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_component.dart';
+import 'package:tank_game/packages/tiled_utils/lib/image_batch_compiler.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
 class TreeLayer extends PositionComponent with ClusterizedComponent {
-  TreeLayer(this.trees, int width, int height) {
+  TreeLayer(this.trees) {
+    position = trees.position.clone();
+    trees.position = Vector2(0, 0);
+    priority = trees.priority;
     Color color = material.Colors.black;
     final shadowPaint = Paint()
       ..colorFilter = ColorFilter.mode(color.withOpacity(0.4), BlendMode.srcIn);
@@ -21,13 +25,16 @@ class TreeLayer extends PositionComponent with ClusterizedComponent {
       canvas.restore();
     }
     trees.render(canvas);
-    recorder.endRecording().toImage(width, height).then((value) {
+    recorder
+        .endRecording()
+        .toImage(trees.image.width, trees.image.height)
+        .then((value) {
       image = value;
     });
   }
 
   Image? image;
-  final PositionComponent trees;
+  final ImageComponent trees;
 
   @override
   void render(Canvas canvas) {

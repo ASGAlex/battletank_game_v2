@@ -2,11 +2,28 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_component.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_game.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 import 'package:tiled/tiled.dart';
 
+typedef LayerPreprocessFunction = ClusterizedComponent Function(
+    ImageComponent image);
+
 class ImageBatchCompiler {
+  ImageBatchCompiler(this.game) {
+    if (game is ClusterizedGame) {
+      _clusterizer = (game as ClusterizedGame).clusterizer;
+    } else {
+      _clusterizer = null;
+    }
+  }
+
+  final FlameGame game;
+  late final Clusterizer? _clusterizer;
+
   Future<ImageComponent> compileMapLayer(
       {required RenderableTiledMap tileMap, List<String>? layerNames}) async {
     layerNames ??= [];
@@ -34,6 +51,43 @@ class ImageBatchCompiler {
         tileMap.map.height * tileMap.map.tileHeight);
 
     return ImageComponent(image, position: Vector2(0, 0));
+  }
+
+  Future addMapLayer(
+      {required RenderableTiledMap tileMap,
+      List<String>? layerNames,
+      int? priority,
+      LayerPreprocessFunction? preprocessFunction}) async {
+    final imageComponent =
+        await compileMapLayer(tileMap: tileMap, layerNames: layerNames);
+    final clusterizer = _clusterizer;
+    if (clusterizer != null) {
+      for (final fragment in clusterizer.fragments) {
+        final image = await imageComponent.image.crop(fragment.rect);
+        final component = ImageComponent(image,
+            position: Vector2(fragment.rect.left, fragment.rect.top));
+        if (priority != null) {
+          component.priority = priority;
+        }
+
+        if (preprocessFunction != null) {
+          final preprocessed = preprocessFunction(component);
+          game.add(preprocessed);
+        } else {
+          game.add(component);
+        }
+      }
+    } else {
+      if (priority != null) {
+        imageComponent.priority = priority;
+      }
+      if (preprocessFunction != null) {
+        final preprocessed = preprocessFunction(imageComponent);
+        game.add(preprocessed);
+      } else {
+        game.add(imageComponent);
+      }
+    }
   }
 
   static List<Layer> _unlistedLayers(

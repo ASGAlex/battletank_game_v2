@@ -10,9 +10,11 @@ mixin ClusterizedComponent on PositionComponent {
 
   Fragment? _currentFragment;
   Clusterizer? _clusterizer;
+  bool _gameClusterized = true;
 
   Clusterizer? get clusterizer {
     if (_clusterizer != null) return _clusterizer;
+    if (_gameClusterized == false) return null;
     ClusterizedGame? game;
     if (this is HasGameRef) {
       game = (this as HasGameRef).gameRef as ClusterizedGame;
@@ -20,13 +22,10 @@ mixin ClusterizedComponent on PositionComponent {
       game = findParent<ClusterizedGame>();
     }
     if (game == null) {
-      throw "Can't find parent of clusterized game";
+      _gameClusterized = false;
     }
 
-    if (game.clusterizer != null) {
-      _clusterizer = game.clusterizer;
-    }
-
+    _clusterizer = game?.clusterizer;
     return _clusterizer;
   }
 
