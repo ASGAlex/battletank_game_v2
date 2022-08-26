@@ -2,9 +2,10 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
-class TreeLayer extends PositionComponent {
+class TreeLayer extends PositionComponent with HasVisibility {
   TreeLayer(this.trees, int width, int height) {
     Color color = material.Colors.black;
     final shadowPaint = Paint()

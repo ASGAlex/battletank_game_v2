@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
+import 'package:tank_game/packages/flame_clusterizer/lib/clusterizer.dart';
 
 import 'tile_processor.dart';
 
@@ -25,7 +26,7 @@ class AnimationBatchCompiler {
     positions.add(position);
   }
 
-  Future<SpriteAnimationComponent> compile() async {
+  Future<SpriteAnimationComponentVis> compile() async {
     await _completer.future;
     final anim = animation;
     if (anim == null) {
@@ -46,11 +47,28 @@ class AnimationBatchCompiler {
     }
     final spriteAnimation = SpriteAnimation.variableSpriteList(newSprites,
         stepTimes: anim.getVariableStepTimes());
-    return SpriteAnimationComponent(
+    return SpriteAnimationComponentVis(
         animation: spriteAnimation,
         position: Vector2.all(0),
         size: newSprites.first.image.size);
   }
+}
+
+class SpriteAnimationComponentVis extends SpriteAnimationComponent
+    with HasVisibility {
+  SpriteAnimationComponentVis({
+    super.animation,
+    super.removeOnFinish,
+    super.playing,
+    super.paint,
+    super.position,
+    super.size,
+    super.scale,
+    super.angle,
+    super.anchor,
+    super.children,
+    super.priority,
+  });
 }
 
 extension _VariableStepTimes on SpriteAnimation {

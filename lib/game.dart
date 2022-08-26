@@ -112,10 +112,11 @@ class MyGame extends MyGameFeatures
     final ground = await imageCompiler.compileMapLayer(
         tileMap: tiledComponent.tileMap, layerNames: ['ground']);
     ground.priority = RenderPriority.ground.priority;
-    final groundList = await clusterizer?.splitImageComponent(ground);
-    if (groundList != null) {
-      for (final g in groundList) {
-        add(g);
+    final groundMap = await clusterizer?.splitImageComponent(ground);
+    if (groundMap != null) {
+      for (final g in groundMap.entries) {
+        g.key.components.addAll(g.value);
+        addAll(g.value);
       }
     }
     consoleMessages.sendMessage('done.');
@@ -125,11 +126,14 @@ class MyGame extends MyGameFeatures
         .compileMapLayer(tileMap: tiledComponent.tileMap, layerNames: ['tree']);
     final trees = await clusterizer?.splitImageComponent(tree);
     if (trees != null) {
-      for (final t in trees) {
-        final treeWithShadow = TreeLayer(t, t.image.width, t.image.height);
-        treeWithShadow.priority = RenderPriority.tree.priority;
-        treeWithShadow.position = t.position;
-        add(treeWithShadow);
+      for (final entry in trees.entries) {
+        for (final t in entry.value) {
+          final treeWithShadow = TreeLayer(t, t.image.width, t.image.height);
+          treeWithShadow.priority = RenderPriority.tree.priority;
+          treeWithShadow.position = t.position;
+          add(treeWithShadow);
+          entry.key.components.add(treeWithShadow);
+        }
       }
     }
     consoleMessages.sendMessage('done.');
@@ -195,24 +199,25 @@ class MyGame extends MyGameFeatures
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
-          'tree': ((tile, position, size) {
+          'tree': ((tile) {
             final collision = tile.getCollisionRect();
             if (collision != null) {
-              collision.position = position;
+              collision.position = tile.position;
               lazyCollisionService.addHitbox(
-                  position: position, size: size, layer: 'tree');
+                  position: tile.position, size: size, layer: 'tree');
             }
           }),
-          'water': ((tile, position, size) {
-            add(WaterCollide(tile, position: position, size: size));
+          'water': ((tile) {
+            add(WaterCollide(tile, position: tile.position, size: size));
           }),
-          'brick': ((tile, position, size) async {
-            final brick = Brick(tile, position: position, size: size);
+          'brick': ((tile) async {
+            final brick = Brick(tile, position: tile.position, size: size);
             add(brick);
             batchRenderer?.batchedComponents.add(brick);
           }),
-          'heavy_brick': ((tile, position, size) async {
-            final brick = HeavyBrick(tile, position: position, size: size);
+          'heavy_brick': ((tile) async {
+            final brick =
+                HeavyBrick(tile, position: tile.position, size: tile.size);
             add(brick);
             batchRenderer?.batchedComponents.add(brick);
           }),
@@ -225,12 +230,18 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Creating water tiles...');
-    final animationCompiler = AnimationBatchCompiler();
+    final fragmentData = <Fragment, AnimationBatchCompiler>{};
     TileProcessor.processTileType(
         tileMap: tiledComponent.tileMap,
         processorByType: <String, TileProcessorFunc>{
-          'water': ((tile, position, size) {
-            animationCompiler.addTile(position, tile);
+          'water': ((tile) {
+            final fragment = clusterizer?.findFragmentByPosition(tile.position);
+            if (fragment != null) {
+              if (fragmentData[fragment] == null) {
+                fragmentData[fragment] = AnimationBatchCompiler();
+              }
+              fragmentData[fragment]!.addTile(tile.position, tile);
+            }
           }),
         },
         layersToLoad: [
@@ -239,9 +250,14 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Compiling water animation...');
-    final animatedWater = await animationCompiler.compile();
-    animatedWater.priority = RenderPriority.water.priority;
-    add(animatedWater);
+    for (final entry in fragmentData.entries) {
+      final fragment = entry.key;
+      final compiler = entry.value;
+      final animatedWater = await compiler.compile();
+      animatedWater.priority = RenderPriority.water.priority;
+      add(animatedWater);
+      fragment.components.add(animatedWater);
+    }
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Loading spawns...');

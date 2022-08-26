@@ -8,18 +8,19 @@ import 'package:flame/image_composition.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tiled/tiled.dart';
 
-typedef TileProcessorFunc = void Function(
-    TileProcessor tile, Vector2 position, Vector2 size);
+typedef TileProcessorFunc = void Function(TileProcessor tile);
 
 class TileProcessor {
   static final Map<String, Sprite> _spriteCache = {};
   static final Map<String, SpriteAnimation> _spriteAnimationCache = {};
   static final Map<String, Image> _imageCache = {};
 
-  TileProcessor(this.tile, this.tileset);
+  TileProcessor(this.tile, this.tileset, this.position, this.size);
 
   Tile tile;
   Tileset tileset;
+  Vector2 position;
+  Vector2 size;
 
   RectangleHitbox? getCollisionRect() {
     if (tile.objectGroup?.type == LayerType.objectGroup) {
@@ -153,12 +154,13 @@ class TileProcessor {
                 yOffset.toDouble() * tileMap.map.tileWidth);
             final processor = processorByType[tileData.type];
             if (processor != null) {
-              final tileProcessor = TileProcessor(tileData, tileset);
-              processor(
-                  tileProcessor,
+              final tileProcessor = TileProcessor(
+                  tileData,
+                  tileset,
                   position,
                   Vector2(tileMap.map.tileWidth.toDouble(),
                       tileMap.map.tileWidth.toDouble()));
+              processor(tileProcessor);
             }
           }
           xOffset++;

@@ -109,10 +109,17 @@ class Clusterizer {
     }
   }
 
-  Future<List<ImageComponent>> splitImageComponent(
+  Fragment? findFragmentByPosition(Vector2 position) {
+    for (final f in fragments) {
+      if (f.rect.containsPoint(position)) return f;
+    }
+    return null;
+  }
+
+  Future<Map<Fragment, List<ImageComponent>>> splitImageComponent(
       ImageComponent component) async {
     final paint = Paint();
-    final componentList = <ImageComponent>[];
+    final componentMap = <Fragment, List<ImageComponent>>{};
     for (final fragment in fragments) {
       final recorder = PictureRecorder();
       final canvas = Canvas(recorder);
@@ -127,10 +134,12 @@ class Clusterizer {
       final imgComp = ImageComponent(img,
           position: Vector2(fragment.rect.left, fragment.rect.top));
       imgComp.priority = component.priority;
-      fragment.components.add(imgComp);
-      componentList.add(imgComp);
+      if (componentMap[fragment] == null) {
+        componentMap[fragment] = [];
+      }
+      componentMap[fragment]!.add(imgComp);
     }
-    return componentList;
+    return componentMap;
   }
 }
 
