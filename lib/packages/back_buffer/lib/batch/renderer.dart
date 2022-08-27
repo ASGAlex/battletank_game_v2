@@ -5,26 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart' as material;
 
-mixin BatchRender on SpriteComponent {
-  @override
-  void renderTree(Canvas canvas) {}
-
-  bool _treeInitiallyUpdated = false;
-
-  @override
-  void updateTree(double dt) {
-    if (!_treeInitiallyUpdated) {
-      super.updateTree(dt);
-      _treeInitiallyUpdated = true;
-    }
-  }
-
-  scheduleTreeUpdate() => _treeInitiallyUpdated = false;
-
-  Rect get sourceRect => sprite!.src;
-
-  Vector2 get offsetPosition => position;
-}
+import 'batch_components.dart';
 
 class BatchComponentRenderer extends PositionComponent {
   BatchComponentRenderer(this.mapWidth, this.mapHeight,
@@ -39,7 +20,7 @@ class BatchComponentRenderer extends PositionComponent {
   bool drawShadow;
   int mapWidth;
   int mapHeight;
-  final batchedComponents = HashSet<BatchRender>();
+  final batchedComponents = HashSet<BatchedComponent>();
 
   bool imageChanged = true;
   Image? spriteSheetImg;

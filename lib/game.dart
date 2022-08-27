@@ -5,7 +5,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
-import 'package:tank_game/packages/back_buffer/lib/batch_components.dart';
 import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
@@ -22,6 +21,7 @@ import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
+import 'packages/back_buffer/lib/batch/batched_game.dart';
 import 'packages/flame_clusterizer/lib/clusterized_game.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
@@ -41,6 +41,7 @@ abstract class MyGameFeatures extends FlameGame
         HasDraggables,
         HasTappables,
         ClusterizedGame,
+        HasBatchRenderer,
         ObjectLayers {
   static const zoomPerScrollUnit = 0.02;
 
@@ -70,8 +71,6 @@ class MyGame extends MyGameFeatures
 
   List<Enemy> enemies = [];
   Player? player;
-
-  BatchComponentRenderer? batchRenderer;
 
   RenderableTiledMap? currentMap;
 
@@ -139,40 +138,35 @@ class MyGame extends MyGameFeatures
     switch (settings.graphicsQuality) {
       case GraphicsQuality.low:
       case GraphicsQuality.treeShadow:
-        batchRenderer = BatchComponentRenderer(
-            mapWidth.toInt(), mapHeight.toInt(),
+        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
             offsetSteps: 0,
             drawShadow: false,
             offsetShadowSteps: 0,
             offsetDirection: null);
         break;
       case GraphicsQuality.walls3D_low:
-        batchRenderer = BatchComponentRenderer(
-            mapWidth.toInt(), mapHeight.toInt(),
+        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
             offsetSteps: 2,
             drawShadow: false,
             offsetShadowSteps: 0,
             offsetDirection: const Offset(2, -2));
         break;
       case GraphicsQuality.walls3dShadows_low:
-        batchRenderer = BatchComponentRenderer(
-            mapWidth.toInt(), mapHeight.toInt(),
+        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
             offsetSteps: 2,
             drawShadow: true,
             offsetShadowSteps: 2,
             offsetDirection: const Offset(2, -2));
         break;
       case GraphicsQuality.walls3DShadows_medium:
-        batchRenderer = BatchComponentRenderer(
-            mapWidth.toInt(), mapHeight.toInt(),
+        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
             offsetSteps: 3,
             drawShadow: true,
             offsetShadowSteps: 2,
             offsetDirection: const Offset(1.3, -1.3));
         break;
       case GraphicsQuality.walls3dShadows_hight:
-        batchRenderer = BatchComponentRenderer(
-            mapWidth.toInt(), mapHeight.toInt(),
+        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
             offsetSteps: 4,
             drawShadow: true,
             offsetShadowSteps: 4,
@@ -198,20 +192,17 @@ class MyGame extends MyGameFeatures
           'brick': ((tile) async {
             final brick = Brick(tile, position: tile.position, size: tile.size);
             add(brick);
-            batchRenderer?.batchedComponents.add(brick);
           }),
           'heavy_brick': ((tile) async {
             final brick =
                 HeavyBrick(tile, position: tile.position, size: tile.size);
             add(brick);
-            batchRenderer?.batchedComponents.add(brick);
           }),
         },
         layersToLoad: [
           'tree',
           'collision'
         ]);
-    add(batchRenderer!);
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Creating water tiles...');
