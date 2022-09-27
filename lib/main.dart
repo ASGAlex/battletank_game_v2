@@ -50,7 +50,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final manager = ShortcutManager(modal: true);
+  final manager = ShortcutManager(
+    modal: true,
+    shortcuts: const <ShortcutActivator, Intent>{
+      SingleActivator(LogicalKeyboardKey.arrowUp): PreviousFocusIntent(),
+      SingleActivator(LogicalKeyboardKey.keyW): PreviousFocusIntent(),
+      SingleActivator(LogicalKeyboardKey.arrowDown): NextFocusIntent(),
+      SingleActivator(LogicalKeyboardKey.keyS): NextFocusIntent(),
+      SingleActivator(LogicalKeyboardKey.select): ActivateIntent(),
+      SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+    },
+  );
   final xinput = SettingsController().xInputGamePadController;
 
   onXInputKeyPressed() {
@@ -79,16 +89,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Shortcuts(
+    return Shortcuts.manager(
       manager: manager,
-      shortcuts: const <ShortcutActivator, Intent>{
-        SingleActivator(LogicalKeyboardKey.arrowUp): PreviousFocusIntent(),
-        SingleActivator(LogicalKeyboardKey.keyW): PreviousFocusIntent(),
-        SingleActivator(LogicalKeyboardKey.arrowDown): NextFocusIntent(),
-        SingleActivator(LogicalKeyboardKey.keyS): NextFocusIntent(),
-        SingleActivator(LogicalKeyboardKey.select): ActivateIntent(),
-        SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
-      },
       child: AnimatedBuilder(
         animation: SettingsController(),
         builder: (BuildContext context, Widget? child) {
