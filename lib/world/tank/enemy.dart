@@ -147,11 +147,11 @@ class Enemy extends Tank {
     shouldSuspend = _shouldSuspend();
     if (shouldSuspend &&
         boundingHitbox.collisionType != CollisionType.inactive) {
-      changeCollisionType(boundingHitbox, CollisionType.inactive);
+      boundingHitbox.collisionType = CollisionType.inactive;
       renderTrackTrail = false;
     } else if (!shouldSuspend &&
         boundingHitbox.collisionType != CollisionType.active) {
-      changeCollisionType(boundingHitbox, CollisionType.active);
+      boundingHitbox.collisionType = CollisionType.active;
       renderTrackTrail = true;
     }
 

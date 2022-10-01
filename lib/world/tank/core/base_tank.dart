@@ -9,7 +9,6 @@ import 'package:flame/particles.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
@@ -27,7 +26,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     with
         KeyboardHandler,
         CollisionCallbacks,
-        CollisionQuadTreeController<MyGame>,
         DestroyableComponent,
         HasGameRef<MyGame>,
         HideableComponent {

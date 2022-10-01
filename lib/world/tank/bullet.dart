@@ -7,7 +7,6 @@ import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
@@ -17,18 +16,12 @@ import 'package:tank_game/world/environment/water.dart';
 import '../sound.dart';
 import '../world.dart';
 import 'core/direction.dart';
-import 'core/hitbox_movement.dart';
-import 'core/hitbox_movement_side.dart';
 import 'enemy.dart';
 
 enum BulletState { fly, boom, crater }
 
 class Bullet extends SpriteAnimationGroupComponent<BulletState>
-    with
-        CollisionCallbacks,
-        HideableComponent,
-        CollisionQuadTreeController<MyGame>,
-        HasGameRef<MyGame> {
+    with CollisionCallbacks, HideableComponent, HasGameRef<MyGame> {
   Bullet(
       {required this.direction,
       required this.firedFrom,
@@ -126,8 +119,8 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   }
 
   @override
-  bool broadPhaseCheck(PositionComponent other) {
-    final success = super.broadPhaseCheck(other);
+  bool onComponentTypeCheck(PositionComponent other) {
+    final success = super.onComponentTypeCheck(other);
 
     if (success) {
       if (other is WaterCollide) return false;
@@ -143,7 +136,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    removeQuadTreeCollision(_hitbox);
+    _hitbox.collisionType = CollisionType.passive;
 
     Future<AudioPlayer>? sfx;
     if (other is Brick) {
@@ -171,7 +164,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   die({bool skipRemove = false, bool noHit = false}) {
     if (!skipRemove) {
-      removeQuadTreeCollision(_hitbox);
+      _hitbox.collisionType = CollisionType.passive;
     }
 
     _light.renderShape = false;
@@ -191,18 +184,17 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   }
 }
 
-class _BulletHitbox extends RectangleHitbox
-    with CollisionQuadTreeController<MyGame> {
+class _BulletHitbox extends RectangleHitbox {
   _BulletHitbox({super.size, super.position});
 
-  @override
-  bool broadPhaseCheck(PositionComponent other) {
-    final success = super.broadPhaseCheck(other);
-    if (success && (other is MovementSideHitbox || other is MovementHitbox)) {
-      return false;
-    }
-    return success;
-  }
+  // @override
+  // bool broadPhaseCheck(PositionComponent other) {
+  //   final success = super.broadPhaseCheck(other);
+  //   if (success && (other is MovementSideHitbox || other is MovementHitbox)) {
+  //     return false;
+  //   }
+  //   return success;
+  // }
 }
 
 class _Light extends CircleComponent {

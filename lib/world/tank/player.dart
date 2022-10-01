@@ -166,7 +166,7 @@ class Player extends Tank {
     if (directionButtonPressed && canMoveForward) {
       current = TankState.run;
       if (movementHitbox.collisionType != CollisionType.active) {
-        changeCollisionType(movementHitbox, CollisionType.active);
+        movementHitbox.collisionType = CollisionType.active;
       }
       if ([PlayerState.paused, PlayerState.stopped]
           .contains(movePlayerSound?.state)) {
@@ -176,7 +176,7 @@ class Player extends Tank {
     } else {
       if (!dead) {
         current = TankState.idle;
-        changeCollisionType(movementHitbox, CollisionType.active);
+        movementHitbox.collisionType = CollisionType.active;
       }
       if (movePlayerSound?.state == PlayerState.playing) {
         movePlayerSound?.pause();

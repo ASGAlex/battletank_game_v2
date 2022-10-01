@@ -1,17 +1,12 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
-import 'package:tank_game/game.dart';
-import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
-import 'package:tank_game/world/environment/spawn.dart';
 
 import 'base_tank.dart';
 import 'direction.dart';
 import 'hitbox_map_bounds.dart';
-import 'hitbox_movement.dart';
 
-class MovementSideHitbox extends HitboxMapBounds
-    with CollisionQuadTreeController<MyGame> {
+class MovementSideHitbox extends HitboxMapBounds {
   MovementSideHitbox(
       {required this.direction, super.angle, super.anchor, super.priority})
       : super(position: Vector2(0, 0));
@@ -59,14 +54,14 @@ class MovementSideHitbox extends HitboxMapBounds
     return null;
   }
 
-  @override
-  bool broadPhaseCheck(PositionComponent other) {
-    final success = super.broadPhaseCheck(other);
-    if (success && (other.parent is Spawn || other is MovementHitbox)) {
-      return false;
-    }
-    return success;
-  }
+  // @override
+  // bool broadPhaseCheck(PositionComponent other) {
+  //   final success = super.broadPhaseCheck(other);
+  //   if (success && (other.parent is Spawn || other is MovementHitbox)) {
+  //     return false;
+  //   }
+  //   return success;
+  // }
 
   @override
   void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {

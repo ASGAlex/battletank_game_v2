@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
@@ -5,7 +6,6 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
-import 'package:tank_game/packages/collision_quad_tree/lib/collision_quad_tree.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
@@ -101,7 +101,8 @@ class MyGame extends MyGameFeatures
     final mapHeight = (tiledComponent.tileMap.map.height *
             tiledComponent.tileMap.map.tileHeight)
         .toDouble();
-    initCollisionDetection(Rect.fromLTWH(0, 0, mapWidth, mapHeight));
+    initializeCollisionDetection(
+        mapDimensions: Rect.fromLTWH(0, 0, mapWidth, mapHeight));
     consoleMessages.sendMessage('done.');
 
     initClusterizer(mapWidth, mapHeight, 200, 200);
