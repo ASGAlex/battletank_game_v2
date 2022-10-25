@@ -33,8 +33,7 @@ dependencies:
   audioplayers_windows: ^1.0.0
   soundpool: ^2.3.0
   flame_tiled: ^1.6.0
-  xinput_gamepad:
-    git: git@github.com:ASGAlex/xinput_gamepad.git
+  xinput_gamepad: ^1.2.1
   dart_numerics: ^0.0.6
   intl: ^0.17.0
   shared_preferences: ^2.0.15
