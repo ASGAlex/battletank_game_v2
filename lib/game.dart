@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
-import 'package:tank_game/packages/lazy_collision/lib/lazy_collision.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
@@ -22,7 +21,6 @@ import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
 import 'packages/back_buffer/lib/batch/batched_game.dart';
-import 'packages/flame_clusterizer/lib/clusterized_game.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
@@ -40,7 +38,6 @@ abstract class MyGameFeatures extends FlameGame
         ScrollDetector,
         HasDraggables,
         HasTappables,
-        ClusterizedGame,
         HasBatchRenderer,
         ObjectLayers {
   static const zoomPerScrollUnit = 0.02;
@@ -67,7 +64,7 @@ class MyGame extends MyGameFeatures
   final String mapFile;
   final BuildContext context;
 
-  final lazyCollisionService = LazyCollisionsService();
+  // final lazyCollisionService = LazyCollisionsService();
 
   List<Enemy> enemies = [];
   Player? player;
@@ -105,7 +102,6 @@ class MyGame extends MyGameFeatures
         mapDimensions: Rect.fromLTWH(0, 0, mapWidth, mapHeight));
     consoleMessages.sendMessage('done.');
 
-    initClusterizer(mapWidth, mapHeight, 200, 200);
     consoleMessages.sendMessage('Compiling ground layer...');
     final imageCompiler = ImageBatchCompiler(this);
     imageCompiler.addMapLayer(
@@ -128,11 +124,11 @@ class MyGame extends MyGameFeatures
     add(backBuffer!);
     consoleMessages.sendMessage('done.');
 
-    consoleMessages.sendMessage('Starting lazy collision service...');
-    await lazyCollisionService.run({
-      'tree': const Duration(milliseconds: 100),
-    });
-    consoleMessages.sendMessage('done.');
+    // consoleMessages.sendMessage('Starting lazy collision service...');
+    // await lazyCollisionService.run({
+    //   'tree': const Duration(milliseconds: 100),
+    // });
+    // consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Creating trees and collision tiles...');
     final settings = SettingsController();
@@ -183,8 +179,8 @@ class MyGame extends MyGameFeatures
             final collision = tile.getCollisionRect();
             if (collision != null) {
               collision.position = tile.position;
-              lazyCollisionService.addHitbox(
-                  position: tile.position, size: tile.size, layer: 'tree');
+              // lazyCollisionService.addHitbox(
+              //     position: tile.position, size: tile.size, layer: 'tree');
             }
           }),
           'water': ((tile) {
@@ -270,17 +266,18 @@ class MyGame extends MyGameFeatures
         for (final property in spawnObject.properties) {
           switch (property.name) {
             case 'cooldown_seconds':
-              newSpawn.cooldown = Duration(seconds: int.parse(property.value));
+              newSpawn.cooldown =
+                  Duration(seconds: int.parse(property.value.toString()));
               break;
             case 'tanks_inside':
-              newSpawn.tanksInside = int.parse(property.value);
+              newSpawn.tanksInside = int.parse(property.value.toString());
               break;
             case 'trigger_distance':
-              final distance = double.parse(property.value);
+              final distance = double.parse(property.value.toString());
               newSpawn.triggerDistanceSquared = distance * distance;
               break;
             case 'tank_type':
-              newSpawn.tankTypeFactory.typeName = property.value;
+              newSpawn.tankTypeFactory.typeName = property.value.toString();
               break;
           }
         }
@@ -366,7 +363,7 @@ class MyGame extends MyGameFeatures
     Spawn.clear();
     Target.clear();
     player?.onRemove();
-    lazyCollisionService.stop();
+    // lazyCollisionService.stop();
     SpriteSheetBase.clearCaches();
     Player.respawnCount = 30;
   }

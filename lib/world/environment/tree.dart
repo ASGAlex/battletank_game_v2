@@ -2,11 +2,10 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:tank_game/packages/flame_clusterizer/lib/clusterized_component.dart';
 import 'package:tank_game/packages/tiled_utils/lib/image_batch_compiler.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
-class TreeLayer extends PositionComponent with ClusterizedComponent {
+class TreeLayer extends PositionComponent {
   TreeLayer(this.trees) {
     position = trees.position.clone();
     trees.position = Vector2(0, 0);

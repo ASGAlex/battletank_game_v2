@@ -10,6 +10,7 @@ import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -77,6 +78,15 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   double _nextSmokeParticle = 0;
 
   @override
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other is Spawn) {
+      // do NOT collide with Player or Water
+      return false;
+    }
+    return super.onComponentTypeCheck(other);
+  }
+
+  @override
   Future<void>? onLoad() async {
     await typeController.onLoad();
 
@@ -88,17 +98,17 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     updateSize();
     await super.onLoad();
 
-    if (trackTreeCollisions) {
-      gameRef.lazyCollisionService
-          .addHitbox(
-              position: position,
-              size: size,
-              layer: 'tree',
-              type: CollisionType.active)
-          .then((value) {
-        _lazyTreeHitboxId = value;
-      });
-    }
+    // if (trackTreeCollisions) {
+    //   gameRef.lazyCollisionService
+    //       .addHitbox(
+    //           position: position,
+    //           size: size,
+    //           layer: 'tree',
+    //           type: CollisionType.active)
+    //       .then((value) {
+    //     _lazyTreeHitboxId = value;
+    //   });
+    // }
   }
 
   bool onFire() {
@@ -186,13 +196,13 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         }
         if (!displacement.isZero()) {
           position = displacement;
-          if (trackTreeCollisions) {
-            gameRef.lazyCollisionService.updateHitbox(
-                id: _lazyTreeHitboxId,
-                position: position.translate(-_halfSizeX, -_halfSizeY),
-                layer: 'tree',
-                size: size);
-          }
+          // if (trackTreeCollisions) {
+          //   gameRef.lazyCollisionService.updateHitbox(
+          //       id: _lazyTreeHitboxId,
+          //       position: position.translate(-_halfSizeX, -_halfSizeY),
+          //       layer: 'tree',
+          //       size: size);
+          // }
           _trackDistance += innerSpeed;
           if (_trackDistance > 2 && renderTrackTrail) {
             _trackDistance = 0;
@@ -204,18 +214,18 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
             gameRef.backBuffer?.add(
                 _TrackTrailComponent(position: rightTrackPos, angle: angle));
           }
-          if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
-            gameRef.lazyCollisionService
-                .getCollisionsCount(_lazyTreeHitboxId, 'tree')
-                .then((value) {
-              final isHidden = value >= 4;
-
-              if (isHidden != _isHiddenFromEnemy) {
-                _isHiddenFromEnemy = isHidden;
-                onHiddenFromEnemyChanged(isHidden);
-              }
-            });
-          }
+          // if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
+          //   gameRef.lazyCollisionService
+          //       .getCollisionsCount(_lazyTreeHitboxId, 'tree')
+          //       .then((value) {
+          //     final isHidden = value >= 4;
+          //
+          //     if (isHidden != _isHiddenFromEnemy) {
+          //       _isHiddenFromEnemy = isHidden;
+          //       onHiddenFromEnemyChanged(isHidden);
+          //     }
+          //   });
+          // }
         }
       }
       if (current != TankState.idle) {
@@ -246,7 +256,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   @override
   onDeath(Component killedBy) {
     if (current != TankState.wreck) {
-      gameRef.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
+      // gameRef.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
       current = TankState.die;
 
       super.onDeath(killedBy);

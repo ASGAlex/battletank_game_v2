@@ -202,7 +202,8 @@ class _Light extends CircleComponent {
       : super(position: Vector2(1, 1), anchor: Anchor.center, radius: 16);
 
   @override
-  onLoad() {
+  Future onLoad() async {
+    super.onLoad();
     paint = Paint();
     paint
       ..color = material.Colors.orangeAccent.withOpacity(0.3)
