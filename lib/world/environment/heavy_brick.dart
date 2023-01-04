@@ -1,9 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch/batch_components.dart';
-import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/world.dart';
 
 class HeavyBrick extends SpriteComponent
@@ -11,11 +12,16 @@ class HeavyBrick extends SpriteComponent
         CollisionCallbacks,
         DestroyableComponent,
         BatchedComponent,
-        HasGameRef<MyGame> {
-  HeavyBrick(this.tileProcessor, {super.position, super.size})
-      : super(priority: RenderPriority.walls.priority);
+        HasGameReference<MyGame>,
+        HasGridSupport {
+  HeavyBrick(this.tileDataProvider, {super.position, super.size})
+      : super(priority: RenderPriority.walls.priority) {
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
+  }
 
-  TileProcessor tileProcessor;
+  TileDataProvider tileDataProvider;
 
   late StaticCollision _hitbox;
 
@@ -43,13 +49,7 @@ class HeavyBrick extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await tileProcessor.getSprite();
-    final collision = tileProcessor.getCollisionRect();
-    if (collision != null) {
-      collision.collisionType = CollisionType.passive;
-      _hitbox = StaticCollision(collision);
-      add(_hitbox);
-    }
+    sprite = await tileDataProvider.getSprite();
     super.onLoad();
   }
 

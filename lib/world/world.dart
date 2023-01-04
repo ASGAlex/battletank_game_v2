@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 
@@ -27,7 +28,7 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-mixin ObjectLayers on FlameGame {
+mixin ObjectLayers on World {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);

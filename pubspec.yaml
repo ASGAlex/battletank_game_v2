@@ -37,6 +37,9 @@ dependencies:
   dart_numerics: ^0.0.6
   intl: ^0.17.0
   shared_preferences: ^2.0.15
+  flame_spatial_grid:
+    path: ../cluisterizer_test
+  #    git: https://github.com/ASGAlex/flame_spatial_grid.git
   flutter:
     sdk: flutter
   flutter_localizations:

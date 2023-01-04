@@ -145,13 +145,12 @@ class Enemy extends Tank {
       return;
     }
     shouldSuspend = _shouldSuspend();
-    if (shouldSuspend &&
-        boundingHitbox.collisionType != CollisionType.inactive) {
-      boundingHitbox.collisionType = CollisionType.inactive;
+    if (shouldSuspend && boundingBox.collisionType != CollisionType.inactive) {
+      boundingBox.collisionType = CollisionType.inactive;
       renderTrackTrail = false;
     } else if (!shouldSuspend &&
-        boundingHitbox.collisionType != CollisionType.active) {
-      boundingHitbox.collisionType = CollisionType.active;
+        boundingBox.collisionType != CollisionType.active) {
+      boundingBox.collisionType = CollisionType.active;
       renderTrackTrail = true;
     }
 

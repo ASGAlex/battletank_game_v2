@@ -1,19 +1,28 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/back_buffer/lib/batch/batch_components.dart';
-import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/world/tank/bullet.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 import 'package:tank_game/world/world.dart';
 
 class Brick extends SpriteComponent
-    with CollisionCallbacks, HasGameRef<MyGame>, BatchedComponent {
-  Brick(this.tileProcessor, {super.position, super.size})
-      : super(priority: RenderPriority.walls.priority);
+    with
+        CollisionCallbacks,
+        HasGameReference<MyGame>,
+        BatchedComponent,
+        HasGridSupport {
+  Brick(this.tileDataProvider, {super.position, super.size})
+      : super(priority: RenderPriority.walls.priority) {
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
+  }
 
-  TileProcessor tileProcessor;
+  TileDataProvider tileDataProvider;
 
   int _hitsByBullet = 0;
   static const halfBrick = 4.0;
@@ -23,13 +32,7 @@ class Brick extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await tileProcessor.getSprite();
-    final collision = tileProcessor.getCollisionRect();
-    if (collision != null) {
-      collision.collisionType = CollisionType.passive;
-      _hitbox = StaticCollision(collision);
-      add(_hitbox);
-    }
+    sprite = await tileDataProvider.getSprite();
     super.onLoad();
   }
 

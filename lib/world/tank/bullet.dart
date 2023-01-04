@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
@@ -21,7 +22,11 @@ import 'enemy.dart';
 enum BulletState { fly, boom, crater }
 
 class Bullet extends SpriteAnimationGroupComponent<BulletState>
-    with CollisionCallbacks, HideableComponent, HasGameRef<MyGame> {
+    with
+        CollisionCallbacks,
+        HideableComponent,
+        HasGameRef<MyGame>,
+        HasGridSupport {
   Bullet(
       {required this.direction,
       required this.firedFrom,
@@ -30,6 +35,9 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       super.angle})
       : super(anchor: Anchor.center) {
     current = BulletState.fly;
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.active;
+    boundingBox.isSolid = true;
   }
 
   final Direction direction;
@@ -45,7 +53,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   final _light = _Light();
 
   Duration? _boomDuration;
-  late _BulletHitbox _hitbox;
 
   @override
   Future<void> onLoad() async {
@@ -58,8 +65,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       BulletState.crater: await SpriteSheetRegistry().boom.crate
     };
 
-    _hitbox = _BulletHitbox(size: size.clone());
-    add(_hitbox);
     add(_light);
 
     Vector2 displacement;
@@ -123,7 +128,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     final success = super.onComponentTypeCheck(other);
 
     if (success) {
-      if (other is WaterCollide) return false;
+      if (other is Water) return false;
       if (current == BulletState.boom) return false;
       if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
         return false;
@@ -136,7 +141,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    _hitbox.collisionType = CollisionType.passive;
+    boundingBox.collisionType = CollisionType.passive;
 
     Future<AudioPlayer>? sfx;
     if (other is Brick) {
@@ -164,7 +169,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   die({bool skipRemove = false, bool noHit = false}) {
     if (!skipRemove) {
-      _hitbox.collisionType = CollisionType.passive;
+      boundingBox.collisionType = CollisionType.passive;
     }
 
     _light.renderShape = false;

@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/generated/l10n.dart';
@@ -15,7 +16,7 @@ import '../world.dart';
 enum TargetState { alive, boom, dead }
 
 class Target extends SpriteAnimationGroupComponent<TargetState>
-    with DestroyableComponent, HasGameRef<MyGame> {
+    with DestroyableComponent, HasGameRef<MyGame>, HasGridSupport {
   static int _primaryProtectTargets = 0;
   static int _primaryProtectTargetsMax = 0;
 
@@ -31,7 +32,11 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
   Target(
       {required super.position,
       this.primary = true,
-      this.protectFromEnemies = false});
+      this.protectFromEnemies = false}) {
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
+  }
 
   bool primary;
   bool protectFromEnemies;
@@ -39,7 +44,6 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
   @override
   double health = 1;
 
-  final _hitbox = RectangleHitbox();
   Duration? _boomDuration;
 
   @override
@@ -56,7 +60,6 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
       TargetState.dead: dead,
     };
     current = TargetState.alive;
-    add(_hitbox);
     increaseCounters();
     return super.onLoad();
   }
@@ -148,7 +151,6 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
 
   @override
   onDeath(Component killedBy) {
-    remove(_hitbox);
     super.onDeath(killedBy);
     current = TargetState.boom;
     SoundLibrary.createSfxPlayer('explosion_player.m4a')

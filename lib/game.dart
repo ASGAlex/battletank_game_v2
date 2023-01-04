@@ -1,7 +1,9 @@
-import 'package:flame/collisions.dart';
+import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flame/input.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
@@ -17,6 +19,7 @@ import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
@@ -24,7 +27,6 @@ import 'packages/back_buffer/lib/batch/batched_game.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
-import 'world/environment/tree.dart';
 import 'world/environment/water.dart';
 import 'world/tank/enemy.dart';
 import 'world/tank/player.dart';
@@ -34,29 +36,19 @@ abstract class MyGameFeatures extends FlameGame
         ColorFilterMix,
         KeyboardEvents,
         SingleGameInstance,
-        HasQuadTreeCollisionDetection,
+        HasSpatialGridFramework,
         ScrollDetector,
         HasDraggables,
         HasTappables,
-        HasBatchRenderer,
-        ObjectLayers {
-  static const zoomPerScrollUnit = 0.02;
-
-  @override
-  void onScroll(PointerScrollInfo info) {
-    camera.zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
-    clampZoom();
-  }
-
-  void clampZoom() {
-    camera.zoom = camera.zoom.clamp(0.05, 5.0);
-  }
+        HasBatchRenderer {
+  GameWorld get world => rootComponent as GameWorld;
 }
 
 class MyGame extends MyGameFeatures
     with MyJoystickMix, GameHardwareKeyboard, XInputGamePad {
   MyGame(this.mapFile, this.context);
 
+  static const zoomPerScrollUnit = 0.22;
   static final fpsTextPaint = TextPaint(
     style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
   );
@@ -76,8 +68,16 @@ class MyGame extends MyGameFeatures
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
 
-  VisibilityIndicator? hudVisibility;
-  FlashMessage? hudFlashMessage;
+  late VisibilityIndicator hudVisibility;
+  late FlashMessage hudFlashMessage;
+  late final CameraComponent cameraComponent;
+
+  @override
+  void onScroll(PointerScrollInfo info) {
+    var zoom = cameraComponent.viewfinder.zoom;
+    zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
+    cameraComponent.viewfinder.zoom = zoom.clamp(0.08, 8.0);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -90,139 +90,24 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('loading map...');
-    var tiledComponent = await TiledComponent.load(mapFile, Vector2.all(8));
-    currentMap = tiledComponent.tileMap;
-    final mapWidth = (tiledComponent.tileMap.map.width *
-            tiledComponent.tileMap.map.tileWidth)
-        .toDouble();
-    final mapHeight = (tiledComponent.tileMap.map.height *
-            tiledComponent.tileMap.map.tileHeight)
-        .toDouble();
-    initializeCollisionDetection(
-        mapDimensions: Rect.fromLTWH(0, 0, mapWidth, mapHeight));
-    consoleMessages.sendMessage('done.');
 
-    consoleMessages.sendMessage('Compiling ground layer...');
-    final imageCompiler = ImageBatchCompiler(this);
-    imageCompiler.addMapLayer(
-        tileMap: tiledComponent.tileMap,
-        layerNames: ['ground'],
-        priority: RenderPriority.ground.priority);
-    consoleMessages.sendMessage('done.');
+    final gameWorld = GameWorld();
+    final map = GameMapLoader(mapFile);
 
-    consoleMessages.sendMessage('Compiling tree layer...');
-    await imageCompiler.addMapLayer(
-        tileMap: tiledComponent.tileMap,
-        layerNames: ['tree'],
-        priority: RenderPriority.tree.priority,
-        preprocessFunction: (ImageComponent treesComponent) =>
-            TreeLayer(treesComponent));
-    consoleMessages.sendMessage('done.');
+    await initializeSpatialGrid(
+        blockSize: 70,
+        debug: true,
+        activeRadius: const Size(2, 2),
+        unloadRadius: const Size(10, 10),
+        rootComponent: gameWorld,
+        lazyLoad: true,
+        initialPosition: Vector2(378, 731),
+        // buildCellsPerUpdate: 1,
+        trackWindowSize: true,
+        // removeCellsPerUpdate: 0.25,
+        suspendedCellLifetime: const Duration(minutes: 1),
+        maps: [map]);
 
-    consoleMessages.sendMessage('Preparing back buffer...');
-    backBuffer = BackBuffer(mapWidth.toInt(), mapHeight.toInt(), 2, 10, 0.98);
-    add(backBuffer!);
-    consoleMessages.sendMessage('done.');
-
-    // consoleMessages.sendMessage('Starting lazy collision service...');
-    // await lazyCollisionService.run({
-    //   'tree': const Duration(milliseconds: 100),
-    // });
-    // consoleMessages.sendMessage('done.');
-
-    consoleMessages.sendMessage('Creating trees and collision tiles...');
-    final settings = SettingsController();
-    switch (settings.graphicsQuality) {
-      case GraphicsQuality.low:
-      case GraphicsQuality.treeShadow:
-        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 0,
-            drawShadow: false,
-            offsetShadowSteps: 0,
-            offsetDirection: null);
-        break;
-      case GraphicsQuality.walls3D_low:
-        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 2,
-            drawShadow: false,
-            offsetShadowSteps: 0,
-            offsetDirection: const Offset(2, -2));
-        break;
-      case GraphicsQuality.walls3dShadows_low:
-        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 2,
-            drawShadow: true,
-            offsetShadowSteps: 2,
-            offsetDirection: const Offset(2, -2));
-        break;
-      case GraphicsQuality.walls3DShadows_medium:
-        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 3,
-            drawShadow: true,
-            offsetShadowSteps: 2,
-            offsetDirection: const Offset(1.3, -1.3));
-        break;
-      case GraphicsQuality.walls3dShadows_hight:
-        initBatchRenderer(mapWidth.toInt(), mapHeight.toInt(),
-            offsetSteps: 4,
-            drawShadow: true,
-            offsetShadowSteps: 4,
-            offsetDirection: const Offset(1.1, -1.1));
-        break;
-    }
-
-    batchRenderer?.priority = RenderPriority.walls.priority;
-    TileProcessor.processTileType(
-        tileMap: tiledComponent.tileMap,
-        processorByType: <String, TileProcessorFunc>{
-          'tree': ((tile) {
-            final collision = tile.getCollisionRect();
-            if (collision != null) {
-              collision.position = tile.position;
-              // lazyCollisionService.addHitbox(
-              //     position: tile.position, size: tile.size, layer: 'tree');
-            }
-          }),
-          'water': ((tile) {
-            add(WaterCollide(tile, position: tile.position, size: tile.size));
-          }),
-          'brick': ((tile) async {
-            final brick = Brick(tile, position: tile.position, size: tile.size);
-            add(brick);
-          }),
-          'heavy_brick': ((tile) async {
-            final brick =
-                HeavyBrick(tile, position: tile.position, size: tile.size);
-            add(brick);
-          }),
-        },
-        layersToLoad: [
-          'tree',
-          'collision'
-        ]);
-    consoleMessages.sendMessage('done.');
-
-    consoleMessages.sendMessage('Creating water tiles...');
-    final compiler = AnimationBatchCompiler(this);
-    TileProcessor.processTileType(
-        tileMap: tiledComponent.tileMap,
-        processorByType: <String, TileProcessorFunc>{
-          'water': ((tile) {
-            compiler.addTile(tile);
-          }),
-        },
-        layersToLoad: [
-          'water',
-        ]);
-    consoleMessages.sendMessage('done.');
-
-    consoleMessages.sendMessage('Compiling water animation...');
-    await compiler.addCollectedTiles(priority: RenderPriority.water.priority);
-    consoleMessages.sendMessage('done.');
-
-    consoleMessages.sendMessage('Loading spawns...');
-    loadSpawns(tiledComponent);
-    loadTargets(tiledComponent);
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Starting UI');
@@ -230,91 +115,43 @@ class MyGame extends MyGameFeatures
       player?.onFire();
     });
     hudVisibility = VisibilityIndicator(this);
-    hudVisibility!.setVisibility(true);
-    hudVisibility!.x = 2;
-    hudVisibility!.y = 2;
-    add(hudVisibility!);
+    hudVisibility.setVisibility(true);
+    hudVisibility.x = 2;
+    hudVisibility.y = 2;
 
     hudFlashMessage =
-        FlashMessage(position: hudVisibility!.position.translate(100, 0));
-    add(hudFlashMessage!);
+        FlashMessage(position: hudVisibility.position.translate(100, 0));
 
     consoleMessages.sendMessage('done.');
+
+    cameraComponent = CameraComponent.withFixedResolution(
+        world: gameWorld, width: 400, height: 250);
+    cameraComponent.viewfinder.zoom = 5;
+    // cameraComponent.setBounds(
+    //     Rectangle.fromRect(Rect.fromLTWH(0, 0, map.mapWidth, map.mapHeight)));
+    add(gameWorld);
+    add(cameraComponent);
+    add(hudVisibility);
+    add(hudFlashMessage);
 
     consoleMessages.sendMessage('Spawning the Player...');
-    camera.viewport = FixedResolutionViewport(Vector2(400, 250));
-    camera.worldBounds = Rect.fromLTWH(0, 0, mapWidth, mapHeight);
-    camera.zoom = 0.3;
+    gameInitializationDone();
 
-    final playerSpawn = await Spawn.waitFree(true);
-    camera.followComponent(playerSpawn);
-    restorePlayer(playerSpawn);
-    // SoundLibrary().playIntro();
-    consoleMessages.sendMessage('done.');
-    consoleMessages.sendMessage('All done, game started!');
-  }
-
-  loadSpawns(TiledComponent tiledComponent) {
-    final spawns =
-        tiledComponent.tileMap.getLayer<ObjectGroup>('spawn')?.objects;
-    if (spawns != null) {
-      for (final spawnObject in spawns) {
-        final newSpawn = Spawn(
-            position: Vector2(spawnObject.x + spawnObject.width / 2,
-                spawnObject.y + spawnObject.height / 2),
-            isForPlayer: spawnObject.name == 'spawn_player');
-        for (final property in spawnObject.properties) {
-          switch (property.name) {
-            case 'cooldown_seconds':
-              newSpawn.cooldown =
-                  Duration(seconds: int.parse(property.value.toString()));
-              break;
-            case 'tanks_inside':
-              newSpawn.tanksInside = int.parse(property.value.toString());
-              break;
-            case 'trigger_distance':
-              final distance = double.parse(property.value.toString());
-              newSpawn.triggerDistanceSquared = distance * distance;
-              break;
-            case 'tank_type':
-              newSpawn.tankTypeFactory.typeName = property.value.toString();
-              break;
-          }
-        }
-        addSpawn(newSpawn);
-      }
-    }
-  }
-
-  loadTargets(TiledComponent tiledComponent) {
-    final targets =
-        tiledComponent.tileMap.getLayer<ObjectGroup>('target')?.objects;
-    if (targets != null) {
-      for (final targetObject in targets) {
-        var primary = true;
-        var protectFromEnemies = false;
-        for (final property in targetObject.properties) {
-          switch (property.name) {
-            case 'primary':
-              primary = property.value == "true" ? true : false;
-              break;
-            case 'protectFromEnemies':
-              protectFromEnemies = property.value == "true" ? true : false;
-              break;
-          }
-        }
-        final newTarget = Target(
-            position: Vector2(targetObject.x, targetObject.y),
-            primary: primary,
-            protectFromEnemies: protectFromEnemies);
-        addSpawn(newTarget);
-      }
-    }
+    Spawn.waitFree(true).then((playerSpawn) async {
+      spatialGrid.trackedComponent = playerSpawn;
+      cameraComponent.follow(playerSpawn, snap: true);
+      await restorePlayer(playerSpawn);
+      cameraComponent.follow(player!);
+      spatialGrid.trackedComponent = player;
+      // SoundLibrary().playIntro();
+      consoleMessages.sendMessage('done.');
+      consoleMessages.sendMessage('All done, game started!');
+    });
   }
 
   onObjectivesStateChange(String message, FlashMessageType type,
       [bool finishGame = false]) {
-    hudFlashMessage?.showMessage(message, type);
+    hudFlashMessage.showMessage(message, type);
     if (finishGame) {
       Future.delayed(const Duration(seconds: 5)).then((value) {
         paused = true;
@@ -331,10 +168,9 @@ class MyGame extends MyGameFeatures
   Future<Player?> restorePlayer([Spawn? spawn]) async {
     if (Player.respawnCount > 0) {
       spawn ??= await Spawn.waitFree(true);
-      camera.followComponent(spawn);
+
       final object = Player(position: spawn.position.clone());
       await spawn.createTank(object, true);
-      camera.followComponent(object);
       player = object;
       Player.respawnCount--;
       return object;
@@ -366,5 +202,185 @@ class MyGame extends MyGameFeatures
     // lazyCollisionService.stop();
     SpriteSheetBase.clearCaches();
     Player.respawnCount = 30;
+  }
+}
+
+class GameWorld extends World with ObjectLayers {}
+
+class GameMapLoader extends TiledMapLoader {
+  GameMapLoader(String fileName) {
+    this.fileName = fileName;
+  }
+
+  @override
+  TileBuilderFunction? get cellPostBuilder => null;
+
+  @override
+  Vector2 get destTileSize => Vector2.all(8);
+
+  @override
+  TileBuilderFunction? get notFoundBuilder => groundBuilder;
+
+  @override
+  Map<String, TileBuilderFunction>? get tileBuilders => {
+        'tree': onBuildTree,
+        'water': onBuildWater,
+        'brick': onBuildBrick,
+        'heavy_brick': onBuildHeavyBrick,
+        'spawn': onBuildSpawn,
+        'spawn_player': onBuildSpawnPlayer,
+        'target': onBuildTarget,
+      };
+
+  @override
+  MyGame get game => super.game as MyGame;
+
+  @override
+  bool get preloadTileSets => true;
+
+  double mapWidth = 0;
+  double mapHeight = 0;
+
+  @override
+  Future<TiledComponent<FlameGame>> init(HasSpatialGridFramework game) {
+    return super.init(game).then((renderableTiledMap) {
+      mapWidth = (renderableTiledMap.tileMap.map.width *
+              renderableTiledMap.tileMap.map.tileWidth)
+          .toDouble();
+      mapHeight = (renderableTiledMap.tileMap.map.height *
+              renderableTiledMap.tileMap.map.tileHeight)
+          .toDouble();
+
+      return renderableTiledMap;
+    });
+  }
+
+  Future groundBuilder(CellBuilderContext context) async {
+    context.priorityOverride = RenderPriority.ground.priority;
+    return genericTileBuilder(context);
+  }
+
+  Future onBuildTree(CellBuilderContext context) async {
+    final data = context.tileDataProvider;
+    if (data == null) return;
+    final tree = Tree(data, position: context.position, size: context.size);
+    tree.currentCell = context.cell;
+    game.layersManager.addComponent(
+        component: tree,
+        layerType: MapLayerType.static,
+        layerName: 'Tree',
+        priority: RenderPriority.tree.priority);
+  }
+
+  Future onBuildWater(CellBuilderContext context) async {
+    final data = context.tileDataProvider;
+    if (data == null) return;
+    final water = Water(data, position: context.position, size: context.size);
+    water.currentCell = context.cell;
+
+    game.layersManager.addComponent(
+        component: water,
+        layerType: MapLayerType.animated,
+        layerName: 'Water',
+        priority: RenderPriority.water.priority);
+  }
+
+  Future onBuildBrick(CellBuilderContext context) async {
+    final data = context.tileDataProvider;
+    if (data == null) return;
+    final brick = Brick(data, position: context.position, size: context.size);
+    brick.currentCell = context.cell;
+
+    game.layersManager.addComponent(
+        component: brick,
+        layerType: MapLayerType.static,
+        layerName: 'Brick',
+        priority: RenderPriority.walls.priority);
+  }
+
+  Future onBuildHeavyBrick(CellBuilderContext context) async {
+    final data = context.tileDataProvider;
+    if (data == null) return;
+    final heavyBrick =
+        HeavyBrick(data, position: context.position, size: context.size);
+
+    heavyBrick.currentCell = context.cell;
+    game.layersManager.addComponent(
+        component: heavyBrick,
+        layerType: MapLayerType.static,
+        layerName: 'HeavyBrick',
+        priority: RenderPriority.walls.priority);
+  }
+
+  Future onBuildSpawn(CellBuilderContext context) async {
+    final properties = context.tiledObject?.properties;
+    if (properties == null) return;
+    final newSpawn = Spawn(
+        position: Vector2(context.position.x + context.size.x / 2,
+            context.position.y + context.size.y / 2),
+        isForPlayer: false);
+
+    newSpawn.currentCell = context.cell;
+    _setupSpawnProperties(newSpawn, properties);
+
+    game.world.addSpawn(newSpawn);
+  }
+
+  Future onBuildSpawnPlayer(CellBuilderContext context) async {
+    final properties = context.tiledObject?.properties;
+    if (properties == null) return;
+    final newSpawn = Spawn(
+        position: Vector2(context.position.x + context.size.x / 2,
+            context.position.y + context.size.y / 2),
+        isForPlayer: true);
+
+    newSpawn.currentCell = context.cell;
+    _setupSpawnProperties(newSpawn, properties);
+
+    game.cameraComponent.follow(newSpawn);
+    game.world.addSpawn(newSpawn);
+  }
+
+  void _setupSpawnProperties(Spawn spawn, CustomProperties properties) {
+    for (final property in properties) {
+      switch (property.name) {
+        case 'cooldown_seconds':
+          spawn.cooldown =
+              Duration(seconds: int.parse(property.value.toString()));
+          break;
+        case 'tanks_inside':
+          spawn.tanksInside = int.parse(property.value.toString());
+          break;
+        case 'trigger_distance':
+          final distance = double.parse(property.value.toString());
+          spawn.triggerDistanceSquared = distance * distance;
+          break;
+        case 'tank_type':
+          spawn.tankTypeFactory.typeName = property.value.toString();
+          break;
+      }
+    }
+  }
+
+  Future onBuildTarget(CellBuilderContext context) async {
+    final properties = context.tiledObject?.properties;
+    if (properties == null) return;
+    var primary = true;
+    var protectFromEnemies = false;
+    for (final property in properties) {
+      switch (property.name) {
+        case 'primary':
+          primary = property.value == "true" ? true : false;
+          break;
+        case 'protectFromEnemies':
+          protectFromEnemies = property.value == "true" ? true : false;
+          break;
+      }
+    }
+    final newTarget = Target(
+        position: context.position,
+        primary: primary,
+        protectFromEnemies: protectFromEnemies);
+    game.world.addSpawn(newTarget);
   }
 }

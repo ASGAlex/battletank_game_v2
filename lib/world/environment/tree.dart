@@ -1,9 +1,24 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/packages/tiled_utils/lib/image_batch_compiler.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/world.dart';
+
+class Tree extends SpriteComponent with HasGridSupport {
+  Tree(this.tileDataProvider, {super.position, super.size})
+      : super(priority: RenderPriority.tree.priority);
+
+  TileDataProvider tileDataProvider;
+
+  @override
+  Future<void> onLoad() async {
+    sprite = await tileDataProvider.getSprite();
+    super.onLoad();
+  }
+}
 
 class TreeLayer extends PositionComponent {
   TreeLayer(this.trees) {

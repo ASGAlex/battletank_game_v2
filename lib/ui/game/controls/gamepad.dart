@@ -65,7 +65,7 @@ mixin XInputGamePad on MyGameFeatures {
       RawKeyUpEvent(character: 'xinput', data: RawKeyEventDataWindows());
 
   @override
-  void update(double dt) {
+  Future update(double dt) async {
     final controller = SettingsController().xInputGamePadController;
     if (controller.useController) {
       if (controller.spaceHold) {

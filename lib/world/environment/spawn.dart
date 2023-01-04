@@ -2,12 +2,13 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/enemy.dart';
 import 'package:tank_game/world/tank/type/types.dart';
-import 'package:tank_game/world/world.dart';
 
 import '../../services/spritesheet/spritesheet.dart';
 
@@ -45,7 +46,7 @@ class SpawnTankFactory {
 }
 
 class Spawn extends SpriteAnimationComponent
-    with CollisionCallbacks, HasGameRef<MyGame> {
+    with CollisionCallbacks, HasGameReference<MyGame>, HasGridSupport {
   static final _instances = <Spawn>[];
   static const spawnDurationSec = 2;
 
@@ -90,6 +91,10 @@ class Spawn extends SpriteAnimationComponent
       : super(
             position: position, size: Vector2.all(15), anchor: Anchor.center) {
     _instances.add(this);
+
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
   }
 
   static clear() {
@@ -100,8 +105,6 @@ class Spawn extends SpriteAnimationComponent
   Future<void> onLoad() async {
     animation = await SpriteSheetRegistry().spawn.animation;
     animation?.onComplete = reverseAnimation;
-    add(StaticCollision(
-        RectangleHitbox()..collisionType = CollisionType.passive));
   }
 
   void reverseAnimation() {
@@ -127,7 +130,7 @@ class Spawn extends SpriteAnimationComponent
 
   void _createObject() {
     if (_currentObject == null) return;
-    gameRef.addTank(_currentObject!);
+    game.world.addTank(_currentObject!);
     _currentObject = null;
     Future.delayed(const Duration(seconds: spawnDurationSec)).then((value) {
       busy = false;

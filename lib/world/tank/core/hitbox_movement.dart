@@ -3,9 +3,8 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 
 import 'base_tank.dart';
-import 'hitbox_map_bounds.dart';
 
-class MovementHitbox extends HitboxMapBounds {
+class MovementHitbox extends RectangleHitbox {
   MovementHitbox({super.angle, super.anchor, super.priority})
       : super(position: Vector2(13, 1));
 
@@ -41,9 +40,10 @@ class MovementHitbox extends HitboxMapBounds {
   void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
     try {
       _otherCollisions++;
-      if (!outOfBounds) {
-        tank.canMoveForward = false;
-      }
+      tank.canMoveForward = false;
+      // if (!outOfBounds) {
+      //   tank.canMoveForward = false;
+      // }
     } catch (e) {
       print(e);
     }
@@ -54,7 +54,7 @@ class MovementHitbox extends HitboxMapBounds {
   void onCollisionEnd(ShapeHitbox other) {
     try {
       _otherCollisions--;
-      if (_otherCollisions == 0 && !outOfBounds) {
+      if (_otherCollisions == 0 /*&& !outOfBounds*/) {
         tank.canMoveForward = true;
       }
     } catch (e) {
@@ -66,11 +66,11 @@ class MovementHitbox extends HitboxMapBounds {
   @override
   update(dt) {
     super.update(dt);
-    if (tank.canMoveForward) {
-      tank.canMoveForward = !outOfBounds;
-    }
+    // if (tank.canMoveForward) {
+    //   tank.canMoveForward = !outOfBounds;
+    // }
 
-    if (!outOfBounds && _otherCollisions == 0) {
+    if (/*!outOfBounds &&*/ _otherCollisions == 0) {
       tank.canMoveForward = true;
     }
   }

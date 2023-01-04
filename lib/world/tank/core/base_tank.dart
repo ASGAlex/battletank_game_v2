@@ -6,6 +6,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
@@ -29,10 +30,15 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         CollisionCallbacks,
         DestroyableComponent,
         HasGameRef<MyGame>,
-        HideableComponent {
+        HideableComponent,
+        HasGridSupport {
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
     typeController = TankTypeController(this);
+
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.active;
+    boundingBox.isSolid = true;
   }
 
   late final TankTypeController typeController;
@@ -60,7 +66,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   int _lazyTreeHitboxId = -1;
   final movementHitbox = MovementHitbox();
-  final boundingHitbox = RectangleHitbox();
 
   final distantAudioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
 
@@ -93,7 +98,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     _boomDuration = typeController.type.animationDie.duration;
 
     current = TankState.idle;
-    add(boundingHitbox);
     add(movementHitbox);
     updateSize();
     await super.onLoad();
@@ -125,7 +129,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           position: position,
           damage: damage,
           firedFrom: this);
-      gameRef.addBullet(bullet);
+      gameRef.world.addBullet(bullet);
       SoundLibrary.createSfxPlayer('player_fire_bullet.m4a').then((player) {
         if (this is Player) {
           player.resume();
@@ -151,7 +155,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         final r = Random();
         final newPos = position.translate(
             8 - r.nextInt(16).toDouble(), 8 - r.nextInt(16).toDouble());
-        gameRef.addSky(ParticleSystemComponent(
+        gameRef.world.addSky(ParticleSystemComponent(
             position: newPos,
             particle: AcceleratedParticle(
                 acceleration:

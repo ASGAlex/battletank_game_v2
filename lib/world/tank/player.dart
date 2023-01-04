@@ -192,7 +192,7 @@ class Player extends Tank {
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {
-    gameRef.hudVisibility?.setVisibility(!isHidden);
+    gameRef.hudVisibility.setVisibility(!isHidden);
   }
 
   @override
