@@ -41,6 +41,13 @@ mixin GameHardwareKeyboard on MyGameFeatures {
         }
       }
 
+      if (key == LogicalKeyboardKey.keyK) {
+        player.onDeath(player);
+      }
+
+      if (key == LogicalKeyboardKey.keyM) {
+        isSpatialGridDebugEnabled = !isSpatialGridDebugEnabled;
+      }
       if (key == LogicalKeyboardKey.keyW) {
         directionButtonPressed = true;
         if (player.lookDirection != Direction.up) {
@@ -75,7 +82,7 @@ mixin GameHardwareKeyboard on MyGameFeatures {
       }
     }
 
-    if (directionButtonPressed && player.canMoveForward) {
+    if (directionButtonPressed && player.movementHitbox.isMovementAllowed) {
       player.current = TankState.run;
       if ([PlayerState.paused, PlayerState.stopped]
           .contains(player.movePlayerSound?.state)) {

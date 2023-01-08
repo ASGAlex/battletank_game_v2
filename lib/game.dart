@@ -7,7 +7,6 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
-import 'package:tank_game/packages/back_buffer/lib/back_buffer.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
@@ -39,7 +38,7 @@ abstract class MyGameFeatures extends FlameGame
         HasSpatialGridFramework,
         ScrollDetector,
         HasDraggables,
-        HasTappables,
+        HasTappableComponents,
         HasBatchRenderer {
   GameWorld get world => rootComponent as GameWorld;
 }
@@ -61,9 +60,7 @@ class MyGame extends MyGameFeatures
   List<Enemy> enemies = [];
   Player? player;
 
-  RenderableTiledMap? currentMap;
-
-  BackBuffer? backBuffer;
+  // BackBuffer? backBuffer;
 
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
@@ -77,6 +74,7 @@ class MyGame extends MyGameFeatures
     var zoom = cameraComponent.viewfinder.zoom;
     zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
     cameraComponent.viewfinder.zoom = zoom.clamp(0.08, 8.0);
+    onAfterZoom();
   }
 
   @override
@@ -95,16 +93,14 @@ class MyGame extends MyGameFeatures
     final map = GameMapLoader(mapFile);
 
     await initializeSpatialGrid(
-        blockSize: 70,
-        debug: true,
+        blockSize: 140,
+        debug: false,
         activeRadius: const Size(2, 2),
-        unloadRadius: const Size(10, 10),
+        unloadRadius: const Size(5, 5),
         rootComponent: gameWorld,
         lazyLoad: true,
         initialPosition: Vector2(378, 731),
-        // buildCellsPerUpdate: 1,
         trackWindowSize: true,
-        // removeCellsPerUpdate: 0.25,
         suspendedCellLifetime: const Duration(minutes: 1),
         maps: [map]);
 
@@ -126,7 +122,7 @@ class MyGame extends MyGameFeatures
 
     cameraComponent = CameraComponent.withFixedResolution(
         world: gameWorld, width: 400, height: 250);
-    cameraComponent.viewfinder.zoom = 5;
+    cameraComponent.viewfinder.zoom = 2;
     // cameraComponent.setBounds(
     //     Rectangle.fromRect(Rect.fromLTWH(0, 0, map.mapWidth, map.mapHeight)));
     add(gameWorld);
@@ -141,8 +137,6 @@ class MyGame extends MyGameFeatures
       spatialGrid.trackedComponent = playerSpawn;
       cameraComponent.follow(playerSpawn, snap: true);
       await restorePlayer(playerSpawn);
-      cameraComponent.follow(player!);
-      spatialGrid.trackedComponent = player;
       // SoundLibrary().playIntro();
       consoleMessages.sendMessage('done.');
       consoleMessages.sendMessage('All done, game started!');
@@ -172,6 +166,8 @@ class MyGame extends MyGameFeatures
       final object = Player(position: spawn.position.clone());
       await spawn.createTank(object, true);
       player = object;
+      cameraComponent.follow(player!);
+      spatialGrid.trackedComponent = player;
       Player.respawnCount--;
       return object;
     } else {
@@ -205,7 +201,30 @@ class MyGame extends MyGameFeatures
   }
 }
 
-class GameWorld extends World with ObjectLayers {}
+class GameWorld extends World
+    with ObjectLayers, TapCallbacks, HasGameRef<MyGame> {
+  @override
+  void onTapDown(TapDownEvent event) {
+    final tapPosition = event.localPosition;
+    final cellsUnderCursor = <Cell>[];
+    gameRef.spatialGrid.cells.forEach((rect, cell) {
+      if (cell.rect.containsPoint(tapPosition)) {
+        cellsUnderCursor.add(cell);
+        print('State:  + ${cell.state}');
+        print('Rect: $rect');
+        // print('Components count: ${cell.components.length}');
+      }
+    });
+
+    final list = componentsAtPoint(tapPosition).toList(growable: false);
+    for (final component in list) {
+      if (component is! HasGridSupport) continue;
+      print(component.runtimeType);
+    }
+
+    add(Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
+  }
+}
 
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
@@ -261,6 +280,7 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildTree(CellBuilderContext context) async {
+    return;
     final data = context.tileDataProvider;
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);

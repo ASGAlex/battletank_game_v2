@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/world.dart';
@@ -112,7 +111,6 @@ class Enemy extends Tank {
 
   bool hearPlayer = false;
   bool seePlayer = false;
-  bool shouldSuspend = false;
 
   @override
   Future<void> onLoad() async {
@@ -144,23 +142,9 @@ class Enemy extends Tank {
       super.update(dt);
       return;
     }
-    shouldSuspend = _shouldSuspend();
-    if (shouldSuspend && boundingBox.collisionType != CollisionType.inactive) {
-      boundingBox.collisionType = CollisionType.inactive;
-      renderTrackTrail = false;
-    } else if (!shouldSuspend &&
-        boundingBox.collisionType != CollisionType.active) {
-      boundingBox.collisionType = CollisionType.active;
-      renderTrackTrail = true;
-    }
 
     if (current != TankState.die) {
-      if (shouldSuspend) {
-        hearPlayer = false;
-        seePlayer = false;
-      } else {
-        hearPlayer = _hearPlayer();
-      }
+      hearPlayer = _hearPlayer();
       if (!hearPlayer) {
         seePlayer = false;
       } else {
@@ -210,25 +194,9 @@ class Enemy extends Tank {
   }
 
   @override
-  void renderTree(Canvas canvas) {
-    if (!shouldSuspend) {
-      super.renderTree(canvas);
-    }
-  }
-
-  @override
   void onWeaponReloaded() {
     if (dead) return;
     _fireController?.onWeaponReloaded();
-  }
-
-  bool _shouldSuspend() {
-    final player = gameRef.player;
-    if (player == null || player.dead) {
-      return false;
-    }
-    final distance = player.position.distanceToSquared(position);
-    return distance >= distanceOfSuspendingSquared;
   }
 
   bool _hearPlayer() {

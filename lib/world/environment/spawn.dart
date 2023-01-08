@@ -76,7 +76,7 @@ class Spawn extends SpriteAnimationComponent
 
   bool busy = false;
   bool isForPlayer = false;
-  PositionComponent? _currentObject;
+  HasGridSupport? _currentObject;
   bool _canTryCreate = false;
 
   Duration cooldown = const Duration(seconds: 60);
@@ -103,6 +103,7 @@ class Spawn extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
+    super.onLoad();
     animation = await SpriteSheetRegistry().spawn.animation;
     animation?.onComplete = reverseAnimation;
   }
@@ -112,17 +113,18 @@ class Spawn extends SpriteAnimationComponent
     animation?.onComplete = reverseAnimation;
   }
 
-  Future createTank(PositionComponent object, [bool isPlayer = false]) {
+  Future createTank(HasGridSupport object, [bool isPlayer = false]) {
     busy = true;
     animation?.reset();
-    _currentObject = object;
     _canTryCreate = false;
-    if (_currentObject is Tank) {
-      (_currentObject as Tank).typeController.type = tankTypeFactory.create();
+    if (object is Tank) {
+      object.typeController.type = tankTypeFactory.create();
     }
     return Future.delayed(const Duration(seconds: spawnDurationSec))
         .then((value) {
+      _currentObject = object;
       _currentObject?.position = position.clone();
+      _currentObject?.currentCell = currentCell;
       _canTryCreate = true;
       return null;
     });

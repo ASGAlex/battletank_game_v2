@@ -25,7 +25,7 @@ class RandomMovementController {
           _plannedMinDistanceForChange) ||
       _remainingDistance <= 0 ||
       _plannedDistance <= 0 ||
-      !parent.canMoveForward;
+      parent.movementHitbox.isMovementBlocked;
 
   final AvailableDirectionsChecker directionsChecker;
   final Tank parent;

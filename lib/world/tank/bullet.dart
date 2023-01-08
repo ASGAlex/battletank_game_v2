@@ -11,13 +11,13 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
-import 'package:tank_game/world/environment/spawn.dart';
-import 'package:tank_game/world/environment/water.dart';
+import 'package:tank_game/world/tank/enemy.dart';
 
+import '../environment/spawn.dart';
+import '../environment/water.dart';
 import '../sound.dart';
 import '../world.dart';
 import 'core/direction.dart';
-import 'enemy.dart';
 
 enum BulletState { fly, boom, crater }
 
@@ -37,7 +37,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     current = BulletState.fly;
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.active;
-    boundingBox.isSolid = true;
   }
 
   final Direction direction;
@@ -125,23 +124,32 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
-    final success = super.onComponentTypeCheck(other);
-
-    if (success) {
-      if (other is Water) return false;
-      if (current == BulletState.boom) return false;
-      if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
-        return false;
-      }
-
-      if (firedFrom is Enemy && other is Enemy && !other.dead) return false;
+    if (other is Water ||
+        other is Spawn ||
+        other == firedFrom ||
+        (other is Bullet && firedFrom == other.firedFrom) ||
+        current == BulletState.boom ||
+        (firedFrom is Enemy && other is Enemy && !other.dead)) {
+      return false;
     }
-    return success;
+    return super.onComponentTypeCheck(other);
+    //
+    // if (success) {
+    //   if (other is Water) return false;
+    //   if (current == BulletState.boom) return false;
+    //   if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
+    //     return false;
+    //   }
+    //
+    //   if (firedFrom is Enemy && other is Enemy && !other.dead) return false;
+    // }
+    // return success;
   }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    boundingBox.collisionType = CollisionType.passive;
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.inactive;
 
     Future<AudioPlayer>? sfx;
     if (other is Brick) {
@@ -169,7 +177,8 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   die({bool skipRemove = false, bool noHit = false}) {
     if (!skipRemove) {
-      boundingBox.collisionType = CollisionType.passive;
+      boundingBox.collisionType =
+          boundingBox.defaultCollisionType = CollisionType.passive;
     }
 
     _light.renderShape = false;
@@ -181,25 +190,12 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       Future.delayed(_boomDuration!).then((value) {
         if (noHit) {
           current = BulletState.crater;
-          gameRef.backBuffer?.add(this);
+          // gameRef.backBuffer?.add(this);
         }
         removeFromParent();
       });
     }
   }
-}
-
-class _BulletHitbox extends RectangleHitbox {
-  _BulletHitbox({super.size, super.position});
-
-  // @override
-  // bool broadPhaseCheck(PositionComponent other) {
-  //   final success = super.broadPhaseCheck(other);
-  //   if (success && (other is MovementSideHitbox || other is MovementHitbox)) {
-  //     return false;
-  //   }
-  //   return success;
-  // }
 }
 
 class _Light extends CircleComponent {

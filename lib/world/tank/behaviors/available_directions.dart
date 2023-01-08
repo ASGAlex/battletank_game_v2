@@ -24,11 +24,11 @@ class AvailableDirectionsChecker {
   List<Direction> getAvailableDirections() {
     final availableDirections = <Direction>[];
     for (final hitbox in _movementSideHitboxes) {
-      if (hitbox.canMoveToDirection) {
+      if (hitbox.isMovementAllowed) {
         availableDirections.add(hitbox.globalMapDirection);
       }
     }
-    if (parent.canMoveForward) {
+    if (parent.movementHitbox.isMovementAllowed) {
       availableDirections.add(parent.lookDirection);
     }
     return availableDirections;

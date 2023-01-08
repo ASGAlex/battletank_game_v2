@@ -158,7 +158,7 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     decreaseCounters();
     Future.delayed(_boomDuration!).then((value) {
       current = TargetState.dead;
-      gameRef.backBuffer?.add(this);
+      // gameRef.backBuffer?.add(this);
       removeFromParent();
     });
   }

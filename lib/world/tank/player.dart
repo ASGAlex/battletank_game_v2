@@ -9,7 +9,6 @@ import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/world/world.dart';
 
-import '../sound.dart';
 import 'core/base_tank.dart';
 import 'core/direction.dart';
 
@@ -22,22 +21,22 @@ class Player extends Tank {
 
   MyJoystick? joystick;
 
-  final _movePlayerSound = SoundLibrary.createMusicPlayer('move_player.m4a',
-          playerId: 'firstPlayerSelf')
-      .then((value) {
-    value.setReleaseMode(ReleaseMode.loop);
-    return value;
-  });
+  // final _movePlayerSound = SoundLibrary.createMusicPlayer('move_player.m4a',
+  //         playerId: 'firstPlayerSelf')
+  //     .then((value) {
+  //   value.setReleaseMode(ReleaseMode.loop);
+  //   return value;
+  // });
 
   AudioPlayer? movePlayerSound;
 
-  final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
-          'move_enemies.m4a',
-          playerId: 'firstPlayerEnemies')
-      .then((value) {
-    value.setReleaseMode(ReleaseMode.loop);
-    return value;
-  });
+  // final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
+  //         'move_enemies.m4a',
+  //         playerId: 'firstPlayerEnemies')
+  //     .then((value) {
+  //   value.setReleaseMode(ReleaseMode.loop);
+  //   return value;
+  // });
 
   AudioPlayer? moveEnemiesAmbientSound;
 
@@ -76,12 +75,12 @@ class Player extends Tank {
 
   @override
   Future<void>? onLoad() async {
-    _movePlayerSound.then((value) {
-      movePlayerSound = value;
-    });
-    _moveEnemiesAmbientSound.then((value) {
-      moveEnemiesAmbientSound = value;
-    });
+    // _movePlayerSound.then((value) {
+    //   movePlayerSound = value;
+    // });
+    // _moveEnemiesAmbientSound.then((value) {
+    //   moveEnemiesAmbientSound = value;
+    // });
     await super.onLoad();
     joystick = gameRef.joystick;
   }
@@ -163,7 +162,7 @@ class Player extends Tank {
       throw "Unexpected Joystick direction error. Angle is& $angleDegrees";
     }
 
-    if (directionButtonPressed && canMoveForward) {
+    if (directionButtonPressed && movementHitbox.isMovementAllowed) {
       current = TankState.run;
       if (movementHitbox.collisionType != CollisionType.active) {
         movementHitbox.collisionType = CollisionType.active;

@@ -28,8 +28,6 @@ class Brick extends SpriteComponent
   static const halfBrick = 4.0;
   static final brickSize = Vector2.all(halfBrick * 2);
 
-  late StaticCollision _hitbox;
-
   @override
   Future<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
@@ -57,7 +55,6 @@ class Brick extends SpriteComponent
           position.y += halfBrick;
           break;
       }
-      _hitbox.size = size;
     }
     _hitsByBullet++;
   }

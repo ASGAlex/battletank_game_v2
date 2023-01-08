@@ -73,7 +73,7 @@ class AttackMovementController {
         parent.lookDirection = direction;
         parent.angle = direction.angle;
         parent.skipUpdateOnAngleChange = true;
-      } else if (!parent.canMoveForward) {
+      } else if (parent.movementHitbox.isMovementBlocked) {
         _startRandomMovement();
       }
       return true;

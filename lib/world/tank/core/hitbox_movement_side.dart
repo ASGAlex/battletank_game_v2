@@ -1,23 +1,24 @@
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:tank_game/world/tank/bullet.dart';
 
+import '../../environment/spawn.dart';
 import 'base_tank.dart';
 import 'direction.dart';
-import 'hitbox_map_bounds.dart';
+import 'hitbox_movement.dart';
 
-class MovementSideHitbox extends HitboxMapBounds {
-  MovementSideHitbox(
-      {required this.direction, super.angle, super.anchor, super.priority})
+class MovementSideHitbox extends BoundingHitbox {
+  MovementSideHitbox({required this.direction})
       : super(position: Vector2(0, 0));
 
   Tank get tank => parent as Tank;
 
   final Direction direction;
 
-  int _collisions = 0;
+  bool get isMovementBlocked => activeCollisions.isNotEmpty;
 
-  bool get canMoveToDirection => !outOfBounds && _collisions == 0;
+  bool get isMovementAllowed => activeCollisions.isEmpty;
 
   Direction get globalMapDirection {
     var globalValue = direction.value + tank.lookDirection.value;
@@ -29,8 +30,6 @@ class MovementSideHitbox extends HitboxMapBounds {
 
   @override
   Future? onLoad() {
-    // debug = true;
-
     switch (direction) {
       case Direction.left:
         position = Vector2(-8, 2);
@@ -54,26 +53,14 @@ class MovementSideHitbox extends HitboxMapBounds {
     return null;
   }
 
-  // @override
-  // bool broadPhaseCheck(PositionComponent other) {
-  //   final success = super.broadPhaseCheck(other);
-  //   if (success && (other.parent is Spawn || other is MovementHitbox)) {
-  //     return false;
-  //   }
-  //   return success;
-  // }
-
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, ShapeHitbox other) {
-    _collisions++;
-
-    super.onCollisionStart(intersectionPoints, other);
-  }
-
-  @override
-  void onCollisionEnd(ShapeHitbox other) {
-    _collisions--;
-
-    super.onCollisionEnd(other);
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other is MovementHitbox ||
+        other is MovementSideHitbox ||
+        other.parent is Spawn ||
+        other.parent is Bullet) {
+      return false;
+    }
+    return super.onComponentTypeCheck(other);
   }
 }

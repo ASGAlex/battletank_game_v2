@@ -11,7 +11,6 @@ import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -20,6 +19,7 @@ import '../bullet.dart';
 import '../enemy.dart';
 import '../player.dart';
 import 'direction.dart';
+import 'hitbox_body.dart';
 import 'hitbox_movement.dart';
 
 enum TankState { run, idle, die, wreck }
@@ -35,16 +35,12 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
     typeController = TankTypeController(this);
-
-    boundingBox.collisionType =
-        boundingBox.defaultCollisionType = CollisionType.active;
-    boundingBox.isSolid = true;
   }
 
   late final TankTypeController typeController;
   Direction lookDirection = Direction.up;
   int speed = 50;
-  bool canMoveForward = true;
+
   bool skipUpdateOnAngleChange = true;
 
   bool _isHiddenFromEnemy = false;
@@ -66,6 +62,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   int _lazyTreeHitboxId = -1;
   final movementHitbox = MovementHitbox();
+  final bodyHitbox =
+      BodyHitbox(position: Vector2.zero(), size: Vector2.all(16));
 
   final distantAudioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
 
@@ -82,14 +80,13 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   static const _nextSmokeParticleMax = 0.15;
   double _nextSmokeParticle = 0;
 
-  @override
-  bool onComponentTypeCheck(PositionComponent other) {
-    if (other is Spawn) {
-      // do NOT collide with Player or Water
-      return false;
-    }
-    return super.onComponentTypeCheck(other);
-  }
+  // @override
+  // bool onComponentTypeCheck(PositionComponent other) {
+  //   if (other is Spawn) {
+  //     return false;
+  //   }
+  //   return super.onComponentTypeCheck(other);
+  // }
 
   @override
   Future<void>? onLoad() async {
@@ -100,6 +97,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     current = TankState.idle;
     add(movementHitbox);
     updateSize();
+    bodyHitbox.size.setFrom(size);
+    add(bodyHitbox);
     await super.onLoad();
 
     // if (trackTreeCollisions) {
@@ -129,6 +128,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           position: position,
           damage: damage,
           firedFrom: this);
+      bullet.currentCell = currentCell;
       gameRef.world.addBullet(bullet);
       SoundLibrary.createSfxPlayer('player_fire_bullet.m4a').then((player) {
         if (this is Player) {
@@ -177,7 +177,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     } else {
       _dtSumTreesCheck += dt;
 
-      if (current == TankState.run && canMoveForward) {
+      if (current == TankState.run && movementHitbox.isMovementAllowed) {
         if (skipUpdateOnAngleChange) {
           skipUpdateOnAngleChange = false;
           return;
@@ -213,10 +213,10 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
             final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
             final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-            gameRef.backBuffer?.add(
-                _TrackTrailComponent(position: leftTrackPos, angle: angle));
-            gameRef.backBuffer?.add(
-                _TrackTrailComponent(position: rightTrackPos, angle: angle));
+            // gameRef.backBuffer?.add(
+            //     _TrackTrailComponent(position: leftTrackPos, angle: angle));
+            // gameRef.backBuffer?.add(
+            //     _TrackTrailComponent(position: rightTrackPos, angle: angle));
           }
           // if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
           //   gameRef.lazyCollisionService
@@ -255,6 +255,22 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     super.renderTree(canvas);
   }
 
+  render(Canvas canvas) {
+    canvas.drawRect(
+        Rect.fromPoints(movementHitbox.position.toOffset(),
+            (movementHitbox.position + movementHitbox.size).toOffset()),
+        Paint()..color = Color.fromRGBO(0, 0, 255, 1));
+
+    canvas.drawRect(
+        Rect.fromPoints(boundingBox.position.toOffset(),
+            (boundingBox.position + boundingBox.size).toOffset()),
+        Paint()
+          ..color = Color.fromRGBO(255, 0, 221, 1.0)
+          ..style = PaintingStyle.stroke);
+    // boundingBox.renderDebugMode(canvas);
+    super.render(canvas);
+  }
+
   void onHiddenFromEnemyChanged(bool isHidden) {}
 
   @override
@@ -291,7 +307,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         });
       }
     } else {
-      gameRef.backBuffer?.add(this);
+      // gameRef.backBuffer?.add(this);
       removeFromParent();
     }
   }
