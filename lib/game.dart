@@ -201,31 +201,6 @@ class MyGame extends MyGameFeatures
   }
 }
 
-class GameWorld extends World
-    with ObjectLayers, TapCallbacks, HasGameRef<MyGame> {
-  @override
-  void onTapDown(TapDownEvent event) {
-    final tapPosition = event.localPosition;
-    final cellsUnderCursor = <Cell>[];
-    gameRef.spatialGrid.cells.forEach((rect, cell) {
-      if (cell.rect.containsPoint(tapPosition)) {
-        cellsUnderCursor.add(cell);
-        print('State:  + ${cell.state}');
-        print('Rect: $rect');
-        // print('Components count: ${cell.components.length}');
-      }
-    });
-
-    final list = componentsAtPoint(tapPosition).toList(growable: false);
-    for (final component in list) {
-      if (component is! HasGridSupport) continue;
-      print(component.runtimeType);
-    }
-
-    add(Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
-  }
-}
-
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
     this.fileName = fileName;
@@ -280,7 +255,6 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildTree(CellBuilderContext context) async {
-    return;
     final data = context.tileDataProvider;
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);

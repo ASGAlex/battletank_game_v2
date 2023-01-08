@@ -3,8 +3,12 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/world/tank/enemy.dart';
 
 enum RenderPriority {
   sky(25),
@@ -28,12 +32,11 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-mixin ObjectLayers on World {
+class GameWorld extends World with TapCallbacks, HasGameRef<MyGame> {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final _spawnLayer = Component(priority: RenderPriority.spawn.priority);
-  final _trackLayer = Component(priority: RenderPriority.trackTrail.priority);
 
   addSky(Component component) {
     _skyLayer.add(component);
@@ -51,18 +54,37 @@ mixin ObjectLayers on World {
     _spawnLayer.add(component);
   }
 
-  addTrack(Component component) {
-    _trackLayer.add(component);
+  @override
+  Future<void>? onLoad() {
+    final root = game.layersManager.layersRootComponent;
+    add(_skyLayer);
+    root.add(_tankLayer);
+    root.add(_bulletLayer);
+    root.add(_spawnLayer);
+    return null;
   }
 
   @override
-  Future<void>? onLoad() {
-    add(_skyLayer);
-    add(_tankLayer);
-    add(_bulletLayer);
-    add(_spawnLayer);
-    add(_trackLayer);
-    return null;
+  void onTapDown(TapDownEvent event) {
+    final tapPosition = event.localPosition;
+    final cellsUnderCursor = <Cell>[];
+    gameRef.spatialGrid.cells.forEach((rect, cell) {
+      if (cell.rect.containsPoint(tapPosition)) {
+        cellsUnderCursor.add(cell);
+        print('State:  + ${cell.state}');
+        print('Rect: $rect');
+        // print('Components count: ${cell.components.length}');
+      }
+    });
+
+    final list = componentsAtPoint(tapPosition).toList(growable: false);
+    for (final component in list) {
+      if (component is! HasGridSupport) continue;
+      print(component.runtimeType);
+    }
+
+    addTank(
+        Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
   }
 }
 

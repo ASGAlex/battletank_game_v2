@@ -14,6 +14,7 @@ import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/tank/enemy.dart';
 
 import '../environment/spawn.dart';
+import '../environment/tree.dart';
 import '../environment/water.dart';
 import '../sound.dart';
 import '../world.dart';
@@ -126,6 +127,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   bool onComponentTypeCheck(PositionComponent other) {
     if (other is Water ||
         other is Spawn ||
+        other is Tree ||
         other == firedFrom ||
         (other is Bullet && firedFrom == other.firedFrom) ||
         current == BulletState.boom ||

@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/tank/bullet.dart';
 
 import '../../environment/spawn.dart';
@@ -58,7 +59,8 @@ class MovementSideHitbox extends BoundingHitbox {
     if (other is MovementHitbox ||
         other is MovementSideHitbox ||
         other.parent is Spawn ||
-        other.parent is Bullet) {
+        other.parent is Bullet ||
+        other.parent is Tree) {
       return false;
     }
     return super.onComponentTypeCheck(other);

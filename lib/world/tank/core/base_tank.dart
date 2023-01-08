@@ -14,6 +14,7 @@ import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
+import '../../environment/tree.dart';
 import '../../sound.dart';
 import '../bullet.dart';
 import '../enemy.dart';
@@ -43,6 +44,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   bool skipUpdateOnAngleChange = true;
 
+  int _treesCount = 0;
   bool _isHiddenFromEnemy = false;
 
   bool get isHiddenFromEnemy => _isHiddenFromEnemy;
@@ -50,7 +52,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   var fireDelay = const Duration(seconds: 1);
   bool canFire = true;
   double _trackDistance = 0;
-  double _dtSumTreesCheck = 0;
 
   bool get trackTreeCollisions => true;
   bool renderTrackTrail = true;
@@ -60,7 +61,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   double damage = 1;
 
-  int _lazyTreeHitboxId = -1;
   final movementHitbox = MovementHitbox();
   final bodyHitbox =
       BodyHitbox(position: Vector2.zero(), size: Vector2.all(16));
@@ -175,8 +175,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
       }
       return;
     } else {
-      _dtSumTreesCheck += dt;
-
       if (current == TankState.run && movementHitbox.isMovementAllowed) {
         if (skipUpdateOnAngleChange) {
           skipUpdateOnAngleChange = false;
@@ -236,6 +234,32 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         super.update(dt);
       }
     }
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Tree) {
+      _treesCount++;
+      if (_treesCount >= 4) {
+        _isHiddenFromEnemy = true;
+        onHiddenFromEnemyChanged(_isHiddenFromEnemy);
+      }
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is Tree) {
+      _treesCount--;
+
+      if (_treesCount < 4) {
+        _isHiddenFromEnemy = false;
+        onHiddenFromEnemyChanged(_isHiddenFromEnemy);
+      }
+    }
+    super.onCollisionEnd(other);
   }
 
   @override
