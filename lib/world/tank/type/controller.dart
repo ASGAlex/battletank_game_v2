@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart' as material;
 import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/type/types.dart';
 
@@ -44,16 +43,8 @@ class TankTypeController {
   Future<Image> getShadow() async {
     var image = _shadowImageByType[type];
     if (image == null) {
-      final recorder = PictureRecorder();
-      final canvas = Canvas(recorder);
-      final shadowPaint = Paint()
-        ..colorFilter = ColorFilter.mode(
-            material.Colors.black.withOpacity(0.6), BlendMode.srcIn);
-      canvas.saveLayer(Rect.largest, shadowPaint);
-      tank.superRender(canvas);
-      image = await recorder
-          .endRecording()
-          .toImageSafe(tank.size.x.toInt(), tank.size.y.toInt());
+      image =
+          await tank.game.world.createShadowOfComponent(tank, tank.superRender);
       _shadowImageByType[type] = image;
     }
     return image;

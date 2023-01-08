@@ -235,18 +235,19 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   @override
   void render(Canvas canvas) {
     Offset? offset;
+    final shadowOffset = game.world.shadowOffset;
     switch (lookDirection) {
       case Direction.up:
-        offset = const Offset(-1.5, 1.5);
+        offset = Offset(-shadowOffset, shadowOffset);
         break;
       case Direction.left:
-        offset = const Offset(-1.5, -1.5);
+        offset = Offset(-shadowOffset, -shadowOffset);
         break;
       case Direction.down:
-        offset = const Offset(1.5, -1.5);
+        offset = Offset(shadowOffset, -shadowOffset);
         break;
       case Direction.right:
-        offset = const Offset(1.5, 1.5);
+        offset = Offset(shadowOffset, shadowOffset);
         break;
     }
     canvas.drawImage(_shadow!, offset, paint);

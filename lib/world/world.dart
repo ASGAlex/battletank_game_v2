@@ -7,6 +7,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/tank/enemy.dart';
 
@@ -40,6 +41,8 @@ class GameWorld extends World with TapCallbacks, HasGameRef<MyGame> {
 
   final fadeOutConfig = FadeOutConfig(
       transparencyPerStep: 0.02, fadeOutTimeout: const Duration(seconds: 2));
+  final shadowsOpacity = 0.6;
+  final shadowOffset = 1.5;
 
   addSky(Component component) {
     _skyLayer.add(component);
@@ -88,6 +91,22 @@ class GameWorld extends World with TapCallbacks, HasGameRef<MyGame> {
 
     addTank(
         Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
+  }
+
+  Future<Image> createShadowOfComponent(
+      HasGridSupport component, void Function(Canvas) draw) async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    final shadowPaint = Paint()
+      ..isAntiAlias = false
+      ..filterQuality = FilterQuality.none
+      ..colorFilter = ColorFilter.mode(
+          material.Colors.black.withOpacity(shadowsOpacity), BlendMode.srcIn);
+    canvas.saveLayer(Rect.largest, shadowPaint);
+    draw(canvas);
+    return await recorder
+        .endRecording()
+        .toImageSafe(component.size.x.toInt(), component.size.y.toInt());
   }
 }
 
