@@ -10,7 +10,6 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/tank/type/controller.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -72,6 +71,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   static const _nextSmokeParticleMax = 0.15;
   double _nextSmokeParticle = 0;
 
+  Image? _shadow;
+
   @override
   Future<void>? onLoad() async {
     await typeController.onLoad();
@@ -82,6 +83,9 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     add(movementHitbox);
     bodyHitbox.size.setFrom(size);
     add(bodyHitbox);
+
+    _shadow = await typeController.getShadow();
+
     await super.onLoad();
   }
 
@@ -229,35 +233,27 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   }
 
   @override
-  void renderTree(Canvas canvas) {
-    final settings = SettingsController();
-
-    Color color = material.Colors.black;
-    final shadowPaint = Paint()
-      ..colorFilter = ColorFilter.mode(color.withOpacity(0.4), BlendMode.srcIn);
-    if (settings.graphicsQuality != GraphicsQuality.low) {
-      canvas.saveLayer(Rect.largest, shadowPaint);
-      canvas.translate(-1.5, 1.5);
-      canvas.transform(transformMatrix.storage);
-      super.render(canvas);
-      canvas.restore();
+  void render(Canvas canvas) {
+    Offset? offset;
+    switch (lookDirection) {
+      case Direction.up:
+        offset = const Offset(-1.5, 1.5);
+        break;
+      case Direction.left:
+        offset = const Offset(-1.5, -1.5);
+        break;
+      case Direction.down:
+        offset = const Offset(1.5, -1.5);
+        break;
+      case Direction.right:
+        offset = const Offset(1.5, 1.5);
+        break;
     }
-    super.renderTree(canvas);
+    canvas.drawImage(_shadow!, offset, paint);
+    super.render(canvas);
   }
 
-  render(Canvas canvas) {
-    canvas.drawRect(
-        Rect.fromPoints(movementHitbox.position.toOffset(),
-            (movementHitbox.position + movementHitbox.size).toOffset()),
-        Paint()..color = Color.fromRGBO(0, 0, 255, 1));
-
-    canvas.drawRect(
-        Rect.fromPoints(boundingBox.position.toOffset(),
-            (boundingBox.position + boundingBox.size).toOffset()),
-        Paint()
-          ..color = Color.fromRGBO(255, 0, 221, 1.0)
-          ..style = PaintingStyle.stroke);
-    // boundingBox.renderDebugMode(canvas);
+  void superRender(Canvas canvas) {
     super.render(canvas);
   }
 

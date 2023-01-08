@@ -91,6 +91,8 @@ class MyGame extends MyGameFeatures
         debug: false,
         activeRadius: const Size(2, 2),
         unloadRadius: const Size(5, 5),
+        buildCellsPerUpdate: 0.2,
+        removeCellsPerUpdate: 0.2,
         rootComponent: gameWorld,
         lazyLoad: true,
         initialPosition: Vector2(378, 731),
@@ -117,8 +119,6 @@ class MyGame extends MyGameFeatures
     cameraComponent = CameraComponent.withFixedResolution(
         world: gameWorld, width: 400, height: 250);
     cameraComponent.viewfinder.zoom = 2;
-    // cameraComponent.setBounds(
-    //     Rectangle.fromRect(Rect.fromLTWH(0, 0, map.mapWidth, map.mapHeight)));
     add(gameWorld);
     add(cameraComponent);
     add(hudVisibility);
