@@ -55,12 +55,8 @@ class MyGame extends MyGameFeatures
   final String mapFile;
   final BuildContext context;
 
-  // final lazyCollisionService = LazyCollisionsService();
-
   List<Enemy> enemies = [];
   Player? player;
-
-  // BackBuffer? backBuffer;
 
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;

@@ -135,17 +135,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       return false;
     }
     return super.onComponentTypeCheck(other);
-    //
-    // if (success) {
-    //   if (other is Water) return false;
-    //   if (current == BulletState.boom) return false;
-    //   if (other == firedFrom || other.parent == firedFrom || other is Spawn) {
-    //     return false;
-    //   }
-    //
-    //   if (firedFrom is Enemy && other is Enemy && !other.dead) return false;
-    // }
-    // return success;
   }
 
   @override
@@ -192,7 +181,11 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       Future.delayed(_boomDuration!).then((value) {
         if (noHit) {
           current = BulletState.crater;
-          // gameRef.backBuffer?.add(this);
+          final layer = game.layersManager.addComponent(
+              component: this,
+              layerType: MapLayerType.trail,
+              layerName: 'trail') as CellTrailLayer;
+          layer.fadeOutConfig = game.world.fadeOutConfig;
         }
         removeFromParent();
       });
@@ -201,8 +194,7 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 }
 
 class _Light extends CircleComponent {
-  _Light({super.children})
-      : super(position: Vector2(1, 1), anchor: Anchor.center, radius: 16);
+  _Light() : super(position: Vector2(1, 1), anchor: Anchor.center, radius: 16);
 
   @override
   Future onLoad() async {

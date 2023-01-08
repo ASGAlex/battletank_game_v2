@@ -22,7 +22,6 @@ class TankTypeController {
     parent.size = _type.size;
     parent.damage = _type.damage;
     parent.fireDelay = _type.fireDelay;
-    parent.updateSize();
 
     parent.animations = {
       TankState.run: _type.animationRun,

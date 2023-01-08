@@ -158,7 +158,11 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
     decreaseCounters();
     Future.delayed(_boomDuration!).then((value) {
       current = TargetState.dead;
-      // gameRef.backBuffer?.add(this);
+      final layer = game.layersManager.addComponent(
+          component: this,
+          layerType: MapLayerType.trail,
+          layerName: 'trail') as CellTrailLayer;
+      layer.fadeOutConfig = game.world.fadeOutConfig;
       removeFromParent();
     });
   }

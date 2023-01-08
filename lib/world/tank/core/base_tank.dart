@@ -69,24 +69,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   Duration? _boomDuration;
 
-  var _halfSizeX = 0.0;
-  var _halfSizeY = 0.0;
-
-  updateSize() {
-    _halfSizeX = size.x / 2;
-    _halfSizeY = size.y / 2;
-  }
-
   static const _nextSmokeParticleMax = 0.15;
   double _nextSmokeParticle = 0;
-
-  // @override
-  // bool onComponentTypeCheck(PositionComponent other) {
-  //   if (other is Spawn) {
-  //     return false;
-  //   }
-  //   return super.onComponentTypeCheck(other);
-  // }
 
   @override
   Future<void>? onLoad() async {
@@ -96,22 +80,9 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
     current = TankState.idle;
     add(movementHitbox);
-    updateSize();
     bodyHitbox.size.setFrom(size);
     add(bodyHitbox);
     await super.onLoad();
-
-    // if (trackTreeCollisions) {
-    //   gameRef.lazyCollisionService
-    //       .addHitbox(
-    //           position: position,
-    //           size: size,
-    //           layer: 'tree',
-    //           type: CollisionType.active)
-    //       .then((value) {
-    //     _lazyTreeHitboxId = value;
-    //   });
-    // }
   }
 
   bool onFire() {
@@ -198,36 +169,31 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         }
         if (!displacement.isZero()) {
           position = displacement;
-          // if (trackTreeCollisions) {
-          //   gameRef.lazyCollisionService.updateHitbox(
-          //       id: _lazyTreeHitboxId,
-          //       position: position.translate(-_halfSizeX, -_halfSizeY),
-          //       layer: 'tree',
-          //       size: size);
-          // }
           _trackDistance += innerSpeed;
           if (_trackDistance > 2 && renderTrackTrail) {
             _trackDistance = 0;
             final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
             final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
 
-            // gameRef.backBuffer?.add(
-            //     _TrackTrailComponent(position: leftTrackPos, angle: angle));
-            // gameRef.backBuffer?.add(
-            //     _TrackTrailComponent(position: rightTrackPos, angle: angle));
+            game.layersManager.addComponent(
+                component:
+                    _TrackTrailComponent(position: leftTrackPos, angle: angle)
+                      ..currentCell = currentCell,
+                layerType: MapLayerType.trail,
+                optimizeCollisions: false,
+                priority: RenderPriority.trackTrail.priority,
+                layerName: 'trail');
+
+            final layer = game.layersManager.addComponent(
+                component:
+                    _TrackTrailComponent(position: rightTrackPos, angle: angle)
+                      ..currentCell = currentCell,
+                layerType: MapLayerType.trail,
+                optimizeCollisions: false,
+                priority: RenderPriority.trackTrail.priority,
+                layerName: 'trail') as CellTrailLayer;
+            layer.fadeOutConfig = game.world.fadeOutConfig;
           }
-          // if (_dtSumTreesCheck >= 2 && trackTreeCollisions) {
-          //   gameRef.lazyCollisionService
-          //       .getCollisionsCount(_lazyTreeHitboxId, 'tree')
-          //       .then((value) {
-          //     final isHidden = value >= 4;
-          //
-          //     if (isHidden != _isHiddenFromEnemy) {
-          //       _isHiddenFromEnemy = isHidden;
-          //       onHiddenFromEnemyChanged(isHidden);
-          //     }
-          //   });
-          // }
         }
       }
       if (current != TankState.idle) {
@@ -300,7 +266,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   @override
   onDeath(Component killedBy) {
     if (current != TankState.wreck) {
-      // gameRef.lazyCollisionService.removeHitbox(_lazyTreeHitboxId, 'tree');
       current = TankState.die;
 
       super.onDeath(killedBy);
@@ -331,13 +296,18 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         });
       }
     } else {
-      // gameRef.backBuffer?.add(this);
+      final layer = game.layersManager.addComponent(
+          component: this,
+          layerType: MapLayerType.trail,
+          layerName: 'trail') as CellTrailLayer;
+      layer.fadeOutConfig = game.world.fadeOutConfig;
       removeFromParent();
     }
   }
 }
 
-class _TrackTrailComponent extends PositionComponent with HasPaint {
+class _TrackTrailComponent extends PositionComponent
+    with HasPaint, HasGridSupport {
   _TrackTrailComponent({super.position, super.angle}) {
     paint.color = material.Colors.black.withOpacity(0.5);
   }

@@ -38,6 +38,9 @@ class GameWorld extends World with TapCallbacks, HasGameRef<MyGame> {
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final _spawnLayer = Component(priority: RenderPriority.spawn.priority);
 
+  final fadeOutConfig = FadeOutConfig(
+      transparencyPerStep: 0.02, fadeOutTimeout: const Duration(seconds: 2));
+
   addSky(Component component) {
     _skyLayer.add(component);
   }
