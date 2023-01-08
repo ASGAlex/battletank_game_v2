@@ -4,17 +4,12 @@ import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/packages/back_buffer/lib/batch/batch_components.dart';
 import 'package:tank_game/world/tank/bullet.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 import 'package:tank_game/world/world.dart';
 
 class Brick extends SpriteComponent
-    with
-        CollisionCallbacks,
-        HasGameReference<MyGame>,
-        BatchedComponent,
-        HasGridSupport {
+    with CollisionCallbacks, HasGameReference<MyGame>, HasGridSupport {
   Brick(this.tileDataProvider, {super.position, super.size})
       : super(priority: RenderPriority.walls.priority) {
     boundingBox.collisionType =
@@ -37,7 +32,7 @@ class Brick extends SpriteComponent
   void collideWithBullet(Bullet bullet) {
     if (bullet.current == BulletState.boom) return;
     if (_hitsByBullet >= 1) {
-      _die();
+      removeFromParent();
     } else {
       switch (bullet.direction) {
         case Direction.right:
@@ -57,23 +52,5 @@ class Brick extends SpriteComponent
       }
     }
     _hitsByBullet++;
-  }
-
-  _die() {
-    if (isRemoving) return;
-    scheduleTreeUpdate();
-    removeFromParent();
-  }
-
-  @override
-  Rect get sourceRect {
-    var source = sprite!.src;
-    if (size.x < 8) {
-      source = Rect.fromLTWH(source.left, source.top, size.x, source.height);
-    }
-    if (size.y < 8) {
-      source = Rect.fromLTWH(source.left, source.top, source.width, size.y);
-    }
-    return source;
   }
 }

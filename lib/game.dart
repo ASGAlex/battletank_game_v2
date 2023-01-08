@@ -22,7 +22,6 @@ import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
 import 'package:tiled/tiled.dart';
 
-import 'packages/back_buffer/lib/batch/batched_game.dart';
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
@@ -38,8 +37,7 @@ abstract class MyGameFeatures extends FlameGame
         HasSpatialGridFramework,
         ScrollDetector,
         HasDraggables,
-        HasTappableComponents,
-        HasBatchRenderer {
+        HasTappableComponents {
   GameWorld get world => rootComponent as GameWorld;
 }
 
