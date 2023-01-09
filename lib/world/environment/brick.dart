@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -22,11 +20,6 @@ class Brick extends SpriteComponent
 
   TileDataProvider tileDataProvider;
 
-  static Image? _shadowImage;
-
-  Future<Image> getShadowImage() async => _shadowImage ??=
-      await game.world.createShadowOfComponent(this, super.render);
-
   int _hitsByBullet = 0;
   static const halfBrick = 4.0;
   static final brickSize = Vector2.all(halfBrick * 2);
@@ -34,7 +27,6 @@ class Brick extends SpriteComponent
   @override
   Future<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
-    await getShadowImage();
     super.onLoad();
   }
 

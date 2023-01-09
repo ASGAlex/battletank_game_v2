@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flame/flame.dart';
@@ -13,15 +12,19 @@ import 'services/settings/controller.dart';
 import 'ui/intl.dart';
 
 void main(List<String> args) async {
-  await runZonedGuarded(
-    () async {
-      WidgetsFlutterBinding.ensureInitialized();
-      SettingsController().loadSettings();
-      runApp(const MyApp());
-    },
-    (error, st) =>
-        SettingsController().consoleMessages.sendMessage(error.toString()),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  SettingsController().loadSettings();
+  runApp(const MyApp());
+
+  // await runZonedGuarded(
+  //   () async {
+  //     WidgetsFlutterBinding.ensureInitialized();
+  //     SettingsController().loadSettings();
+  //     runApp(const MyApp());
+  //   },
+  //   (error, st) =>
+  //       SettingsController().consoleMessages.sendMessage(error.toString()),
+  // );
 }
 
 class RawKeyEventSim extends RawKeyDownEvent {

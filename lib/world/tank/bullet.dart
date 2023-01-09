@@ -181,11 +181,16 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
       Future.delayed(_boomDuration!).then((value) {
         if (noHit) {
           current = BulletState.crater;
-          final layer = game.layersManager.addComponent(
-              component: this,
-              layerType: MapLayerType.trail,
-              layerName: 'trail') as CellTrailLayer;
-          layer.fadeOutConfig = game.world.fadeOutConfig;
+          game.layersManager
+              .addComponent(
+                  component: this,
+                  layerType: MapLayerType.trail,
+                  layerName: 'trail')
+              .then((CellLayer layer) {
+            if (layer is CellTrailLayer) {
+              layer.fadeOutConfig = game.world.fadeOutConfig;
+            }
+          });
         }
         removeFromParent();
       });

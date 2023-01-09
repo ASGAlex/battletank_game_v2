@@ -188,15 +188,19 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
                 priority: RenderPriority.trackTrail.priority,
                 layerName: 'trail');
 
-            final layer = game.layersManager.addComponent(
-                component:
-                    _TrackTrailComponent(position: rightTrackPos, angle: angle)
+            game.layersManager
+                .addComponent(
+                    component: _TrackTrailComponent(
+                        position: rightTrackPos, angle: angle)
                       ..currentCell = currentCell,
-                layerType: MapLayerType.trail,
-                optimizeCollisions: false,
-                priority: RenderPriority.trackTrail.priority,
-                layerName: 'trail') as CellTrailLayer;
-            layer.fadeOutConfig = game.world.fadeOutConfig;
+                    layerType: MapLayerType.trail,
+                    optimizeCollisions: false,
+                    priority: RenderPriority.trackTrail.priority,
+                    layerName: 'trail')
+                .then((CellLayer layer) {
+              (layer as CellTrailLayer).fadeOutConfig =
+                  game.world.fadeOutConfig;
+            });
           }
         }
       }
@@ -293,11 +297,16 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         });
       }
     } else {
-      final layer = game.layersManager.addComponent(
-          component: this,
-          layerType: MapLayerType.trail,
-          layerName: 'trail') as CellTrailLayer;
-      layer.fadeOutConfig = game.world.fadeOutConfig;
+      game.layersManager
+          .addComponent(
+              component: this,
+              layerType: MapLayerType.trail,
+              layerName: 'trail')
+          .then((CellLayer layer) {
+        if (layer is CellTrailLayer) {
+          layer.fadeOutConfig = game.world.fadeOutConfig;
+        }
+      });
       removeFromParent();
     }
   }

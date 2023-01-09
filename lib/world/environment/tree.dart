@@ -22,11 +22,13 @@ class Tree extends SpriteComponent
 
   TileDataProvider tileDataProvider;
 
+  Future<Image> loadShadowImage() async => _shadowImage ??=
+      await game.world.createShadowOfComponent(this, super.render);
+
   @override
   Future<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
-    _shadowImage ??=
-        await game.world.createShadowOfComponent(this, super.render);
+    await loadShadowImage();
     super.onLoad();
   }
 

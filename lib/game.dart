@@ -37,7 +37,7 @@ abstract class MyGameFeatures extends FlameGame
         HasSpatialGridFramework,
         ScrollDetector,
         HasDraggables,
-        HasTappableComponents {
+        HasTappables {
   GameWorld get world => rootComponent as GameWorld;
 }
 
@@ -87,7 +87,7 @@ class MyGame extends MyGameFeatures
     final map = GameMapLoader(mapFile);
 
     await initializeSpatialGrid(
-        blockSize: 140,
+        blockSize: 80,
         debug: false,
         activeRadius: const Size(2, 2),
         unloadRadius: const Size(5, 5),
@@ -189,7 +189,6 @@ class MyGame extends MyGameFeatures
     Spawn.clear();
     Target.clear();
     player?.onRemove();
-    // lazyCollisionService.stop();
     SpriteSheetBase.clearCaches();
     Player.respawnCount = 30;
   }
@@ -252,6 +251,7 @@ class GameMapLoader extends TiledMapLoader {
     final data = context.tileDataProvider;
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);
+
     tree.currentCell = context.cell;
     game.layersManager.addComponent(
         component: tree,
