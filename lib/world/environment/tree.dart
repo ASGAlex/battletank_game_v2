@@ -14,16 +14,19 @@ class Tree extends SpriteComponent
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
+    paint.filterQuality = FilterQuality.none;
+    paint.isAntiAlias = false;
   }
 
-  static Image? _treeImage;
+  static Image? _shadowImage;
 
   TileDataProvider tileDataProvider;
 
   @override
   Future<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
-    _treeImage ??= await game.world.createShadowOfComponent(this, super.render);
+    _shadowImage ??=
+        await game.world.createShadowOfComponent(this, super.render);
     super.onLoad();
   }
 
@@ -31,7 +34,7 @@ class Tree extends SpriteComponent
   render(Canvas canvas) {
     final offset =
         Offset(-game.world.shadowOffset, game.world.shadowOffset) * 1.5;
-    canvas.drawImage(_treeImage!, offset, paint);
+    canvas.drawImage(_shadowImage!, offset, paint);
     super.render(canvas);
   }
 }
