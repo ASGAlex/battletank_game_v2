@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -25,7 +27,7 @@ class Brick extends SpriteComponent
   static final brickSize = Vector2.all(halfBrick * 2);
 
   @override
-  Future<void> onLoad() async {
+  FutureOr<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
     super.onLoad();
   }

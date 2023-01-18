@@ -121,8 +121,8 @@ class MyGame extends MyGameFeatures
     cameraComponent.viewfinder.zoom = 2;
     add(gameWorld);
     add(cameraComponent);
-    add(hudVisibility);
-    add(hudFlashMessage);
+    cameraComponent.viewport.add(hudVisibility);
+    cameraComponent.viewport.add(hudFlashMessage);
 
     consoleMessages.sendMessage('Spawning the Player...');
     gameInitializationDone();
