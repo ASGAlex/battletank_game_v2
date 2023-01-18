@@ -152,6 +152,7 @@ class Enemy extends Tank {
       }
       switch (_movementMode) {
         case _MovementMode.wait:
+          movementHitbox.groupCollisionsTags.clear();
           if (hearPlayer) {
             _movementMode = _MovementMode.random;
           } else if (seePlayer) {
@@ -160,6 +161,12 @@ class Enemy extends Tank {
           break;
         case _MovementMode.random:
           _randomMovementController?.runRandomMovement(dt);
+          if (movementHitbox.groupCollisionsTags.isEmpty) {
+            movementHitbox.groupCollisionsTags
+              ..add('Brick')
+              ..add('HeavyBrick')
+              ..add('Water');
+          }
           bool eventHappen = false;
           if (seePlayer) {
             _movementMode = _MovementMode.attack;
@@ -180,6 +187,7 @@ class Enemy extends Tank {
           }
           break;
         case _MovementMode.attack:
+          movementHitbox.groupCollisionsTags.clear();
           final foundDirection =
               _attackMovementController!.runAttackMovement(dt, seePlayer);
           if (!foundDirection) {
