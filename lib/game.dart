@@ -86,16 +86,21 @@ class MyGame extends MyGameFeatures
     final gameWorld = GameWorld();
     final map = GameMapLoader(mapFile);
 
+    cameraComponent = CameraComponent.withFixedResolution(
+        world: gameWorld, width: 400, height: 250);
+    cameraComponent.viewfinder.zoom = 2;
+    cameraComponent.moveTo(Vector2(378, 731));
+
     await initializeSpatialGrid(
         blockSize: 80,
         debug: false,
         activeRadius: const Size(2, 2),
         unloadRadius: const Size(5, 5),
-        buildCellsPerUpdate: 0.2,
-        removeCellsPerUpdate: 0.2,
+        // buildCellsPerUpdate: 1,
+        // removeCellsPerUpdate: 1,
         rootComponent: gameWorld,
         lazyLoad: true,
-        initialPosition: Vector2(378, 731),
+        trackedComponent: SpatialGridCameraWrapper(cameraComponent),
         trackWindowSize: true,
         suspendedCellLifetime: const Duration(minutes: 1),
         maps: [map]);
@@ -116,11 +121,7 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('done.');
 
-    cameraComponent = CameraComponent.withFixedResolution(
-        world: gameWorld, width: 400, height: 250);
-    cameraComponent.viewfinder.zoom = 2;
     add(gameWorld);
-    add(cameraComponent);
     cameraComponent.viewport.add(hudVisibility);
     cameraComponent.viewport.add(hudFlashMessage);
 
@@ -128,7 +129,7 @@ class MyGame extends MyGameFeatures
     gameInitializationDone();
 
     Spawn.waitFree(true).then((playerSpawn) async {
-      spatialGrid.trackedComponent = playerSpawn;
+      // spatialGrid.trackedComponent = playerSpawn;
       cameraComponent.follow(playerSpawn, snap: true);
       await restorePlayer(playerSpawn);
       // SoundLibrary().playIntro();
@@ -161,7 +162,7 @@ class MyGame extends MyGameFeatures
       await spawn.createTank(object, true);
       player = object;
       cameraComponent.follow(player!);
-      spatialGrid.trackedComponent = player;
+      // spatialGrid.trackedComponent = player;
       Player.respawnCount--;
       return object;
     } else {
