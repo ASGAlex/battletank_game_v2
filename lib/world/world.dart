@@ -5,6 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
@@ -33,7 +34,7 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-class GameWorld extends World with HasGameRef<MyGame> {
+class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
@@ -74,14 +75,21 @@ class GameWorld extends World with HasGameRef<MyGame> {
   void onTapDown(TapDownEvent event) {
     final tapPosition = event.localPosition;
     final cellsUnderCursor = <Cell>[];
-    gameRef.spatialGrid.cells.forEach((rect, cell) {
-      if (cell.rect.containsPoint(tapPosition)) {
-        cellsUnderCursor.add(cell);
-        print('State:  + ${cell.state}');
-        print('Rect: $rect');
-        // print('Components count: ${cell.components.length}');
-      }
-    });
+    try {
+      gameRef.spatialGrid.cells.forEach((rect, cell) {
+        if (cell.rect.containsPoint(tapPosition)) {
+          cellsUnderCursor.add(cell);
+          print('State:  + ${cell.state}');
+          print('Rect: $rect');
+          final animations = cell.components.whereType<CellStaticAnimationLayer>();
+          animations.forEach((element) {
+            element.compileToSingleLayer(element.children);
+          });
+          // print('Components count: ${cell.components.length}');
+        }
+      });
+    } catch(e){}
+
 
     final list = componentsAtPoint(tapPosition).toList(growable: false);
     for (final component in list) {
@@ -89,8 +97,8 @@ class GameWorld extends World with HasGameRef<MyGame> {
       print(component.runtimeType);
     }
 
-    addTank(
-        Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
+    // addTank(
+    //     Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
   }
 
   Future<Image> createShadowOfComponent(

@@ -37,7 +37,7 @@ abstract class MyGameFeatures extends FlameGame
         HasSpatialGridFramework,
         ScrollDetector,
         HasDraggables,
-        HasTappables {
+        HasTappableComponents {
   GameWorld get world => rootComponent as GameWorld;
 }
 
@@ -222,9 +222,6 @@ class GameMapLoader extends TiledMapLoader {
 
   @override
   MyGame get game => super.game as MyGame;
-
-  @override
-  bool get preloadTileSets => true;
 
   double mapWidth = 0;
   double mapHeight = 0;
