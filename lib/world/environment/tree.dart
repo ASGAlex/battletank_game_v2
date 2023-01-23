@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
@@ -18,25 +19,54 @@ class Tree extends SpriteComponent
     paint.isAntiAlias = false;
   }
 
-  static Image? _shadowImage;
-
   TileDataProvider tileDataProvider;
 
-  Future<Image> loadShadowImage() async => _shadowImage ??=
-      await game.world.createShadowOfComponent(this, super.render);
-
   @override
-  Future<void> onLoad() async {
+  FutureOr<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();
-    await loadShadowImage();
     super.onLoad();
+  }
+}
+
+class TreeShadow extends Tree {
+  TreeShadow(Tree tree)
+      : super(tree.tileDataProvider,
+            position: tree.position.clone(), size: tree.size.clone()) {
+    currentCell = tree.currentCell;
+    position.add(game.world.shadowOffset*1.2);
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.inactive;
+  }
+
+  static Image? _shadowImage;
+
+  Future<Image> loadShadowImage() async {
+    if (_shadowImage != null) {
+      return _shadowImage!;
+    }
+
+    if (sprite != null) {
+      _shadowImage =
+          await game.world.createShadowOfComponent(this, super.render);
+      return _shadowImage!;
+    }
+
+    throw "Can't generate shadow without sprite";
   }
 
   @override
-  render(Canvas canvas) {
-    final offset =
-        Offset(-game.world.shadowOffset, game.world.shadowOffset) * 1.5;
-    canvas.drawImage(_shadowImage!, offset, paint);
-    super.render(canvas);
+  //ignore: must_call_super
+  void render(Canvas canvas) {
+    final image = _shadowImage;
+    if (image != null) {
+      canvas.drawImage(image, Offset.zero, paint);
+    }
+  }
+
+  @override
+  FutureOr<void> onLoad() async {
+    sprite = await tileDataProvider.getSprite();
+    await loadShadowImage();
+    super.onLoad();
   }
 }

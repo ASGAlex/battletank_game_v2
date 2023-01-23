@@ -43,7 +43,8 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
   final fadeOutConfig = FadeOutConfig(
       transparencyPerStep: 0.02, fadeOutTimeout: const Duration(seconds: 2));
   final shadowsOpacity = 0.6;
-  final shadowOffset = 1.5;
+
+  final shadowOffset = Vector2(-1.5, 1.5);
 
   addSky(Component component) {
     _skyLayer.add(component);
@@ -81,15 +82,15 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
           cellsUnderCursor.add(cell);
           print('State:  + ${cell.state}');
           print('Rect: $rect');
-          final animations = cell.components.whereType<CellStaticAnimationLayer>();
-          animations.forEach((element) {
-            element.compileToSingleLayer(element.children);
-          });
+          final animations =
+              cell.components.whereType<CellStaticAnimationLayer>();
+          // animations.forEach((element) {
+          //   element.compileToSingleLayer(element.children);
+          // });
           // print('Components count: ${cell.components.length}');
         }
       });
-    } catch(e){}
-
+    } catch (e) {}
 
     final list = componentsAtPoint(tapPosition).toList(growable: false);
     for (final component in list) {
@@ -97,6 +98,7 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
       print(component.runtimeType);
     }
 
+    game.player?.position.setFrom(tapPosition);
     // addTank(
     //     Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
   }
@@ -134,6 +136,7 @@ mixin HideableComponent on Component {
   bool _hidden = false;
 
   bool get hidden => _hidden;
+
   set hidden(bool value) {
     _hidden = value;
     onHiddenChange(hidden);

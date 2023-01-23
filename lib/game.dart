@@ -249,13 +249,22 @@ class GameMapLoader extends TiledMapLoader {
     final data = context.tileDataProvider;
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);
-
     tree.currentCell = context.cell;
+    final treeShadow = TreeShadow(tree);
+
     game.layersManager.addComponent(
         component: tree,
         layerType: MapLayerType.static,
         layerName: 'Tree',
         priority: RenderPriority.tree.priority);
+
+    game.layersManager.addComponent(
+        component: treeShadow,
+        layerType: MapLayerType.static,
+        layerName: 'TreeShadow',
+        isRenewable: false,
+        optimizeCollisions: false,
+        priority: RenderPriority.tree.priority -1);
   }
 
   Future onBuildWater(CellBuilderContext context) async {
