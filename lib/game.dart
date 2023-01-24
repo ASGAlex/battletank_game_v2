@@ -17,6 +17,7 @@ import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
+import 'package:tank_game/world/environment/shadow.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
@@ -250,7 +251,8 @@ class GameMapLoader extends TiledMapLoader {
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);
     tree.currentCell = context.cell;
-    final treeShadow = TreeShadow(tree);
+    final shadow0 = ShadowComponent(tree);
+    final shadow1 = ShadowComponent(tree, 1.3);
 
     game.layersManager.addComponent(
         component: tree,
@@ -259,12 +261,20 @@ class GameMapLoader extends TiledMapLoader {
         priority: RenderPriority.tree.priority);
 
     game.layersManager.addComponent(
-        component: treeShadow,
+        component: shadow0,
         layerType: MapLayerType.static,
         layerName: 'TreeShadow',
         isRenewable: false,
         optimizeCollisions: false,
-        priority: RenderPriority.tree.priority -1);
+        priority: RenderPriority.tree.priority - 1);
+
+    game.layersManager.addComponent(
+        component: shadow1,
+        layerType: MapLayerType.static,
+        layerName: 'TreeShadow',
+        isRenewable: false,
+        optimizeCollisions: false,
+        priority: RenderPriority.tree.priority - 1);
   }
 
   Future onBuildWater(CellBuilderContext context) async {
@@ -285,12 +295,28 @@ class GameMapLoader extends TiledMapLoader {
     if (data == null) return;
     final brick = Brick(data, position: context.position, size: context.size);
     brick.currentCell = context.cell;
+    final shadow0 = ShadowComponent(brick);
+    final shadow1 = ShadowComponent(brick, 1.3);
 
     game.layersManager.addComponent(
         component: brick,
         layerType: MapLayerType.static,
         layerName: 'Brick',
         priority: RenderPriority.walls.priority);
+
+    game.layersManager.addComponent(
+        component: shadow0,
+        layerType: MapLayerType.static,
+        layerName: 'BrickShadow',
+        optimizeCollisions: false,
+        priority: RenderPriority.walls.priority - 1);
+
+    game.layersManager.addComponent(
+        component: shadow1,
+        layerType: MapLayerType.static,
+        layerName: 'BrickShadow',
+        optimizeCollisions: false,
+        priority: RenderPriority.walls.priority - 1);
   }
 
   Future onBuildHeavyBrick(CellBuilderContext context) async {
