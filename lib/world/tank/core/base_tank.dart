@@ -10,7 +10,8 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/tank/type/controller.dart';
+import 'package:tank_game/world/environment/shadow.dart';
+import 'package:tank_game/world/tank/core/tank_type_controller.dart';
 import 'package:tank_game/world/world.dart';
 
 import '../../environment/tree.dart';
@@ -31,10 +32,13 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         DestroyableComponent,
         HasGameRef<MyGame>,
         HideableComponent,
+        HasShadow,
         HasGridSupport {
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
     typeController = TankTypeController(this);
+    _shadowComponent = ShadowComponent(this, game);
+    _shadowComponent.priority = RenderPriority.player.priority - 1;
   }
 
   late final TankTypeController typeController;
@@ -53,7 +57,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   double _trackDistance = 0;
 
   bool get trackTreeCollisions => true;
-  bool renderTrackTrail = true;
+  bool renderTrackTrail = false;
 
   @override
   double health = 1;
@@ -71,20 +75,18 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   static const _nextSmokeParticleMax = 0.15;
   double _nextSmokeParticle = 0;
 
-  Image? _shadow;
+  late ShadowComponent _shadowComponent;
 
   @override
   Future<void>? onLoad() async {
-    await typeController.onLoad();
-
-    _boomDuration = typeController.type.animationDie.duration;
+    final computedDuration =
+        ((animations?[TankState.die]?.totalDuration() ?? 0.2) * 1000).toInt();
+    _boomDuration = Duration(milliseconds: computedDuration);
 
     current = TankState.idle;
     add(movementHitbox);
     bodyHitbox.size.setFrom(size);
     add(bodyHitbox);
-
-    _shadow = await typeController.getShadow();
 
     await super.onLoad();
   }
@@ -250,11 +252,10 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
         offset = Offset(shadowOffset, shadowOffset);
         break;
     }
-    canvas.drawImage(_shadow!, offset, paint);
-    super.render(canvas);
-  }
-
-  void superRender(Canvas canvas) {
+    final shadow = _shadowComponent.getShadowImage();
+    if (shadow != null) {
+      canvas.drawImage(shadow, offset, paint);
+    }
     super.render(canvas);
   }
 

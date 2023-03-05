@@ -4,13 +4,10 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
-import 'package:flame/input.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/tank/enemy.dart';
 
 enum RenderPriority {
   sky(25),
@@ -34,7 +31,7 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
+class GameWorld extends World with HasGameRef<MyGame> {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final _tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
@@ -103,8 +100,7 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
     //     Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
   }
 
-  Future<Image> createShadowOfComponent(
-      HasGridSupport component, void Function(Canvas) draw) async {
+  Image createShadow(Vector2 size, void Function(Canvas) draw) {
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
     final shadowPaint = Paint()
@@ -114,9 +110,7 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
           material.Colors.black.withOpacity(shadowsOpacity), BlendMode.srcIn);
     canvas.saveLayer(Rect.largest, shadowPaint);
     draw(canvas);
-    return await recorder
-        .endRecording()
-        .toImageSafe(component.size.x.toInt(), component.size.y.toInt());
+    return recorder.endRecording().toImageSync(size.x.toInt(), size.y.toInt());
   }
 }
 

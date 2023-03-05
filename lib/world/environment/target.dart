@@ -1,12 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/image_composition.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
-import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/world/sound.dart';
@@ -48,16 +45,32 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
 
   @override
   Future<void>? onLoad() async {
-    final alive = await SpriteSheetRegistry().target.life;
-    final boom = await SpriteSheetRegistry().boomBig.animation;
-    final dead = await SpriteSheetRegistry().target.dead;
-    _boomDuration = boom.duration;
-    size = alive.frames.first.sprite.src.size.toVector2();
+    final bigBoomTile = game.tilesetManager.getTile('boom_big', 'boom_big');
+    final boomAnimation = bigBoomTile?.spriteAnimation;
+    if (boomAnimation == null) {
+      throw "Can't load boom animation!";
+    }
+
+    final targetAlive = game.tilesetManager.getTile('target', 'alive');
+    final alive = targetAlive?.sprite;
+    if (alive == null) {
+      throw "Can't load alive target sprite!";
+    }
+
+    final targetDead = game.tilesetManager.getTile('target', 'dead');
+    final dead = targetDead?.sprite;
+    if (dead == null) {
+      throw "Can't load dead target sprite!";
+    }
+
+    _boomDuration =
+        Duration(milliseconds: (boomAnimation.totalDuration() * 1000).toInt());
+    size.setFrom(alive.srcSize);
 
     animations = {
-      TargetState.alive: alive,
-      TargetState.boom: boom,
-      TargetState.dead: dead,
+      TargetState.alive: alive.toAnimation(),
+      TargetState.boom: boomAnimation,
+      TargetState.dead: dead.toAnimation(),
     };
     current = TargetState.alive;
     increaseCounters();

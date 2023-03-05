@@ -8,7 +8,6 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/world/environment/brick.dart';
 import 'package:tank_game/world/environment/heavy_brick.dart';
 import 'package:tank_game/world/tank/enemy.dart';
@@ -53,16 +52,37 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
   final _light = _Light();
 
   Duration? _boomDuration;
+  Vector2 _boomSpriteSize = Vector2.zero();
 
   @override
   Future<void> onLoad() async {
-    final boom = await SpriteSheetRegistry().boom.boom;
-    _boomDuration = boom.duration;
-    size = SpriteSheetRegistry().bullet.spriteSize;
+    final boomTileCache = game.tilesetManager.getTile('boom', 'boom');
+    final boom = boomTileCache?.spriteAnimation;
+    if (boom == null) {
+      throw "Can't load bullet's boom animation!";
+    }
+    _boomSpriteSize = boom.frames.first.sprite.srcSize;
+
+    final craterTileCache = game.tilesetManager.getTile('boom', 'crater');
+    final crater = craterTileCache?.sprite?.toAnimation();
+    if (crater == null) {
+      throw "Can't load boom's crate sprite!";
+    }
+
+    _boomDuration =
+        Duration(milliseconds: (boom.totalDuration() * 1000).toInt());
+
+    final bulletTileCache = game.tilesetManager.getTile('bullet', 'bullet');
+    final bullet = bulletTileCache?.spriteAnimation;
+    if (bullet == null) {
+      throw "Can't load bullet's fly animation!";
+    }
+
+    size.setFrom(bullet.frames.first.sprite.srcSize);
     animations = {
-      BulletState.fly: SpriteSheetRegistry().bullet.animation,
+      BulletState.fly: bullet,
       BulletState.boom: boom,
-      BulletState.crater: await SpriteSheetRegistry().boom.crate
+      BulletState.crater: crater
     };
 
     add(_light);
@@ -172,10 +192,11 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
           boundingBox.defaultCollisionType = CollisionType.passive;
     }
 
+    removeFromParent();
     _light.renderShape = false;
     _light.removeFromParent();
     current = BulletState.boom;
-    size = SpriteSheetRegistry().boom.spriteSize;
+    size.setFrom(_boomSpriteSize);
 
     if (_boomDuration != null) {
       Future.delayed(_boomDuration!).then((value) {

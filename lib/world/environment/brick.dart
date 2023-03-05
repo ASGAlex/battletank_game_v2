@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
-import 'package:flame/extensions.dart';
-import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/environment/shadow.dart';
@@ -18,9 +16,8 @@ class Brick extends SpriteComponent
         HasGameReference<MyGame>,
         HasGridSupport,
         HasShadow {
-  Brick(TileDataProvider tileDataProvider, {super.position, super.size})
+  Brick(this.tileDataProvider, {super.position, super.size})
       : super(priority: RenderPriority.walls.priority) {
-    this.tileDataProvider = tileDataProvider;
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
@@ -29,6 +26,7 @@ class Brick extends SpriteComponent
   int _hitsByBullet = 0;
   static const halfBrick = 4.0;
   static final brickSize = Vector2.all(halfBrick * 2);
+  TileDataProvider tileDataProvider;
 
   @override
   FutureOr<void> onLoad() async {

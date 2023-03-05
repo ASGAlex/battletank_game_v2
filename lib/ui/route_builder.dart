@@ -11,7 +11,8 @@ typedef RouteItem = Widget Function(BuildContext context);
 
 class RouteBuilder {
   static final _routeMap = <String, RouteItem>{
-    '/': (ctx) => const MainMenu(),
+    // '/': (ctx) => const MainMenu(),
+    '/': (ctx) => _gameRoute(),
     '/main': (ctx) => const MainMenu(),
     '/missions': (ctx) => const MissionMenu(),
     '/settings': (ctx) => const SettingsView(),
@@ -35,7 +36,10 @@ class RouteBuilder {
       );
 
   static Widget _gameRoute() {
-    return const GameScreen();
+    return GameScreen(
+      mission: MissionDescription(
+          name: 'mission', description: 'description', mapFile: 'mission.tmx'),
+    );
   }
 
   static gotoMainMenu(BuildContext context) {

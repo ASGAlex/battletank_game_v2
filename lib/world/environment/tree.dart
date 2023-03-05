@@ -11,9 +11,8 @@ import 'package:tank_game/world/world.dart';
 
 class Tree extends SpriteComponent
     with HasGridSupport, HasGameReference<MyGame>, HasShadow {
-  Tree(TileDataProvider tileDataProvider, {super.position, super.size})
+  Tree(this.tileDataProvider, {super.position, super.size})
       : super(priority: RenderPriority.tree.priority) {
-    this.tileDataProvider = tileDataProvider;
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
@@ -21,6 +20,7 @@ class Tree extends SpriteComponent
     paint.isAntiAlias = false;
   }
 
+  TileDataProvider tileDataProvider;
   @override
   FutureOr<void> onLoad() async {
     sprite = await tileDataProvider.getSprite();

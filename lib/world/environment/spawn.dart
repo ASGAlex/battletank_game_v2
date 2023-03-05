@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -7,43 +5,10 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/tank/core/base_tank.dart';
+import 'package:tank_game/world/tank/core/tank_type_controller.dart';
 import 'package:tank_game/world/tank/enemy.dart';
-import 'package:tank_game/world/tank/type/types.dart';
-
-import '../../services/spritesheet/spritesheet.dart';
 
 typedef _SpawnTankType = TankType Function();
-
-class SpawnTankFactory {
-  static final _typesByName = <String, _SpawnTankType>{
-    'any': () {
-      final types = <TankType>[
-        TankType0(),
-        TankType1(),
-        TankType2(),
-        TankType3(),
-        TankType4()
-      ];
-      final i = Random().nextInt(types.length);
-      return types[i];
-    },
-    'simple': () => TankType0(),
-    'middle': () => TankType1(),
-    'advanced': () => TankType2(),
-    'heavy': () => TankType3(),
-    'fast': () => TankType4(),
-  };
-
-  String typeName = 'any';
-
-  TankType create() {
-    final func = _typesByName[typeName];
-    if (func == null) {
-      throw 'No such type';
-    }
-    return func();
-  }
-}
 
 class Spawn extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame>, HasGridSupport {
@@ -72,8 +37,7 @@ class Spawn extends SpriteAnimationComponent
     return Future.value(spawn);
   }
 
-  final tankTypeFactory = SpawnTankFactory();
-
+  TankType? createTanksOfType;
   bool busy = false;
   bool isForPlayer = false;
   HasGridSupport? _currentObject;
@@ -104,7 +68,14 @@ class Spawn extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     super.onLoad();
-    animation = await SpriteSheetRegistry().spawn.animation;
+
+    final spawnTileCache = game.tilesetManager.getTile('spawn', 'spawn');
+    final spawn = spawnTileCache?.spriteAnimation;
+    if (spawn == null) {
+      throw "Can't load spawn's animation!";
+    }
+
+    animation = spawn;
     animation?.onComplete = reverseAnimation;
   }
 
@@ -118,7 +89,11 @@ class Spawn extends SpriteAnimationComponent
     animation?.reset();
     _canTryCreate = false;
     if (object is Tank) {
-      object.typeController.type = tankTypeFactory.create();
+      if (createTanksOfType != null) {
+        object.typeController.type = createTanksOfType!;
+      } else {
+        object.typeController.type = TankType.getRandom();
+      }
     }
     return Future.delayed(const Duration(seconds: spawnDurationSec))
         .then((value) {

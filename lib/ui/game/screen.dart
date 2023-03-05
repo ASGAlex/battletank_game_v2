@@ -10,11 +10,13 @@ import 'ingame_menu.dart';
 import 'mission_objectives.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  const GameScreen({Key? key, this.mission}) : super(key: key);
+
+  final MissionDescription? mission;
 
   @override
   Widget build(BuildContext context) {
-    final selectedMission =
+    final selectedMission = mission ??
         ModalRoute.of(context)?.settings.arguments as MissionDescription?;
     if (selectedMission == null) {
       throw "Mission was not selected!!";

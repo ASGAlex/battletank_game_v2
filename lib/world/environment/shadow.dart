@@ -3,14 +3,11 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 
-mixin HasShadow on SpriteComponent {
-  late TileDataProvider tileDataProvider;
-
+mixin HasShadow on PositionComponent {
   final _removeShadow = ValueNotifier<bool>(false);
 
   @override
@@ -19,9 +16,8 @@ mixin HasShadow on SpriteComponent {
   }
 }
 
-class ShadowComponent extends SpriteComponent
-    with HasGridSupport, HasGameReference<MyGame> {
-  ShadowComponent(HasShadow component, [this.offsetMultiplier = 1])
+class ShadowComponent extends PositionComponent with HasGridSupport, HasPaint {
+  ShadowComponent(HasShadow component, this.game, [this.offsetMultiplier = 1])
       : _component = component {
     if (component is HasGridSupport) {
       currentCell = (component as HasGridSupport).currentCell;
@@ -35,16 +31,21 @@ class ShadowComponent extends SpriteComponent
     _component.size.addListener(onTrackedComponentSizeChange);
     _component._removeShadow.addListener(onComponentRemove);
 
-    _component.paint.blendMode = BlendMode.src;
+    // if (_component is HasPaint) {
+    //   (_component as HasPaint).paint.blendMode = BlendMode.src;
+    // }
 
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.inactive;
   }
 
+  MyGame game;
   final HasShadow _component;
 
   static final _globalImage = <Type, Image>{};
   Image? _shadowImage;
+
+  Image? getShadowImage() => _shadowImage;
 
   double offsetMultiplier = 1;
 
@@ -67,18 +68,16 @@ class ShadowComponent extends SpriteComponent
     removeFromParent();
   }
 
-  Future onTrackedComponentSizeChange() async {
+  void onTrackedComponentSizeChange() {
     size.setFrom(_component.size);
 
-    _shadowImage =
-        await game.world.createShadowOfComponent(this, _component.render);
+    _shadowImage = game.world.createShadow(size, _component.render);
   }
 
   @override
   FutureOr<void> onLoad() async {
-    sprite = _component.sprite = await _component.tileDataProvider.getSprite();
     _globalImage[_component.runtimeType] =
-        await game.world.createShadowOfComponent(this, _component.render);
+        game.world.createShadow(size, _component.render);
 
     super.onLoad();
   }

@@ -1,4 +1,3 @@
-import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
@@ -10,7 +9,6 @@ import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/services/spritesheet/spritesheet.dart';
 import 'package:tank_game/ui/game/controls/gamepad.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
 import 'package:tank_game/ui/game/controls/keyboard.dart';
@@ -21,12 +19,12 @@ import 'package:tank_game/world/environment/shadow.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
-import 'package:tiled/tiled.dart';
 
 import 'world/environment/brick.dart';
 import 'world/environment/heavy_brick.dart';
 import 'world/environment/target.dart';
 import 'world/environment/water.dart';
+import 'world/tank/core/tank_type_controller.dart';
 import 'world/tank/enemy.dart';
 import 'world/tank/player.dart';
 
@@ -37,8 +35,9 @@ abstract class MyGameFeatures extends FlameGame
         SingleGameInstance,
         HasSpatialGridFramework,
         ScrollDetector,
+        ScaleDetector,
         HasDraggables,
-        HasTappableComponents {
+        HasTappables {
   GameWorld get world => rootComponent as GameWorld;
 }
 
@@ -64,12 +63,21 @@ class MyGame extends MyGameFeatures
   late FlashMessage hudFlashMessage;
   late final CameraComponent cameraComponent;
 
+  late final GameMapLoader map;
+
   @override
   void onScroll(PointerScrollInfo info) {
     var zoom = cameraComponent.viewfinder.zoom;
     zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
-    cameraComponent.viewfinder.zoom = zoom.clamp(0.08, 8.0);
+    cameraComponent.viewfinder.zoom = zoom.clamp(0.1, 8.0);
     onAfterZoom();
+  }
+
+  @override
+  void onScaleUpdate(ScaleUpdateInfo info) {
+    var zoom = cameraComponent.viewfinder.zoom;
+    zoom += info.delta.game.y.sign * zoomPerScrollUnit;
+    cameraComponent.viewfinder.zoom = zoom.clamp(0.1, 8.0);
   }
 
   @override
@@ -85,26 +93,37 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('loading map...');
 
     final gameWorld = GameWorld();
-    final map = GameMapLoader(mapFile);
+    map = GameMapLoader(mapFile);
 
     cameraComponent = CameraComponent.withFixedResolution(
         world: gameWorld, width: 400, height: 250);
-    cameraComponent.viewfinder.zoom = 2;
     cameraComponent.moveTo(Vector2(378, 731));
+    // cameraComponent.viewfinder.zoom = 22;
 
     await initializeSpatialGrid(
-        blockSize: 80,
+        blockSize: 100,
         debug: false,
         activeRadius: const Size(2, 2),
         unloadRadius: const Size(5, 5),
-        // buildCellsPerUpdate: 1,
-        // removeCellsPerUpdate: 1,
+        preloadRadius: const Size(5, 5),
+        maximumCells: 150,
+        buildCellsPerUpdate: 5,
+        removeCellsPerUpdate: 4,
         rootComponent: gameWorld,
         lazyLoad: true,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
         trackWindowSize: true,
+        // onAfterCellBuild: (cell, rootComponent) async {
+        //   final trailLayer = CellTrailLayer(cell, name: 'trail');
+        //   trailLayer.priority = RenderPriority.trackTrail.priority;
+        //   trailLayer.optimizeCollisions = false;
+        //   trailLayer.fadeOutConfig = world.fadeOutConfig;
+        //   layersManager.addLayer(trailLayer);
+        // },
         suspendedCellLifetime: const Duration(minutes: 1),
         maps: [map]);
+
+    await _loadExternalTileSets();
 
     consoleMessages.sendMessage('done.');
 
@@ -127,7 +146,6 @@ class MyGame extends MyGameFeatures
     cameraComponent.viewport.add(hudFlashMessage);
 
     consoleMessages.sendMessage('Spawning the Player...');
-    gameInitializationDone();
 
     Spawn.waitFree(true).then((playerSpawn) async {
       // spatialGrid.trackedComponent = playerSpawn;
@@ -137,6 +155,17 @@ class MyGame extends MyGameFeatures
       consoleMessages.sendMessage('done.');
       consoleMessages.sendMessage('All done, game started!');
     });
+  }
+
+  Future<void> _loadExternalTileSets() {
+    final futures = <Future>[];
+    futures.add(tilesetManager.loadTileset('tank.tsx'));
+    futures.add(tilesetManager.loadTileset('boom.tsx'));
+    futures.add(tilesetManager.loadTileset('boom_big.tsx'));
+    futures.add(tilesetManager.loadTileset('spawn.tsx'));
+    futures.add(tilesetManager.loadTileset('target.tsx'));
+    futures.add(tilesetManager.loadTileset('bullet.tsx'));
+    return Future.wait(futures);
   }
 
   onObjectivesStateChange(String message, FlashMessageType type,
@@ -191,7 +220,6 @@ class MyGame extends MyGameFeatures
     Spawn.clear();
     Target.clear();
     player?.onRemove();
-    SpriteSheetBase.clearCaches();
     Player.respawnCount = 30;
   }
 }
@@ -247,12 +275,13 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildTree(CellBuilderContext context) async {
+    // return;
     final data = context.tileDataProvider;
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);
     tree.currentCell = context.cell;
-    final shadow0 = ShadowComponent(tree);
-    final shadow1 = ShadowComponent(tree, 1.3);
+    final shadow0 = ShadowComponent(tree, game);
+    final shadow1 = ShadowComponent(tree, game, 1.3);
 
     game.layersManager.addComponent(
         component: tree,
@@ -278,6 +307,7 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildWater(CellBuilderContext context) async {
+    // return;
     final data = context.tileDataProvider;
     if (data == null) return;
     final water = Water(data, position: context.position, size: context.size);
@@ -291,12 +321,17 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildBrick(CellBuilderContext context) async {
+    // return;
     final data = context.tileDataProvider;
-    if (data == null) return;
+    if (data == null) {
+      print('return!!!');
+
+      return;
+    }
     final brick = Brick(data, position: context.position, size: context.size);
     brick.currentCell = context.cell;
-    final shadow0 = ShadowComponent(brick);
-    final shadow1 = ShadowComponent(brick, 1.3);
+    final shadow0 = ShadowComponent(brick, game);
+    final shadow1 = ShadowComponent(brick, game, 1.3);
 
     game.layersManager.addComponent(
         component: brick,
@@ -320,6 +355,7 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildHeavyBrick(CellBuilderContext context) async {
+    // return;
     final data = context.tileDataProvider;
     if (data == null) return;
     final heavyBrick =
@@ -377,7 +413,8 @@ class GameMapLoader extends TiledMapLoader {
           spawn.triggerDistanceSquared = distance * distance;
           break;
         case 'tank_type':
-          spawn.tankTypeFactory.typeName = property.value.toString();
+          spawn.createTanksOfType =
+              TankType.fromString(property.value.toString());
           break;
       }
     }
