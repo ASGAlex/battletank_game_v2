@@ -476,7 +476,7 @@
   </object>
   <object id="12" name="spawn" class="spawn" x="1019" y="57.3333" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="int" value="1"/>
+    <property name="cooldown_seconds" type="int" value="120"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="5"/>
     <property name="trigger_distance" type="float" value="128"/>

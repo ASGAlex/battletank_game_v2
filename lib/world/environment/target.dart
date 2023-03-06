@@ -6,7 +6,6 @@ import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/intl.dart';
-import 'package:tank_game/world/sound.dart';
 
 import '../world.dart';
 
@@ -166,8 +165,8 @@ class Target extends SpriteAnimationGroupComponent<TargetState>
   onDeath(Component killedBy) {
     super.onDeath(killedBy);
     current = TargetState.boom;
-    SoundLibrary.createSfxPlayer('explosion_player.m4a')
-        .then((value) => value.resume());
+    // SoundLibrary.createSfxPlayer('explosion_player.m4a')
+    //     .then((value) => value.resume());
     decreaseCounters();
     Future.delayed(_boomDuration!).then((value) {
       current = TargetState.dead;

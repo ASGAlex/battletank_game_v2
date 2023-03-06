@@ -7,7 +7,6 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/controls/joystick.dart';
-import 'package:tank_game/world/world.dart';
 
 import 'core/base_tank.dart';
 import 'core/direction.dart';
@@ -17,7 +16,7 @@ class Player extends Tank {
 
   double _dtAmbientEnemySoundCheck = 0;
 
-  static int respawnCount = 30;
+  static int respawnCount = 3000;
 
   MyJoystick? joystick;
 
@@ -48,28 +47,28 @@ class Player extends Tank {
         onJoystickEvent();
       }
       _dtAmbientEnemySoundCheck += dt;
-      if (_dtAmbientEnemySoundCheck > 0.6) {
-        _dtAmbientEnemySoundCheck = 0;
-        var minDistance = distanceOfSilenceSquared;
-        for (final enemy in gameRef.enemies) {
-          final distance = enemy.position.distanceToSquared(position);
-          if (distance < minDistance) {
-            minDistance = distance;
-          }
-        }
-        if (minDistance >= distanceOfSilenceSquared) {
-          if (moveEnemiesAmbientSound?.state == PlayerState.playing) {
-            moveEnemiesAmbientSound?.pause();
-          }
-        } else {
-          moveEnemiesAmbientSound
-              ?.setVolume(1 - (minDistance / distanceOfSilenceSquared));
-          if ([PlayerState.paused, PlayerState.stopped]
-              .contains(moveEnemiesAmbientSound?.state)) {
-            moveEnemiesAmbientSound?.resume();
-          }
-        }
-      }
+      // if (_dtAmbientEnemySoundCheck > 0.6) {
+      //   _dtAmbientEnemySoundCheck = 0;
+      //   var minDistance = distanceOfSilenceSquared;
+      //   for (final enemy in gameRef.enemies) {
+      //     final distance = enemy.position.distanceToSquared(position);
+      //     if (distance < minDistance) {
+      //       minDistance = distance;
+      //     }
+      //   }
+      //   if (minDistance >= distanceOfSilenceSquared) {
+      //     if (moveEnemiesAmbientSound?.state == PlayerState.playing) {
+      //       moveEnemiesAmbientSound?.pause();
+      //     }
+      //   } else {
+      //     moveEnemiesAmbientSound
+      //         ?.setVolume(1 - (minDistance / distanceOfSilenceSquared));
+      //     if ([PlayerState.paused, PlayerState.stopped]
+      //         .contains(moveEnemiesAmbientSound?.state)) {
+      //       moveEnemiesAmbientSound?.resume();
+      //     }
+      //   }
+      // }
     }
   }
 
@@ -112,8 +111,8 @@ class Player extends Tank {
   @override
   onDeath(Component killedBy) {
     if (!dead) {
-      moveEnemiesAmbientSound?.pause();
-      movePlayerSound?.pause();
+      // moveEnemiesAmbientSound?.pause();
+      // movePlayerSound?.pause();
       gameRef.restorePlayer();
     }
     super.onDeath(killedBy);
@@ -167,19 +166,19 @@ class Player extends Tank {
       if (movementHitbox.collisionType != CollisionType.active) {
         movementHitbox.collisionType = CollisionType.active;
       }
-      if ([PlayerState.paused, PlayerState.stopped]
-          .contains(movePlayerSound?.state)) {
-        movePlayerSound?.setVolume(0.5);
-        movePlayerSound?.resume();
-      }
+      // if ([PlayerState.paused, PlayerState.stopped]
+      //     .contains(movePlayerSound?.state)) {
+      //   movePlayerSound?.setVolume(0.5);
+      //   movePlayerSound?.resume();
+      // }
     } else {
       if (!dead) {
         current = TankState.idle;
         movementHitbox.collisionType = CollisionType.active;
       }
-      if (movePlayerSound?.state == PlayerState.playing) {
-        movePlayerSound?.pause();
-      }
+      // if (movePlayerSound?.state == PlayerState.playing) {
+      //   movePlayerSound?.pause();
+      // }
     }
 
     if (updateAngle) {
@@ -196,7 +195,7 @@ class Player extends Tank {
 
   @override
   onRemove() {
-    movePlayerSound?.pause();
-    moveEnemiesAmbientSound?.pause();
+    // movePlayerSound?.pause();
+    // moveEnemiesAmbientSound?.pause();
   }
 }

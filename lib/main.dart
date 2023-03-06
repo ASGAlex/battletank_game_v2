@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/ui/route_builder.dart';
-import 'package:tank_game/world/sound.dart';
 
 import 'services/settings/controller.dart';
 import 'ui/intl.dart';
@@ -77,7 +76,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     xinput.dispose();
-    SoundLibrary.dispose();
+    // SoundLibrary.dispose();
     super.dispose();
   }
 
@@ -85,7 +84,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     Flame.device.setLandscape();
     Flame.device.fullScreen();
-    SoundLibrary.loadSounds();
+    // SoundLibrary.loadSounds();
     xinput.addListener(onXInputKeyPressed);
     super.initState();
   }

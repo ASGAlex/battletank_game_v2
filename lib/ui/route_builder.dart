@@ -38,7 +38,9 @@ class RouteBuilder {
   static Widget _gameRoute() {
     return GameScreen(
       mission: MissionDescription(
-          name: 'mission', description: 'description', mapFile: 'mission.tmx'),
+          name: 'mission',
+          description: 'description',
+          mapFile: 'performance_test.tmx'),
     );
   }
 

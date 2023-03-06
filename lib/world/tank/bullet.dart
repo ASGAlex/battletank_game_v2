@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -162,20 +161,20 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.inactive;
 
-    Future<AudioPlayer>? sfx;
+    // Future<AudioPlayer>? sfx;
     if (other is Brick) {
       other.collideWithBullet(this);
-      sfx = SoundLibrary.createSfxPlayer('player_bullet_wall.m4a');
+      //   sfx = SoundLibrary.createSfxPlayer('player_bullet_wall.m4a');
     } else if (other is HeavyBrick) {
-      sfx = SoundLibrary.createSfxPlayer('player_bullet_strong_wall.m4a');
+      //   sfx = SoundLibrary.createSfxPlayer('player_bullet_strong_wall.m4a');
     }
-
-    sfx?.then((player) {
-      distantSfxPlayer.actualDistance =
-          (gameRef.player?.position.distanceToSquared(position) ??
-              distanceOfSilenceSquared + 1);
-      distantSfxPlayer.play(player);
-    });
+    //
+    // sfx?.then((player) {
+    //   distantSfxPlayer.actualDistance =
+    //       (gameRef.player?.position.distanceToSquared(position) ??
+    //           distanceOfSilenceSquared + 1);
+    //   distantSfxPlayer.play(player);
+    // });
 
     die(skipRemove: true);
 

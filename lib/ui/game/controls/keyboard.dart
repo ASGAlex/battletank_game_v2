@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
@@ -84,18 +83,18 @@ mixin GameHardwareKeyboard on MyGameFeatures {
 
     if (directionButtonPressed && player.movementHitbox.isMovementAllowed) {
       player.current = TankState.run;
-      if ([PlayerState.paused, PlayerState.stopped]
-          .contains(player.movePlayerSound?.state)) {
-        player.movePlayerSound?.setVolume(0.5);
-        player.movePlayerSound?.resume();
-      }
+      // if ([PlayerState.paused, PlayerState.stopped]
+      //     .contains(player.movePlayerSound?.state)) {
+      //   player.movePlayerSound?.setVolume(0.5);
+      //   player.movePlayerSound?.resume();
+      // }
     } else {
       if (!player.dead) {
         player.current = TankState.idle;
       }
-      if (player.movePlayerSound?.state == PlayerState.playing) {
-        player.movePlayerSound?.pause();
-      }
+      // if (player.movePlayerSound?.state == PlayerState.playing) {
+      //   player.movePlayerSound?.pause();
+      // }
     }
 
     if (updateAngle) {

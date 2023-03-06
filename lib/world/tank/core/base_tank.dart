@@ -17,8 +17,6 @@ import 'package:tank_game/world/world.dart';
 import '../../environment/tree.dart';
 import '../../sound.dart';
 import '../bullet.dart';
-import '../enemy.dart';
-import '../player.dart';
 import 'direction.dart';
 import 'hitbox_body.dart';
 import 'hitbox_movement.dart';
@@ -107,16 +105,16 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           firedFrom: this);
       bullet.currentCell = currentCell;
       gameRef.world.addBullet(bullet);
-      SoundLibrary.createSfxPlayer('player_fire_bullet.m4a').then((player) {
-        if (this is Player) {
-          player.resume();
-        } else {
-          distantAudioPlayer.actualDistance =
-              (gameRef.player?.position.distanceToSquared(position) ??
-                  distanceOfSilenceSquared + 1);
-          distantAudioPlayer.play(player);
-        }
-      });
+      // SoundLibrary.createSfxPlayer('player_fire_bullet.m4a').then((player) {
+      //   if (this is Player) {
+      //     player.resume();
+      //   } else {
+      //     distantAudioPlayer.actualDistance =
+      //         (gameRef.player?.position.distanceToSquared(position) ??
+      //             distanceOfSilenceSquared + 1);
+      //     distantAudioPlayer.play(player);
+      //   }
+      // });
       return true;
     }
 
@@ -269,22 +267,22 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
       super.onDeath(killedBy);
 
       Future<AudioPlayer>? sfx;
-      if (this is Player) {
-        sfx = SoundLibrary.createSfxPlayer('explosion_player.m4a');
-      } else if (this is Enemy) {
-        sfx = SoundLibrary.createSfxPlayer('explosion_enemy.m4a');
-      }
-
-      sfx?.then((player) {
-        if (this is Player) {
-          player.resume();
-        } else {
-          distantAudioPlayer.actualDistance =
-              (gameRef.player?.position.distanceToSquared(position) ??
-                  distanceOfSilenceSquared + 1);
-          distantAudioPlayer.play(player);
-        }
-      });
+      // if (this is Player) {
+      //   sfx = SoundLibrary.createSfxPlayer('explosion_player.m4a');
+      // } else if (this is Enemy) {
+      //   sfx = SoundLibrary.createSfxPlayer('explosion_enemy.m4a');
+      // }
+      //
+      // sfx?.then((player) {
+      //   if (this is Player) {
+      //     player.resume();
+      //   } else {
+      //     distantAudioPlayer.actualDistance =
+      //         (gameRef.player?.position.distanceToSquared(position) ??
+      //             distanceOfSilenceSquared + 1);
+      //     distantAudioPlayer.play(player);
+      //   }
+      // });
 
       if (_boomDuration != null) {
         Future.delayed(_boomDuration!).then((value) {
