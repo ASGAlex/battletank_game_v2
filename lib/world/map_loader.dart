@@ -2,7 +2,6 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/environment/shadow.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
@@ -17,6 +16,8 @@ class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
     this.fileName = fileName;
   }
+
+  Vector2 cameraInitialPosition = Vector2.zero();
 
   @override
   TileBuilderFunction? get cellPostBuilder => null;
@@ -36,6 +37,11 @@ class GameMapLoader extends TiledMapLoader {
         'spawn': onBuildSpawn,
         'spawn_player': onBuildSpawnPlayer,
         'target': onBuildTarget,
+      };
+
+  @override
+  Map<String, TileBuilderFunction>? get globalObjectBuilder => {
+        'spawn_player': onSetupInitialPosition,
       };
 
   @override
@@ -69,30 +75,12 @@ class GameMapLoader extends TiledMapLoader {
     if (data == null) return;
     final tree = Tree(data, position: context.position, size: context.size);
     tree.currentCell = context.cell;
-    final shadow0 = ShadowComponent(tree, game);
-    final shadow1 = ShadowComponent(tree, game, 1.3);
 
     game.layersManager.addComponent(
         component: tree,
         layerType: MapLayerType.static,
         layerName: 'Tree',
         priority: RenderPriority.tree.priority);
-
-    game.layersManager.addComponent(
-        component: shadow0,
-        layerType: MapLayerType.static,
-        layerName: 'TreeShadow',
-        isRenewable: false,
-        optimizeCollisions: false,
-        priority: RenderPriority.tree.priority - 1);
-
-    game.layersManager.addComponent(
-        component: shadow1,
-        layerType: MapLayerType.static,
-        layerName: 'TreeShadow',
-        isRenewable: false,
-        optimizeCollisions: false,
-        priority: RenderPriority.tree.priority - 1);
   }
 
   Future onBuildWater(CellBuilderContext context) async {
@@ -119,28 +107,12 @@ class GameMapLoader extends TiledMapLoader {
     }
     final brick = Brick(data, position: context.position, size: context.size);
     brick.currentCell = context.cell;
-    final shadow0 = ShadowComponent(brick, game);
-    final shadow1 = ShadowComponent(brick, game, 1.3);
 
     game.layersManager.addComponent(
         component: brick,
         layerType: MapLayerType.static,
         layerName: 'Brick',
         priority: RenderPriority.walls.priority);
-
-    game.layersManager.addComponent(
-        component: shadow0,
-        layerType: MapLayerType.static,
-        layerName: 'BrickShadow',
-        optimizeCollisions: false,
-        priority: RenderPriority.walls.priority - 1);
-
-    game.layersManager.addComponent(
-        component: shadow1,
-        layerType: MapLayerType.static,
-        layerName: 'BrickShadow',
-        optimizeCollisions: false,
-        priority: RenderPriority.walls.priority - 1);
   }
 
   Future onBuildHeavyBrick(CellBuilderContext context) async {
@@ -185,6 +157,10 @@ class GameMapLoader extends TiledMapLoader {
 
     game.cameraComponent.moveTo(newSpawn.position);
     game.world.addSpawn(newSpawn);
+  }
+
+  Future onSetupInitialPosition(CellBuilderContext context) async {
+    cameraInitialPosition.setFrom(context.position);
   }
 
   void _setupSpawnProperties(Spawn spawn, CustomProperties properties) {

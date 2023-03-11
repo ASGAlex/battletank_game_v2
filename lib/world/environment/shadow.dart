@@ -16,8 +16,10 @@ mixin HasShadow on PositionComponent {
   }
 }
 
-class ShadowComponent extends PositionComponent with HasGridSupport, HasPaint {
-  ShadowComponent(HasShadow component, this.game, [this.offsetMultiplier = 1])
+class ShadowComponent_legacy extends PositionComponent
+    with HasGridSupport, HasPaint {
+  ShadowComponent_legacy(HasShadow component, this.game,
+      [this.offsetMultiplier = 1])
       : _component = component {
     if (component is HasGridSupport) {
       currentCell = (component as HasGridSupport).currentCell;

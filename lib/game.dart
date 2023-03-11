@@ -90,18 +90,17 @@ class MyGame extends MyGameFeatures
 
     cameraComponent = CameraComponent.withFixedResolution(
         world: gameWorld, width: 400, height: 250);
-    // cameraComponent.moveTo(Vector2(378, 731));
     // cameraComponent.viewfinder.zoom = 22;
 
     await initializeSpatialGrid(
         blockSize: 100,
         debug: false,
         activeRadius: const Size(2, 2),
-        unloadRadius: const Size(5, 5),
-        preloadRadius: const Size(5, 5),
-        maximumCells: 150,
+        unloadRadius: const Size(2, 2),
+        preloadRadius: const Size(10, 10),
+        maximumCells: 90,
         buildCellsPerUpdate: 5,
-        removeCellsPerUpdate: 4,
+        removeCellsPerUpdate: 1,
         rootComponent: gameWorld,
         lazyLoad: true,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
@@ -113,8 +112,10 @@ class MyGame extends MyGameFeatures
         //   trailLayer.fadeOutConfig = world.fadeOutConfig;
         //   layersManager.addLayer(trailLayer);
         // },
-        suspendedCellLifetime: const Duration(minutes: 1),
+        suspendedCellLifetime: const Duration(minutes: 2),
         maps: [map]);
+
+    cameraComponent.moveTo(map.cameraInitialPosition);
 
     await _loadExternalTileSets();
 

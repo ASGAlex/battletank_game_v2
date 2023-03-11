@@ -35,8 +35,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   Tank({super.position})
       : super(size: Vector2(16, 16), angle: 0, anchor: Anchor.center) {
     typeController = TankTypeController(this);
-    _shadowComponent = ShadowComponent(this, game);
-    _shadowComponent.priority = RenderPriority.player.priority - 1;
   }
 
   late final TankTypeController typeController;
@@ -72,8 +70,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
   static const _nextSmokeParticleMax = 0.15;
   double _nextSmokeParticle = 0;
-
-  late ShadowComponent _shadowComponent;
 
   @override
   Future<void>? onLoad() async {
@@ -249,10 +245,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
       case Direction.right:
         offset = Offset(shadowOffset, shadowOffset);
         break;
-    }
-    final shadow = _shadowComponent.getShadowImage();
-    if (shadow != null) {
-      canvas.drawImage(shadow, offset, paint);
     }
     super.render(canvas);
   }

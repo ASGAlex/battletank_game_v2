@@ -58,6 +58,12 @@ class TankTypeController {
   set type(TankType value) {
     _type = value;
     _loadTypeData();
+
+    if (value == TankType.heavy) {
+      parent.boundingBox.collisionCheckFrequency = 0.5;
+      parent.movementHitbox.collisionCheckFrequency = 0.5;
+      parent.bodyHitbox.collisionCheckFrequency = 0.5;
+    }
   }
 
   void _loadTypeData() {

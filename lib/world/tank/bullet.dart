@@ -197,18 +197,15 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
     current = BulletState.boom;
     size.setFrom(_boomSpriteSize);
 
-    if (_boomDuration != null) {
+    if (noHit) {
+      current = BulletState.crater;
+      final layer = game.layersManager.addComponent(
+          component: this, layerType: MapLayerType.trail, layerName: 'trail');
+      if (layer is CellTrailLayer) {
+        layer.fadeOutConfig = game.world.fadeOutConfig;
+      }
+    } else if (_boomDuration != null) {
       Future.delayed(_boomDuration!).then((value) {
-        if (noHit) {
-          current = BulletState.crater;
-          final layer = game.layersManager.addComponent(
-              component: this,
-              layerType: MapLayerType.trail,
-              layerName: 'trail');
-          if (layer is CellTrailLayer) {
-            layer.fadeOutConfig = game.world.fadeOutConfig;
-          }
-        }
         removeFromParent();
       });
     }

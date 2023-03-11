@@ -8,8 +8,6 @@ import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/core/tank_type_controller.dart';
 import 'package:tank_game/world/tank/enemy.dart';
 
-typedef _SpawnTankType = TankType Function();
-
 class Spawn extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame>, HasGridSupport {
   static final _instances = <Spawn>[];
@@ -74,17 +72,15 @@ class Spawn extends SpriteAnimationComponent
     if (spawn == null) {
       throw "Can't load spawn's animation!";
     }
-
+    if (spawn.frames.length < 8) {
+      final reversed = spawn.reversed();
+      spawn.frames.addAll(reversed.frames);
+      spawn.loop = true;
+    }
     animation = spawn;
-    animation?.onComplete = reverseAnimation;
   }
 
-  void reverseAnimation() {
-    animation = animation?.reversed();
-    animation?.onComplete = reverseAnimation;
-  }
-
-  Future createTank(HasGridSupport object, [bool isPlayer = false]) {
+  Future createTank(HasGridSupport object, [bool isPlayer = false]) async {
     busy = true;
     animation?.reset();
     _canTryCreate = false;
