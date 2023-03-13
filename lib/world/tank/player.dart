@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
@@ -27,7 +26,7 @@ class Player extends Tank {
   //   return value;
   // });
 
-  AudioPlayer? movePlayerSound;
+  // AudioPlayer? movePlayerSound;
 
   // final _moveEnemiesAmbientSound = SoundLibrary.createMusicPlayer(
   //         'move_enemies.m4a',
@@ -37,7 +36,7 @@ class Player extends Tank {
   //   return value;
   // });
 
-  AudioPlayer? moveEnemiesAmbientSound;
+  // AudioPlayer? moveEnemiesAmbientSound;
 
   @override
   void update(double dt) {

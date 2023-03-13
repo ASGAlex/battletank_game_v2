@@ -96,15 +96,12 @@ class MyGame extends MyGameFeatures
         blockSize: 100,
         debug: false,
         activeRadius: const Size(2, 2),
-        unloadRadius: const Size(2, 2),
-        preloadRadius: const Size(10, 10),
-        maximumCells: 90,
-        buildCellsPerUpdate: 5,
-        removeCellsPerUpdate: 1,
+        unloadRadius: const Size(3, 3),
+        preloadRadius: const Size(5, 5),
+        buildCellsPerUpdate: 1,
+        processCellsLimitToPauseEngine: 25,
         rootComponent: gameWorld,
-        lazyLoad: true,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
-        trackWindowSize: true,
         // onAfterCellBuild: (cell, rootComponent) async {
         //   final trailLayer = CellTrailLayer(cell, name: 'trail');
         //   trailLayer.priority = RenderPriority.trackTrail.priority;
@@ -142,12 +139,14 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('Spawning the Player...');
 
     Spawn.waitFree(true).then((playerSpawn) async {
-      // spatialGrid.trackedComponent = playerSpawn;
-      cameraComponent.follow(playerSpawn, maxSpeed: 60);
-      await restorePlayer(playerSpawn);
-      // SoundLibrary().playIntro();
-      consoleMessages.sendMessage('done.');
-      consoleMessages.sendMessage('All done, game started!');
+      if (player == null || player?.dead == true) {
+        // spatialGrid.trackedComponent = playerSpawn;
+        cameraComponent.follow(playerSpawn, maxSpeed: 60);
+        await restorePlayer(playerSpawn);
+        // SoundLibrary().playIntro();
+        consoleMessages.sendMessage('done.');
+        consoleMessages.sendMessage('All done, game started!');
+      }
     });
   }
 
@@ -186,7 +185,7 @@ class MyGame extends MyGameFeatures
       await spawn.createTank(object, true);
       player = object;
       player!.health = 1000;
-      cameraComponent.follow(player!);
+      cameraComponent.follow(player!, maxSpeed: 60);
       // spatialGrid.trackedComponent = player;
       Player.respawnCount--;
       return object;

@@ -76,11 +76,12 @@ class GameMapLoader extends TiledMapLoader {
     final tree = Tree(data, position: context.position, size: context.size);
     tree.currentCell = context.cell;
 
-    game.layersManager.addComponent(
+    final layer = game.layersManager.addComponent(
         component: tree,
         layerType: MapLayerType.static,
         layerName: 'Tree',
         priority: RenderPriority.tree.priority);
+    (layer as CellStaticLayer).renderAsImage = true;
   }
 
   Future onBuildWater(CellBuilderContext context) async {

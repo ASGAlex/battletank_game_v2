@@ -14,7 +14,6 @@ import 'package:tank_game/world/tank/enemy.dart';
 import '../environment/spawn.dart';
 import '../environment/tree.dart';
 import '../environment/water.dart';
-import '../sound.dart';
 import '../world.dart';
 import 'core/direction.dart';
 
@@ -44,7 +43,6 @@ class Bullet extends SpriteAnimationGroupComponent<BulletState>
 
   PositionComponent firedFrom;
 
-  final distantSfxPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
   double _distance = 0;
   final _maxDistance = 300;
 

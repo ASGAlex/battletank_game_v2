@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
@@ -15,7 +14,6 @@ import 'package:tank_game/world/tank/core/tank_type_controller.dart';
 import 'package:tank_game/world/world.dart';
 
 import '../../environment/tree.dart';
-import '../../sound.dart';
 import '../bullet.dart';
 import 'direction.dart';
 import 'hitbox_body.dart';
@@ -63,8 +61,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   final movementHitbox = MovementHitbox();
   final bodyHitbox =
       BodyHitbox(position: Vector2.zero(), size: Vector2.all(16));
-
-  final distantAudioPlayer = DistantSfxPlayer(distanceOfSilenceSquared);
 
   Duration? _boomDuration;
 
@@ -258,7 +254,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 
       super.onDeath(killedBy);
 
-      Future<AudioPlayer>? sfx;
       // if (this is Player) {
       //   sfx = SoundLibrary.createSfxPlayer('explosion_player.m4a');
       // } else if (this is Enemy) {
