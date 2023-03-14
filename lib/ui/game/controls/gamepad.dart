@@ -67,7 +67,7 @@ mixin XInputGamePad on MyGameFeatures {
   @override
   Future update(double dt) async {
     final controller = SettingsController().xInputGamePadController;
-    if (controller.useController) {
+    if (false /*controller.useController*/) {
       if (controller.spaceHold) {
         controller.keysPressed.add(LogicalKeyboardKey.space);
       }

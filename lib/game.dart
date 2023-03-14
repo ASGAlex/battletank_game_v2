@@ -185,7 +185,6 @@ class MyGame extends MyGameFeatures
       await spawn.createTank(object, true);
       player = object;
       player!.health = 1000;
-      cameraComponent.follow(player!, maxSpeed: 60);
       // spatialGrid.trackedComponent = player;
       Player.respawnCount--;
       return object;

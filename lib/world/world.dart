@@ -8,6 +8,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/tank/player.dart';
 
 enum RenderPriority {
   sky(25),
@@ -49,6 +50,9 @@ class GameWorld extends World with HasGameRef<MyGame> {
 
   addTank(Component component) {
     _tankLayer.add(component);
+    if (component is Player) {
+      game.cameraComponent.follow(component, maxSpeed: 60);
+    }
   }
 
   addBullet(Component component) {

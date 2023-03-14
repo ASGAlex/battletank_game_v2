@@ -83,12 +83,12 @@ class Player extends Tank {
     joystick = gameRef.joystick;
   }
 
-  @override
-  onHiddenChange(bool hidden) {
-    if (hidden == true && dead == true) {
-      gameRef.restorePlayer();
-    }
-  }
+  // @override
+  // onHiddenChange(bool hidden) {
+  //   if (hidden == true && dead == true) {
+  //     gameRef.restorePlayer();
+  //   }
+  // }
 
   @override
   takeDamage(double damage, Component from) {
