@@ -28,7 +28,6 @@ abstract class MyGameFeatures extends FlameGame
         SingleGameInstance,
         HasSpatialGridFramework,
         ScrollDetector,
-        ScaleDetector,
         HasDraggables,
         HasTappables {
   GameWorld get world => rootComponent as GameWorld;
@@ -67,13 +66,6 @@ class MyGame extends MyGameFeatures
   }
 
   @override
-  void onScaleUpdate(ScaleUpdateInfo info) {
-    var zoom = cameraComponent.viewfinder.zoom;
-    zoom += info.delta.game.y.sign * zoomPerScrollUnit;
-    cameraComponent.viewfinder.zoom = zoom.clamp(0.1, 8.0);
-  }
-
-  @override
   Future<void> onLoad() async {
     consoleMessages.sendMessage('Start loading!');
     super.onLoad();
@@ -99,9 +91,12 @@ class MyGame extends MyGameFeatures
         unloadRadius: const Size(3, 3),
         preloadRadius: const Size(5, 5),
         buildCellsPerUpdate: 1,
-        processCellsLimitToPauseEngine: 25,
+        cleanupCellsPerUpdate: 1,
+        processCellsLimitToPauseEngine: 15,
         rootComponent: gameWorld,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
+        suspendedCellLifetime: const Duration(seconds: 120),
+        suspendCellPrecision: const Duration(seconds: 30),
         // onAfterCellBuild: (cell, rootComponent) async {
         //   final trailLayer = CellTrailLayer(cell, name: 'trail');
         //   trailLayer.priority = RenderPriority.trackTrail.priority;
@@ -109,7 +104,6 @@ class MyGame extends MyGameFeatures
         //   trailLayer.fadeOutConfig = world.fadeOutConfig;
         //   layersManager.addLayer(trailLayer);
         // },
-        suspendedCellLifetime: const Duration(minutes: 2),
         maps: [map]);
 
     cameraComponent.moveTo(map.cameraInitialPosition);

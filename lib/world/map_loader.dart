@@ -73,7 +73,8 @@ class GameMapLoader extends TiledMapLoader {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
-    final tree = Tree(data, position: context.position, size: context.size);
+    final tree =
+        Tree(data, position: context.absolutePosition, size: context.size);
     tree.currentCell = context.cell;
 
     final layer = game.layersManager.addComponent(
@@ -88,7 +89,8 @@ class GameMapLoader extends TiledMapLoader {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
-    final water = Water(data, position: context.position, size: context.size);
+    final water =
+        Water(data, position: context.absolutePosition, size: context.size);
     water.currentCell = context.cell;
 
     game.layersManager.addComponent(
@@ -106,13 +108,15 @@ class GameMapLoader extends TiledMapLoader {
 
       return;
     }
-    final brick = Brick(data, position: context.position, size: context.size);
+    final brick =
+        Brick(data, position: context.absolutePosition, size: context.size);
     brick.currentCell = context.cell;
 
     game.layersManager.addComponent(
         component: brick,
         layerType: MapLayerType.static,
         layerName: 'Brick',
+        optimizeGraphics: false,
         priority: RenderPriority.walls.priority);
   }
 
@@ -120,13 +124,14 @@ class GameMapLoader extends TiledMapLoader {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
-    final heavyBrick =
-        HeavyBrick(data, position: context.position, size: context.size);
+    final heavyBrick = HeavyBrick(data,
+        position: context.absolutePosition, size: context.size);
 
     heavyBrick.currentCell = context.cell;
     game.layersManager.addComponent(
         component: heavyBrick,
         layerType: MapLayerType.static,
+        optimizeGraphics: false,
         layerName: 'HeavyBrick',
         priority: RenderPriority.walls.priority);
   }
@@ -135,8 +140,8 @@ class GameMapLoader extends TiledMapLoader {
     final properties = context.tiledObject?.properties;
     if (properties == null) return;
     final newSpawn = Spawn(
-        position: Vector2(context.position.x + context.size.x / 2,
-            context.position.y + context.size.y / 2),
+        position: Vector2(context.absolutePosition.x + context.size.x / 2,
+            context.absolutePosition.y + context.size.y / 2),
         isForPlayer: false);
 
     newSpawn.currentCell = context.cell;
@@ -149,8 +154,8 @@ class GameMapLoader extends TiledMapLoader {
     final properties = context.tiledObject?.properties;
     if (properties == null) return;
     final newSpawn = Spawn(
-        position: Vector2(context.position.x + context.size.x / 2,
-            context.position.y + context.size.y / 2),
+        position: Vector2(context.absolutePosition.x + context.size.x / 2,
+            context.absolutePosition.y + context.size.y / 2),
         isForPlayer: true);
 
     newSpawn.currentCell = context.cell;
@@ -161,7 +166,7 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onSetupInitialPosition(CellBuilderContext context) async {
-    cameraInitialPosition.setFrom(context.position);
+    cameraInitialPosition.setFrom(context.absolutePosition);
   }
 
   void _setupSpawnProperties(Spawn spawn, CustomProperties properties) {
@@ -202,7 +207,7 @@ class GameMapLoader extends TiledMapLoader {
       }
     }
     final newTarget = Target(
-        position: context.position,
+        position: context.absolutePosition,
         primary: primary,
         protectFromEnemies: protectFromEnemies);
     game.world.addSpawn(newTarget);

@@ -35,6 +35,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     typeController = TankTypeController(this);
   }
 
+  int? get debugCoordinatesPrecision => null;
+
   late final TankTypeController typeController;
   Direction lookDirection = Direction.up;
   int speed = 50;
@@ -51,7 +53,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
   double _trackDistance = 0;
 
   bool get trackTreeCollisions => true;
-  bool renderTrackTrail = false;
+  bool renderTrackTrail = true;
 
   @override
   double health = 1;
@@ -169,7 +171,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
           if (_trackDistance > 2 && renderTrackTrail) {
             _trackDistance = 0;
             final leftTrackPos = transform.localToGlobal(Vector2(0, 0));
-            final rightTrackPos = transform.localToGlobal(Vector2(12, 0));
+            final rightTrackPos = transform.localToGlobal(Vector2(10, 0));
 
             game.layersManager.addComponent(
                 component:
@@ -189,6 +191,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
                 priority: RenderPriority.trackTrail.priority,
                 layerName: 'trail');
             (layer as CellTrailLayer).fadeOutConfig = game.world.fadeOutConfig;
+            layer.persistentCorrection = 20;
+            // print(layer.correctionTopLeft);
           }
         }
       }
@@ -293,7 +297,8 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
 class _TrackTrailComponent extends PositionComponent
     with HasPaint, HasGridSupport {
   _TrackTrailComponent({super.position, super.angle}) {
-    paint.color = material.Colors.black.withOpacity(0.5);
+    paint.color = material.Colors.white.withOpacity(0.5);
+    size = Vector2(5, 1);
   }
 
   @override

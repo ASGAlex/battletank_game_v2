@@ -39,7 +39,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
   final _spawnLayer = Component(priority: RenderPriority.spawn.priority);
 
   final fadeOutConfig = FadeOutConfig(
-      transparencyPerStep: 0.02, fadeOutTimeout: const Duration(seconds: 2));
+      transparencyPerStep: 0.1, fadeOutTimeout: const Duration(seconds: 2));
   final shadowsOpacity = 0.6;
 
   final shadowOffset = Vector2(-1.5, 1.5);
