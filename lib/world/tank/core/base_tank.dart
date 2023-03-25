@@ -35,6 +35,7 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
     typeController = TankTypeController(this);
   }
 
+  @override
   int? get debugCoordinatesPrecision => null;
 
   late final TankTypeController typeController;
