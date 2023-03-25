@@ -3,8 +3,6 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/events.dart';
-import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/painting.dart';
@@ -14,6 +12,7 @@ import '../../../world/world.dart';
 
 mixin MyJoystickMix on MyGameFeatures {
   MyJoystick? joystick;
+  HudButtonComponent? hudButton;
 
   initJoystick([VoidCallback? playerFire]) async {
     final image = await images.load('joystick.png');
@@ -35,7 +34,7 @@ mixin MyJoystickMix on MyGameFeatures {
         ),
         margin: const EdgeInsets.only(left: 20, bottom: 40),
       );
-      add(HudButtonComponent(
+      hudButton = HudButtonComponent(
           button: SpriteComponent(
               sprite: sheet.getSpriteById(3), size: Vector2.all(60))
             ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
@@ -43,8 +42,10 @@ mixin MyJoystickMix on MyGameFeatures {
               sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
           onPressed: playerFire,
           priority: RenderPriority.ui.priority,
-          margin: const EdgeInsets.only(bottom: 40, right: 20)));
+          margin: const EdgeInsets.only(bottom: 40, right: 20));
+
       add(joystick!);
+      add(hudButton!);
 
       joystick?.background
           ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
@@ -70,6 +71,26 @@ mixin MyJoystickMix on MyGameFeatures {
   @override
   void onDragCancel(int pointerId) {
     joystick?.handleDragCanceled(pointerId);
+  }
+
+  @override
+  void onTapCancel(int pointerId) {
+    hudButton?.handleTapCancel(pointerId);
+  }
+
+  @override
+  void onTapDown(int pointerId, TapDownInfo info) {
+    hudButton?.onTapDown(info);
+  }
+
+  @override
+  void onTapUp(int pointerId, TapUpInfo info) {
+    hudButton?.onTapUp(info);
+  }
+
+  @override
+  void onLongTapDown(int pointerId, TapDownInfo info) {
+    hudButton?.onLongTapDown(info);
   }
 }
 
