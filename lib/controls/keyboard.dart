@@ -1,16 +1,21 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/tank/core/base_tank.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 
 mixin GameHardwareKeyboard on MyGameFeatures {
+  final inputEventsHandler = InputEventsHandler();
+
   @override
   KeyEventResult onKeyEvent(
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
+    return inputEventsHandler.onKeyEvent(event, keysPressed);
+
     final player = (this as MyGame).player;
 
     if (player == null) return KeyEventResult.handled;

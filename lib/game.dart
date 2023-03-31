@@ -1,19 +1,25 @@
+import 'dart:io';
+
 import 'package:flame/experimental.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:tank_game/controls/gamepad.dart';
+import 'package:tank_game/controls/joystick.dart';
+import 'package:tank_game/controls/keyboard.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/ui/game/controls/gamepad.dart';
-import 'package:tank_game/ui/game/controls/joystick.dart';
-import 'package:tank_game/ui/game/controls/keyboard.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
+import 'package:tank_game/world/actors/human/human.dart';
+import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
+import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -113,9 +119,10 @@ class MyGame extends MyGameFeatures
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Starting UI');
-    initJoystick(() {
-      player?.onFire();
-    });
+    if (Platform.isAndroid || Platform.isIOS) {
+      initJoystick(inputEventsHandler.handleFireEvent);
+      inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
+    }
     hudVisibility = VisibilityIndicator(this);
     hudVisibility.setVisibility(true);
     hudVisibility.x = 2;
@@ -132,16 +139,16 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('Spawning the Player...');
 
-    Spawn.waitFree(true).then((playerSpawn) async {
-      if (player == null || player?.dead == true) {
-        // spatialGrid.trackedComponent = playerSpawn;
-        cameraComponent.follow(playerSpawn, maxSpeed: 60);
-        await restorePlayer(playerSpawn);
-        // SoundLibrary().playIntro();
-        consoleMessages.sendMessage('done.');
-        consoleMessages.sendMessage('All done, game started!');
-      }
-    });
+    // Spawn.waitFree(true).then((playerSpawn) async {
+    //   if (player == null || player?.dead == true) {
+    //     // spatialGrid.trackedComponent = playerSpawn;
+    //     cameraComponent.follow(playerSpawn, maxSpeed: 60);
+    //     await restorePlayer(playerSpawn);
+    //     // SoundLibrary().playIntro();
+    //     consoleMessages.sendMessage('done.');
+    //     consoleMessages.sendMessage('All done, game started!');
+    //   }
+    // });
   }
 
   Future<void> _loadExternalTileSets() {
@@ -171,17 +178,32 @@ class MyGame extends MyGameFeatures
     }
   }
 
-  Future<Player?> restorePlayer([Spawn? spawn]) async {
-    if (Player.respawnCount > 0) {
-      spawn ??= await Spawn.waitFree(true);
+  @override
+  void onInitializationDone() {
+    restorePlayer();
+  }
 
-      final object = Player(position: spawn.position.clone());
-      await spawn.createTank(object, true);
-      player = object;
-      player!.health = 1000;
+  void restorePlayer() {
+    if (Player.respawnCount > 0) {
+      final player = HumanEntity();
+      player.data
+        ..factions.add(Faction(name: 'Player'))
+        ..health = 10000;
+      player.add(PlayerControlledBehavior());
+
+      cameraComponent.follow(player);
+
+      SpawnManager()
+          .spawnNewActor(actor: player, faction: Faction(name: 'Player'));
+
+      // spawn ??= await Spawn.waitFree(true);
+      //
+      // final object = Player(position: spawn.position.clone());
+      // await spawn.createTank(object, true);
+      // player = object;
+      // player!.health = 1000;
       // spatialGrid.trackedComponent = player;
       Player.respawnCount--;
-      return object;
     } else {
       overlays.add('game_over_fail');
       onEndGame();
@@ -206,7 +228,7 @@ class MyGame extends MyGameFeatures
     TileProcessor.clearCache();
     Spawn.clear();
     Target.clear();
-    player?.onRemove();
+    // player?.onRemove();
     Player.respawnCount = 30;
   }
 }

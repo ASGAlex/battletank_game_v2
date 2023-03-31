@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.9" tiledversion="1.9.2" name="tank" tilewidth="14" tileheight="16" tilecount="15" columns="3">
- <image source="../images/spritesheets/tank_basic2.png" width="42" height="80"/>
+<tileset version="1.9" tiledversion="1.9.2" name="tank" tilewidth="14" tileheight="16" tilecount="18" columns="3">
+ <image source="../images/spritesheets/tank_basic2.png" width="42" height="96"/>
  <tile id="0" class="simple">
   <properties>
    <property name="damage" type="float" value="1"/>
@@ -71,4 +71,12 @@
  </tile>
  <tile id="13" class="fast_idle"/>
  <tile id="14" class="fast_wreck"/>
+ <tile id="15" class="human">
+  <animation>
+   <frame tileid="15" duration="500"/>
+   <frame tileid="16" duration="500"/>
+  </animation>
+ </tile>
+ <tile id="16" class="human_idle"/>
+ <tile id="17" class="human_wreck"/>
 </tileset>

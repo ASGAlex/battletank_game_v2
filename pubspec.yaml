@@ -40,6 +40,9 @@ dependencies:
   flame_spatial_grid:
     path: ../cluisterizer_test
   #    git: https://github.com/ASGAlex/flame_spatial_grid.git
+
+  flame_message_stream:
+    git: https://github.com/ASGAlex/flame_message_stream.git
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -49,6 +52,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  flame_behaviors: ^0.2.0
 
 dev_dependencies:
   flutter_test:

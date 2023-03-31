@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flame/components.dart';
@@ -21,36 +20,34 @@ mixin MyJoystickMix on MyGameFeatures {
       columns: 6,
       rows: 1,
     );
-    if (Platform.isAndroid || Platform.isIOS) {
-      joystick = MyJoystick(
+    joystick = MyJoystick(
+      priority: RenderPriority.ui.priority,
+      knob: SpriteComponent(
+        sprite: sheet.getSpriteById(1),
+        size: Vector2.all(40),
+      ),
+      background: SpriteComponent(
+        sprite: sheet.getSpriteById(0),
+        size: Vector2.all(90),
+      ),
+      margin: const EdgeInsets.only(left: 20, bottom: 40),
+    );
+    hudButton = HudButtonComponent(
+        button: SpriteComponent(
+            sprite: sheet.getSpriteById(3), size: Vector2.all(60))
+          ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
+        buttonDown: SpriteComponent(
+            sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
+        onPressed: playerFire,
         priority: RenderPriority.ui.priority,
-        knob: SpriteComponent(
-          sprite: sheet.getSpriteById(1),
-          size: Vector2.all(40),
-        ),
-        background: SpriteComponent(
-          sprite: sheet.getSpriteById(0),
-          size: Vector2.all(90),
-        ),
-        margin: const EdgeInsets.only(left: 20, bottom: 40),
-      );
-      hudButton = HudButtonComponent(
-          button: SpriteComponent(
-              sprite: sheet.getSpriteById(3), size: Vector2.all(60))
-            ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
-          buttonDown: SpriteComponent(
-              sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
-          onPressed: playerFire,
-          priority: RenderPriority.ui.priority,
-          margin: const EdgeInsets.only(bottom: 40, right: 20));
+        margin: const EdgeInsets.only(bottom: 40, right: 20));
 
-      add(joystick!);
-      add(hudButton!);
+    add(joystick!);
+    add(hudButton!);
 
-      joystick?.background
-          ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
-      joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
-    }
+    joystick?.background
+        ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
+    joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
   }
 
   @override

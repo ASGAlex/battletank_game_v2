@@ -2,7 +2,10 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -153,16 +156,24 @@ class GameMapLoader extends TiledMapLoader {
   Future onBuildSpawnPlayer(CellBuilderContext context) async {
     final properties = context.tiledObject?.properties;
     if (properties == null) return;
-    final newSpawn = Spawn(
-        position: Vector2(context.absolutePosition.x + context.size.x / 2,
-            context.absolutePosition.y + context.size.y / 2),
-        isForPlayer: true);
+    // final newSpawn = Spawn(
+    //     position: Vector2(context.absolutePosition.x + context.size.x / 2,
+    //         context.absolutePosition.y + context.size.y / 2),
+    //     isForPlayer: true);
+    //
+    // newSpawn.currentCell = context.cell;
+    // _setupSpawnProperties(newSpawn, properties);
+    //
+    // game.cameraComponent.moveTo(newSpawn.position);
+    // game.world.addSpawn(newSpawn);
 
-    newSpawn.currentCell = context.cell;
-    _setupSpawnProperties(newSpawn, properties);
-
-    game.cameraComponent.moveTo(newSpawn.position);
-    game.world.addSpawn(newSpawn);
+    final newSpawn2 = SpawnEntity(rootComponent: game.world.tankLayer)
+      ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
+          context.absolutePosition.y + context.size.y / 2);
+    newSpawn2.spawnData.factions.add(Faction(name: 'Player'));
+    newSpawn2.spawnData.allowedFactions.add(Faction(name: 'Player'));
+    game.world.addSpawn(newSpawn2);
+    SpawnManager().add(newSpawn2);
   }
 
   Future onSetupInitialPosition(CellBuilderContext context) async {

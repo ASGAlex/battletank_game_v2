@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:tank_game/controls/joystick.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/ui/game/controls/joystick.dart';
 
 import 'core/base_tank.dart';
 import 'core/direction.dart';
@@ -112,7 +112,7 @@ class Player extends Tank {
     if (!dead) {
       // moveEnemiesAmbientSound?.pause();
       // movePlayerSound?.pause();
-      gameRef.restorePlayer();
+      // gameRef.restorePlayer();
     }
     super.onDeath(killedBy);
   }

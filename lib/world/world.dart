@@ -34,9 +34,9 @@ const distanceOfRevealSquared = 30 * 30;
 
 class GameWorld extends World with HasGameRef<MyGame> {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
-  final _tankLayer = Component(priority: RenderPriority.player.priority);
+  final tankLayer = Component(priority: RenderPriority.player.priority);
   final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
-  final _spawnLayer = Component(priority: RenderPriority.spawn.priority);
+  final spawnLayer = Component(priority: RenderPriority.spawn.priority);
 
   final fadeOutConfig = FadeOutConfig(
       transparencyPerStep: 0.1, fadeOutTimeout: const Duration(seconds: 2));
@@ -49,7 +49,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
   }
 
   addTank(Component component) {
-    _tankLayer.add(component);
+    tankLayer.add(component);
     if (component is Player) {
       game.cameraComponent.follow(component, maxSpeed: 60);
     }
@@ -60,16 +60,16 @@ class GameWorld extends World with HasGameRef<MyGame> {
   }
 
   addSpawn(Component component) {
-    _spawnLayer.add(component);
+    spawnLayer.add(component);
   }
 
   @override
   Future<void>? onLoad() {
     final root = game.layersManager.layersRootComponent;
     add(_skyLayer);
-    root.add(_tankLayer);
+    root.add(tankLayer);
     root.add(_bulletLayer);
-    root.add(_spawnLayer);
+    root.add(spawnLayer);
     return null;
   }
 
@@ -99,7 +99,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
       print(component.runtimeType);
     }
 
-    game.player?.position.setFrom(tapPosition);
+    // game.player?.position.setFrom(tapPosition);
     // addTank(
     //     Enemy(position: tapPosition)..currentCell = cellsUnderCursor.single);
   }
