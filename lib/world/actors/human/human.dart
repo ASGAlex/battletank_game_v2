@@ -7,6 +7,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
+import 'package:tank_game/world/core/behaviors/attacks/range_attack_behavior.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
@@ -27,6 +28,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           tileset: 'tank', tileType: 'human_wreck', loop: true),
     }));
     current = ActorCoreState.idle;
+
+    add(RangeAttackBehavior());
     super.onLoad();
   }
 

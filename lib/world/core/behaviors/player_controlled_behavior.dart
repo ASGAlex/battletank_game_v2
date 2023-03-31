@@ -6,6 +6,7 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 
 class PlayerControlledBehavior extends Behavior<ActorMixin>
@@ -31,6 +32,9 @@ class PlayerControlledBehavior extends Behavior<ActorMixin>
         parent.lookDirection = Direction.right;
         break;
       case PlayerAction.fire:
+        try {
+          parent.findBehavior<AttackBehavior>().attack();
+        } on StateError catch (e) {}
         break;
     }
   }
