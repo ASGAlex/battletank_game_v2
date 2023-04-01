@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
-import 'package:tank_game/extensions.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 
@@ -18,21 +17,21 @@ class MovementBehavior extends Behavior<ActorMixin> {
     lastInnerSpeed = parent.data.speed * dt;
     switch (parent.data.lookDirection) {
       case Direction.left:
-        lastDisplacement.setFrom(parent.position.translate(-lastInnerSpeed, 0));
+        lastDisplacement.setValues(-lastInnerSpeed, 0);
         break;
       case Direction.right:
-        lastDisplacement.setFrom(parent.position.translate(lastInnerSpeed, 0));
+        lastDisplacement.setValues(lastInnerSpeed, 0);
         break;
       case Direction.up:
-        lastDisplacement.setFrom(parent.position.translate(0, -lastInnerSpeed));
+        lastDisplacement.setValues(0, -lastInnerSpeed);
         break;
       case Direction.down:
-        lastDisplacement.setFrom(parent.position.translate(0, lastInnerSpeed));
+        lastDisplacement.setValues(0, lastInnerSpeed);
         break;
     }
 
     if (!lastDisplacement.isZero()) {
-      parent.position.setFrom(lastDisplacement);
+      parent.position.setFrom(parent.position + lastDisplacement);
     }
   }
 }
