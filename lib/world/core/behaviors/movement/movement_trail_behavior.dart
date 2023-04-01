@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/movement_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 
 abstract class MovementTrailBehavior extends Behavior<ActorMixin> {
   @override

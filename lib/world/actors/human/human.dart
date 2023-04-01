@@ -8,6 +8,9 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/range_attack_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
+import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
@@ -29,6 +32,22 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }));
     current = ActorCoreState.idle;
 
+    add(MovementForwardCollisionBehavior(
+      hitboxRelativePosition: Vector2(1, -2),
+      hitboxSize: Vector2(12, 2),
+      typeCheck: (other) {
+        if (other is MovementHitbox || other.parent is SpawnEntity
+            // other is MovementSideHitbox ||
+            // other.parent is Spawn ||
+            // other.parent is Bullet ||
+            // other.parent is Tree) {
+            ) {
+          return false;
+        }
+        return true;
+      },
+    ));
+    add(MovementBehavior());
     add(RangeAttackBehavior());
     super.onLoad();
   }

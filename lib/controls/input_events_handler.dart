@@ -6,30 +6,32 @@ import 'package:tank_game/world/tank/core/direction.dart';
 enum PlayerAction { moveUp, moveDown, moveLeft, moveRight, fire }
 
 class InputEventsHandler {
-  final messageProvider = MessageStreamProvider<PlayerAction>();
+  final messageProvider = MessageStreamProvider<List<PlayerAction>>();
 
   KeyEventResult onKeyEvent(
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
+    final actions = <PlayerAction>[];
     for (final key in keysPressed) {
       if (key == LogicalKeyboardKey.keyW) {
-        messageProvider.sendMessage(PlayerAction.moveUp);
+        actions.add(PlayerAction.moveUp);
       }
       if (key == LogicalKeyboardKey.keyA) {
-        messageProvider.sendMessage(PlayerAction.moveLeft);
+        actions.add(PlayerAction.moveLeft);
       }
       if (key == LogicalKeyboardKey.keyS) {
-        messageProvider.sendMessage(PlayerAction.moveDown);
+        actions.add(PlayerAction.moveDown);
       }
       if (key == LogicalKeyboardKey.keyD) {
-        messageProvider.sendMessage(PlayerAction.moveRight);
+        actions.add(PlayerAction.moveRight);
       }
 
       if (key == LogicalKeyboardKey.space) {
-        handleFireEvent();
+        actions.add(PlayerAction.fire);
       }
     }
+    messageProvider.sendMessage(actions);
     return KeyEventResult.handled;
   }
 
@@ -38,7 +40,7 @@ class InputEventsHandler {
   Direction Function()? getCurrentDirection;
 
   void handleFireEvent() {
-    messageProvider.sendMessage(PlayerAction.fire);
+    // messageProvider.sendMessage([PlayerAction.fire]);
   }
 
   bool onJoystickEvent() {
@@ -52,16 +54,16 @@ class InputEventsHandler {
     }
     if (angleDegrees >= 315 || angleDegrees <= 45) {
       //Up
-      messageProvider.sendMessage(PlayerAction.moveUp);
+      messageProvider.sendMessage([PlayerAction.moveUp]);
     } else if (angleDegrees > 45 && angleDegrees < 135) {
       //Right
-      messageProvider.sendMessage(PlayerAction.moveRight);
+      messageProvider.sendMessage([PlayerAction.moveRight]);
     } else if (angleDegrees >= 135 && angleDegrees <= 225) {
       //Bottom
-      messageProvider.sendMessage(PlayerAction.moveDown);
+      messageProvider.sendMessage([PlayerAction.moveDown]);
     } else if (angleDegrees > 225 && angleDegrees < 315) {
       //Left
-      messageProvider.sendMessage(PlayerAction.moveLeft);
+      messageProvider.sendMessage([PlayerAction.moveLeft]);
     }
     return true;
   }
