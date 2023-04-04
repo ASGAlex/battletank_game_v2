@@ -1,14 +1,11 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:tank_game/controls/joystick.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
 import 'core/base_tank.dart';
-import 'core/direction.dart';
 
 class Player extends Tank {
   Player({super.position});
@@ -17,7 +14,7 @@ class Player extends Tank {
 
   static int respawnCount = 3000;
 
-  MyJoystick? joystick;
+  // MyJoystick? joystick;
 
   // final _movePlayerSound = SoundLibrary.createMusicPlayer('move_player.m4a',
   //         playerId: 'firstPlayerSelf')
@@ -43,7 +40,7 @@ class Player extends Tank {
     super.update(dt);
     if (!dead) {
       if (Platform.isAndroid || Platform.isIOS) {
-        onJoystickEvent();
+        // onJoystickEvent();
       }
       _dtAmbientEnemySoundCheck += dt;
       // if (_dtAmbientEnemySoundCheck > 0.6) {
@@ -80,7 +77,7 @@ class Player extends Tank {
     //   moveEnemiesAmbientSound = value;
     // });
     await super.onLoad();
-    joystick = gameRef.joystick;
+    // joystick = gameRef.joystick;
   }
 
   // @override
@@ -117,75 +114,75 @@ class Player extends Tank {
     super.onDeath(killedBy);
   }
 
-  bool onJoystickEvent() {
-    if (dead) return false;
-    bool directionButtonPressed = false;
-    bool updateAngle = false;
-
-    final angleDegrees = joystick?.knobAngleDegrees;
-
-    if (angleDegrees == null) {
-      return false;
-    }
-
-    directionButtonPressed = true;
-    if (angleDegrees == 0) {
-      directionButtonPressed = false;
-    } else if (angleDegrees >= 315 || angleDegrees <= 45) {
-      //Up
-      if (lookDirection != Direction.up) {
-        lookDirection = Direction.up;
-        updateAngle = true;
-      }
-    } else if (angleDegrees > 45 && angleDegrees < 135) {
-      //Right
-      if (lookDirection != Direction.right) {
-        lookDirection = Direction.right;
-        updateAngle = true;
-      }
-    } else if (angleDegrees >= 135 && angleDegrees <= 225) {
-      //Bottom
-      if (lookDirection != Direction.down) {
-        lookDirection = Direction.down;
-        updateAngle = true;
-      }
-    } else if (angleDegrees > 225 && angleDegrees < 315) {
-      //Left
-      if (lookDirection != Direction.left) {
-        lookDirection = Direction.left;
-        updateAngle = true;
-      }
-    } else {
-      directionButtonPressed = false;
-      throw "Unexpected Joystick direction error. Angle is& $angleDegrees";
-    }
-
-    if (directionButtonPressed && movementHitbox.isMovementAllowed) {
-      current = TankState.run;
-      if (movementHitbox.collisionType != CollisionType.active) {
-        movementHitbox.collisionType = CollisionType.active;
-      }
-      // if ([PlayerState.paused, PlayerState.stopped]
-      //     .contains(movePlayerSound?.state)) {
-      //   movePlayerSound?.setVolume(0.5);
-      //   movePlayerSound?.resume();
-      // }
-    } else {
-      if (!dead) {
-        current = TankState.idle;
-        movementHitbox.collisionType = CollisionType.active;
-      }
-      // if (movePlayerSound?.state == PlayerState.playing) {
-      //   movePlayerSound?.pause();
-      // }
-    }
-
-    if (updateAngle) {
-      angle = lookDirection.angle;
-      skipUpdateOnAngleChange = true;
-    }
-    return false;
-  }
+  // bool onJoystickEvent() {
+  //   if (dead) return false;
+  //   bool directionButtonPressed = false;
+  //   bool updateAngle = false;
+  //
+  //   final angleDegrees = joystick?.knobAngleDegrees;
+  //
+  //   if (angleDegrees == null) {
+  //     return false;
+  //   }
+  //
+  //   directionButtonPressed = true;
+  //   if (angleDegrees == 0) {
+  //     directionButtonPressed = false;
+  //   } else if (angleDegrees >= 315 || angleDegrees <= 45) {
+  //     //Up
+  //     if (lookDirection != Direction.up) {
+  //       lookDirection = Direction.up;
+  //       updateAngle = true;
+  //     }
+  //   } else if (angleDegrees > 45 && angleDegrees < 135) {
+  //     //Right
+  //     if (lookDirection != Direction.right) {
+  //       lookDirection = Direction.right;
+  //       updateAngle = true;
+  //     }
+  //   } else if (angleDegrees >= 135 && angleDegrees <= 225) {
+  //     //Bottom
+  //     if (lookDirection != Direction.down) {
+  //       lookDirection = Direction.down;
+  //       updateAngle = true;
+  //     }
+  //   } else if (angleDegrees > 225 && angleDegrees < 315) {
+  //     //Left
+  //     if (lookDirection != Direction.left) {
+  //       lookDirection = Direction.left;
+  //       updateAngle = true;
+  //     }
+  //   } else {
+  //     directionButtonPressed = false;
+  //     throw "Unexpected Joystick direction error. Angle is& $angleDegrees";
+  //   }
+  //
+  //   if (directionButtonPressed && movementHitbox.isMovementAllowed) {
+  //     current = TankState.run;
+  //     if (movementHitbox.collisionType != CollisionType.active) {
+  //       movementHitbox.collisionType = CollisionType.active;
+  //     }
+  //     // if ([PlayerState.paused, PlayerState.stopped]
+  //     //     .contains(movePlayerSound?.state)) {
+  //     //   movePlayerSound?.setVolume(0.5);
+  //     //   movePlayerSound?.resume();
+  //     // }
+  //   } else {
+  //     if (!dead) {
+  //       current = TankState.idle;
+  //       movementHitbox.collisionType = CollisionType.active;
+  //     }
+  //     // if (movePlayerSound?.state == PlayerState.playing) {
+  //     //   movePlayerSound?.pause();
+  //     // }
+  //   }
+  //
+  //   if (updateAngle) {
+  //     angle = lookDirection.angle;
+  //     skipUpdateOnAngleChange = true;
+  //   }
+  //   return false;
+  // }
 
   @override
   onHiddenFromEnemyChanged(bool isHidden) {

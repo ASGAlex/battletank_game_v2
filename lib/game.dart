@@ -6,7 +6,6 @@ import 'package:flame/input.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
-import 'package:tank_game/controls/joystick.dart';
 import 'package:tank_game/controls/keyboard.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
@@ -39,8 +38,7 @@ abstract class MyGameFeatures extends FlameGame
   GameWorld get world => rootComponent as GameWorld;
 }
 
-class MyGame extends MyGameFeatures
-    with MyJoystickMix, GameHardwareKeyboard, XInputGamePad {
+class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   MyGame(this.mapFile, this.context);
 
   static const zoomPerScrollUnit = 0.22;
@@ -120,8 +118,8 @@ class MyGame extends MyGameFeatures
 
     consoleMessages.sendMessage('Starting UI');
     if (Platform.isAndroid || Platform.isIOS) {
-      initJoystick(inputEventsHandler.handleFireEvent);
-      inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
+      // initJoystick(inputEventsHandler.handleFireEvent);
+      // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
     }
     hudVisibility = VisibilityIndicator(this);
     hudVisibility.setVisibility(true);

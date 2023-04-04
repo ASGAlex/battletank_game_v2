@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: "0c55f8d704f09536125c811a19d9aab7407dce245b2bfb507e84296c1c996202"
+      sha256: "2e9545698e75534e2bf79d542df604f6fb8de0184825ea5a5e1f781449054d70"
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.0"
+    version: "1.7.0"
   flame_behaviors:
     dependency: "direct main"
     description:
@@ -149,10 +149,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: aa8a98922702ac948480a39a335aecb74914c204ee3ed7af3ec4e444548de84e
+      sha256: "9df019f83aaf4b2b5333f06cb95892c5e1232b54d25f049a95aa790422f8a952"
       url: "https://pub.dev"
     source: hosted
-    version: "1.9.1"
+    version: "1.10.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -313,10 +313,10 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "78528fd87d0d08ffd3e69551173c026e8eacc7b7079c82eb6a77413957b7e394"
+      sha256: "858aaa72d8f61637d64e776aca82e1c67e6d9ee07979123c5d17115031c1b13b"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.20"
+    version: "2.1.0"
   shared_preferences_android:
     dependency: transitive
     description:
