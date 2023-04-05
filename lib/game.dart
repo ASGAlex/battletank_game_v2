@@ -15,6 +15,7 @@ import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
+import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn.dart';
@@ -51,6 +52,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   List<Enemy> enemies = [];
   Player? player;
+
+  ActorMixin? currentPlayer;
 
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
@@ -178,21 +181,23 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   @override
   void onInitializationDone() {
-    restorePlayer();
+    if (!(currentPlayer?.isMounted ?? false)) {
+      restorePlayer();
+    }
   }
 
   void restorePlayer() {
     if (Player.respawnCount > 0) {
-      final player = HumanEntity();
-      player.data
+      currentPlayer = HumanEntity();
+      currentPlayer!.data
         ..factions.add(Faction(name: 'Player'))
         ..health = 10000;
-      player.add(PlayerControlledBehavior());
+      currentPlayer!.add(PlayerControlledBehavior());
 
-      cameraComponent.follow(player);
+      cameraComponent.follow(currentPlayer!);
 
-      SpawnManager()
-          .spawnNewActor(actor: player, faction: Faction(name: 'Player'));
+      SpawnManager().spawnNewActor(
+          actor: currentPlayer!, faction: Faction(name: 'Player'));
 
       // spawn ??= await Spawn.waitFree(true);
       //

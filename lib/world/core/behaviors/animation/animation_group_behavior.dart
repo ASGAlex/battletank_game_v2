@@ -9,15 +9,18 @@ import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart
 
 class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
     with HasGameReference<HasSpatialGridFramework> {
-  AnimationGroupBehavior({required this.animationConfigs});
+  AnimationGroupBehavior(
+      {required this.animationConfigs, this.keepAnimations = false});
 
   final Map<T, AnimationConfig> animationConfigs;
+  final bool keepAnimations;
 
   @override
   FutureOr<void> onLoad() {
     assert(parent is SpriteAnimationGroupComponent<T>);
     assert((parent as SpriteAnimationGroupComponent<T>).animations == null);
 
+    (parent as SpriteAnimationGroupComponent<T>).autoResize = true;
     final animations = <T, SpriteAnimation>{};
 
     for (final entry in animationConfigs.entries) {
@@ -38,6 +41,8 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
 
   @override
   void onRemove() {
-    (parent as SpriteAnimationGroupComponent<T>).animations = null;
+    if (!keepAnimations) {
+      (parent as SpriteAnimationGroupComponent<T>).animations = null;
+    }
   }
 }

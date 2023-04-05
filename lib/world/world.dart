@@ -35,7 +35,7 @@ const distanceOfRevealSquared = 30 * 30;
 class GameWorld extends World with HasGameRef<MyGame> {
   final _skyLayer = Component(priority: RenderPriority.sky.priority);
   final tankLayer = Component(priority: RenderPriority.player.priority);
-  final _bulletLayer = Component(priority: RenderPriority.bullet.priority);
+  final bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final spawnLayer = Component(priority: RenderPriority.spawn.priority);
 
   final fadeOutConfig = FadeOutConfig(
@@ -56,7 +56,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
   }
 
   addBullet(Component component) {
-    _bulletLayer.add(component);
+    bulletLayer.add(component);
   }
 
   addSpawn(Component component) {
@@ -68,7 +68,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
     final root = game.layersManager.layersRootComponent;
     add(_skyLayer);
     root.add(tankLayer);
-    root.add(_bulletLayer);
+    root.add(bulletLayer);
     root.add(spawnLayer);
     return null;
   }

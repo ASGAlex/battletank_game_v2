@@ -6,7 +6,7 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
 
 class PlayerControlledBehavior extends Behavior<ActorMixin>
@@ -18,9 +18,9 @@ class PlayerControlledBehavior extends Behavior<ActorMixin>
   }
 
   @override
-  void onStreamMessage(List<PlayerAction> messages) {
+  void onStreamMessage(List<PlayerAction> message) {
     var isMovementAction = false;
-    for (final msg in messages) {
+    for (final msg in message) {
       switch (msg) {
         case PlayerAction.moveUp:
           parent.lookDirection = Direction.up;
@@ -40,7 +40,7 @@ class PlayerControlledBehavior extends Behavior<ActorMixin>
           break;
         case PlayerAction.fire:
           try {
-            parent.findBehavior<AttackBehavior>().attack();
+            parent.findBehavior<FireBulletBehavior>().tryFire();
           } on StateError catch (e) {}
           break;
       }

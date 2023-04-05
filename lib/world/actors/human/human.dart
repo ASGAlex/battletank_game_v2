@@ -2,21 +2,34 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/human/human_step_trail.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
-import 'package:tank_game/world/core/behaviors/attacks/range_attack_behavior.dart';
+import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
-    with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
+    with
+        CollisionCallbacks,
+        EntityMixin,
+        HasGridSupport,
+        ActorMixin,
+        HasGameReference<MyGame> {
   HumanEntity() {
+    data = AttackerData();
     data.speed = 10;
+    (data as AttackerData)
+      ..secondsBetweenFire = 0.2
+      ..ammoHealth = 0.001
+      ..ammoRange = 200;
   }
 
   @override
@@ -49,8 +62,21 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
     ));
     add(MovementBehavior());
-    add(RangeAttackBehavior());
     add(HumanStepTrailBehavior());
+    add(FireBulletBehavior(
+      bulletsRootComponent: game.world.bulletLayer,
+      animationFactory: () => {
+        ActorCoreState.idle: const AnimationConfig(
+            tileset: 'bullet', tileType: 'bullet', loop: true),
+        ActorCoreState.move: const AnimationConfig(
+            tileset: 'bullet', tileType: 'bullet', loop: true),
+        ActorCoreState.dying: const AnimationConfig(
+            tileset: 'boom', tileType: 'boom', loop: true),
+        ActorCoreState.wreck: const AnimationConfig(
+            tileset: 'boom', tileType: 'crater', loop: true),
+      },
+      bulletOffset: Vector2(4, -2),
+    ));
     super.onLoad();
   }
 
