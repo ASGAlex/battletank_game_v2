@@ -192,6 +192,9 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
       currentPlayer!.data
         ..factions.add(Faction(name: 'Player'))
         ..health = 10000;
+
+      (currentPlayer as HumanEntity).boundingBox.isDistanceCallbackEnabled =
+          true;
       currentPlayer!.add(PlayerControlledBehavior());
 
       cameraComponent.follow(currentPlayer!);

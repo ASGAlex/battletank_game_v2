@@ -23,6 +23,8 @@ class SpawnData extends ActorData {
   double triggerDistanceSquared = -1;
   SpawnTriggerCallback? triggerCallback;
 
+  String typeOfTank = '';
+
   SpawnData() {
     coreState = ActorCoreState.idle;
     health = -1;

@@ -26,6 +26,7 @@ class SpawnBehavior extends CollisionBehavior {
   FutureOr<void> onLoad() {
     assert(parent is SpawnEntity);
     SpawnManager().add(parent as SpawnEntity);
+    parent.boundingBox.collisionType = CollisionType.passive;
     parent.boundingBox.isDistanceCallbackEnabled = true;
   }
 

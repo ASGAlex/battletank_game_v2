@@ -46,3 +46,11 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
     }
   }
 }
+
+mixin AnimationGroupCoreStateListenerMixin
+    on SpriteAnimationGroupComponent<ActorCoreState> implements ActorMixin {
+  @override
+  void onCoreStateChanged() {
+    current = data.coreState;
+  }
+}

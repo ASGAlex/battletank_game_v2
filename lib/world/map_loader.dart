@@ -2,8 +2,9 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn.dart';
+import 'package:tank_game/world/environment/spawn/spawn_data.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree.dart';
@@ -13,7 +14,6 @@ import 'environment/brick.dart';
 import 'environment/heavy_brick.dart';
 import 'environment/target.dart';
 import 'environment/water.dart';
-import 'tank/core/tank_type_controller.dart';
 
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
@@ -142,64 +142,39 @@ class GameMapLoader extends TiledMapLoader {
   Future onBuildSpawn(CellBuilderContext context) async {
     final properties = context.tiledObject?.properties;
     if (properties == null) return;
-    final newSpawn = Spawn(
-        position: Vector2(context.absolutePosition.x + context.size.x / 2,
-            context.absolutePosition.y + context.size.y / 2),
-        isForPlayer: false);
 
-    newSpawn.currentCell = context.cell;
-    _setupSpawnProperties(newSpawn, properties);
-
+    final newSpawn = SpawnEntity.fromProperties(
+        rootComponent: game.world.tankLayer, properties: properties)
+      ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
+          context.absolutePosition.y + context.size.y / 2);
+    newSpawn.spawnData.factions.add(Faction(name: 'Enemy'));
+    newSpawn.spawnData.allowedFactions.add(Faction(name: 'Enemy'));
+    newSpawn.boundingBox.isDistanceCallbackEnabled = true;
+    newSpawn.spawnData.triggerCallback = (activeSpawn) {
+      activeSpawn.spawnBehavior.objectToSpawn =
+          TankEntity(activeSpawn.spawnData.typeOfTank, game.tilesetManager);
+      activeSpawn.spawnData.state = SpawnState.spawning;
+    };
     game.world.addSpawn(newSpawn);
+    SpawnManager().add(newSpawn);
   }
 
   Future onBuildSpawnPlayer(CellBuilderContext context) async {
     final properties = context.tiledObject?.properties;
     if (properties == null) return;
-    // final newSpawn = Spawn(
-    //     position: Vector2(context.absolutePosition.x + context.size.x / 2,
-    //         context.absolutePosition.y + context.size.y / 2),
-    //     isForPlayer: true);
-    //
-    // newSpawn.currentCell = context.cell;
-    // _setupSpawnProperties(newSpawn, properties);
-    //
-    // game.cameraComponent.moveTo(newSpawn.position);
-    // game.world.addSpawn(newSpawn);
 
-    final newSpawn2 = SpawnEntity(rootComponent: game.world.tankLayer)
+    final newSpawn = SpawnEntity.fromProperties(
+        rootComponent: game.world.tankLayer, properties: properties)
       ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
           context.absolutePosition.y + context.size.y / 2);
-    newSpawn2.spawnData.factions.add(Faction(name: 'Player'));
-    newSpawn2.spawnData.allowedFactions.add(Faction(name: 'Player'));
-    game.world.addSpawn(newSpawn2);
-    SpawnManager().add(newSpawn2);
+    newSpawn.spawnData.factions.add(Faction(name: 'Player'));
+    newSpawn.spawnData.allowedFactions.add(Faction(name: 'Player'));
+    game.world.addSpawn(newSpawn);
+    SpawnManager().add(newSpawn);
   }
 
   Future onSetupInitialPosition(CellBuilderContext context) async {
     cameraInitialPosition.setFrom(context.absolutePosition);
-  }
-
-  void _setupSpawnProperties(Spawn spawn, CustomProperties properties) {
-    for (final property in properties) {
-      switch (property.name) {
-        case 'cooldown_seconds':
-          spawn.cooldown =
-              Duration(seconds: int.parse(property.value.toString()));
-          break;
-        case 'tanks_inside':
-          spawn.tanksInside = int.parse(property.value.toString());
-          break;
-        case 'trigger_distance':
-          final distance = double.parse(property.value.toString());
-          spawn.triggerDistanceSquared = distance * distance;
-          break;
-        case 'tank_type':
-          spawn.createTanksOfType =
-              TankType.fromString(property.value.toString());
-          break;
-      }
-    }
   }
 
   Future onBuildTarget(CellBuilderContext context) async {
