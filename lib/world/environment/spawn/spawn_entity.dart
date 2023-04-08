@@ -5,8 +5,11 @@ import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
+import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/visibility_mixin.dart';
 import 'package:tank_game/world/environment/spawn/spawn_behavior.dart';
 
@@ -21,6 +24,42 @@ class SpawnEntity extends SpriteAnimationComponent
         ActorMixin {
   SpawnEntity({required this.rootComponent}) {
     data = SpawnData();
+  }
+
+  MyGame? game;
+
+  factory SpawnEntity.fromContext({
+    required Component rootComponent,
+    required CellBuilderContext context,
+    required MyGame game,
+  }) {
+    final tiledObject = context.tiledObject;
+    if (tiledObject == null) throw 'tiledObject must be set!';
+
+    final newSpawn = SpawnEntity.fromProperties(
+        rootComponent: game.world.tankLayer, properties: tiledObject.properties)
+      ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
+          context.absolutePosition.y + context.size.y / 2);
+    newSpawn.game = game;
+    Faction faction;
+    if (tiledObject.name == 'spawn') {
+      faction = Faction(name: 'Enemy');
+      newSpawn.boundingBox.isDistanceCallbackEnabled = true;
+      newSpawn.spawnData.triggerCallback = newSpawn.spawnCallback;
+    } else {
+      faction = Faction(name: 'Player');
+    }
+    newSpawn.spawnData.factions.add(faction);
+    newSpawn.spawnData.allowedFactions.add(faction);
+    return newSpawn;
+  }
+
+  void spawnCallback(SpawnEntity activeSpawn) {
+    if (game != null) {
+      activeSpawn.spawnBehavior.objectToSpawn =
+          TankEntity(activeSpawn.spawnData.typeOfTank, game!.tilesetManager);
+      activeSpawn.spawnData.state = SpawnState.spawning;
+    }
   }
 
   factory SpawnEntity.fromProperties({

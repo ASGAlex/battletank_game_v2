@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 
 enum InteractableTrigger {
   userAction,
@@ -11,21 +12,22 @@ enum InteractableTrigger {
 }
 
 mixin Interactor on EntityMixin {
-  bool isInteractionEnabled = true;
+  bool isInteractionEnabled = false;
 }
 
 class InteractableBehavior extends CollisionBehavior
     with HasGameReference<MyGame>, MessageListenerMixin<List<PlayerAction>> {
   InteractableBehavior({
-    required this.action,
+    this.action,
     required InteractableTrigger trigger,
     this.distance = 0,
     this.triggerUserAction = PlayerAction.trigger,
   }) {
-    trigger = trigger;
+    _trigger = trigger;
+    this.trigger = trigger;
   }
 
-  Function action;
+  Function? action;
   late InteractableTrigger _trigger;
   double distance = 0.0;
   PlayerAction triggerUserAction;
@@ -50,9 +52,13 @@ class InteractableBehavior extends CollisionBehavior
   @override
   void onStreamMessage(List<PlayerAction> message) {
     if (trigger != InteractableTrigger.userAction) return;
-    if (triggerUserAction == message && activated) {
-      action.call();
+    if (message.contains(triggerUserAction) && activated) {
+      doTriggerAction();
     }
+  }
+
+  void doTriggerAction() {
+    action?.call();
   }
 
   @override
@@ -61,20 +67,21 @@ class InteractableBehavior extends CollisionBehavior
   }
 
   @override
-  void onCollisionStart(Set<Vector2> intersectionPoints, Component other) {
-    if (other is Interactor && other.isInteractionEnabled) {
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is Interactor && (other as Interactor).isInteractionEnabled) {
       _activatorsCount++;
       if (trigger == InteractableTrigger.activation) {
-        action.call();
+        doTriggerAction();
       }
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
-  void onCollisionEnd(Component other) {
+  void onCollisionEnd(PositionComponent other) {
     if (other is Interactor &&
-        other.isInteractionEnabled &&
+        (other as Interactor).isInteractionEnabled &&
         _activatorsCount > 0) {
       _activatorsCount--;
     }

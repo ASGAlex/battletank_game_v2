@@ -80,7 +80,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(4, -2),
     ));
-    boundingBox.collisionType = CollisionType.active;
     super.onLoad();
+    boundingBox.collisionType = CollisionType.active;
   }
 }

@@ -2,9 +2,6 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/actors/tank/tank.dart';
-import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn/spawn_data.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree.dart';
@@ -38,7 +35,7 @@ class GameMapLoader extends TiledMapLoader {
         'brick': onBuildBrick,
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
-        'spawn_player': onBuildSpawnPlayer,
+        'spawn_player': onBuildSpawn,
         'target': onBuildTarget,
       };
 
@@ -140,35 +137,12 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildSpawn(CellBuilderContext context) async {
-    final properties = context.tiledObject?.properties;
-    if (properties == null) return;
+    final newSpawn = SpawnEntity.fromContext(
+      rootComponent: game.world.tankLayer,
+      context: context,
+      game: game,
+    );
 
-    final newSpawn = SpawnEntity.fromProperties(
-        rootComponent: game.world.tankLayer, properties: properties)
-      ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
-          context.absolutePosition.y + context.size.y / 2);
-    newSpawn.spawnData.factions.add(Faction(name: 'Enemy'));
-    newSpawn.spawnData.allowedFactions.add(Faction(name: 'Enemy'));
-    newSpawn.boundingBox.isDistanceCallbackEnabled = true;
-    newSpawn.spawnData.triggerCallback = (activeSpawn) {
-      activeSpawn.spawnBehavior.objectToSpawn =
-          TankEntity(activeSpawn.spawnData.typeOfTank, game.tilesetManager);
-      activeSpawn.spawnData.state = SpawnState.spawning;
-    };
-    game.world.addSpawn(newSpawn);
-    SpawnManager().add(newSpawn);
-  }
-
-  Future onBuildSpawnPlayer(CellBuilderContext context) async {
-    final properties = context.tiledObject?.properties;
-    if (properties == null) return;
-
-    final newSpawn = SpawnEntity.fromProperties(
-        rootComponent: game.world.tankLayer, properties: properties)
-      ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
-          context.absolutePosition.y + context.size.y / 2);
-    newSpawn.spawnData.factions.add(Faction(name: 'Player'));
-    newSpawn.spawnData.allowedFactions.add(Faction(name: 'Player'));
     game.world.addSpawn(newSpawn);
     SpawnManager().add(newSpawn);
   }

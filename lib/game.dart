@@ -16,6 +16,7 @@ import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn.dart';
@@ -195,6 +196,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
       (currentPlayer as HumanEntity).boundingBox.isDistanceCallbackEnabled =
           true;
+      (currentPlayer as Interactor).isInteractionEnabled = true;
       currentPlayer!.add(PlayerControlledBehavior());
 
       cameraComponent.follow(currentPlayer!);

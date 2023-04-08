@@ -11,6 +11,7 @@ import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -113,6 +114,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(6, 0),
     ));
+
+    add(InteractionSetPlayer());
     super.onLoad();
+    boundingBox.collisionType = CollisionType.active;
   }
 }
