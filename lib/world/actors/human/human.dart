@@ -21,6 +21,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         CollisionCallbacks,
         EntityMixin,
         HasGridSupport,
+        HasTrailSupport,
         ActorMixin,
         Interactor,
         AnimationGroupCoreStateListenerMixin,
@@ -44,6 +45,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       ActorCoreState.dying: const AnimationConfig(
           tileset: 'tank', tileType: 'human_wreck', loop: true),
       ActorCoreState.wreck: const AnimationConfig(
+          tileset: 'tank', tileType: 'human_wreck', loop: true),
+      ActorCoreState.removing: const AnimationConfig(
           tileset: 'tank', tileType: 'human_wreck', loop: true),
     }));
     current = ActorCoreState.idle;
@@ -80,5 +83,21 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     ));
     super.onLoad();
     boundingBox.collisionType = CollisionType.active;
+  }
+
+  @override
+  void onCoreStateChanged() {
+    super.onCoreStateChanged();
+    if (data.coreState == ActorCoreState.wreck) {
+      final layer = sgGame.layersManager.addComponent(
+        component: this,
+        layerType: MapLayerType.trail,
+        layerName: 'trail',
+        optimizeCollisions: false,
+      );
+      if (layer is CellTrailLayer) {
+        layer.fadeOutConfig = (sgGame as MyGame).world.fadeOutConfig;
+      }
+    }
   }
 }
