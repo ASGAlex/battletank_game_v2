@@ -6,6 +6,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/actors/tank/tank_step_trail.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
@@ -119,6 +120,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     ));
     add(KillableBehavior());
     add(InteractionSetPlayer());
+    add(TankStepTrailBehavior());
     super.onLoad();
     boundingBox.collisionType = CollisionType.active;
   }

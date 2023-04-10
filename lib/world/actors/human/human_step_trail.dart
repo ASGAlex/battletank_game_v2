@@ -19,6 +19,7 @@ class HumanStepTrailBehavior extends MovementTrailBehavior {
         layerType: MapLayerType.trail,
         layerName: 'trail',
         optimizeCollisions: false,
+        priority: 1,
       );
 
       if (layer is CellTrailLayer && game is MyGame) {
