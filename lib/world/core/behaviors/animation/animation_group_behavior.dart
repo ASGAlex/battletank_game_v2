@@ -4,13 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 
 class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
     with HasGameReference<HasSpatialGridFramework> {
   AnimationGroupBehavior(
-      {required this.animationConfigs, this.keepAnimations = false});
+      {required this.animationConfigs, this.keepAnimations = true});
 
   final Map<T, AnimationConfig> animationConfigs;
   final bool keepAnimations;
@@ -49,6 +50,7 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
 
 mixin AnimationGroupCoreStateListenerMixin
     on SpriteAnimationGroupComponent<ActorCoreState> implements ActorMixin {
+  @mustCallSuper
   @override
   void onCoreStateChanged() {
     current = data.coreState;

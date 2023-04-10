@@ -13,6 +13,7 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -22,6 +23,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         CollisionCallbacks,
         EntityMixin,
         HasGridSupport,
+        HasTrailSupport,
         ActorMixin,
         AnimationGroupCoreStateListenerMixin,
         HasGameReference<MyGame> {
@@ -70,6 +72,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   final String _tileType;
+  late final SmokeBehavior smoke;
 
   @override
   FutureOr<void> onLoad() {
@@ -83,8 +86,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           tileType: 'boom',
           onComplete: () {
             coreState = ActorCoreState.wreck;
+            smoke.isEnabled = true;
           }),
       ActorCoreState.wreck: AnimationConfig(
+          tileset: _tileset, tileType: '${_tileType}_wreck', loop: true),
+      ActorCoreState.removing: AnimationConfig(
           tileset: _tileset, tileType: '${_tileType}_wreck', loop: true),
     }));
     current = ActorCoreState.idle;
@@ -121,7 +127,25 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(KillableBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
+    smoke = SmokeBehavior(game.world.skyLayer);
+    add(smoke);
     super.onLoad();
     boundingBox.collisionType = CollisionType.active;
+  }
+
+  @override
+  void onCoreStateChanged() {
+    super.onCoreStateChanged();
+    if (data.coreState == ActorCoreState.removing) {
+      final layer = sgGame.layersManager.addComponent(
+        component: this,
+        layerType: MapLayerType.trail,
+        layerName: 'trail',
+        optimizeCollisions: false,
+      );
+      if (layer is CellTrailLayer) {
+        layer.fadeOutConfig = (sgGame as MyGame).world.fadeOutConfig;
+      }
+    }
   }
 }

@@ -35,7 +35,9 @@ class KillableBehavior extends CollisionBehavior {
   }
 
   void killParent(AttackBehavior attackedBy) {
-    if (parent.data.coreState != ActorCoreState.wreck) {
+    if (parent.data.coreState == ActorCoreState.wreck) {
+      parent.coreState = ActorCoreState.removing;
+    } else {
       parent.coreState = ActorCoreState.dying;
     }
   }

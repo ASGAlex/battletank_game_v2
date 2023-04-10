@@ -59,9 +59,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   FutureOr<void> onLoad() {
     add(AnimationGroupBehavior<ActorCoreState>(
-      animationConfigs: animationConfigs,
-      keepAnimations: true,
-    ));
+        animationConfigs: animationConfigs));
     add(movementBehavior);
     add(AttackBehavior());
 

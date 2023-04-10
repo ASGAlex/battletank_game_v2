@@ -33,7 +33,7 @@ const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
 class GameWorld extends World with HasGameRef<MyGame> {
-  final _skyLayer = Component(priority: RenderPriority.sky.priority);
+  final skyLayer = Component(priority: RenderPriority.sky.priority);
   final tankLayer = Component(priority: RenderPriority.player.priority);
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final spawnLayer = Component(priority: RenderPriority.spawn.priority);
@@ -45,7 +45,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
   final shadowOffset = Vector2(-1.5, 1.5);
 
   addSky(Component component) {
-    _skyLayer.add(component);
+    skyLayer.add(component);
   }
 
   addTank(Component component) {
@@ -66,7 +66,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
   @override
   Future<void>? onLoad() {
     final root = game.layersManager.layersRootComponent;
-    add(_skyLayer);
+    add(skyLayer);
     root.add(tankLayer);
     root.add(bulletLayer);
     root.add(spawnLayer);
