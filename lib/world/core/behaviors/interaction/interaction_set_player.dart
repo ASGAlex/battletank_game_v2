@@ -22,6 +22,8 @@ class InteractionSetPlayer extends InteractableBehavior {
 
       parent.coreState = ActorCoreState.idle;
       parent.add(PlayerControlledBehavior());
+      parent.data.factions.clear();
+      parent.data.factions.addAll(currentPlayerEntity.data.factions);
       game.currentPlayer = parent;
       game.cameraComponent.follow(game.currentPlayer!);
     }

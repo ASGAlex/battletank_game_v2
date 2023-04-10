@@ -105,6 +105,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
         suspendedCellLifetime: const Duration(seconds: 120),
         suspendCellPrecision: const Duration(seconds: 30),
+        cellBuilderNoMap: map.noMapBuilder,
         // onAfterCellBuild: (cell, rootComponent) async {
         //   final trailLayer = CellTrailLayer(cell, name: 'trail');
         //   trailLayer.priority = RenderPriority.trackTrail.priority;

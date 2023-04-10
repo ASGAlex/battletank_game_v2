@@ -13,7 +13,6 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
-import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
@@ -53,7 +52,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       hitboxRelativePosition: Vector2(1, -2),
       hitboxSize: Vector2(12, 2),
       typeCheck: (other) {
-        if (other is MovementHitbox || other.parent is SpawnEntity
+        if (other.parent is SpawnEntity || other.parent is BulletEntity
             // other is MovementSideHitbox ||
             // other.parent is Spawn ||
             // other.parent is Bullet ||
@@ -64,7 +63,6 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         return true;
       },
     ));
-    add(MovementBehavior());
     add(HumanStepTrailBehavior());
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,

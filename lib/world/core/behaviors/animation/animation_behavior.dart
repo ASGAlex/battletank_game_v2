@@ -13,6 +13,7 @@ class AnimationConfig {
     this.loop = false,
     this.reversed = false,
     this.reversedLoop = false,
+    this.onComplete,
     required this.tileset,
     required this.tileType,
   });
@@ -22,6 +23,7 @@ class AnimationConfig {
   final bool reversedLoop;
   final String tileset;
   final String tileType;
+  final void Function()? onComplete;
 }
 
 class AnimationBehavior extends Behavior<ActorMixin>
@@ -58,6 +60,12 @@ class AnimationBehavior extends Behavior<ActorMixin>
         animation = animation.reversed();
       }
     }
+
+    if (config.onComplete != null) {
+      animation.onComplete = config.onComplete;
+      animation.loop = false;
+    }
+
     return animation;
   }
 

@@ -11,8 +11,8 @@ import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
-import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
@@ -43,7 +43,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
         case 'fireDelay':
           attackerData.secondsBetweenFire =
-              double.parse(property.value.toString());
+              double.parse(property.value.toString()) / 1000;
           break;
 
         case 'health':
@@ -78,7 +78,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       ActorCoreState.move:
           AnimationConfig(tileset: _tileset, tileType: _tileType, loop: true),
       ActorCoreState.dying: AnimationConfig(
-          tileset: _tileset, tileType: '${_tileType}_wreck', loop: true),
+          tileset: 'boom',
+          tileType: 'boom',
+          onComplete: () {
+            coreState = ActorCoreState.wreck;
+          }),
       ActorCoreState.wreck: AnimationConfig(
           tileset: _tileset, tileType: '${_tileType}_wreck', loop: true),
     }));
@@ -88,7 +92,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       hitboxRelativePosition: Vector2(1, -2),
       hitboxSize: Vector2(12, 2),
       typeCheck: (other) {
-        if (other is MovementHitbox || other.parent is SpawnEntity
+        if (other.parent is SpawnEntity || other.parent is BulletEntity
             // other is MovementSideHitbox ||
             // other.parent is Spawn ||
             // other.parent is Bullet ||
@@ -99,7 +103,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         return true;
       },
     ));
-    add(MovementBehavior());
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,
       animationFactory: () => {
@@ -112,9 +115,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         ActorCoreState.wreck: const AnimationConfig(
             tileset: 'boom', tileType: 'crater', loop: true),
       },
-      bulletOffset: Vector2(6, 0),
+      bulletOffset: Vector2(0, 0),
     ));
-
+    add(KillableBehavior());
     add(InteractionSetPlayer());
     super.onLoad();
     boundingBox.collisionType = CollisionType.active;

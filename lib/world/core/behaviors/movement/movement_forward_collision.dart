@@ -59,6 +59,9 @@ class MovementHitbox extends BoundingHitbox {
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
+    if (other is MovementHitbox) {
+      return false;
+    }
     final checkResult = typeCheck(other);
     if (checkResult) {
       return super.onComponentTypeCheck(other);

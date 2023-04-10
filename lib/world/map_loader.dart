@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -64,6 +67,58 @@ class GameMapLoader extends TiledMapLoader {
     });
   }
 
+  Future<void> noMapBuilder(
+    Cell cell,
+    Component rootComponent,
+    bool isFullyOutside,
+  ) async {
+    final grass = game.tilesetManager.getTile('ground', 'grass');
+    final sand = game.tilesetManager.getTile('ground', 'sand');
+    if (grass == null || sand == null) {
+      return;
+    }
+    var filled = false;
+    var filledWidth = 0.0;
+    var filledHeight = 0.0;
+    while (!filled) {
+      final p = Random().nextInt(100);
+      TileCache tile;
+      if (p < 20) {
+        tile = sand;
+      } else {
+        tile = grass;
+      }
+      final sprite = tile.sprite;
+      if (sprite == null) {
+        continue;
+      }
+
+      final component = TileComponent(tile);
+      component.currentCell = cell;
+      component.position = Vector2(filledWidth, filledHeight);
+      component.size.setFrom(sprite.srcSize);
+
+      game.layersManager.addComponent(
+        component: component,
+        absolutePosition: false,
+        layerName: 'static-ground-procedural',
+        layerType: MapLayerType.static,
+        isRenewable: false,
+        optimizeCollisions: false,
+        priority: -100,
+      );
+
+      filledWidth += sprite.srcSize.x.floor();
+      if (filledWidth >= cell.rect.width) {
+        filledHeight += sprite.srcSize.y.floor();
+        filledWidth = 0;
+        if (filledHeight >= cell.rect.height) {
+          filled = true;
+        }
+      }
+    }
+  }
+
   Future groundBuilder(CellBuilderContext context) async {
     context.priorityOverride = RenderPriority.ground.priority;
     return genericTileBuilder(context);
@@ -104,8 +159,6 @@ class GameMapLoader extends TiledMapLoader {
     // return;
     final data = context.tileDataProvider;
     if (data == null) {
-      print('return!!!');
-
       return;
     }
     final brick =

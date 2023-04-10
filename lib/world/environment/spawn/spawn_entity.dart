@@ -56,8 +56,11 @@ class SpawnEntity extends SpriteAnimationComponent
 
   void spawnCallback(SpawnEntity activeSpawn) {
     if (game != null) {
-      activeSpawn.spawnBehavior.objectToSpawn =
+      final tank =
           TankEntity(activeSpawn.spawnData.typeOfTank, game!.tilesetManager);
+      tank.data.factions.addAll(activeSpawn.data.factions);
+      activeSpawn.spawnBehavior.objectToSpawn = tank;
+
       activeSpawn.spawnData.state = SpawnState.spawning;
     }
   }

@@ -84,12 +84,18 @@ class SpawnBehavior extends CollisionBehavior {
   }
 
   void _trySpawnByTrigger() {
+    if (spawnData.capacity <= 0 && spawnData.capacity != -1) {
+      return;
+    }
     for (final entry in _trackedObjectsDistances.entries) {
       final dx = entry.value.first;
       final dy = entry.value.last;
       final squared = dx * dx + dy * dy;
       if (squared < spawnData.triggerDistanceSquared) {
         spawnData.triggerCallback?.call(parent as SpawnEntity);
+        if (spawnData.capacity != -1) {
+          spawnData.capacity--;
+        }
         break;
       }
     }

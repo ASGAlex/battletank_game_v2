@@ -30,7 +30,7 @@ class HumanStepTrailBehavior extends MovementTrailBehavior {
 
 class HumanStep extends PositionComponent with HasGridSupport, HasPaint {
   HumanStep(this.human) {
-    paint.color = Colors.white38;
+    paint.color = Colors.black54;
     paint.strokeWidth = 1;
     paint.isAntiAlias = false;
     final cell = human.currentCell;

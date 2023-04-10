@@ -41,7 +41,9 @@ class PlayerControlledBehavior extends Behavior<ActorMixin>
         case PlayerAction.fire:
           try {
             parent.findBehavior<FireBulletBehavior>().tryFire();
-          } on StateError catch (e) {}
+          } on StateError catch (e) {
+            print(e);
+          }
           break;
         case PlayerAction.trigger:
           // TODO: Handle this case.
