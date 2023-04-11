@@ -21,6 +21,7 @@ import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
+import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -195,8 +196,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         ..factions.add(Faction(name: 'Player'))
         ..health = 10000;
 
-      (currentPlayer as HumanEntity).boundingBox.isDistanceCallbackEnabled =
-          true;
+      currentPlayer!.add(TriggerSpawnBehavior());
       (currentPlayer as Interactor).isInteractionEnabled = true;
       currentPlayer!.add(PlayerControlledBehavior());
 

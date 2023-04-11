@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
@@ -19,6 +20,10 @@ class BulletData extends ActorData {
   /// -1 means infinity
   double range = -1;
   double fliedDistance = 0;
+  double splash = -1;
+  double haloRadius = 0;
+  double haloBlur = 5;
+  Color haloColor = Colors.orangeAccent.withOpacity(0.3);
 }
 
 class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -35,10 +40,13 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     required this.owner,
     required double range,
     required this.animationConfigs,
+    double haloRadius = 0,
     Vector2? offset,
   }) {
+    anchor = Anchor.center;
     data = BulletData();
     (data as BulletData).range = range;
+    (data as BulletData).haloRadius = haloRadius;
     data.health = health;
     data.speed = speed;
     data.lookDirection = lookDirection;
@@ -55,6 +63,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   HasGridSupport owner;
   final movementBehavior = MovementBehavior();
   final Map<ActorCoreState, AnimationConfig> animationConfigs;
+  CircleComponent? halo;
 
   @override
   FutureOr<void> onLoad() {
@@ -62,6 +71,23 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         animationConfigs: animationConfigs));
     add(movementBehavior);
     add(AttackBehavior());
+
+    final bulletData = (data as BulletData);
+    if (bulletData.haloRadius > 0) {
+      halo = CircleComponent(
+        radius: bulletData.haloRadius,
+        position: Vector2.all(-bulletData.haloRadius),
+      );
+      halo!.paint.blendMode = BlendMode.lighten;
+      halo!.paint.color = bulletData.haloColor;
+      if (bulletData.haloBlur > 0) {
+        halo!.paint.maskFilter = MaskFilter.blur(
+          BlurStyle.normal,
+          bulletData.haloBlur,
+        );
+      }
+      add(halo!);
+    }
 
     super.onLoad();
 
@@ -128,6 +154,7 @@ class FireBulletBehavior extends Behavior<ActorMixin> {
     required this.bulletsRootComponent,
     required this.animationFactory,
     this.bulletOffset,
+    this.haloRadius = 0,
   });
 
   final _offsetRotations = <Direction, Vector2>{};
@@ -162,6 +189,7 @@ class FireBulletBehavior extends Behavior<ActorMixin> {
 
   Component bulletsRootComponent;
   Vector2? bulletOffset;
+  double haloRadius = 0;
   bool _tryFire = false;
 
   void tryFire() {
@@ -171,14 +199,14 @@ class FireBulletBehavior extends Behavior<ActorMixin> {
   void doFire() {
     final offset = _offsetRotations[attackerData.lookDirection];
     final bullet = BulletEntity(
-      owner: parent,
-      animationConfigs: animationFactory.call(),
-      range: attackerData.ammoRange,
-      speed: attackerData.ammoSpeed,
-      lookDirection: attackerData.lookDirection,
-      health: attackerData.ammoHealth,
-      offset: offset,
-    );
+        owner: parent,
+        animationConfigs: animationFactory.call(),
+        range: attackerData.ammoRange,
+        speed: attackerData.ammoSpeed,
+        lookDirection: attackerData.lookDirection,
+        health: attackerData.ammoHealth,
+        offset: offset,
+        haloRadius: haloRadius);
     bulletsRootComponent.add(bullet);
   }
 

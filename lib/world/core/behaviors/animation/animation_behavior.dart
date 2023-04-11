@@ -14,6 +14,7 @@ class AnimationConfig {
     this.reversed = false,
     this.reversedLoop = false,
     this.onComplete,
+    this.needShadow = true,
     required this.tileset,
     required this.tileType,
   });
@@ -23,6 +24,7 @@ class AnimationConfig {
   final bool reversedLoop;
   final String tileset;
   final String tileType;
+  final bool needShadow;
   final void Function()? onComplete;
 }
 

@@ -13,6 +13,7 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
@@ -112,6 +113,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     ));
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,
+      haloRadius: size.x / 2,
       animationFactory: () => {
         ActorCoreState.idle: const AnimationConfig(
             tileset: 'bullet', tileType: 'bullet', loop: true),
@@ -127,6 +129,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(KillableBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
+    add(ShadowBehavior());
     smoke = SmokeBehavior(game.world.skyLayer);
     add(smoke);
     super.onLoad();
