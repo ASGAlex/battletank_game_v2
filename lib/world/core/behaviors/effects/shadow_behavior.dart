@@ -2,21 +2,23 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/rendering.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
-import 'package:flutter/material.dart' as material;
+import 'package:flutter/material.dart' show Colors;
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/tank/core/direction.dart';
+import 'package:tank_game/world/world.dart';
 
-class ShadowBehavior extends Behavior<ActorMixin> {
-  ShadowBehavior({this.shadowKey, this.staticEntity = false});
+class ShadowBehavior extends Behavior<ActorMixin>
+    with HasGameReference<MyGame> {
+  ShadowBehavior({this.shadowKey});
 
   final String? shadowKey;
-  final bool staticEntity;
 
   static final generatedShadows = <String, Map<Picture, Vector2>>{};
   final animationStateToKey = <dynamic, String>{};
@@ -53,7 +55,17 @@ class ShadowBehavior extends Behavior<ActorMixin> {
     shadowPictureComponent = ShadowPictureComponent(shadowKey, this);
 
     shadowPictureComponent!.priority = parent.priority - 1;
-    parent.parent!.add(shadowPictureComponent!);
+
+    if (parent.parent is CellLayer) {
+      final layer = game.layersManager.addComponent(
+          component: shadowPictureComponent!,
+          layerType: MapLayerType.static,
+          layerName: 'Shadows',
+          priority: RenderPriority.shadows.priority);
+      (layer as CellStaticLayer).renderAsImage = true;
+    } else {
+      parent.parent!.add(shadowPictureComponent!);
+    }
     return super.onLoad();
   }
 
@@ -86,7 +98,7 @@ class ShadowBehavior extends Behavior<ActorMixin> {
       ..isAntiAlias = false
       ..filterQuality = FilterQuality.none
       ..colorFilter = ColorFilter.mode(
-        material.Colors.black.withOpacity(game.world.shadowsOpacity),
+        Colors.black.withOpacity(game.world.shadowsOpacity),
         BlendMode.srcIn,
       );
 
@@ -104,6 +116,8 @@ class ShadowPictureComponent extends PositionComponent with HasGridSupport {
   ShadowPictureComponent(this.shadowKey, this.shadowBehavior) {
     targetEntity = shadowBehavior.parent;
     anchor = targetEntity.anchor;
+    currentCell = targetEntity.currentCell;
+    _updateTransform();
   }
 
   final String? shadowKey;

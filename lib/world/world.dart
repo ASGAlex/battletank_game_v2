@@ -18,6 +18,7 @@ enum RenderPriority {
   player(10),
   water(9),
   spawn(5),
+  shadows(2),
   trackTrail(1),
   ground(0),
   ui(100);

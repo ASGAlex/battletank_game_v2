@@ -10,12 +10,7 @@ import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/world.dart';
 
 class TreeEntity extends SpriteComponent
-    with
-        CollisionCallbacks,
-        EntityMixin,
-        HasGridSupport,
-        HasTrailSupport,
-        ActorMixin {
+    with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
   TreeEntity({required super.sprite, super.position, super.size})
       : super(priority: RenderPriority.tree.priority) {
     boundingBox.collisionType =
