@@ -16,6 +16,7 @@ import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/tree/tree.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -56,7 +57,9 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       hitboxRelativePosition: Vector2(1, -2),
       hitboxSize: Vector2(12, 2),
       typeCheck: (other) {
-        if (other.parent is SpawnEntity || other.parent is BulletEntity
+        if (other.parent is SpawnEntity ||
+                other.parent is BulletEntity ||
+                other.parent is TreeEntity
             // other is MovementSideHitbox ||
             // other.parent is Spawn ||
             // other.parent is Bullet ||
@@ -82,8 +85,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(4, -2),
     ));
-    add(ShadowBehavior());
     super.onLoad();
+    add(ShadowBehavior());
     boundingBox.collisionType = CollisionType.active;
   }
 

@@ -7,7 +7,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
-import 'package:tank_game/world/environment/tree.dart';
+import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/world.dart';
 
 import 'environment/brick.dart';
@@ -108,6 +108,26 @@ class GameMapLoader extends TiledMapLoader {
         priority: -100,
       );
 
+      if (tile == grass && Random().nextInt(100) < 60) {
+        final sprite = game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+        if (sprite == null) return;
+        final tree = TreeEntity(
+          sprite: sprite,
+          position: component.position,
+          size: component.size,
+        );
+        tree.currentCell = cell;
+
+        final layer = game.layersManager.addComponent(
+            component: tree,
+            layerType: MapLayerType.static,
+            absolutePosition: false,
+            layerName: 'Tree',
+            priority: RenderPriority.tree.priority);
+        (layer as CellStaticLayer).renderAsImage = true;
+        layer.persistentCorrection = sprite.srcSize.x;
+      }
+
       filledWidth += sprite.srcSize.x.floor();
       if (filledWidth >= cell.rect.width) {
         filledHeight += sprite.srcSize.y.floor();
@@ -126,10 +146,13 @@ class GameMapLoader extends TiledMapLoader {
 
   Future onBuildTree(CellBuilderContext context) async {
     // return;
-    final data = context.tileDataProvider;
-    if (data == null) return;
-    final tree =
-        Tree(data, position: context.absolutePosition, size: context.size);
+    final sprite = await context.tileDataProvider?.getSprite();
+    if (sprite == null) return;
+    final tree = TreeEntity(
+      sprite: sprite,
+      position: context.absolutePosition,
+      size: context.size,
+    );
     tree.currentCell = context.cell;
 
     final layer = game.layersManager.addComponent(
@@ -138,10 +161,11 @@ class GameMapLoader extends TiledMapLoader {
         layerName: 'Tree',
         priority: RenderPriority.tree.priority);
     (layer as CellStaticLayer).renderAsImage = true;
+    layer.persistentCorrection = sprite.srcSize.x;
   }
 
   Future onBuildWater(CellBuilderContext context) async {
-    // return;
+    // return;ds
     final data = context.tileDataProvider;
     if (data == null) return;
     final water =

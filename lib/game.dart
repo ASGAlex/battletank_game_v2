@@ -116,7 +116,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         // },
         maps: [map]);
 
-    cameraComponent.moveTo(map.cameraInitialPosition);
+    // cameraComponent.moveTo(map.cameraInitialPosition);
+    cameraComponent.viewfinder.position = map.cameraInitialPosition;
 
     await _loadExternalTileSets();
 
@@ -185,6 +186,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   @override
   void onInitializationDone() {
     if (!(currentPlayer?.isMounted ?? false)) {
+      //cameraComponent.viewfinder.position = map.cameraInitialPosition;
       restorePlayer();
     }
   }

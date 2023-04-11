@@ -13,13 +13,14 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/tank/core/direction.dart';
 
 class ShadowBehavior extends Behavior<ActorMixin> {
-  ShadowBehavior({this.shadowKey});
+  ShadowBehavior({this.shadowKey, this.staticEntity = false});
 
   final String? shadowKey;
+  final bool staticEntity;
 
   static final generatedShadows = <String, Map<Picture, Vector2>>{};
   final animationStateToKey = <dynamic, String>{};
-  ShadowPictureComponent? _shadowPictureComponent;
+  ShadowPictureComponent? shadowPictureComponent;
 
   @override
   FutureOr<void> onLoad() {
@@ -49,17 +50,17 @@ class ShadowBehavior extends Behavior<ActorMixin> {
         }
       }
     }
-    _shadowPictureComponent = ShadowPictureComponent(shadowKey, this);
+    shadowPictureComponent = ShadowPictureComponent(shadowKey, this);
 
-    _shadowPictureComponent!.priority = parent.priority - 1;
-    parent.parent!.add(_shadowPictureComponent!);
+    shadowPictureComponent!.priority = parent.priority - 1;
+    parent.parent!.add(shadowPictureComponent!);
     return super.onLoad();
   }
 
   @override
   void onRemove() {
-    if (_shadowPictureComponent != null) {
-      _shadowPictureComponent!.removeFromParent();
+    if (shadowPictureComponent != null) {
+      shadowPictureComponent!.removeFromParent();
     }
     super.onRemove();
   }
@@ -102,7 +103,7 @@ class ShadowBehavior extends Behavior<ActorMixin> {
 class ShadowPictureComponent extends PositionComponent with HasGridSupport {
   ShadowPictureComponent(this.shadowKey, this.shadowBehavior) {
     targetEntity = shadowBehavior.parent;
-    anchor = Anchor.center;
+    anchor = targetEntity.anchor;
   }
 
   final String? shadowKey;
