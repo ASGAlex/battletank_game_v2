@@ -82,7 +82,6 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
 
       if (layer is CellTrailLayer && game is MyGame) {
         layer.fadeOutConfig = game.world.fadeOutConfig;
-        layer.persistentCorrection = 16;
       }
     } catch (e) {}
   }

@@ -125,7 +125,6 @@ class GameMapLoader extends TiledMapLoader {
             layerName: 'Tree',
             priority: RenderPriority.tree.priority);
         (layer as CellStaticLayer).renderAsImage = true;
-        layer.persistentCorrection = sprite.srcSize.x;
       }
 
       filledWidth += sprite.srcSize.x.floor();
@@ -161,7 +160,6 @@ class GameMapLoader extends TiledMapLoader {
         layerName: 'Tree',
         priority: RenderPriority.tree.priority);
     (layer as CellStaticLayer).renderAsImage = true;
-    layer.persistentCorrection = sprite.srcSize.x;
   }
 
   Future onBuildWater(CellBuilderContext context) async {

@@ -192,7 +192,6 @@ class Tank extends SpriteAnimationGroupComponent<TankState>
                 priority: RenderPriority.trackTrail.priority,
                 layerName: 'trail');
             (layer as CellTrailLayer).fadeOutConfig = game.world.fadeOutConfig;
-            layer.persistentCorrection = 20;
             // print(layer.correctionTopLeft);
           }
         }
