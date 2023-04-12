@@ -8,12 +8,12 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
+import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
 
 import 'environment/brick.dart';
 import 'environment/heavy_brick.dart';
 import 'environment/target.dart';
-import 'environment/water.dart';
 
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
@@ -108,23 +108,42 @@ class GameMapLoader extends TiledMapLoader {
         priority: -100,
       );
 
-      if (tile == grass && Random().nextInt(100) < 60) {
-        final sprite = game.tilesetManager.getTile('bricks', 'tree')?.sprite;
-        if (sprite == null) return;
-        final tree = TreeEntity(
-          sprite: sprite,
-          position: component.position,
-          size: component.size,
-        );
-        tree.currentCell = cell;
+      if (tile == grass) {
+        final random = Random().nextInt(100);
+        if (random < 20) {
+          final sprite = game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+          if (sprite == null) return;
+          final tree = TreeEntity(
+            sprite: sprite,
+            position: component.position,
+            size: component.size,
+          );
+          tree.currentCell = cell;
 
-        final layer = game.layersManager.addComponent(
-            component: tree,
-            layerType: MapLayerType.static,
-            absolutePosition: false,
-            layerName: 'Tree',
-            priority: RenderPriority.tree.priority);
-        (layer as CellStaticLayer).renderAsImage = true;
+          final layer = game.layersManager.addComponent(
+              component: tree,
+              layerType: MapLayerType.static,
+              absolutePosition: false,
+              layerName: 'Tree',
+              priority: RenderPriority.tree.priority);
+          (layer as CellStaticLayer).renderAsImage = true;
+        } else if (random < 30) {
+          final animation =
+              game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
+          if (animation == null) return;
+          final water = WaterEntity(
+            animation: animation,
+            size: component.size,
+            position: component.position,
+          );
+          water.currentCell = cell;
+          game.layersManager.addComponent(
+              component: water,
+              layerType: MapLayerType.animated,
+              absolutePosition: false,
+              layerName: 'Water',
+              priority: RenderPriority.water.priority);
+        }
       }
 
       filledWidth += sprite.srcSize.x.floor();
@@ -166,8 +185,12 @@ class GameMapLoader extends TiledMapLoader {
     // return;ds
     final data = context.tileDataProvider;
     if (data == null) return;
-    final water =
-        Water(data, position: context.absolutePosition, size: context.size);
+    final animation = await data.getSpriteAnimation();
+    final water = WaterEntity(
+      animation: animation,
+      position: context.absolutePosition,
+      size: context.size,
+    );
     water.currentCell = context.cell;
 
     game.layersManager.addComponent(
