@@ -13,8 +13,8 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
+import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
-import 'package:tank_game/world/tank/core/direction.dart';
 
 class BulletData extends ActorData {
   /// -1 means infinity

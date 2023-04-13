@@ -19,15 +19,10 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
-
-import 'world/environment/target.dart';
-import 'world/tank/enemy.dart';
-import 'world/tank/player.dart';
 
 abstract class MyGameFeatures extends FlameGame
     with
@@ -51,9 +46,6 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   final String mapFile;
   final BuildContext context;
-
-  List<Enemy> enemies = [];
-  Player? player;
 
   ActorMixin? currentPlayer;
 
@@ -192,7 +184,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   }
 
   void restorePlayer() {
-    if (Player.respawnCount > 0) {
+    if (true) {
       currentPlayer = HumanEntity();
       currentPlayer!.data
         ..factions.add(Faction(name: 'Player'))
@@ -206,28 +198,11 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
       SpawnManager().spawnNewActor(
           actor: currentPlayer!, faction: Faction(name: 'Player'));
-
-      // spawn ??= await Spawn.waitFree(true);
-      //
-      // final object = Player(position: spawn.position.clone());
-      // await spawn.createTank(object, true);
-      // player = object;
-      // player!.health = 1000;
-      // spatialGrid.trackedComponent = player;
-      Player.respawnCount--;
     } else {
       overlays.add('game_over_fail');
       onEndGame();
       return null;
     }
-  }
-
-  Future<Enemy> spawnEnemy() async {
-    var spawn = await Spawn.waitFree();
-    final object = Enemy(position: spawn.position.clone());
-    await spawn.createTank(object, true);
-    enemies.add(object);
-    return object;
   }
 
   @override
@@ -237,9 +212,6 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   void onEndGame() {
     TileProcessor.clearCache();
-    Spawn.clear();
-    Target.clear();
     // player?.onRemove();
-    Player.respawnCount = 30;
   }
 }

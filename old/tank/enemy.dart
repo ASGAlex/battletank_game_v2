@@ -5,12 +5,11 @@ import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/world.dart';
 
+import '../core/direction.dart';
 import 'behaviors/attack_movement.dart';
 import 'behaviors/available_directions.dart';
 import 'behaviors/fire.dart';
 import 'behaviors/random_movement.dart';
-import 'core/base_tank.dart';
-import 'core/direction.dart';
 
 enum _MovementMode { wait, random, attack }
 

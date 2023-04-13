@@ -5,15 +5,13 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/environment/brick/brick.dart';
+import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
-
-import 'environment/brick.dart';
-import 'environment/heavy_brick.dart';
-import 'environment/target.dart';
 
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
@@ -206,8 +204,9 @@ class GameMapLoader extends TiledMapLoader {
     if (data == null) {
       return;
     }
-    final brick =
-        Brick(data, position: context.absolutePosition, size: context.size);
+    final sprite = await data.getSprite();
+    final brick = BrickEntity(
+        sprite: sprite, position: context.absolutePosition, size: context.size);
     brick.currentCell = context.cell;
 
     game.layersManager.addComponent(
@@ -222,8 +221,9 @@ class GameMapLoader extends TiledMapLoader {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
-    final heavyBrick = HeavyBrick(data,
-        position: context.absolutePosition, size: context.size);
+    final sprite = await data.getSprite();
+    final heavyBrick = HeavyBrickEntity(
+        sprite: sprite, position: context.absolutePosition, size: context.size);
 
     heavyBrick.currentCell = context.cell;
     game.layersManager.addComponent(
@@ -250,24 +250,24 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildTarget(CellBuilderContext context) async {
-    final properties = context.tiledObject?.properties;
-    if (properties == null) return;
-    var primary = true;
-    var protectFromEnemies = false;
-    for (final property in properties) {
-      switch (property.name) {
-        case 'primary':
-          primary = property.value == "true" ? true : false;
-          break;
-        case 'protectFromEnemies':
-          protectFromEnemies = property.value == "true" ? true : false;
-          break;
-      }
-    }
-    final newTarget = Target(
-        position: context.absolutePosition,
-        primary: primary,
-        protectFromEnemies: protectFromEnemies);
-    game.world.addSpawn(newTarget);
+    // final properties = context.tiledObject?.properties;
+    // if (properties == null) return;
+    // var primary = true;
+    // var protectFromEnemies = false;
+    // for (final property in properties) {
+    //   switch (property.name) {
+    //     case 'primary':
+    //       primary = property.value == "true" ? true : false;
+    //       break;
+    //     case 'protectFromEnemies':
+    //       protectFromEnemies = property.value == "true" ? true : false;
+    //       break;
+    //   }
+    // }
+    // final newTarget = Target(
+    //     position: context.absolutePosition,
+    //     primary: primary,
+    //     protectFromEnemies: protectFromEnemies);
+    // game.world.addSpawn(newTarget);
   }
 }

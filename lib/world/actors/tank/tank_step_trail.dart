@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_trail_behavior.dart';
-import 'package:tank_game/world/tank/core/direction.dart';
+import 'package:tank_game/world/core/direction.dart';
 
 class TankStepTrailBehavior extends MovementTrailBehavior {
   TankStepTrailBehavior() : super(stepSize: 2);

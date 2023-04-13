@@ -17,11 +17,22 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
   final bool keepAnimations;
 
   @override
+  void update(double dt) {
+    final animationGroup = (parent as SpriteAnimationGroupComponent<T>);
+
+    final spriteSize = animationGroup.animation?.getSprite().srcSize;
+    if (spriteSize != null && animationGroup.size != spriteSize) {
+      animationGroup.size.setFrom(spriteSize);
+    }
+    super.update(dt);
+  }
+
+  @override
   FutureOr<void> onLoad() {
     assert(parent is SpriteAnimationGroupComponent<T>);
     assert((parent as SpriteAnimationGroupComponent<T>).animations == null);
 
-    (parent as SpriteAnimationGroupComponent<T>).autoResize = true;
+    (parent as SpriteAnimationGroupComponent<T>).autoResize = false;
     final animations = <T, SpriteAnimation>{};
 
     for (final entry in animationConfigs.entries) {

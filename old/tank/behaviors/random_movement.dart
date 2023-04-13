@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import '../../core/direction.dart';
 import '../core/base_tank.dart';
-import '../core/direction.dart';
 import 'available_directions.dart';
 
 class RandomMovementController {

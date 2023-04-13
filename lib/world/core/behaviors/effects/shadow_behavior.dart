@@ -11,7 +11,7 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
-import 'package:tank_game/world/tank/core/direction.dart';
+import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/world.dart';
 
 class ShadowBehavior extends Behavior<ActorMixin>
@@ -146,12 +146,20 @@ class ShadowPictureComponent extends PositionComponent with HasGridSupport {
 
   void _updateTransform() {
     position.setFrom(targetEntity.position);
+    size.setFrom(targetEntity.size);
     angle = targetEntity.angle;
+
+    if (parent is CellLayer) {
+      (parent as CellLayer).isUpdateNeeded = true;
+    }
   }
 
   @override
   void onRemove() {
     targetEntity.transform.removeListener(_updateTransform);
+    if (parent is CellLayer) {
+      (parent as CellLayer).isUpdateNeeded = true;
+    }
     super.onRemove();
   }
 

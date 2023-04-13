@@ -4,9 +4,9 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/environment/tree.dart';
 import 'package:tank_game/world/tank/bullet.dart';
 
+import '../../core/direction.dart';
 import '../../environment/spawn.dart';
 import 'base_tank.dart';
-import 'direction.dart';
 import 'hitbox_movement.dart';
 
 class MovementSideHitbox extends BoundingHitbox {

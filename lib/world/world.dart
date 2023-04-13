@@ -8,7 +8,6 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/tank/player.dart';
 
 enum RenderPriority {
   sky(25),
@@ -16,9 +15,9 @@ enum RenderPriority {
   tree(15),
   bullet(12),
   player(10),
-  water(9),
-  spawn(5),
-  shadows(2),
+  shadows(6),
+  water(5),
+  spawn(3),
   trackTrail(1),
   ground(0),
   ui(100);
@@ -51,9 +50,6 @@ class GameWorld extends World with HasGameRef<MyGame> {
 
   addTank(Component component) {
     tankLayer.add(component);
-    if (component is Player) {
-      game.cameraComponent.follow(component, maxSpeed: 60);
-    }
   }
 
   addBullet(Component component) {

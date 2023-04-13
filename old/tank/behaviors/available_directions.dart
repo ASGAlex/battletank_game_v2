@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 
+import '../../core/direction.dart';
 import '../core/base_tank.dart';
-import '../core/direction.dart';
 import '../core/hitbox_movement_side.dart';
 
 class AvailableDirectionsChecker {

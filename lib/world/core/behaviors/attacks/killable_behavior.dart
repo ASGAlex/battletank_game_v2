@@ -4,7 +4,7 @@ import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 
 class KillableBehavior extends CollisionBehavior {
-  KillableBehavior({this.factionCheck}) {
+  KillableBehavior({this.factionCheck, this.customApplyAttack}) {
     factionCheck ??= (attackedBy, killable) {
       final factionPlayer = Faction(name: 'Player');
       final factionEnemy = Faction(name: 'Enemy');
@@ -19,13 +19,16 @@ class KillableBehavior extends CollisionBehavior {
   }
 
   bool Function(ActorMixin attackedBy, ActorMixin killable)? factionCheck;
-
-  @override
-  void update(double dt) {}
+  bool Function(ActorMixin attackedBy, ActorMixin killable)? customApplyAttack;
 
   void applyAttack(AttackBehavior attackedBy) {
     final killAllowed = factionCheck?.call(attackedBy.parent, parent) ?? true;
     if (killAllowed) {
+      final processed =
+          customApplyAttack?.call(attackedBy.parent, parent) ?? false;
+      if (processed) {
+        return;
+      }
       parent.data.health -= attackedBy.parent.data.health;
       attackedBy.parent.data.health = 0;
       if (parent.data.health <= 0) {
