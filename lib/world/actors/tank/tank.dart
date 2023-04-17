@@ -78,6 +78,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   FutureOr<void> onLoad() {
+    anchor = Anchor.center;
     add(AnimationGroupBehavior<ActorCoreState>(animationConfigs: {
       ActorCoreState.idle: AnimationConfig(
           tileset: _tileset, tileType: '${_tileType}_idle', loop: true),

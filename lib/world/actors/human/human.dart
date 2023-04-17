@@ -39,6 +39,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   FutureOr<void> onLoad() {
+    super.onLoad();
+    anchor = Anchor.center;
     add(AnimationGroupBehavior<ActorCoreState>(animationConfigs: {
       ActorCoreState.idle: const AnimationConfig(
           tileset: 'tank', tileType: 'human_idle', loop: true),
@@ -54,8 +56,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     current = ActorCoreState.idle;
 
     add(MovementForwardCollisionBehavior(
-      hitboxRelativePosition: Vector2(1, -2),
-      hitboxSize: Vector2(12, 2),
+      hitboxRelativePosition: Vector2(0, 0),
+      hitboxSize: Vector2(14, 2),
       typeCheck: (other) {
         if (other.parent is SpawnEntity ||
                 other.parent is BulletEntity ||
@@ -85,7 +87,6 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(4, -2),
     ));
-    super.onLoad();
     add(ShadowBehavior());
     boundingBox.collisionType = CollisionType.active;
   }

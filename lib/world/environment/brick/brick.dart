@@ -40,7 +40,6 @@ class BrickEntity extends SpriteComponent
     add(ShadowBehavior(shadowKey: 'brick'));
     add(KillableBehavior(customApplyAttack: applyAttack));
     super.onLoad();
-    anchor = Anchor.topLeft;
     _halfSize.setFrom(size / 2);
   }
 
@@ -72,16 +71,18 @@ class BrickEntity extends SpriteComponent
   }
 
   bool applyAttack(ActorMixin attackedBy, ActorMixin killable) {
-    _attackedBy = attackedBy;
-    data.health -= attackedBy.data.health;
-    attackedBy.data.health = 0;
-    if (resizeOnHit) {
-      isUpdateNeeded = true;
-      if (parent is CellLayer) {
-        (parent as CellLayer).isUpdateNeeded = true;
+    if (attackedBy.data.coreState == ActorCoreState.move) {
+      _attackedBy = attackedBy;
+      data.health -= attackedBy.data.health;
+      attackedBy.data.health = 0;
+      if (resizeOnHit) {
+        isUpdateNeeded = true;
+        if (parent is CellLayer) {
+          (parent as CellLayer).isUpdateNeeded = true;
+        }
+      } else if (data.health <= 0) {
+        removeFromParent();
       }
-    } else if (data.health <= 0) {
-      removeFromParent();
     }
     return true;
   }

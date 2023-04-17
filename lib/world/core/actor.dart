@@ -14,7 +14,6 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
 
   @override
   FutureOr<void> onLoad() {
-    anchor = Anchor.center;
     super.onLoad();
     boundingBox.transform.addListener(_updateData);
     _updateData();

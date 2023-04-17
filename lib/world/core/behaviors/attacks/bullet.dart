@@ -67,6 +67,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   FutureOr<void> onLoad() {
+    anchor = Anchor.center;
     add(AnimationGroupBehavior<ActorCoreState>(
         animationConfigs: animationConfigs));
     add(movementBehavior);

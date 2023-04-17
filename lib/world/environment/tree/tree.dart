@@ -33,6 +33,5 @@ class TreeEntity extends SpriteComponent
   FutureOr<void> onLoad() {
     add(ShadowBehavior(shadowKey: 'tree'));
     super.onLoad();
-    anchor = Anchor.topLeft;
   }
 }

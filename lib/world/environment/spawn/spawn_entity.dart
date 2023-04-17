@@ -98,6 +98,7 @@ class SpawnEntity extends SpriteAnimationComponent
 
   @override
   FutureOr<void> onLoad() async {
+    anchor = Anchor.center;
     add(AnimationBehavior(
       config: const AnimationConfig(
         tileset: 'spawn',

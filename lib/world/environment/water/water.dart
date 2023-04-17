@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
@@ -26,11 +25,5 @@ class WaterEntity extends SpriteAnimationComponent
       return false;
     }
     return super.onComponentTypeCheck(other);
-  }
-
-  @override
-  FutureOr<void> onLoad() {
-    super.onLoad();
-    anchor = Anchor.topLeft;
   }
 }
