@@ -112,7 +112,8 @@ class ShadowBehavior extends Behavior<ActorMixin>
   }
 }
 
-class ShadowPictureComponent extends PositionComponent with HasGridSupport {
+class ShadowPictureComponent extends PositionComponent
+    with HasGridSupport, HasPaint {
   ShadowPictureComponent(this.shadowKey, this.shadowBehavior) {
     targetEntity = shadowBehavior.parent;
     anchor = targetEntity.anchor;

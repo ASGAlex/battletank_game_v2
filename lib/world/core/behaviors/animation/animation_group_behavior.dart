@@ -21,7 +21,6 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
     assert(parent is SpriteAnimationGroupComponent<T>);
     assert((parent as SpriteAnimationGroupComponent<T>).animations == null);
 
-    (parent as SpriteAnimationGroupComponent<T>).autoResize = true;
     final animations = <T, SpriteAnimation>{};
 
     for (final entry in animationConfigs.entries) {
@@ -38,6 +37,7 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
       parent.size.setFrom(animation.frames.first.sprite.srcSize);
       parent.boundingBox.size.setFrom(parent.size);
     }
+    (parent as SpriteAnimationGroupComponent<T>).autoResize = true;
   }
 
   @override

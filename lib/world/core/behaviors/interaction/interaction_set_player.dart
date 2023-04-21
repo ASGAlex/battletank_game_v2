@@ -1,4 +1,6 @@
+import 'package:flame/effects.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
@@ -18,7 +20,18 @@ class InteractionSetPlayer extends InteractableBehavior {
       playerControlled.removeFromParent();
       currentPlayerEntity.coreState = ActorCoreState.idle;
       if (removeAfterSet) {
-        currentPlayerEntity.removeFromParent();
+        final effect = OpacityEffect.to(
+          0.01,
+          EffectController(duration: 0.75),
+        );
+        currentPlayerEntity.add(effect);
+        effect.onComplete = () {
+          currentPlayerEntity.removeFromParent();
+        };
+        try {
+          final shadow = currentPlayerEntity.findBehavior<ShadowBehavior>();
+          shadow.removeFromParent();
+        } catch (_) {}
       }
 
       parent.coreState = ActorCoreState.idle;
@@ -27,7 +40,9 @@ class InteractionSetPlayer extends InteractableBehavior {
       parent.data.factions.addAll(currentPlayerEntity.data.factions);
       parent.add(TriggerSpawnBehavior());
       game.currentPlayer = parent;
-      game.cameraComponent.follow(game.currentPlayer!);
+      game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
+      Future.delayed(const Duration(seconds: 2)).then((value) =>
+          game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40));
     }
     super.doTriggerAction();
   }
