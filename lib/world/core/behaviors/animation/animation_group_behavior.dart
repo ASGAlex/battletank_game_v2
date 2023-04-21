@@ -31,13 +31,8 @@ class AnimationGroupBehavior<T> extends Behavior<ActorMixin>
     }
 
     (parent as SpriteAnimationGroupComponent<T>).animations = animations;
-
-    if (parent.size.isZero()) {
-      final animation = animations.values.first;
-      parent.size.setFrom(animation.frames.first.sprite.srcSize);
-      parent.boundingBox.size.setFrom(parent.size);
-    }
     (parent as SpriteAnimationGroupComponent<T>).autoResize = true;
+    parent.boundingBox.size.setFrom(parent.size);
   }
 
   @override

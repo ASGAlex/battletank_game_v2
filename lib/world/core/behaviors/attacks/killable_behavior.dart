@@ -1,6 +1,7 @@
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 
 class KillableBehavior extends CollisionBehavior {
@@ -33,11 +34,20 @@ class KillableBehavior extends CollisionBehavior {
       attackedBy.parent.data.health = 0;
       if (parent.data.health <= 0) {
         killParent(attackedBy);
+      } else {
+        try {
+          final colorFilter = parent.findBehavior<ColorFilterBehavior>();
+          colorFilter.applyNext();
+        } catch (_) {}
       }
     }
   }
 
   void killParent(AttackBehavior attackedBy) {
+    try {
+      final filter = parent.findBehavior<ColorFilterBehavior>();
+      filter.removeFromParent();
+    } catch (_) {}
     if (parent.data.coreState == ActorCoreState.wreck) {
       parent.coreState = ActorCoreState.removing;
     } else {

@@ -20,7 +20,6 @@ class InteractableBehavior extends CollisionBehavior
   InteractableBehavior({
     this.action,
     required InteractableTrigger trigger,
-    this.distance = 0,
     this.triggerUserAction = PlayerAction.trigger,
   }) {
     _trigger = trigger;
@@ -29,7 +28,6 @@ class InteractableBehavior extends CollisionBehavior
 
   Function? action;
   late InteractableTrigger _trigger;
-  double distance = 0.0;
   PlayerAction triggerUserAction;
 
   InteractableTrigger get trigger => _trigger;

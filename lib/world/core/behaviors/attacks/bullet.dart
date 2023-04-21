@@ -32,7 +32,8 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         EntityMixin,
         HasGridSupport,
         HasTrailSupport,
-        ActorMixin {
+        ActorMixin,
+        AnimationGroupCoreStateListenerMixin {
   BulletEntity({
     required double speed,
     required Direction lookDirection,
@@ -51,6 +52,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     data.speed = speed;
     data.lookDirection = lookDirection;
     position.setFrom(owner.position);
+    data.factions.addAll(owner.data.factions);
     if (offset != null) {
       position.add(offset);
     }
@@ -60,7 +62,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     currentCell = owner.currentCell;
   }
 
-  HasGridSupport owner;
+  ActorMixin owner;
   final movementBehavior = MovementBehavior();
   final Map<ActorCoreState, AnimationConfig> animationConfigs;
   CircleComponent? halo;
@@ -68,6 +70,10 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   FutureOr<void> onLoad() {
     anchor = Anchor.center;
+    if (data.coreState == ActorCoreState.init) {
+      coreState = ActorCoreState.move;
+    }
+    angle = data.lookDirection.angle;
     add(AnimationGroupBehavior<ActorCoreState>(
         animationConfigs: animationConfigs));
     add(movementBehavior);
@@ -91,11 +97,6 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }
 
     super.onLoad();
-
-    if (data.coreState == ActorCoreState.init) {
-      coreState = ActorCoreState.move;
-    }
-    angle = data.lookDirection.angle;
   }
 
   @override

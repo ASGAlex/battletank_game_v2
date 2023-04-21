@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
 import 'package:tank_game/world/core/actor.dart';
@@ -48,6 +49,7 @@ class AttackBehavior extends CollisionBehavior {
   }
 
   void killParent() {
+    parent.boundingBox.collisionType = CollisionType.inactive;
     parent.coreState = ActorCoreState.dying;
   }
 }

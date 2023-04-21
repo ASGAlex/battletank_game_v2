@@ -13,10 +13,12 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
+import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 
@@ -137,6 +139,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(smoke);
     super.onLoad();
     add(ShadowBehavior());
+    if (!data.factions.contains(Faction(name: 'Player'))) {
+      add(ColorFilterBehavior());
+    }
     boundingBox.collisionType = CollisionType.active;
   }
 
