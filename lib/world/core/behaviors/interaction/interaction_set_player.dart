@@ -44,6 +44,7 @@ class InteractionSetPlayer extends InteractableBehavior {
       parent.data.factions.addAll(currentPlayerEntity.data.factions);
       parent.add(TriggerSpawnBehavior());
       parent.add(DetectableBehavior(detectionType: DetectionType.visual));
+      parent.add(DetectableBehavior(detectionType: DetectionType.audial));
 
       removeNpcBehaviors();
 
@@ -62,9 +63,11 @@ class InteractionSetPlayer extends InteractableBehavior {
     } catch (_) {}
 
     try {
-      final detector = parent.findBehavior<DetectorBehavior>();
-      detector.disableCallbackOnRemove = false;
-      detector.removeFromParent();
+      final detectors = parent.findBehaviors<DetectorBehavior>();
+      for (final detector in detectors) {
+        detector.disableCallbackOnRemove = false;
+        detector.removeFromParent();
+      }
     } catch (_) {}
 
     try {

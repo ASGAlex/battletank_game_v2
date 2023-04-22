@@ -19,8 +19,10 @@ import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dar
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
@@ -33,6 +35,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasTrailSupport,
         ActorMixin,
         AnimationGroupCoreStateListenerMixin,
+        MovementFactoryMixin,
         HasGameReference<MyGame> {
   static const _tileset = 'tank';
 
@@ -145,22 +148,42 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     // if enemy
     if (!data.factions.contains(Faction(name: 'Player'))) {
       add(ColorFilterBehavior());
-      add(RandomMovementBehavior(
-        maxDirectionDistance: 300,
-        minDirectionDistance: 50,
-      ));
+      add(createRandomMovement());
       add(DetectorBehavior(
-          distance: 200,
-          detectionType: DetectionType.visual,
+          distance: 300,
+          detectionType: DetectionType.audial,
           factionsToDetect: [Faction(name: 'Player')],
           maxMomentum: 120,
           onDetection: (player, x, y) {
             coreState = ActorCoreState.move;
           }));
+
+      add(DetectorBehavior(
+        distance: 200,
+        detectionType: DetectionType.visual,
+        factionsToDetect: [Faction(name: 'Player')],
+        maxMomentum: 0,
+        onDetection: _trackDetectedTarget,
+      ));
     } else {
+      add(DetectableBehavior(detectionType: DetectionType.audial));
       add(DetectableBehavior(detectionType: DetectionType.visual));
     }
     boundingBox.collisionType = CollisionType.active;
+  }
+
+  TargetedMovementBehavior? _targetedMovementBehavior;
+
+  void _trackDetectedTarget(
+      ActorMixin target, double distanceX, double distanceY) {
+    coreState = ActorCoreState.move;
+    if (_targetedMovementBehavior == null) {
+      _targetedMovementBehavior =
+          createTargetedMovement(targetPosition: target.position);
+      add(_targetedMovementBehavior!);
+    } else {
+      _targetedMovementBehavior!.targetPosition.setFrom(target.position);
+    }
   }
 
   @override
@@ -219,4 +242,22 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       }
     }
   }
+
+  @override
+  RandomMovementBehavior createRandomMovement() => RandomMovementBehavior(
+        maxDirectionDistance: 300,
+        minDirectionDistance: 50,
+      );
+
+  @override
+  TargetedMovementBehavior createTargetedMovement(
+          {required Vector2 targetPosition}) =>
+      TargetedMovementBehavior(
+        targetPosition: targetPosition,
+        maxRandomMovementTime: 5,
+        onShouldFire: () {
+          findBehavior<FireBulletBehavior>().tryFire();
+        },
+        stopAtTarget: false,
+      );
 }

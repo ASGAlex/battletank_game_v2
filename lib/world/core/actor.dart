@@ -35,8 +35,10 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   }
 
   set coreState(ActorCoreState state) {
-    data.coreState = state;
-    onCoreStateChanged();
+    if (data.coreState != state) {
+      data.coreState = state;
+      onCoreStateChanged();
+    }
   }
 
   set lookDirection(Direction direction) {
