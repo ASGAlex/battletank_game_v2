@@ -5,6 +5,7 @@ import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart'
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
+import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
 
@@ -42,23 +43,33 @@ class InteractionSetPlayer extends InteractableBehavior {
       parent.data.factions.clear();
       parent.data.factions.addAll(currentPlayerEntity.data.factions);
       parent.add(TriggerSpawnBehavior());
-      try {
-        final colorFilter = parent.findBehavior<ColorFilterBehavior>();
-        colorFilter.removeFromParent();
-      } catch (_) {}
-
-      try {
-        final detector = parent.findBehavior<DetectorBehavior>();
-        detector.disableCallbackOnRemove = false;
-        detector.removeFromParent();
-      } catch (_) {}
-
       parent.add(DetectableBehavior(detectionType: DetectionType.visual));
+
+      removeNpcBehaviors();
+
       game.currentPlayer = parent;
       game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
       Future.delayed(const Duration(seconds: 2)).then((value) =>
           game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40));
     }
     super.doTriggerAction();
+  }
+
+  void removeNpcBehaviors() {
+    try {
+      final colorFilter = parent.findBehavior<ColorFilterBehavior>();
+      colorFilter.removeFromParent();
+    } catch (_) {}
+
+    try {
+      final detector = parent.findBehavior<DetectorBehavior>();
+      detector.disableCallbackOnRemove = false;
+      detector.removeFromParent();
+    } catch (_) {}
+
+    try {
+      final movement = parent.findBehavior<RandomMovementBehavior>();
+      movement.removeFromParent();
+    } catch (_) {}
   }
 }

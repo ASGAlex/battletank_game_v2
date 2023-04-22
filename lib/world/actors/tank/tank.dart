@@ -20,6 +20,7 @@ import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
+import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
@@ -144,10 +145,17 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     // if enemy
     if (!data.factions.contains(Faction(name: 'Player'))) {
       add(ColorFilterBehavior());
+      add(RandomMovementBehavior(
+        maxDirectionDistance: 300,
+        minDirectionDistance: 50,
+      ));
       add(DetectorBehavior(
           distance: 200,
           detectionType: DetectionType.visual,
-          factionsToDetect: [Faction(name: 'Player')]));
+          factionsToDetect: [Faction(name: 'Player')],
+          onDetection: (player, x, y) {
+            coreState = ActorCoreState.move;
+          }));
     } else {
       add(DetectableBehavior(detectionType: DetectionType.visual));
     }

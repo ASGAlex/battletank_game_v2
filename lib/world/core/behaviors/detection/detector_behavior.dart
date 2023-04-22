@@ -10,11 +10,15 @@ enum DetectionType {
   audial,
 }
 
+typedef DetectionCallback = void Function(
+    ActorMixin other, double distanceX, double distanceY);
+
 class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
   DetectorBehavior({
     required this.distance,
     required this.detectionType,
     required this.factionsToDetect,
+    this.onDetection,
   });
 
   final double distance;
@@ -22,6 +26,8 @@ class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
 
   bool detected = false;
   final List<Faction> factionsToDetect;
+
+  DetectionCallback? onDetection;
 
   @override
   void onCalculateDistance(
@@ -54,6 +60,7 @@ class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
         final finalDistance = distance + detectable.distanceModifier;
         if (distanceX < finalDistance && distanceY < finalDistance) {
           detected = true;
+          onDetection?.call(other, distanceX, distanceY);
           return;
         }
       }
