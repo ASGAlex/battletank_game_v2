@@ -21,12 +21,14 @@ mixin DistanceCallbackMixin on Behavior<ActorMixin> {
   @override
   @mustCallSuper
   void onRemove() {
-    if (disableCallbackOnRemove) {
-      parent.boundingBox.isDistanceCallbackEnabled = false;
-    }
-    if (registerDistanceFunction) {
-      parent.distanceFunctions.remove(onCalculateDistance);
-    }
+    try {
+      if (disableCallbackOnRemove) {
+        parent.boundingBox.isDistanceCallbackEnabled = false;
+      }
+      if (registerDistanceFunction) {
+        parent.distanceFunctions.remove(onCalculateDistance);
+      }
+    } catch (_) {}
   }
 
   void onCalculateDistance(

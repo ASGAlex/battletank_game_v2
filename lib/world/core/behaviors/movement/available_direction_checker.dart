@@ -28,7 +28,9 @@ class AvailableDirectionChecker extends Behavior<ActorMixin> {
   @override
   void onRemove() {
     disableSideHitboxes();
-    parent.removeAll(_movementSideHitboxes);
+    try {
+      parent.removeAll(_movementSideHitboxes);
+    } catch (_) {}
   }
 
   final _movementSideHitboxes = <MovementSideHitbox>[

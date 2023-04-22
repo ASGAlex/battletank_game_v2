@@ -108,19 +108,21 @@ class TankStep extends PositionComponent with HasGridSupport, HasPaint {
 
   @override
   void render(Canvas canvas) {
-    final trackTopLeft1 = behavior
-        .topLeftRotated1[behavior.parent.data.lookDirection]!
-        .toOffset();
-    final trackBottomRight1 = behavior
-        .bottomRightRotated1[behavior.parent.data.lookDirection]!
-        .toOffset();
-    final trackTopLeft2 = behavior
-        .topLeftRotated2[behavior.parent.data.lookDirection]!
-        .toOffset();
-    final trackBottomRight2 = behavior
-        .bottomRightRotated2[behavior.parent.data.lookDirection]!
-        .toOffset();
-    canvas.drawRect(Rect.fromPoints(trackTopLeft1, trackBottomRight1), paint);
-    canvas.drawRect(Rect.fromPoints(trackTopLeft2, trackBottomRight2), paint);
+    try {
+      final trackTopLeft1 = behavior
+          .topLeftRotated1[behavior.parent.data.lookDirection]!
+          .toOffset();
+      final trackBottomRight1 = behavior
+          .bottomRightRotated1[behavior.parent.data.lookDirection]!
+          .toOffset();
+      final trackTopLeft2 = behavior
+          .topLeftRotated2[behavior.parent.data.lookDirection]!
+          .toOffset();
+      final trackBottomRight2 = behavior
+          .bottomRightRotated2[behavior.parent.data.lookDirection]!
+          .toOffset();
+      canvas.drawRect(Rect.fromPoints(trackTopLeft1, trackBottomRight1), paint);
+      canvas.drawRect(Rect.fromPoints(trackTopLeft2, trackBottomRight2), paint);
+    } catch (_) {}
   }
 }

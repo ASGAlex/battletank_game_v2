@@ -165,7 +165,33 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   void onCoreStateChanged() {
     super.onCoreStateChanged();
-    if (data.coreState == ActorCoreState.removing) {
+    if (data.coreState == ActorCoreState.dying) {
+      try {
+        findBehaviors<RandomMovementBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<ColorFilterBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<TankStepTrailBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<DetectableBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<DetectorBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+    } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
         component: this,
         layerType: MapLayerType.trail,
