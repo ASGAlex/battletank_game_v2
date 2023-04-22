@@ -19,13 +19,13 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   @override
   FutureOr<void> onLoad() {
     super.onLoad();
-    boundingBox.transform.addListener(_updateData);
+    transform.addListener(_updateData);
     _updateData();
   }
 
   @override
   void onRemove() {
-    boundingBox.transform.removeListener(_updateData);
+    transform.removeListener(_updateData);
     super.onRemove();
   }
 
@@ -41,10 +41,14 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
     }
   }
 
+  ActorCoreState get coreState => data.coreState;
+
   set lookDirection(Direction direction) {
     data.lookDirection = direction;
     angle = direction.angle;
   }
+
+  Direction get lookDirection => data.lookDirection;
 
   @override
   void onCalculateDistance(

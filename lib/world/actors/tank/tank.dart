@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/tank/tank_step_trail.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -150,7 +152,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(ColorFilterBehavior());
       add(createRandomMovement());
       add(DetectorBehavior(
-          distance: 300,
+          distance: 400,
           detectionType: DetectionType.audial,
           factionsToDetect: [Faction(name: 'Player')],
           maxMomentum: 120,
@@ -159,7 +161,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           }));
 
       add(DetectorBehavior(
-        distance: 200,
+        distance: 300,
         detectionType: DetectionType.visual,
         factionsToDetect: [Faction(name: 'Player')],
         maxMomentum: 0,
@@ -179,10 +181,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     coreState = ActorCoreState.move;
     if (_targetedMovementBehavior == null) {
       _targetedMovementBehavior =
-          createTargetedMovement(targetPosition: target.position);
+          createTargetedMovement(targetPosition: target.data.positionCenter);
       add(_targetedMovementBehavior!);
     } else {
-      _targetedMovementBehavior!.targetPosition.setFrom(target.position);
+      _targetedMovementBehavior!.targetPosition
+          .setFrom(target.data.positionCenter);
     }
   }
 
@@ -230,6 +233,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           element.removeFromParent();
         });
       } catch (_) {}
+      try {
+        findBehaviors<TargetedMovementBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
     } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
         component: this,
@@ -260,4 +268,21 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         },
         stopAtTarget: false,
       );
+
+  @override
+  void render(Canvas canvas) {
+    super.render(canvas);
+    if (_targetedMovementBehavior != null) {
+      canvas.drawRect(
+          Rect.fromPoints(Offset.zero, size.toOffset()),
+          Paint()
+            ..color = Colors.red
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 3);
+      final tp = _targetedMovementBehavior!.targetPosition;
+      final local = transform.globalToLocal(tp);
+      canvas.drawLine(
+          Offset.zero, local.toOffset(), Paint()..color = Colors.red);
+    }
+  }
 }

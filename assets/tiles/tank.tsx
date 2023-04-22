@@ -4,7 +4,7 @@
  <tile id="0" class="simple">
   <properties>
    <property name="damage" type="float" value="1"/>
-   <property name="fireDelay" type="int" value="1500"/>
+   <property name="fireDelay" type="int" value="1250"/>
    <property name="health" type="float" value="1"/>
    <property name="speed" type="int" value="55"/>
   </properties>
@@ -18,7 +18,7 @@
  <tile id="3" class="middle">
   <properties>
    <property name="damage" type="float" value="1"/>
-   <property name="fireDelay" type="int" value="1250"/>
+   <property name="fireDelay" type="int" value="1000"/>
    <property name="health" type="float" value="2"/>
    <property name="speed" type="int" value="50"/>
   </properties>
@@ -46,7 +46,7 @@
  <tile id="9" class="heavy">
   <properties>
    <property name="damage" type="float" value="2"/>
-   <property name="fireDelay" type="int" value="1000"/>
+   <property name="fireDelay" type="int" value="1500"/>
    <property name="health" type="float" value="3"/>
    <property name="speed" type="int" value="35"/>
   </properties>

@@ -31,6 +31,8 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   late final MovementForwardCollisionBehavior _moveForwardBehavior;
   RandomMovementBehavior? _randomMovementBehavior;
 
+  double _dtFromLastDirectionChange = 0;
+
   @override
   FutureOr onLoad() {
     _moveForwardBehavior =
@@ -38,11 +40,13 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     try {
       parent.findBehavior<RandomMovementBehavior>().removeFromParent();
     } catch (_) {}
+
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
+    _dtFromLastDirectionChange += dt;
     if (isRandomMovement) {
       if (_randomMovementTimer <= maxRandomMovementTime) {
         _randomMovementTimer += dt;
@@ -57,7 +61,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
       return;
     }
 
-    _diff.setFrom(targetPosition - parent.position);
+    _diff.setFrom(targetPosition - parent.data.positionCenter);
     if (_diff.x <= parent.size.x && _diff.y <= parent.size.y) {
       if (stopAtTarget) {
         parent.coreState = ActorCoreState.idle;
@@ -70,8 +74,11 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
     final direction = _findShortestDirection();
 
-    if (direction != null && direction != parent.data.lookDirection) {
+    if (direction != null &&
+        direction != parent.lookDirection &&
+        _dtFromLastDirectionChange >= 0.5) {
       parent.lookDirection = direction;
+      _dtFromLastDirectionChange = 0;
     }
 
     if (shouldFire) {
@@ -97,7 +104,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
   Direction? _findShortestDirection() {
     var diffBetweenAxis = _diff.x.abs() - _diff.y.abs();
-    final minDiff = parent.size.x / 4;
+    final minDiff = parent.size.x / 2;
 
     if (diffBetweenAxis.abs() <= minDiff) {
       if (Random().nextBool()) {
