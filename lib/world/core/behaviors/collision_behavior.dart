@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flame/collisions.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
-abstract class CollisionBehavior extends Behavior<ActorMixin>
+abstract class CollisionBehavior extends CoreBehavior<ActorMixin>
     with CollisionCallbacks {
   CollisionBehavior();
 

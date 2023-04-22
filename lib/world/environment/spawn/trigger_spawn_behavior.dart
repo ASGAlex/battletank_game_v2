@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
-class TriggerSpawnBehavior extends Behavior<ActorMixin> {
+class TriggerSpawnBehavior extends CoreBehavior<ActorMixin> {
   @override
   FutureOr<void> onLoad() {
     parent.boundingBox.isDistanceCallbackEnabled = true;

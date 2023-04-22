@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flame/experimental.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 
-class PlayerControlledBehavior extends Behavior<ActorMixin>
+class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     with HasGameReference<MyGame>, MessageListenerMixin<List<PlayerAction>> {
   @override
   FutureOr<void> onLoad() {

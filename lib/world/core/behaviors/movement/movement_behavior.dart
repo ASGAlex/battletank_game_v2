@@ -1,9 +1,9 @@
 import 'package:flame/components.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 
-class MovementBehavior extends Behavior<ActorMixin> {
+class MovementBehavior extends CoreBehavior<ActorMixin> {
   final lastDisplacement = Vector2.zero();
   double lastInnerSpeed = 0;
 

@@ -3,10 +3,10 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
-class ColorFilterBehavior extends Behavior<ActorMixin> {
+class ColorFilterBehavior extends CoreBehavior<ActorMixin> {
   static final colorFilters = <ColorFilter>[
     //red
     const ColorFilter.matrix(<double>[

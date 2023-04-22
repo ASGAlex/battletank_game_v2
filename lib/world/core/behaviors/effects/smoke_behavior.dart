@@ -3,12 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/extensions.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
-class SmokeBehavior extends Behavior<ActorMixin> {
+class SmokeBehavior extends CoreBehavior<ActorMixin> {
   SmokeBehavior(this.rootComponent);
 
   Component rootComponent;

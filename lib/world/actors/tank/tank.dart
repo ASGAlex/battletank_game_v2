@@ -192,6 +192,21 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           element.removeFromParent();
         });
       } catch (_) {}
+      try {
+        findBehaviors<MovementForwardCollisionBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<InteractionSetPlayer>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
+      try {
+        findBehaviors<FireBulletBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
+      } catch (_) {}
     } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
         component: this,

@@ -12,6 +12,7 @@ import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -151,7 +152,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 }
 
-class FireBulletBehavior extends Behavior<ActorMixin> {
+class FireBulletBehavior extends CoreBehavior<ActorMixin> {
   FireBulletBehavior({
     required this.bulletsRootComponent,
     required this.animationFactory,

@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
-import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/distance_callback_mixin.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -13,7 +13,8 @@ enum DetectionType {
 typedef DetectionCallback = void Function(
     ActorMixin other, double distanceX, double distanceY);
 
-class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
+class DetectorBehavior extends CoreBehavior<ActorMixin>
+    with DistanceCallbackMixin {
   DetectorBehavior({
     required this.distance,
     required this.detectionType,
