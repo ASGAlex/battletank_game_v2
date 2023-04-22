@@ -4,13 +4,14 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
+import 'package:tank_game/world/core/behaviors/distance_callback_mixin.dart';
 import 'package:tank_game/world/core/visibility_mixin.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 
 import 'spawn_data.dart';
 
-class SpawnBehavior extends CollisionBehavior {
+class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
   final _trackedObjectsDistances = <Component, List<double>>{};
   ActorMixin? objectToSpawn;
 
@@ -25,6 +26,7 @@ class SpawnBehavior extends CollisionBehavior {
   @override
   FutureOr<void> onLoad() {
     assert(parent is SpawnEntity);
+    super.onLoad();
     SpawnManager().add(parent as SpawnEntity);
     parent.boundingBox.collisionType = CollisionType.passive;
     parent.boundingBox.isDistanceCallbackEnabled = true;
@@ -34,6 +36,7 @@ class SpawnBehavior extends CollisionBehavior {
   void onRemove() {
     SpawnManager().remove(parent as SpawnEntity);
     parent.boundingBox.isDistanceCallbackEnabled = false;
+    super.onRemove();
   }
 
   @override
@@ -78,6 +81,7 @@ class SpawnBehavior extends CollisionBehavior {
     }
   }
 
+  @override
   void onCalculateDistance(
       Component other, double distanceX, double distanceY) {
     _trackedObjectsDistances[other] = [distanceX, distanceY];

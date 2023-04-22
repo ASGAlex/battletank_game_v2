@@ -9,8 +9,12 @@ import 'package:tank_game/world/core/faction.dart';
 
 enum ActorCoreState { init, idle, move, dying, wreck, removing }
 
+typedef DistanceFunction = void Function(Component, double, double);
+
 mixin ActorMixin on HasGridSupport implements EntityMixin {
   ActorData data = ActorData();
+
+  final distanceFunctions = <DistanceFunction>{};
 
   @override
   FutureOr<void> onLoad() {
@@ -38,6 +42,14 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   set lookDirection(Direction direction) {
     data.lookDirection = direction;
     angle = direction.angle;
+  }
+
+  @override
+  void onCalculateDistance(
+      Component other, double distanceX, double distanceY) {
+    for (final function in distanceFunctions) {
+      function.call(other, distanceX, distanceY);
+    }
   }
 
   void onCoreStateChanged() {}

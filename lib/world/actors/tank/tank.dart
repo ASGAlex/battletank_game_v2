@@ -13,6 +13,8 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
@@ -139,8 +141,15 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(smoke);
     super.onLoad();
     add(ShadowBehavior());
+    // if enemy
     if (!data.factions.contains(Faction(name: 'Player'))) {
       add(ColorFilterBehavior());
+      add(DetectorBehavior(
+          distance: 200,
+          detectionType: DetectionType.visual,
+          factionsToDetect: [Faction(name: 'Player')]));
+    } else {
+      add(DetectableBehavior(detectionType: DetectionType.visual));
     }
     boundingBox.collisionType = CollisionType.active;
   }

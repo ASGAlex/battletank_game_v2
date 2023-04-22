@@ -109,10 +109,4 @@ class SpawnEntity extends SpriteAnimationComponent
     add(spawnBehavior);
     super.onLoad();
   }
-
-  @override
-  void onCalculateDistance(
-      Component other, double distanceX, double distanceY) {
-    spawnBehavior.onCalculateDistance(other, distanceX, distanceY);
-  }
 }

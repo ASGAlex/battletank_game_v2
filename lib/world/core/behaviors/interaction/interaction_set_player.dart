@@ -1,5 +1,7 @@
 import 'package:flame/effects.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
@@ -44,6 +46,14 @@ class InteractionSetPlayer extends InteractableBehavior {
         final colorFilter = parent.findBehavior<ColorFilterBehavior>();
         colorFilter.removeFromParent();
       } catch (_) {}
+
+      try {
+        final detector = parent.findBehavior<DetectorBehavior>();
+        detector.disableCallbackOnRemove = false;
+        detector.removeFromParent();
+      } catch (_) {}
+
+      parent.add(DetectableBehavior(detectionType: DetectionType.visual));
       game.currentPlayer = parent;
       game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
       Future.delayed(const Duration(seconds: 2)).then((value) =>
