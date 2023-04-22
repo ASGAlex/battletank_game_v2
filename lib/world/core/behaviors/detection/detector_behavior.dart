@@ -19,10 +19,16 @@ class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
     required this.detectionType,
     required this.factionsToDetect,
     this.onDetection,
-  });
+    this.maxMomentum = 0,
+  }) {
+    _momentum = maxMomentum;
+  }
 
   final double distance;
   final DetectionType detectionType;
+  final double maxMomentum;
+
+  double _momentum = 0;
 
   bool detected = false;
   final List<Faction> factionsToDetect;
@@ -65,10 +71,21 @@ class DetectorBehavior extends Behavior<ActorMixin> with DistanceCallbackMixin {
         }
       }
     } catch (_) {}
+
+    if (_momentum < maxMomentum && onDetection != null) {
+      onDetection?.call(other, distanceX, distanceY);
+    }
   }
 
   @override
   void update(double dt) {
+    if (!detected) {
+      if (_momentum < maxMomentum) {
+        _momentum += dt;
+      }
+    } else {
+      _momentum = 0;
+    }
     detected = false;
   }
 }

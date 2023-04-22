@@ -84,8 +84,14 @@ class ColorFilterBehavior extends Behavior<ActorMixin> {
 
   ColorFilter? _original;
 
+  var _previous = -1;
+
   ColorFilter get randomColorFilter {
-    final i = Random().nextInt(colorFilters.length);
+    var i = _previous;
+    while (i == _previous) {
+      i = Random().nextInt(colorFilters.length);
+    }
+    _previous = i;
     return colorFilters[i];
   }
 

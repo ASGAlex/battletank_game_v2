@@ -153,6 +153,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           distance: 200,
           detectionType: DetectionType.visual,
           factionsToDetect: [Faction(name: 'Player')],
+          maxMomentum: 120,
           onDetection: (player, x, y) {
             coreState = ActorCoreState.move;
           }));
