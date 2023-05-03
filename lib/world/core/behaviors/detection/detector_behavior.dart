@@ -20,6 +20,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
     required this.detectionType,
     required this.factionsToDetect,
     this.onDetection,
+    this.onNothingDetected,
     this.maxMomentum = 0,
   }) {
     _momentum = maxMomentum;
@@ -35,6 +36,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
   final List<Faction> factionsToDetect;
 
   DetectionCallback? onDetection;
+  Function? onNothingDetected;
 
   @override
   void onCalculateDistance(
@@ -64,7 +66,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
         if (detectable.detectionType != detectionType) {
           continue;
         }
-        final finalDistance = distance + detectable.distanceModifier;
+        final finalDistance = distance * detectable.distanceModifier;
         if (distanceX < finalDistance && distanceY < finalDistance) {
           detected = true;
           onDetection?.call(other, distanceX, distanceY);
@@ -84,6 +86,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
       if (_momentum < maxMomentum) {
         _momentum += dt;
       }
+      onNothingDetected?.call();
     } else {
       _momentum = 0;
     }

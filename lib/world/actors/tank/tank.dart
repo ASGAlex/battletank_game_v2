@@ -27,6 +27,7 @@ import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 
 class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -152,7 +153,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(ColorFilterBehavior());
       add(createRandomMovement());
       add(DetectorBehavior(
-          distance: 400,
+          distance: 2000,
           detectionType: DetectionType.audial,
           factionsToDetect: [Faction(name: 'Player')],
           maxMomentum: 120,
@@ -161,15 +162,21 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           }));
 
       add(DetectorBehavior(
-        distance: 300,
-        detectionType: DetectionType.visual,
-        factionsToDetect: [Faction(name: 'Player')],
-        maxMomentum: 0,
-        onDetection: _trackDetectedTarget,
-      ));
+          distance: 800,
+          detectionType: DetectionType.visual,
+          factionsToDetect: [Faction(name: 'Player')],
+          maxMomentum: 0,
+          onDetection: _trackDetectedTarget,
+          onNothingDetected: () {
+            if (_targetedMovementBehavior != null) {
+              _targetedMovementBehavior?.removeFromParent();
+              _targetedMovementBehavior = null;
+            }
+          }));
     } else {
       add(DetectableBehavior(detectionType: DetectionType.audial));
       add(DetectableBehavior(detectionType: DetectionType.visual));
+      add(HideInTreesBehavior());
     }
     boundingBox.collisionType = CollisionType.active;
   }
@@ -180,8 +187,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       ActorMixin target, double distanceX, double distanceY) {
     coreState = ActorCoreState.move;
     if (_targetedMovementBehavior == null) {
-      _targetedMovementBehavior =
-          createTargetedMovement(targetPosition: target.data.positionCenter);
+      _targetedMovementBehavior = createTargetedMovement(
+        targetPosition: target.data.positionCenter,
+        targetSize: target.data.size,
+      );
       add(_targetedMovementBehavior!);
     } else {
       _targetedMovementBehavior!.targetPosition
@@ -237,6 +246,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         findBehaviors<TargetedMovementBehavior>().forEach((element) {
           element.removeFromParent();
         });
+        if (_targetedMovementBehavior != null) {
+          _targetedMovementBehavior?.removeFromParent();
+          _targetedMovementBehavior = null;
+        }
       } catch (_) {}
     } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
@@ -259,9 +272,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   TargetedMovementBehavior createTargetedMovement(
-          {required Vector2 targetPosition}) =>
+          {required Vector2 targetPosition, required Vector2 targetSize}) =>
       TargetedMovementBehavior(
         targetPosition: targetPosition,
+        targetSize: targetSize,
         maxRandomMovementTime: 5,
         onShouldFire: () {
           findBehavior<FireBulletBehavior>().tryFire();

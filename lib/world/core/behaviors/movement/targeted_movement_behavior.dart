@@ -12,17 +12,21 @@ import 'package:tank_game/world/core/direction.dart';
 class TargetedMovementBehavior extends AvailableDirectionChecker {
   TargetedMovementBehavior({
     required this.targetPosition,
+    required Vector2 targetSize,
     this.stopMovementDistance = 0,
     this.maxRandomMovementTime = 5,
     this.onShouldFire,
     this.stopAtTarget = true,
-  });
+  }) {
+    minDiff = max(targetSize.x, targetSize.y) / 2;
+  }
 
   bool stopAtTarget;
   double stopMovementDistance;
   double maxRandomMovementTime;
   double _randomMovementTimer = 0;
   final Vector2 targetPosition;
+  late final double minDiff;
   final _diff = Vector2(0, 0);
   bool shouldFire = false;
 
@@ -76,7 +80,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
     if (direction != null &&
         direction != parent.lookDirection &&
-        _dtFromLastDirectionChange >= 0.5) {
+        _dtFromLastDirectionChange >= 0.25) {
       parent.lookDirection = direction;
       _dtFromLastDirectionChange = 0;
     }
@@ -104,13 +108,12 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
   Direction? _findShortestDirection() {
     var diffBetweenAxis = _diff.x.abs() - _diff.y.abs();
-    final minDiff = parent.size.x / 2;
 
     if (diffBetweenAxis.abs() <= minDiff) {
       if (Random().nextBool()) {
-        diffBetweenAxis = -(minDiff + 1);
+        diffBetweenAxis = -1;
       } else {
-        diffBetweenAxis = minDiff + 1;
+        diffBetweenAxis = 1;
       }
     }
 

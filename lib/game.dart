@@ -86,13 +86,13 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     // cameraComponent.viewfinder.zoom = 22;
 
     await initializeSpatialGrid(
-        blockSize: 100,
+        blockSize: 200,
         debug: false,
-        activeRadius: const Size(2, 2),
+        activeRadius: const Size(1, 1),
         unloadRadius: const Size(1, 1),
         preloadRadius: const Size(1, 1),
-        buildCellsPerUpdate: 1,
-        cleanupCellsPerUpdate: 1,
+        buildCellsPerUpdate: 2,
+        cleanupCellsPerUpdate: 2,
         processCellsLimitToPauseEngine: 15,
         rootComponent: gameWorld,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),

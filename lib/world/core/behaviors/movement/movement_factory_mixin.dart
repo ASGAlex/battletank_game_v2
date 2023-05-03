@@ -7,5 +7,5 @@ mixin MovementFactoryMixin on ActorMixin {
   RandomMovementBehavior createRandomMovement();
 
   TargetedMovementBehavior createTargetedMovement(
-      {required Vector2 targetPosition});
+      {required Vector2 targetPosition, required Vector2 targetSize});
 }

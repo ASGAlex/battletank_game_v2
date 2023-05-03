@@ -1,10 +1,10 @@
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
-import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
+import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 
-class KillableBehavior extends CollisionBehavior {
+class KillableBehavior extends CoreBehavior<ActorMixin> {
   KillableBehavior({this.factionCheck, this.customApplyAttack}) {
     factionCheck ??= (attackedBy, killable) {
       final factionPlayer = Faction(name: 'Player');
