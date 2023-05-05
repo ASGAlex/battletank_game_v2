@@ -16,7 +16,6 @@ import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
@@ -185,14 +184,11 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   void restorePlayer() {
     if (true) {
-      currentPlayer = HumanEntity();
-      currentPlayer!.data
-        ..factions.add(Faction(name: 'Player'))
-        ..health = 10000;
-
-      currentPlayer!.add(TriggerSpawnBehavior());
-      (currentPlayer as Interactor).isInteractionEnabled = true;
-      currentPlayer!.add(PlayerControlledBehavior());
+      currentPlayer = HumanEntity()
+        ..isInteractionEnabled = true
+        ..add(TriggerSpawnBehavior())
+        ..add(PlayerControlledBehavior())
+        ..data.factions.add(Faction(name: 'Player'));
 
       cameraComponent.follow(currentPlayer!);
 

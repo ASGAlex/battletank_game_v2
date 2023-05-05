@@ -3,7 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/world/core/direction.dart';
 
-enum PlayerAction { moveUp, moveDown, moveLeft, moveRight, fire, trigger }
+enum PlayerAction {
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  fire,
+  triggerE,
+  triggerF,
+}
 
 class InputEventsHandler {
   final messageProvider = MessageStreamProvider<List<PlayerAction>>();
@@ -27,7 +35,10 @@ class InputEventsHandler {
         actions.add(PlayerAction.moveRight);
       }
       if (key == LogicalKeyboardKey.keyE) {
-        actions.add(PlayerAction.trigger);
+        actions.add(PlayerAction.triggerE);
+      }
+      if (key == LogicalKeyboardKey.keyF) {
+        actions.add(PlayerAction.triggerF);
       }
 
       if (key == LogicalKeyboardKey.space) {

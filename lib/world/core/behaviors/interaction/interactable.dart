@@ -20,7 +20,7 @@ class InteractableBehavior extends CollisionBehavior
   InteractableBehavior({
     this.action,
     required InteractableTrigger trigger,
-    this.triggerUserAction = PlayerAction.trigger,
+    this.triggerUserAction = PlayerAction.triggerE,
   }) {
     _trigger = trigger;
     this.trigger = trigger;

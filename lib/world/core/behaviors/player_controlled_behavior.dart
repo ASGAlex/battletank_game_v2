@@ -45,8 +45,9 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
             print(e);
           }
           break;
-        case PlayerAction.trigger:
-          // TODO: Handle this case.
+        case PlayerAction.triggerE:
+        case PlayerAction.triggerF:
+          // should not to handle
           break;
       }
     }
