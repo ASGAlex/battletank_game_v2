@@ -6,7 +6,6 @@ import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
-import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/tank/tank_step_trail.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -158,7 +157,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           factionsToDetect: [Faction(name: 'Player')],
           maxMomentum: 120,
           onDetection: (player, x, y) {
-            coreState = ActorCoreState.move;
+            final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
+            if (!forceIdle) {
+              coreState = ActorCoreState.move;
+            }
           }));
 
       add(DetectorBehavior(
@@ -185,7 +187,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   void _trackDetectedTarget(
       ActorMixin target, double distanceX, double distanceY) {
-    coreState = ActorCoreState.move;
+    final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
+    if (!forceIdle) {
+      coreState = ActorCoreState.move;
+    }
+
     if (_targetedMovementBehavior == null) {
       _targetedMovementBehavior = createTargetedMovement(
         targetPosition: target.data.positionCenter,
@@ -280,23 +286,23 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         onShouldFire: () {
           findBehavior<FireBulletBehavior>().tryFire();
         },
-        stopAtTarget: false,
+        stopAtTarget: true,
       );
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    if (_targetedMovementBehavior != null) {
-      canvas.drawRect(
-          Rect.fromPoints(Offset.zero, size.toOffset()),
-          Paint()
-            ..color = Colors.red
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 3);
-      final tp = _targetedMovementBehavior!.targetPosition;
-      final local = transform.globalToLocal(tp);
-      canvas.drawLine(
-          Offset.zero, local.toOffset(), Paint()..color = Colors.red);
-    }
+    // if (_targetedMovementBehavior != null) {
+    //   canvas.drawRect(
+    //       Rect.fromPoints(Offset.zero, size.toOffset()),
+    //       Paint()
+    //         ..color = Colors.red
+    //         ..style = PaintingStyle.stroke
+    //         ..strokeWidth = 3);
+    //   final tp = _targetedMovementBehavior!.targetPosition;
+    //   final local = transform.globalToLocal(tp);
+    //   canvas.drawLine(
+    //       Offset.zero, local.toOffset(), Paint()..color = Colors.red);
+    // }
   }
 }
