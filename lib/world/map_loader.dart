@@ -106,41 +106,44 @@ class GameMapLoader extends TiledMapLoader {
         priority: -100,
       );
 
-      if (tile == grass) {
-        final random = Random().nextInt(100);
-        if (random < 20) {
-          final sprite = game.tilesetManager.getTile('bricks', 'tree')?.sprite;
-          if (sprite == null) return;
-          final tree = TreeEntity(
-            sprite: sprite,
-            position: component.position,
-            size: component.size,
-          );
-          tree.currentCell = cell;
+      if (isFullyOutside) {
+        if (tile == grass) {
+          final random = Random().nextInt(100);
+          if (random < 20) {
+            final sprite =
+                game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+            if (sprite == null) return;
+            final tree = TreeEntity(
+              sprite: sprite,
+              position: component.position,
+              size: component.size,
+            );
+            tree.currentCell = cell;
 
-          final layer = game.layersManager.addComponent(
-              component: tree,
-              layerType: MapLayerType.static,
-              absolutePosition: false,
-              layerName: 'Tree',
-              priority: RenderPriority.tree.priority);
-          (layer as CellStaticLayer).renderAsImage = true;
-        } else if (random < 30) {
-          final animation =
-              game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
-          if (animation == null) return;
-          final water = WaterEntity(
-            animation: animation,
-            size: component.size,
-            position: component.position,
-          );
-          water.currentCell = cell;
-          game.layersManager.addComponent(
-              component: water,
-              layerType: MapLayerType.animated,
-              absolutePosition: false,
-              layerName: 'Water',
-              priority: RenderPriority.water.priority);
+            final layer = game.layersManager.addComponent(
+                component: tree,
+                layerType: MapLayerType.static,
+                absolutePosition: false,
+                layerName: 'Tree',
+                priority: RenderPriority.tree.priority);
+            (layer as CellStaticLayer).renderAsImage = true;
+          } else if (random < 30) {
+            final animation =
+                game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
+            if (animation == null) return;
+            final water = WaterEntity(
+              animation: animation,
+              size: component.size,
+              position: component.position,
+            );
+            water.currentCell = cell;
+            game.layersManager.addComponent(
+                component: water,
+                layerType: MapLayerType.animated,
+                absolutePosition: false,
+                layerName: 'Water',
+                priority: RenderPriority.water.priority);
+          }
         }
       }
 
