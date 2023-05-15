@@ -29,9 +29,7 @@ abstract class MyGameFeatures extends FlameGame
         KeyboardEvents,
         SingleGameInstance,
         HasSpatialGridFramework,
-        ScrollDetector,
-        HasDraggables,
-        HasTappables {
+        ScrollDetector {
   GameWorld get world => rootComponent as GameWorld;
 }
 
@@ -82,10 +80,9 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
     cameraComponent = CameraComponent.withFixedResolution(
         world: gameWorld, width: 400, height: 250);
-    // cameraComponent.viewfinder.zoom = 22;
 
     await initializeSpatialGrid(
-        blockSize: 200,
+        blockSize: 100,
         debug: false,
         activeRadius: const Size(1, 1),
         unloadRadius: const Size(1, 1),
@@ -94,9 +91,15 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         cleanupCellsPerUpdate: 2,
         processCellsLimitToPauseEngine: 15,
         rootComponent: gameWorld,
+        trackWindowSize: true,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
-        suspendedCellLifetime: const Duration(seconds: 120),
-        suspendCellPrecision: const Duration(seconds: 30),
+        initialPositionChecker: (layer, object, mapOffset, worldName) {
+          if (object.name == 'spawn_player') {
+            return mapOffset + Vector2(object.x, object.y);
+          }
+        },
+        // suspendedCellLifetime: const Duration(seconds: 120),
+        // suspendCellPrecision: const Duration(seconds: 30),
         cellBuilderNoMap: map.noMapBuilder,
         // onAfterCellBuild: (cell, rootComponent) async {
         //   final trailLayer = CellTrailLayer(cell, name: 'trail');
@@ -106,10 +109,6 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         //   layersManager.addLayer(trailLayer);
         // },
         maps: [map]);
-
-    // cameraComponent.moveTo(map.cameraInitialPosition);
-    cameraComponent.viewfinder.position = map.cameraInitialPosition;
-
     await _loadExternalTileSets();
 
     consoleMessages.sendMessage('done.');
@@ -176,8 +175,11 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   @override
   void onInitializationDone() {
+    cameraComponent.viewfinder.zoom = 4;
+    cameraComponent.viewfinder.position = map.cameraInitialPosition;
+
+    onAfterZoom();
     if (!(currentPlayer?.isMounted ?? false)) {
-      //cameraComponent.viewfinder.position = map.cameraInitialPosition;
       restorePlayer();
     }
   }
@@ -188,6 +190,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
         ..add(PlayerControlledBehavior())
+        ..position = map.cameraInitialPosition
         ..data.factions.add(Faction(name: 'Player'));
 
       cameraComponent.follow(currentPlayer!);

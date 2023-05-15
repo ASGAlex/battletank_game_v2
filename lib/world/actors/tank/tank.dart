@@ -68,6 +68,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         case 'speed':
           attackerData.speed = double.parse(property.value.toString());
           break;
+
+        case 'zoom':
+          attackerData.zoom = double.parse(property.value.toString());
+          break;
       }
     }
 

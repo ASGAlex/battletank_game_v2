@@ -41,6 +41,7 @@ class SpawnEntity extends SpriteAnimationComponent
       ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
           context.absolutePosition.y + context.size.y / 2);
     newSpawn.game = game;
+    newSpawn.currentCell = context.cell;
     Faction faction;
     if (tiledObject.name == 'spawn') {
       faction = Faction(name: 'Enemy');
@@ -58,6 +59,7 @@ class SpawnEntity extends SpriteAnimationComponent
     if (game != null) {
       final tank =
           TankEntity(activeSpawn.spawnData.typeOfTank, game!.tilesetManager);
+      tank.currentCell = currentCell;
       tank.data.factions.addAll(activeSpawn.data.factions);
       activeSpawn.spawnBehavior.objectToSpawn = tank;
 

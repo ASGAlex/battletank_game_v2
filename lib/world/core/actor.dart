@@ -69,6 +69,7 @@ class ActorData {
   Vector2 positionCenter = Vector2.zero();
   Vector2 size = Vector2.zero();
   final factions = <Faction>[];
+  double zoom = 4;
 
   final properties = HashMap<String, dynamic>();
 }

@@ -102,7 +102,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   void onCoreStateChanged() {
-    current = data.coreState;
+    super.onCoreStateChanged();
     if (data.coreState == ActorCoreState.wreck) {
       final layer = sgGame.layersManager.addComponent(
         component: this,

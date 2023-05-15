@@ -63,6 +63,7 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
           final newObject = objectToSpawn;
           if (newObject != null) {
             newObject.position.setFrom(spawnData.positionCenter);
+            newObject.currentCell = parent.currentCell;
             (parent as SpawnEntity).rootComponent.add(newObject);
             objectToSpawn = null;
           }

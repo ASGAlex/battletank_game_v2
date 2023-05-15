@@ -30,7 +30,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasGameReference<MyGame> {
   HumanEntity() {
     data = AttackerData();
-    data.speed = 10;
+    data.speed = 20;
+    data.zoom = 4;
     (data as AttackerData)
       ..secondsBetweenFire = 0.2
       ..ammoHealth = 0.001

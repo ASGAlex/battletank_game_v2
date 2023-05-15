@@ -2,6 +2,7 @@ import 'package:flame/effects.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/camera_zoom_effect.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
@@ -65,8 +66,11 @@ class InteractionSetPlayer extends InteractableBehavior {
 
       game.currentPlayer = parent;
       game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
-      Future.delayed(const Duration(seconds: 2)).then((value) =>
-          game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40));
+      Future.delayed(const Duration(seconds: 2)).then((value) {
+        game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
+        game.cameraComponent.viewfinder
+            .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
+      });
     }
     super.doTriggerAction();
   }

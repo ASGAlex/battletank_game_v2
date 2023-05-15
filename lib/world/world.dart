@@ -31,7 +31,7 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-class GameWorld extends World with HasGameRef<MyGame> {
+class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
   final skyLayer = Component(priority: RenderPriority.sky.priority);
   final tankLayer = Component(priority: RenderPriority.player.priority);
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);
@@ -79,21 +79,30 @@ class GameWorld extends World with HasGameRef<MyGame> {
           cellsUnderCursor.add(cell);
           print('State:  + ${cell.state}');
           print('Rect: $rect');
-          final animations =
-              cell.components.whereType<CellStaticAnimationLayer>();
+          print('Out of bounds: ${cell.outOfBoundsCounter}');
+          // final animations =
+          //     cell.components.whereType<CellStaticAnimationLayer>();
           // animations.forEach((element) {
           //   element.compileToSingleLayer(element.children);
           // });
           // print('Components count: ${cell.components.length}');
         }
       });
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
 
     final list = componentsAtPoint(tapPosition).toList(growable: false);
     for (final component in list) {
       if (component is! HasGridSupport) continue;
-      print(component.runtimeType);
+      if (component is CellLayer) {
+        print(component.name);
+      } else {
+        print(component.runtimeType);
+      }
     }
+
+    event.handled = true;
 
     // game.player?.position.setFrom(tapPosition);
     // addTank(
