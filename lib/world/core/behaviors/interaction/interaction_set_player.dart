@@ -65,11 +65,11 @@ class InteractionSetPlayer extends InteractableBehavior {
       removeNpcBehaviors();
 
       game.currentPlayer = parent;
+      game.cameraComponent.viewfinder
+          .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
       game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
       Future.delayed(const Duration(seconds: 2)).then((value) {
         game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
-        game.cameraComponent.viewfinder
-            .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
       });
     }
     super.doTriggerAction();
