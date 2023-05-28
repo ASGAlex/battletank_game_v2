@@ -13,11 +13,13 @@ class AttackBehavior extends CollisionBehavior {
   @override
   FutureOr<void> onLoad() {
     if (parent is SpriteAnimationGroupComponent) {
-      final dyingAnimation = (parent as SpriteAnimationGroupComponent)
-          .animations?[ActorCoreState.dying];
-      if (dyingAnimation != null) {
+      final animatedParent = (parent as SpriteAnimationGroupComponent);
+      final dyingAnimation = animatedParent.animations?[ActorCoreState.dying];
+      final dyingAnimationTicker =
+          animatedParent.animationTickers?[ActorCoreState.dying];
+      if (dyingAnimation != null && dyingAnimationTicker != null) {
         dyingAnimation.loop = false;
-        dyingAnimation.onComplete = () {
+        dyingAnimationTicker.onComplete = () {
           if (_hitTarget) {
             parent.removeFromParent();
           } else {

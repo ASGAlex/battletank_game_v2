@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
-import 'package:tank_game/extensions.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_trail_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
@@ -24,10 +23,10 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
       final topLeft1 = TankStep.topLeftDefault.clone();
       final bottomRight1 = TankStep.bottomRightDefault.clone();
 
-      final topLeft2 =
-          TankStep.topLeftDefault.translate(TankStep.distanceBetweenTracks, 0);
-      final bottomRight2 = TankStep.bottomRightDefault
-          .translate(TankStep.distanceBetweenTracks, 0);
+      final topLeft2 = TankStep.topLeftDefault.clone()
+        ..translate(TankStep.distanceBetweenTracks, 0);
+      final bottomRight2 = TankStep.bottomRightDefault.clone()
+        ..translate(TankStep.distanceBetweenTracks, 0);
 
       switch (possibleDirection) {
         case Direction.up:

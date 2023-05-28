@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:flame/camera.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/experimental.dart';
 
 class CameraZoomEffect extends Effect {
   CameraZoomEffect(this.targetZoom, super.controller);

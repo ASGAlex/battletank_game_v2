@@ -86,7 +86,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
       tilesetManager: game.tilesetManager,
     );
 
-    _renderSprite(animation.getSprite(), key);
+    _renderSprite(animation.ticker().getSprite(), key);
   }
 
   void _renderSprite(Sprite sprite, String key) {

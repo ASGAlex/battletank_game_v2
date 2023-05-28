@@ -4,7 +4,6 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:tank_game/extensions.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
@@ -24,8 +23,9 @@ class SmokeBehavior extends CoreBehavior<ActorMixin> {
         final r = Random();
         final w = parent.size.x.ceil();
         final h = parent.size.y.ceil();
-        final newPos = parent.position.translate(
-            w / 2 - r.nextInt(w).toDouble(), h / 2 - r.nextInt(h).toDouble());
+        final newPos = parent.position.clone()
+          ..translate(
+              w / 2 - r.nextInt(w).toDouble(), h / 2 - r.nextInt(h).toDouble());
         rootComponent.add(ParticleSystemComponent(
             position: newPos,
             particle: AcceleratedParticle(

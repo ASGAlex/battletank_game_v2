@@ -5,6 +5,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/animation/configurable_animation.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
 @immutable
@@ -50,6 +51,8 @@ class AnimationBehavior extends CoreBehavior<ActorMixin>
           SpriteAnimation.spriteList([sprite], stepTime: 10000, loop: true);
     }
 
+    animation = ConfigurableAnimation(animation);
+
     if (config.reversedLoop) {
       final reversed = animation.reversed();
       animation.frames.addAll(reversed.frames);
@@ -64,7 +67,7 @@ class AnimationBehavior extends CoreBehavior<ActorMixin>
     }
 
     if (config.onComplete != null) {
-      animation.onComplete = config.onComplete;
+      (animation as ConfigurableAnimation).onComplete = config.onComplete;
       animation.loop = false;
     }
 

@@ -1,15 +1,13 @@
 import 'dart:io';
 
-import 'package:flame/experimental.dart';
+import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/keyboard.dart';
-import 'package:tank_game/extensions.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
-import 'package:tank_game/packages/tiled_utils/lib/tiled_utils.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
@@ -123,8 +121,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     hudVisibility.x = 2;
     hudVisibility.y = 2;
 
-    hudFlashMessage =
-        FlashMessage(position: hudVisibility.position.translate(100, 0));
+    hudFlashMessage = FlashMessage(
+        position: hudVisibility.position.clone()..translate(100, 0));
 
     consoleMessages.sendMessage('done.');
 
@@ -210,7 +208,6 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   }
 
   void onEndGame() {
-    TileProcessor.clearCache();
     // player?.onRemove();
   }
 }

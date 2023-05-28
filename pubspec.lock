@@ -117,10 +117,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: c38e1be5827aa839c166c6ed08a2733bb4523bf153d8c670739c20c842fa1844
+      sha256: "6954277d14731fa497a7a878bb34cf01c090b20e3ffe5c6e093a7c1f823bfac5"
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.3"
+    version: "1.8.0"
   flame_behaviors:
     dependency: "direct main"
     description:
@@ -149,10 +149,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: "47ec58a4fe668ba5ed97a33ffa0b0038277d6f638d9285276446dc7a048b5e0e"
+      sha256: "592a4ccc166ccb39f97560e528e867290459d5070390436ebffcde95a87c6b18"
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.1"
+    version: "1.10.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -249,10 +249,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_linux
-      sha256: "2ae08f2216225427e64ad224a24354221c2c7907e448e6e0e8b57b1eb9f10ad1"
+      sha256: ffbb8cc9ed2c9ec0e4b7a541e56fd79b138e8f47d2fb86815f15358a349b3b57
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.10"
+    version: "2.1.11"
   path_provider_platform_interface:
     dependency: transitive
     description:
