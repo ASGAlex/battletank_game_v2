@@ -171,8 +171,11 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     }
   }
 
+  bool _initialized = false;
+
   @override
   void onInitializationDone() {
+    if (_initialized) return;
     cameraComponent.viewfinder.zoom = 4;
     cameraComponent.viewfinder.position = map.cameraInitialPosition;
 
@@ -180,6 +183,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     if (!(currentPlayer?.isMounted ?? false)) {
       restorePlayer();
     }
+    _initialized = true;
   }
 
   void restorePlayer() {

@@ -31,7 +31,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   HumanEntity() {
     data = AttackerData();
     data.speed = 20;
-    data.zoom = 4;
+    data.zoom = 5;
     (data as AttackerData)
       ..secondsBetweenFire = 0.2
       ..ammoHealth = 0.001
@@ -55,6 +55,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           tileset: 'tank', tileType: 'human_wreck', loop: true),
     }));
     current = ActorCoreState.idle;
+    autoResize = false;
+    scale = Vector2.all(0.5);
 
     add(MovementForwardCollisionBehavior(
       hitboxRelativePosition: Vector2(0, 0),

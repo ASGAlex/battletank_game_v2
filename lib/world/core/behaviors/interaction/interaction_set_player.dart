@@ -19,60 +19,73 @@ class InteractionSetPlayer extends InteractableBehavior {
 
   final bool removeAfterSet;
   ActorMixin? prevPlayerEntity;
+  var _actionInProgress = false;
+  var paused = false;
 
   @override
   void doTriggerAction() {
+    if (_actionInProgress || paused) {
+      return;
+    }
+    print('Trigger!!!');
+    _actionInProgress = true;
     final currentPlayerEntity = game.currentPlayer;
     if (currentPlayerEntity != null) {
-      final playerControlled =
-          currentPlayerEntity.findBehavior<PlayerControlledBehavior>();
-      playerControlled.removeFromParent();
-      currentPlayerEntity.coreState = ActorCoreState.idle;
-      if (removeAfterSet) {
-        final effect = OpacityEffect.to(
-          0.01,
-          EffectController(duration: 0.75),
-        );
-        currentPlayerEntity.add(effect);
-        effect.onComplete = currentPlayerEntity.removeFromParent;
-        try {
-          final shadow = currentPlayerEntity.findBehavior<ShadowBehavior>();
-          shadow.removeFromParent();
-        } catch (_) {}
-      } else {
-        prevPlayerEntity = currentPlayerEntity;
-      }
+      try {
+        final playerControlled =
+            currentPlayerEntity.findBehavior<PlayerControlledBehavior>();
+        playerControlled.removeFromParent();
+        paused = true;
+        currentPlayerEntity.coreState = ActorCoreState.idle;
+        if (removeAfterSet) {
+          final effect = OpacityEffect.to(
+            0.01,
+            EffectController(duration: 0.75),
+          );
+          currentPlayerEntity.add(effect);
+          effect.onComplete = currentPlayerEntity.removeFromParent;
+          try {
+            final shadow = currentPlayerEntity.findBehavior<ShadowBehavior>();
+            shadow.removeFromParent();
+          } catch (_) {}
+        } else {
+          prevPlayerEntity = currentPlayerEntity;
+        }
 
-      parent.coreState = ActorCoreState.idle;
-      parent.add(PlayerControlledBehavior());
-      parent.data.factions.clear();
-      parent.data.factions.addAll(currentPlayerEntity.data.factions);
-      if (!parent.hasBehavior<TriggerSpawnBehavior>()) {
-        parent.add(TriggerSpawnBehavior());
-      }
-      if (!parent.hasBehavior<DetectableBehavior>()) {
-        parent.add(DetectableBehavior(detectionType: DetectionType.visual));
-        parent.add(DetectableBehavior(detectionType: DetectionType.audial));
-      }
-      if (!parent.hasBehavior<HideInTreesBehavior>()) {
-        parent.add(HideInTreesBehavior());
-      }
-      if (!parent.hasBehavior<InteractionPlayerOut>()) {
-        parent.add(InteractionPlayerOut());
-      }
-      parent.data.health = 1000000;
+        parent.coreState = ActorCoreState.idle;
+        parent.add(PlayerControlledBehavior());
+        parent.data.factions.clear();
+        parent.data.factions.addAll(currentPlayerEntity.data.factions);
+        if (!parent.hasBehavior<TriggerSpawnBehavior>()) {
+          parent.add(TriggerSpawnBehavior());
+        }
+        if (!parent.hasBehavior<DetectableBehavior>()) {
+          parent.add(DetectableBehavior(detectionType: DetectionType.visual));
+          parent.add(DetectableBehavior(detectionType: DetectionType.audial));
+        }
+        if (!parent.hasBehavior<HideInTreesBehavior>()) {
+          parent.add(HideInTreesBehavior());
+        }
+        if (!parent.hasBehavior<InteractionPlayerOut>()) {
+          parent.add(InteractionPlayerOut());
+        }
+        parent.data.health = 1000000;
 
-      removeNpcBehaviors();
+        removeNpcBehaviors();
 
-      game.currentPlayer = parent;
-      game.cameraComponent.viewfinder
-          .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
-      game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
-      Future.delayed(const Duration(seconds: 2)).then((value) {
-        game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
-      });
+        game.currentPlayer = parent;
+        game.cameraComponent.viewfinder
+            .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
+        game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
+        Future.delayed(const Duration(seconds: 2)).then((value) {
+          game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
+        });
+      } catch (error) {
+        print(error);
+      }
     }
     super.doTriggerAction();
+    _actionInProgress = false;
   }
 
   void removeNpcBehaviors() {

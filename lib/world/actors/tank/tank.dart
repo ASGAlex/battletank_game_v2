@@ -154,31 +154,33 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     // if enemy
     if (!data.factions.contains(Faction(name: 'Player'))) {
       add(ColorFilterBehavior());
-      add(createRandomMovement());
-      add(DetectorBehavior(
-          distance: 2000,
-          detectionType: DetectionType.audial,
-          factionsToDetect: [Faction(name: 'Player')],
-          maxMomentum: 120,
-          onDetection: (player, x, y) {
-            final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
-            if (!forceIdle) {
-              coreState = ActorCoreState.move;
-            }
-          }));
+      if (data.factions.contains(Faction(name: 'Enemy'))) {
+        add(createRandomMovement());
+        add(DetectorBehavior(
+            distance: 2000,
+            detectionType: DetectionType.audial,
+            factionsToDetect: [Faction(name: 'Player')],
+            maxMomentum: 120,
+            onDetection: (player, x, y) {
+              final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
+              if (!forceIdle) {
+                coreState = ActorCoreState.move;
+              }
+            }));
 
-      add(DetectorBehavior(
-          distance: 800,
-          detectionType: DetectionType.visual,
-          factionsToDetect: [Faction(name: 'Player')],
-          maxMomentum: 0,
-          onDetection: _trackDetectedTarget,
-          onNothingDetected: () {
-            if (_targetedMovementBehavior != null) {
-              _targetedMovementBehavior?.removeFromParent();
-              _targetedMovementBehavior = null;
-            }
-          }));
+        add(DetectorBehavior(
+            distance: 800,
+            detectionType: DetectionType.visual,
+            factionsToDetect: [Faction(name: 'Player')],
+            maxMomentum: 0,
+            onDetection: _trackDetectedTarget,
+            onNothingDetected: () {
+              if (_targetedMovementBehavior != null) {
+                _targetedMovementBehavior?.removeFromParent();
+                _targetedMovementBehavior = null;
+              }
+            }));
+      }
     } else {
       add(DetectableBehavior(detectionType: DetectionType.audial));
       add(DetectableBehavior(detectionType: DetectionType.visual));

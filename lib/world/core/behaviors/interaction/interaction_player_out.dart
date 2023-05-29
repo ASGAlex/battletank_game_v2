@@ -19,11 +19,19 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
 
   Function? action;
   final bool createHuman;
+  var _actionInProgress = false;
+  var paused = false;
 
   @override
   FutureOr<void> onLoad() {
     listenProvider(game.inputEventsHandler.messageProvider);
     return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    dispose();
+    super.onRemove();
   }
 
   @override
@@ -34,8 +42,17 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   }
 
   void doTriggerAction() {
+    if (_actionInProgress || paused) {
+      return;
+    }
+    _actionInProgress = true;
+    print('Trigger!!!');
+
     try {
       ActorMixin? restoredEntity;
+      final interactionSetPlayer = parent.findBehavior<InteractionSetPlayer>();
+      interactionSetPlayer.paused = false;
+      paused = true;
       if (createHuman) {
         restoredEntity = HumanEntity()..isInteractionEnabled = true;
         restoredEntity.position
@@ -43,8 +60,6 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
         restoredEntity.data.factions.addAll(parent.data.factions);
         parent.parent?.add(restoredEntity);
       } else {
-        final interactionSetPlayer =
-            parent.findBehavior<InteractionSetPlayer>();
         restoredEntity = interactionSetPlayer.prevPlayerEntity;
       }
       if (restoredEntity != null) {
@@ -64,6 +79,9 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
       }
       action?.call();
       removeFromParent();
-    } catch (_) {}
+    } catch (error) {
+      print(error);
+    }
+    _actionInProgress = false;
   }
 }

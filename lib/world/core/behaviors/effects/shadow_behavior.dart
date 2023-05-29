@@ -118,6 +118,7 @@ class ShadowPictureComponent extends PositionComponent
     targetEntity = shadowBehavior.parent;
     anchor = targetEntity.anchor;
     currentCell = targetEntity.currentCell;
+    scale = targetEntity.scale;
     _updateTransform();
   }
 

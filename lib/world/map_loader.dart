@@ -13,6 +13,8 @@ import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
 
+import 'core/faction.dart';
+
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
     this.fileName = fileName;
@@ -37,6 +39,7 @@ class GameMapLoader extends TiledMapLoader {
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
         'spawn_player': onBuildSpawn,
+        'spawn_test': onBuildSpawnTest,
         'target': onBuildTarget,
       };
 
@@ -243,6 +246,25 @@ class GameMapLoader extends TiledMapLoader {
       context: context,
       game: game,
     );
+
+    game.world.addSpawn(newSpawn);
+    SpawnManager().add(newSpawn);
+  }
+
+  Future onBuildSpawnTest(CellBuilderContext context) async {
+    final newSpawn = SpawnEntity.fromContext(
+      rootComponent: game.world.tankLayer,
+      context: context,
+      game: game,
+    );
+
+    final faction = Faction(name: 'Neutral');
+    newSpawn.boundingBox.isDistanceCallbackEnabled = true;
+    newSpawn.spawnData.triggerCallback = newSpawn.spawnCallback;
+    newSpawn.spawnData.factions.clear();
+    newSpawn.spawnData.factions.add(faction);
+    newSpawn.spawnData.allowedFactions.clear();
+    newSpawn.spawnData.allowedFactions.add(faction);
 
     game.world.addSpawn(newSpawn);
     SpawnManager().add(newSpawn);
