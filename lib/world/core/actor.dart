@@ -64,6 +64,7 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
 class ActorData {
   double health = 1;
   double speed = 0;
+  double cameraSpeed = 40;
   Direction lookDirection = Direction.up;
   ActorCoreState coreState = ActorCoreState.init;
   Vector2 positionCenter = Vector2.zero();

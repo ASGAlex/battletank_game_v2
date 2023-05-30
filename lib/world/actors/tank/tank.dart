@@ -72,6 +72,10 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         case 'zoom':
           attackerData.zoom = double.parse(property.value.toString());
           break;
+
+        case 'cameraSpeed':
+          attackerData.speed = double.parse(property.value.toString());
+          break;
       }
     }
 
@@ -85,6 +89,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       ..secondsBetweenFire = 1
       ..ammoHealth = 1
       ..ammoRange = 200;
+    boundingBox.debugMode = true;
   }
 
   final String _tileType;
@@ -113,8 +118,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     current = ActorCoreState.idle;
 
     add(MovementForwardCollisionBehavior(
-      hitboxRelativePosition: Vector2(1, -2),
-      hitboxSize: Vector2(12, 2),
+      hitboxRelativePosition: Vector2(0, -2),
+      hitboxSize: Vector2(14, 2),
       typeCheck: (other) {
         if (other.parent is SpawnEntity ||
                 other.parent is BulletEntity ||

@@ -58,8 +58,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     autoResize = false;
     scale = Vector2.all(0.5);
 
-    add(MovementForwardCollisionBehavior(
-      hitboxRelativePosition: Vector2(0, 0),
+    final movementForward = MovementForwardCollisionBehavior(
+      hitboxRelativePosition: Vector2(0, -2),
       hitboxSize: Vector2(14, 2),
       typeCheck: (other) {
         if (other.parent is SpawnEntity ||
@@ -74,7 +74,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         }
         return true;
       },
-    ));
+    );
+    add(movementForward);
     add(HumanStepTrailBehavior());
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,

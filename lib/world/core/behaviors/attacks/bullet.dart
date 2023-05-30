@@ -98,6 +98,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }
 
     super.onLoad();
+    boundingBox.broadphaseCheckOnlyByType = false;
   }
 
   @override

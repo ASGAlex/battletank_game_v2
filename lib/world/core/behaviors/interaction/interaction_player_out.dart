@@ -46,7 +46,6 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
       return;
     }
     _actionInProgress = true;
-    print('Trigger!!!');
 
     try {
       ActorMixin? restoredEntity;
@@ -70,11 +69,12 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
 
         game.currentPlayer = restoredEntity;
 
-        game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
+        game.cameraComponent.follow(restoredEntity, maxSpeed: 7);
         game.cameraComponent.viewfinder.add(CameraZoomEffect(
-            game.currentPlayer!.data.zoom, LinearEffectController(2)));
+            restoredEntity.data.zoom, LinearEffectController(2)));
         Future.delayed(const Duration(seconds: 2)).then((value) {
-          game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
+          game.cameraComponent.follow(restoredEntity!,
+              maxSpeed: restoredEntity.data.cameraSpeed);
         });
       }
       action?.call();

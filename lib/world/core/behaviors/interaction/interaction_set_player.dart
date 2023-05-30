@@ -27,7 +27,6 @@ class InteractionSetPlayer extends InteractableBehavior {
     if (_actionInProgress || paused) {
       return;
     }
-    print('Trigger!!!');
     _actionInProgress = true;
     final currentPlayerEntity = game.currentPlayer;
     if (currentPlayerEntity != null) {

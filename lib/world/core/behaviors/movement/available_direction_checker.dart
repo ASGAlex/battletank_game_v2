@@ -111,7 +111,7 @@ class MovementSideHitbox extends BoundingHitbox {
         break;
     }
     super.onLoad();
-
+    broadphaseCheckOnlyByType = false;
     return null;
   }
 

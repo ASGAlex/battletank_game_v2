@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -49,6 +50,7 @@ class MovementHitbox extends BoundingHitbox {
     required this.typeCheck,
   }) {
     collisionType = CollisionType.active;
+    // debugMode = true;
   }
 
   bool get isMovementBlocked => activeCollisions.isNotEmpty;
@@ -56,6 +58,12 @@ class MovementHitbox extends BoundingHitbox {
   bool get isMovementAllowed => activeCollisions.isEmpty;
 
   bool Function(PositionComponent) typeCheck;
+
+  @override
+  FutureOr<void> onLoad() {
+    broadphaseCheckOnlyByType = false;
+    return super.onLoad();
+  }
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
@@ -68,5 +76,15 @@ class MovementHitbox extends BoundingHitbox {
     }
 
     return checkResult;
+  }
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    canvas.drawRect(
+      Rect.fromLTWH(position.x, position.y, size.x, size.y),
+      Paint()
+        ..color = const Color.fromRGBO(119, 0, 255, 1.0)
+        ..style = PaintingStyle.stroke,
+    );
   }
 }
