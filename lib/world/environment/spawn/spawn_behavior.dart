@@ -39,8 +39,15 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
     super.onRemove();
   }
 
+  bool _spawnOnNextTick = false;
+
   @override
   void update(double dt) {
+    if (_spawnOnNextTick) {
+      _doSpawnOnNextTick();
+      return;
+    }
+
     switch (spawnData.state) {
       case SpawnState.idle:
         if (parent is VisibilityMixin) {
@@ -57,17 +64,7 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
             (parent as CollisionCallbacks).isColliding) {
           break;
         }
-        if (spawnData.secondsDuringSpawn <= spawnData.timeoutSecondsElapsed) {
-          spawnData.timeoutSecondsElapsed = 0;
-          spawnData.state = SpawnState.timeout;
-          final newObject = objectToSpawn;
-          if (newObject != null) {
-            newObject.position.setFrom(spawnData.positionCenter);
-            newObject.currentCell = parent.currentCell;
-            (parent as SpawnEntity).rootComponent.add(newObject);
-            objectToSpawn = null;
-          }
-        }
+        _spawnOnNextTick = true;
         break;
       case SpawnState.timeout:
         if (parent is VisibilityMixin) {
@@ -79,6 +76,25 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
           spawnData.state = SpawnState.idle;
         }
         break;
+    }
+  }
+
+  void _doSpawnOnNextTick() {
+    _spawnOnNextTick = false;
+    if (parent is CollisionCallbacks &&
+        (parent as CollisionCallbacks).isColliding) {
+      return;
+    }
+    if (spawnData.secondsDuringSpawn <= spawnData.timeoutSecondsElapsed) {
+      spawnData.timeoutSecondsElapsed = 0;
+      spawnData.state = SpawnState.timeout;
+      final newObject = objectToSpawn;
+      if (newObject != null) {
+        newObject.position.setFrom(spawnData.positionCenter);
+        newObject.currentCell = parent.currentCell;
+        (parent as SpawnEntity).rootComponent.add(newObject);
+        objectToSpawn = null;
+      }
     }
   }
 
