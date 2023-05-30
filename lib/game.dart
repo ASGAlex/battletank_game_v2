@@ -93,7 +93,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
         initialPositionChecker: (layer, object, mapOffset, worldName) {
           if (object.name == 'spawn_player') {
-            return mapOffset + Vector2(object.x, object.y);
+            return cameraComponent.viewfinder.position =
+                mapOffset + Vector2(object.x, object.y);
           }
         },
         // suspendedCellLifetime: const Duration(seconds: 120),
@@ -176,8 +177,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   @override
   void onInitializationDone() {
     if (_initialized) return;
-    cameraComponent.viewfinder.zoom = 4;
-    cameraComponent.viewfinder.position = map.cameraInitialPosition;
+    cameraComponent.viewfinder.zoom = 5;
 
     onAfterZoom();
     if (!(currentPlayer?.isMounted ?? false)) {
@@ -192,7 +192,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
         ..add(PlayerControlledBehavior())
-        ..position = map.cameraInitialPosition
+        ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 
       cameraComponent.follow(currentPlayer!);

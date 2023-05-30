@@ -80,6 +80,11 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
           print('State:  + ${cell.state}');
           print('Rect: $rect');
           print('Out of bounds: ${cell.outOfBoundsCounter}');
+
+          final l = (game)
+              .layersManager
+              .getLayer(name: 'static-ground-procedural', cell: cell);
+          print(l);
           // final animations =
           //     cell.components.whereType<CellStaticAnimationLayer>();
           // animations.forEach((element) {

@@ -20,8 +20,6 @@ class GameMapLoader extends TiledMapLoader {
     this.fileName = fileName;
   }
 
-  Vector2 cameraInitialPosition = Vector2.zero();
-
   @override
   TileBuilderFunction? get cellPostBuilder => null;
 
@@ -44,9 +42,8 @@ class GameMapLoader extends TiledMapLoader {
       };
 
   @override
-  Map<String, TileBuilderFunction>? get globalObjectBuilder => {
-        'spawn_player': onSetupInitialPosition,
-      };
+  // TODO: implement globalObjectBuilder
+  Map<String, TileBuilderFunction>? get globalObjectBuilder => null;
 
   @override
   MyGame get game => super.game as MyGame;
@@ -76,7 +73,7 @@ class GameMapLoader extends TiledMapLoader {
     final grass = game.tilesetManager.getTile('ground', 'grass');
     final sand = game.tilesetManager.getTile('ground', 'sand');
     if (grass == null || sand == null) {
-      return;
+      throw 'Background tiles not found!';
     }
     var filled = false;
     var filledWidth = 0.0;
@@ -91,7 +88,7 @@ class GameMapLoader extends TiledMapLoader {
       }
       final sprite = tile.sprite;
       if (sprite == null) {
-        continue;
+        throw 'Background sprites not found!';
       }
 
       final component = TileComponent(tile);
@@ -268,10 +265,6 @@ class GameMapLoader extends TiledMapLoader {
 
     game.world.addSpawn(newSpawn);
     SpawnManager().add(newSpawn);
-  }
-
-  Future onSetupInitialPosition(CellBuilderContext context) async {
-    cameraInitialPosition.setFrom(context.absolutePosition);
   }
 
   Future onBuildTarget(CellBuilderContext context) async {
