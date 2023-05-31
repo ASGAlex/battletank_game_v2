@@ -134,10 +134,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "93e43b2394488c878087d5659d918d2875f6b3a9"
+      resolved-ref: "5db33c65af322e39c877447a69ab7509183df6a2"
       url: "https://github.com/ASGAlex/flame_message_stream.git"
     source: git
-    version: "0.0.1+1"
+    version: "0.0.1+2"
   flame_spatial_grid:
     dependency: "direct main"
     description:

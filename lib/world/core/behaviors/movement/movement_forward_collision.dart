@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 
 class MovementForwardCollisionBehavior extends MovementBehavior {
@@ -61,21 +62,27 @@ class MovementHitbox extends BoundingHitbox {
 
   @override
   FutureOr<void> onLoad() {
-    broadphaseCheckOnlyByType = false;
+    isSolid = true;
     return super.onLoad();
   }
 
   @override
-  bool onComponentTypeCheck(PositionComponent other) {
-    if (other is MovementHitbox) {
+  bool onComponentPureTypeCheck(PositionComponent other) {
+    if (other is MovementHitbox || other is MovementSideHitbox) {
       return false;
     }
-    final checkResult = typeCheck(other);
-    if (checkResult) {
-      return super.onComponentTypeCheck(other);
-    }
+    return true;
+  }
 
-    return checkResult;
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other is BodyHitbox) {
+      return true;
+    }
+    if (other is BoundingHitbox && other.hitboxParent is ActorWithBody) {
+      return false;
+    }
+    return typeCheck(other);
   }
 
   @override

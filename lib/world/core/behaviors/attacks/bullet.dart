@@ -98,7 +98,6 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }
 
     super.onLoad();
-    boundingBox.broadphaseCheckOnlyByType = false;
   }
 
   @override
@@ -118,11 +117,15 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   @override
-  bool onComponentTypeCheck(PositionComponent other) {
+  bool onComponentPureTypeCheck(PositionComponent other) {
     if (other is SpawnEntity || other == owner) {
       return false;
     }
+    return true;
+  }
 
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
     if (other is ActorMixin) {
       final otherFactions = other.data.factions;
       final myFactions = data.factions;
@@ -130,7 +133,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         if (myFactions.contains(faction)) return false;
       }
     }
-    return super.onComponentTypeCheck(other);
+    return true;
   }
 
   @override

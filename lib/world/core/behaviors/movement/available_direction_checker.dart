@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -70,7 +71,9 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
 
 class MovementSideHitbox extends BoundingHitbox {
   MovementSideHitbox({required this.direction})
-      : super(position: Vector2(0, 0));
+      : super(position: Vector2(0, 0)) {
+    anchor = Anchor.topLeft;
+  }
 
   final Direction direction;
 
@@ -94,36 +97,52 @@ class MovementSideHitbox extends BoundingHitbox {
     final width = parentSize.x / 2;
     switch (direction) {
       case Direction.left:
-        position = Vector2(-width, 2);
-        size = Vector2(width, parentSize.y - 3);
+        position = Vector2(-width, 0);
+        size = Vector2(width, parentSize.y);
         break;
       case Direction.right:
-        position = Vector2(parentSize.x, 2);
-        size = Vector2(width, parentSize.y - 3);
+        position = Vector2(parentSize.x, 0);
+        size = Vector2(width, parentSize.y);
         break;
       case Direction.up:
         position = Vector2(2, -width);
         size = Vector2(parentSize.x - 3, width);
         break;
       case Direction.down:
-        position = Vector2(2, parentSize.y);
-        size = Vector2(parentSize.x - 3, width);
+        position = Vector2(0, parentSize.y);
+        size = Vector2(parentSize.x, width);
         break;
     }
     super.onLoad();
-    broadphaseCheckOnlyByType = false;
+    // debugMode = true;
     return null;
   }
 
   @override
+  bool onComponentPureTypeCheck(PositionComponent other) {
+    if (other is MovementHitbox || other is MovementSideHitbox) {
+      return false;
+    }
+    return true;
+  }
+
+  @override
   bool onComponentTypeCheck(PositionComponent other) {
-    if (other is MovementHitbox ||
-        other is MovementSideHitbox ||
-        other.parent is SpawnEntity ||
+    if (other.parent is SpawnEntity ||
         other.parent is BulletEntity ||
         other.parent is TreeEntity) {
       return false;
     }
-    return super.onComponentTypeCheck(other);
+    return true;
+  }
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      Paint()
+        ..color = const Color.fromRGBO(188, 174, 238, 1.0)
+        ..style = PaintingStyle.fill,
+    );
   }
 }

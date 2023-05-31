@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
@@ -10,6 +12,17 @@ import 'package:tank_game/world/core/faction.dart';
 enum ActorCoreState { init, idle, move, dying, wreck, removing }
 
 typedef DistanceFunction = void Function(Component, double, double);
+
+mixin ActorWithBody on ActorMixin {
+  final bodyHitbox = BodyHitbox();
+
+  @override
+  FutureOr<void> onLoad() {
+    super.onLoad();
+    bodyHitbox.size.setFrom(size);
+    add(bodyHitbox);
+  }
+}
 
 mixin ActorMixin on HasGridSupport implements EntityMixin {
   ActorData data = ActorData();
@@ -73,4 +86,33 @@ class ActorData {
   double zoom = 4;
 
   final properties = HashMap<String, dynamic>();
+}
+
+class BodyHitbox extends BoundingHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    collisionType = defaultCollisionType = CollisionType.active;
+    // debugMode = true;
+    return super.onLoad();
+  }
+
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other is BoundingHitbox &&
+        other.hitboxParent is ActorWithBody &&
+        (other.hitboxParent as ActorWithBody).boundingBox == other) {
+      return false;
+    }
+    return super.onComponentTypeCheck(other);
+  }
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.x, size.y),
+      Paint()
+        ..color = const Color.fromRGBO(255, 0, 0, 0.8)
+        ..style = PaintingStyle.fill,
+    );
+  }
 }

@@ -36,6 +36,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasGridSupport,
         HasTrailSupport,
         ActorMixin,
+        ActorWithBody,
         AnimationGroupCoreStateListenerMixin,
         MovementFactoryMixin,
         HasGameReference<MyGame> {
@@ -192,6 +193,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(HideInTreesBehavior());
     }
     boundingBox.collisionType = CollisionType.active;
+    boundingBox.isSolid = true;
   }
 
   TargetedMovementBehavior? _targetedMovementBehavior;

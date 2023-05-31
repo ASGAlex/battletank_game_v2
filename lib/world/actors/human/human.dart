@@ -25,6 +25,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasGridSupport,
         HasTrailSupport,
         ActorMixin,
+        ActorWithBody,
         Interactor,
         AnimationGroupCoreStateListenerMixin,
         HasGameReference<MyGame> {

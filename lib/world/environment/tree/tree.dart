@@ -23,10 +23,15 @@ class TreeEntity extends SpriteComponent
   }
 
   @override
-  bool onComponentTypeCheck(PositionComponent other) {
+  bool onComponentPureTypeCheck(PositionComponent other) {
     if (other is BulletEntity) {
       return false;
     }
+    return true;
+  }
+
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
     if (!(other as ActorMixin).hasBehavior<HideInTreesBehavior>()) {
       return false;
     }
@@ -60,6 +65,5 @@ class TreeEntity extends SpriteComponent
   FutureOr<void> onLoad() {
     add(ShadowBehavior(shadowKey: 'tree'));
     super.onLoad();
-    boundingBox.broadphaseCheckOnlyByType = false;
   }
 }
