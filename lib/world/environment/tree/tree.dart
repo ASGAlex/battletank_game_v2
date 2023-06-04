@@ -23,7 +23,7 @@ class TreeEntity extends SpriteComponent
   }
 
   @override
-  bool onComponentPureTypeCheck(PositionComponent other) {
+  bool pureTypeCheck(PositionComponent other) {
     if (other is BulletEntity) {
       return false;
     }
@@ -53,10 +53,12 @@ class TreeEntity extends SpriteComponent
   @override
   void onCollisionEnd(PositionComponent other) {
     if (other is ActorMixin) {
-      final hideBehavior = other.findBehavior<HideInTreesBehavior>();
-      if (hideBehavior.collisionsWithTrees > 0) {
-        hideBehavior.collisionsWithTrees--;
-      }
+      try {
+        final hideBehavior = other.findBehavior<HideInTreesBehavior>();
+        if (hideBehavior.collisionsWithTrees > 0) {
+          hideBehavior.collisionsWithTrees--;
+        }
+      } catch (_) {}
     }
     super.onCollisionEnd(other);
   }

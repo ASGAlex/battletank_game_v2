@@ -7,6 +7,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
+import 'package:tank_game/world/environment/tree/tree.dart';
 
 class MovementForwardCollisionBehavior extends MovementBehavior {
   MovementForwardCollisionBehavior({
@@ -67,8 +68,10 @@ class MovementHitbox extends BoundingHitbox {
   }
 
   @override
-  bool onComponentPureTypeCheck(PositionComponent other) {
-    if (other is MovementHitbox || other is MovementSideHitbox) {
+  bool pureTypeCheck(Type other) {
+    if (other == MovementHitbox ||
+        other == MovementSideHitbox ||
+        other == TreeEntity) {
       return false;
     }
     return true;

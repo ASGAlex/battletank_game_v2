@@ -117,7 +117,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   @override
-  bool onComponentPureTypeCheck(PositionComponent other) {
+  bool pureTypeCheck(PositionComponent other) {
     if (other is SpawnEntity || other == owner) {
       return false;
     }

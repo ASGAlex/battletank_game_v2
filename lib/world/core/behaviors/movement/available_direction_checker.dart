@@ -119,8 +119,8 @@ class MovementSideHitbox extends BoundingHitbox {
   }
 
   @override
-  bool onComponentPureTypeCheck(PositionComponent other) {
-    if (other is MovementHitbox || other is MovementSideHitbox) {
+  bool pureTypeCheck(Type other) {
+    if (other == MovementHitbox || other == MovementSideHitbox) {
       return false;
     }
     return true;
