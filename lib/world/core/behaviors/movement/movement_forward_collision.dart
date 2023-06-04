@@ -5,20 +5,20 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
+import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 
 class MovementForwardCollisionBehavior extends MovementBehavior {
   MovementForwardCollisionBehavior({
     required Vector2 hitboxRelativePosition,
     required Vector2 hitboxSize,
-    required bool Function(PositionComponent) typeCheck,
   }) {
     movementHitbox = MovementHitbox(
       position: hitboxRelativePosition,
       size: hitboxSize,
-      typeCheck: typeCheck,
     );
   }
 
@@ -49,7 +49,6 @@ class MovementHitbox extends BoundingHitbox {
   MovementHitbox({
     required super.position,
     required super.size,
-    required this.typeCheck,
   }) {
     collisionType = CollisionType.active;
     // debugMode = true;
@@ -58,8 +57,6 @@ class MovementHitbox extends BoundingHitbox {
   bool get isMovementBlocked => activeCollisions.isNotEmpty;
 
   bool get isMovementAllowed => activeCollisions.isEmpty;
-
-  bool Function(PositionComponent) typeCheck;
 
   @override
   FutureOr<void> onLoad() {
@@ -71,7 +68,9 @@ class MovementHitbox extends BoundingHitbox {
   bool pureTypeCheck(Type other) {
     if (other == MovementHitbox ||
         other == MovementSideHitbox ||
-        other == TreeEntity) {
+        other == TreeEntity ||
+        other == SpawnEntity ||
+        other == BulletEntity) {
       return false;
     }
     return true;
@@ -85,7 +84,7 @@ class MovementHitbox extends BoundingHitbox {
     if (other is BoundingHitbox && other.hitboxParent is ActorWithBody) {
       return false;
     }
-    return typeCheck(other);
+    return true;
   }
 
   @override

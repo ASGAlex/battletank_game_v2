@@ -15,8 +15,6 @@ import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
-import 'package:tank_game/world/environment/tree/tree.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -62,19 +60,6 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     final movementForward = MovementForwardCollisionBehavior(
       hitboxRelativePosition: Vector2(0, -2),
       hitboxSize: Vector2(14, 2),
-      typeCheck: (other) {
-        if (other.parent is SpawnEntity ||
-                other.parent is BulletEntity ||
-                other.parent is TreeEntity
-            // other is MovementSideHitbox ||
-            // other.parent is Spawn ||
-            // other.parent is Bullet ||
-            // other.parent is Tree) {
-            ) {
-          return false;
-        }
-        return true;
-      },
     );
     add(movementForward);
     add(HumanStepTrailBehavior());

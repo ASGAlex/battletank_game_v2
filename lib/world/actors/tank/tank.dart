@@ -25,9 +25,7 @@ import 'package:tank_game/world/core/behaviors/movement/movement_forward_collisi
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
-import 'package:tank_game/world/environment/tree/tree.dart';
 
 class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -121,19 +119,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(MovementForwardCollisionBehavior(
       hitboxRelativePosition: Vector2(0, -2),
       hitboxSize: Vector2(14, 2),
-      typeCheck: (other) {
-        if (other.parent is SpawnEntity ||
-                other.parent is BulletEntity ||
-                other.parent is TreeEntity
-            // other is MovementSideHitbox ||
-            // other.parent is Spawn ||
-            // other.parent is Bullet ||
-            // other.parent is Tree) {
-            ) {
-          return false;
-        }
-        return true;
-      },
     ));
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,
