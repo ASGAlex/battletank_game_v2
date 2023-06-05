@@ -34,7 +34,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasGridSupport,
         HasTrailSupport,
         ActorMixin,
-        ActorWithBody,
+        ActorWithSeparateBody,
         AnimationGroupCoreStateListenerMixin,
         MovementFactoryMixin,
         HasGameReference<MyGame> {

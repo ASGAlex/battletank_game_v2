@@ -15,7 +15,6 @@ import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
 class BulletData extends ActorData {
   /// -1 means infinity
@@ -117,15 +116,10 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   @override
-  bool pureTypeCheck(PositionComponent other) {
-    if (other is SpawnEntity || other == owner) {
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other == owner) {
       return false;
     }
-    return true;
-  }
-
-  @override
-  bool onComponentTypeCheck(PositionComponent other) {
     if (other is ActorMixin) {
       final otherFactions = other.data.factions;
       final myFactions = data.factions;

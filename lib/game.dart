@@ -14,10 +14,14 @@ import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
+import 'package:tank_game/world/environment/tree/tree.dart';
+import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -213,5 +217,18 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   void onEndGame() {
     // player?.onRemove();
+  }
+
+  @override
+  bool pureTypeCheck(Type activeItemType, Type potentialItemType) {
+    if (activeItemType == BulletEntity) {
+      if (potentialItemType == WaterEntity ||
+          potentialItemType == TreeEntity ||
+          potentialItemType == SpawnEntity) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }

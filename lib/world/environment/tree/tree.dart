@@ -6,7 +6,6 @@ import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 import 'package:tank_game/world/world.dart';
@@ -20,14 +19,6 @@ class TreeEntity extends SpriteComponent
     boundingBox.isSolid = true;
     paint.filterQuality = FilterQuality.none;
     paint.isAntiAlias = false;
-  }
-
-  @override
-  bool pureTypeCheck(PositionComponent other) {
-    if (other is BulletEntity) {
-      return false;
-    }
-    return true;
   }
 
   @override

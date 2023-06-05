@@ -5,8 +5,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
-import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
@@ -66,22 +64,9 @@ class MovementHitbox extends BoundingHitbox {
 
   @override
   bool pureTypeCheck(Type other) {
-    if (other == MovementHitbox ||
-        other == MovementSideHitbox ||
+    if (other == SpawnEntity ||
         other == TreeEntity ||
-        other == SpawnEntity ||
-        other == BulletEntity) {
-      return false;
-    }
-    return true;
-  }
-
-  @override
-  bool onComponentTypeCheck(PositionComponent other) {
-    if (other is BodyHitbox) {
-      return true;
-    }
-    if (other is BoundingHitbox && other.hitboxParent is ActorWithBody) {
+        other == BoundingHitbox) {
       return false;
     }
     return true;

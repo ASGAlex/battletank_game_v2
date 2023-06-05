@@ -17,6 +17,7 @@ class BrickEntity extends SpriteComponent
         EntityMixin,
         HasGridSupport,
         ActorMixin,
+        ActorWithBoundingBody,
         UpdateOnDemand {
   BrickEntity({
     required super.sprite,

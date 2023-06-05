@@ -13,7 +13,7 @@ enum ActorCoreState { init, idle, move, dying, wreck, removing }
 
 typedef DistanceFunction = void Function(Component, double, double);
 
-mixin ActorWithBody on ActorMixin {
+mixin ActorWithSeparateBody on ActorMixin {
   final bodyHitbox = BodyHitbox();
 
   @override
@@ -22,6 +22,12 @@ mixin ActorWithBody on ActorMixin {
     bodyHitbox.size.setFrom(size);
     add(bodyHitbox);
   }
+}
+
+mixin ActorWithBoundingBody on ActorMixin {
+  @override
+  BoundingHitboxFactory get boundingHitboxFactory =>
+      (parent) => BodyHitbox(parentWithGridSupport: parent);
 }
 
 mixin ActorMixin on HasGridSupport implements EntityMixin {
@@ -89,21 +95,18 @@ class ActorData {
 }
 
 class BodyHitbox extends BoundingHitbox {
+  BodyHitbox({
+    super.size,
+    super.position,
+    super.collisionType,
+    super.parentWithGridSupport,
+  });
+
   @override
   FutureOr<void> onLoad() {
     collisionType = defaultCollisionType = CollisionType.active;
     // debugMode = true;
     return super.onLoad();
-  }
-
-  @override
-  bool onComponentTypeCheck(PositionComponent other) {
-    if (other is BoundingHitbox &&
-        other.hitboxParent is ActorWithBody &&
-        (other.hitboxParent as ActorWithBody).boundingBox == other) {
-      return false;
-    }
-    return super.onComponentTypeCheck(other);
   }
 
   @override
