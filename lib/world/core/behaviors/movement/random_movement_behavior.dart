@@ -20,16 +20,23 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
   bool get isDistanceEnd => _plannedDistance <= _actualDistance;
 
   late final MovementForwardCollisionBehavior _moveForwardBehavior;
+  bool _chooseDirectionNextTick = false;
 
   @override
   void update(double dt) {
+    if (_chooseDirectionNextTick) {
+      _chooseDirectionNextTick = false;
+      chooseNewDirection();
+      disableSideHitboxes();
+    }
     var distance = _moveForwardBehavior.lastDisplacement.x;
     if (distance == 0) {
       distance = _moveForwardBehavior.lastDisplacement.y;
     }
     _actualDistance += distance;
     if (movementHitbox.isMovementBlocked || isDistanceEnd) {
-      chooseNewDirection();
+      enableSideHitboxes();
+      _chooseDirectionNextTick = true;
     }
   }
 
