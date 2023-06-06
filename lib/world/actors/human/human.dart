@@ -64,6 +64,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(movementForward);
     add(HumanStepTrailBehavior());
     add(FireBulletBehavior(
+      scale: 0.4,
       bulletsRootComponent: game.world.bulletLayer,
       animationFactory: () => {
         ActorCoreState.idle: const AnimationConfig(
@@ -75,7 +76,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         ActorCoreState.wreck: const AnimationConfig(
             tileset: 'boom', tileType: 'crater', loop: true),
       },
-      bulletOffset: Vector2(4, -2),
+      bulletOffset: Vector2(2.5, -2),
     ));
     add(ShadowBehavior());
     boundingBox.collisionType = CollisionType.active;

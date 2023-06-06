@@ -156,6 +156,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     required this.animationFactory,
     this.bulletOffset,
     this.haloRadius = 0,
+    this.scale = 1,
   });
 
   final _offsetRotations = <Direction, Vector2>{};
@@ -192,6 +193,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
   Vector2? bulletOffset;
   double haloRadius = 0;
   bool _tryFire = false;
+  double scale = 1;
 
   void tryFire() {
     _tryFire = true;
@@ -208,6 +210,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         health: attackerData.ammoHealth,
         offset: offset,
         haloRadius: haloRadius);
+    bullet.scale = Vector2.all(scale);
     bulletsRootComponent.add(bullet);
   }
 
