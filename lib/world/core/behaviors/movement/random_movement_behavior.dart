@@ -28,6 +28,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       _chooseDirectionNextTick = false;
       chooseNewDirection();
       disableSideHitboxes();
+      return;
     }
     var distance = _moveForwardBehavior.lastDisplacement.x;
     if (distance == 0) {

@@ -148,7 +148,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       if (data.factions.contains(Faction(name: 'Enemy'))) {
         add(createRandomMovement());
         add(DetectorBehavior(
-            distance: 2000,
+            distance: 1500,
             detectionType: DetectionType.audial,
             factionsToDetect: [Faction(name: 'Player')],
             maxMomentum: 120,
