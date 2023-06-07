@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -122,10 +120,10 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     consoleMessages.sendMessage('done.');
 
     consoleMessages.sendMessage('Starting UI');
-    if (Platform.isAndroid || Platform.isIOS) {
-      // initJoystick(inputEventsHandler.handleFireEvent);
-      // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
-    }
+    // if (Platform.isAndroid || Platform.isIOS) {
+    // initJoystick(inputEventsHandler.handleFireEvent);
+    // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
+    // }
     hudVisibility = VisibilityIndicator(this);
     hudVisibility.setVisibility(true);
     hudVisibility.x = 2;

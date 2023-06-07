@@ -67,9 +67,9 @@ class _MyAppState extends State<MyApp> {
 
   onXInputKeyPressed() {
     for (final logicalKey in xinput.keysPressed) {
-      final event = RawKeyEventSim(logicalKey);
+      // final event = RawKeyEventSim(logicalKey);
       // ignore: invalid_use_of_protected_member
-      manager.handleKeypress(context, event);
+      // manager.handleKeypress(context, event);
     }
   }
 
@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
     Flame.device.setLandscape();
     Flame.device.fullScreen();
     // SoundLibrary.loadSounds();
-    xinput.addListener(onXInputKeyPressed);
+    // xinput.addListener(onXInputKeyPressed);
     super.initState();
   }
 

@@ -1,4 +1,3 @@
-import 'package:dart_numerics/dart_numerics.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
@@ -49,7 +48,7 @@ class ColorFilterComponent<T extends ColorFilterMix> extends Component {
 
   ColorFilterConfig config;
 
-  ColorFilterComponent(this.config) : super(priority: int64MaxValue);
+  ColorFilterComponent(this.config) : super(priority: 999999999);
 
   @override
   void render(Canvas canvas) {
