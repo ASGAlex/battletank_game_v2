@@ -82,8 +82,10 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     final gameWorld = GameWorld();
     map = GameMapLoader(mapFile);
 
-    cameraComponent = CameraComponent.withFixedResolution(
-        world: gameWorld, width: 400, height: 250);
+    cameraComponent = CameraComponent(
+        world: gameWorld,
+        viewport: FixedAspectRatioViewport(aspectRatio: 400 / 250));
+    cameraComponent.viewfinder.zoom = 5;
 
     await initializeSpatialGrid(
         blockSize: 100,
