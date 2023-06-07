@@ -22,6 +22,9 @@ class TreeEntity extends SpriteComponent
   }
 
   @override
+  BoundingHitboxFactory get boundingHitboxFactory => () => TreeBoundingHitbox();
+
+  @override
   bool onComponentTypeCheck(PositionComponent other) {
     if (!(other as ActorMixin).hasBehavior<HideInTreesBehavior>()) {
       return false;
@@ -60,3 +63,5 @@ class TreeEntity extends SpriteComponent
     super.onLoad();
   }
 }
+
+class TreeBoundingHitbox extends BoundingHitbox {}

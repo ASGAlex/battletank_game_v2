@@ -28,7 +28,7 @@ mixin ActorWithSeparateBody on ActorMixin {
 mixin ActorWithBoundingBody on ActorMixin {
   @override
   BoundingHitboxFactory get boundingHitboxFactory =>
-      (parent) => BodyHitbox(parentWithGridSupport: parent);
+      () => BodyHitbox(parentWithGridSupport: this);
 }
 
 mixin ActorMixin on HasGridSupport implements EntityMixin {

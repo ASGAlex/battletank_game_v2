@@ -100,6 +100,10 @@ class SpawnEntity extends SpriteAnimationComponent
   final spawnBehavior = SpawnBehavior();
 
   @override
+  BoundingHitboxFactory get boundingHitboxFactory =>
+      () => SpawnBoundingHitbox();
+
+  @override
   FutureOr<void> onLoad() async {
     anchor = Anchor.center;
     add(AnimationBehavior(
@@ -113,3 +117,5 @@ class SpawnEntity extends SpriteAnimationComponent
     super.onLoad();
   }
 }
+
+class SpawnBoundingHitbox extends BoundingHitbox {}

@@ -65,8 +65,8 @@ class MovementHitbox extends BoundingHitbox {
 
   @override
   bool pureTypeCheck(Type other) {
-    if (other == SpawnEntity ||
-        other == TreeEntity ||
+    if (other == SpawnBoundingHitbox ||
+        other == TreeBoundingHitbox ||
         other == BoundingHitbox ||
         other == WeakBodyHitbox) {
       return false;
