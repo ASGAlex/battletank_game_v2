@@ -12,9 +12,11 @@ import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
+import 'package:tank_game/world/core/direction.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -33,8 +35,23 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     data.zoom = 5;
     (data as AttackerData)
       ..secondsBetweenFire = 0.2
-      ..ammoHealth = 0.001
-      ..ammoRange = 200;
+      ..ammoHealth = 0.25
+      ..ammoRange = 15;
+
+    bodyHitbox.onCollisionStartCallback = onWeakBodyCollision;
+    bodyHitbox.collisionType = CollisionType.passive;
+  }
+
+  @override
+  final bodyHitbox = WeakBodyHitbox();
+
+  void onWeakBodyCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
+    if (coreState == ActorCoreState.idle || coreState == ActorCoreState.move) {
+      try {
+        final killable = findBehavior<KillableBehavior>();
+        killable.killParent();
+      } catch (_) {}
+    }
   }
 
   @override
@@ -79,13 +96,22 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       bulletOffset: Vector2(2.5, -2),
     ));
     add(ShadowBehavior());
+    add(KillableBehavior());
     boundingBox.collisionType = CollisionType.active;
   }
 
   @override
   void onCoreStateChanged() {
     super.onCoreStateChanged();
-    if (data.coreState == ActorCoreState.wreck) {
+    if (data.coreState == ActorCoreState.wreck ||
+        data.coreState == ActorCoreState.removing ||
+        data.coreState == ActorCoreState.dying) {
+      lookDirection = Direction.up;
+      try {
+        final shadow = findBehavior<ShadowBehavior>();
+        shadow.removeFromParent();
+      } catch (_) {}
+      boundingBox.collisionType = CollisionType.inactive;
       final layer = sgGame.layersManager.addComponent(
         component: this,
         layerType: MapLayerType.trail,
@@ -96,5 +122,15 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         layer.fadeOutConfig = (sgGame as MyGame).world.fadeOutConfig;
       }
     }
+  }
+}
+
+class WeakBodyHitbox extends BodyHitbox {
+  @override
+  bool pureTypeCheck(Type other) {
+    if (other == BodyHitbox) {
+      return true;
+    }
+    return false;
   }
 }

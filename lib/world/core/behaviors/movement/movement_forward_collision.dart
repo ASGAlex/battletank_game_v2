@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -66,8 +67,26 @@ class MovementHitbox extends BoundingHitbox {
   bool pureTypeCheck(Type other) {
     if (other == SpawnEntity ||
         other == TreeEntity ||
-        other == BoundingHitbox) {
+        other == BoundingHitbox ||
+        other == WeakBodyHitbox) {
       return false;
+    }
+    return true;
+  }
+
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
+    final component = other.parent;
+    if (component is HumanEntity) {
+      final factions = component.data.factions;
+      final myFactions = (parent as ActorMixin).data.factions;
+      var shouldCareAboutIt = false;
+      for (final faction in factions) {
+        if (myFactions.contains(faction)) {
+          shouldCareAboutIt = true;
+        }
+      }
+      return shouldCareAboutIt;
     }
     return true;
   }

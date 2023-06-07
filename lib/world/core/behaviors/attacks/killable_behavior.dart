@@ -2,6 +2,7 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
+import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 
 class KillableBehavior extends CoreBehavior<ActorMixin> {
@@ -43,10 +44,15 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
     }
   }
 
-  void killParent(AttackBehavior attackedBy) {
+  void killParent([AttackBehavior? attackedBy]) {
     try {
       final filter = parent.findBehavior<ColorFilterBehavior>();
       filter.removeFromParent();
+    } catch (_) {}
+
+    try {
+      final controlled = parent.findBehavior<PlayerControlledBehavior>();
+      controlled.removeFromParent();
     } catch (_) {}
     if (parent.data.coreState == ActorCoreState.wreck) {
       parent.coreState = ActorCoreState.removing;
