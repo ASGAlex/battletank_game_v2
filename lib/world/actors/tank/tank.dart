@@ -206,7 +206,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   void onCoreStateChanged() {
     super.onCoreStateChanged();
     if (data.coreState == ActorCoreState.dying) {
-      stopCameraFollowing();
+      resetCamera();
       try {
         findBehaviors<RandomMovementBehavior>().forEach((element) {
           element.removeFromParent();

@@ -80,12 +80,13 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
 
   void onCoreStateChanged() {}
 
-  void stopCameraFollowing() {
+  void resetCamera() {
     final currentPlayer = (spatialGrid?.game as MyGame).currentPlayer;
     if (currentPlayer == this) {
-      final camera = (spatialGrid?.game as MyGame).cameraComponent;
-      camera.stop();
-      (spatialGrid?.game as MyGame).restorePlayer();
+      final game = (spatialGrid?.game as MyGame);
+      game.cameraComponent.stop();
+      game.cameraComponent.moveTo(game.initialPlayerPosition, speed: 100);
+      game.restorePlayer();
     }
   }
 }

@@ -7,7 +7,7 @@
    <property name="damage" type="float" value="1"/>
    <property name="fireDelay" type="int" value="1250"/>
    <property name="health" type="float" value="1"/>
-   <property name="speed" type="int" value="55"/>
+   <property name="speed" type="int" value="40"/>
    <property name="zoom" type="float" value="3.5"/>
   </properties>
   <animation>
@@ -23,7 +23,7 @@
    <property name="damage" type="float" value="1"/>
    <property name="fireDelay" type="int" value="1000"/>
    <property name="health" type="float" value="2"/>
-   <property name="speed" type="int" value="50"/>
+   <property name="speed" type="int" value="35"/>
    <property name="zoom" type="float" value="3"/>
   </properties>
   <animation>
@@ -39,7 +39,7 @@
    <property name="damage" type="float" value="1"/>
    <property name="fireDelay" type="int" value="850"/>
    <property name="health" type="float" value="2"/>
-   <property name="speed" type="int" value="45"/>
+   <property name="speed" type="int" value="40"/>
    <property name="zoom" type="float" value="3"/>
   </properties>
   <animation>
@@ -55,7 +55,7 @@
    <property name="damage" type="float" value="2"/>
    <property name="fireDelay" type="int" value="1500"/>
    <property name="health" type="float" value="3"/>
-   <property name="speed" type="int" value="35"/>
+   <property name="speed" type="int" value="30"/>
    <property name="zoom" type="float" value="2.8"/>
   </properties>
   <animation>
@@ -71,7 +71,7 @@
    <property name="damage" type="float" value="0.25"/>
    <property name="fireDelay" type="int" value="500"/>
    <property name="health" type="float" value="1"/>
-   <property name="speed" type="int" value="60"/>
+   <property name="speed" type="int" value="50"/>
    <property name="zoom" type="float" value="2"/>
   </properties>
   <animation>

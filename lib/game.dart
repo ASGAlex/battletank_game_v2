@@ -57,6 +57,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   late final GameMapLoader map;
 
+  final initialPlayerPosition = Vector2(0, 0);
+
   @override
   void onScroll(PointerScrollInfo info) {
     var zoom = cameraComponent.viewfinder.zoom;
@@ -97,6 +99,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
         initialPositionChecker: (layer, object, mapOffset, worldName) {
           if (object.name == 'spawn_player') {
+            initialPlayerPosition.setValues(object.x, object.y);
             return cameraComponent.viewfinder.position =
                 mapOffset + Vector2(object.x, object.y);
           }
