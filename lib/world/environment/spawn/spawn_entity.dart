@@ -49,6 +49,7 @@ class SpawnEntity extends SpriteAnimationComponent
       newSpawn.spawnData.triggerCallback = newSpawn.spawnCallback;
     } else {
       faction = Faction(name: 'Player');
+      newSpawn.spawnData.secondsBetweenSpawns = 2;
     }
     newSpawn.spawnData.factions.add(faction);
     newSpawn.spawnData.allowedFactions.add(faction);

@@ -6,6 +6,7 @@ import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 
@@ -45,16 +46,27 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
             print(e);
           }
           break;
+        case PlayerAction.triggerK:
+          try {
+            final killable =
+                game.currentPlayer?.findBehavior<KillableBehavior>();
+            killable?.killParent();
+          } catch (_) {}
+          break;
         case PlayerAction.triggerE:
         case PlayerAction.triggerF:
           // should not to handle
           break;
       }
     }
-    if (isMovementAction) {
-      parent.coreState = ActorCoreState.move;
-    } else {
-      parent.coreState = ActorCoreState.idle;
+    if (parent.coreState != ActorCoreState.dying &&
+        parent.coreState != ActorCoreState.removing &&
+        parent.coreState != ActorCoreState.wreck) {
+      if (isMovementAction) {
+        parent.coreState = ActorCoreState.move;
+      } else {
+        parent.coreState = ActorCoreState.idle;
+      }
     }
   }
 

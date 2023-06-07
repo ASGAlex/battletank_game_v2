@@ -48,6 +48,7 @@ mixin AnimationGroupCoreStateListenerMixin
   @mustCallSuper
   @override
   void onCoreStateChanged() {
+    print(data.coreState);
     current = data.coreState;
   }
 }

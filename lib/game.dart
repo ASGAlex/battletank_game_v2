@@ -195,14 +195,16 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
       currentPlayer = HumanEntity()
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
-        ..add(PlayerControlledBehavior())
         ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 
-      cameraComponent.follow(currentPlayer!);
-
       SpawnManager().spawnNewActor(
-          actor: currentPlayer!, faction: Faction(name: 'Player'));
+          actor: currentPlayer!,
+          faction: Faction(name: 'Player'),
+          onSpawnComplete: () {
+            currentPlayer!.add(PlayerControlledBehavior());
+            cameraComponent.follow(currentPlayer!);
+          });
     } else {
       overlays.add('game_over_fail');
       onEndGame();

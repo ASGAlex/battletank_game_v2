@@ -14,6 +14,7 @@ import 'spawn_data.dart';
 class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
   final _trackedObjectsDistances = <Component, List<double>>{};
   ActorMixin? objectToSpawn;
+  Function? onSpawnComplete;
 
   SpawnData get spawnData {
     final spawnData = parent.data;
@@ -94,6 +95,7 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
         newObject.currentCell = parent.currentCell;
         (parent as SpawnEntity).rootComponent.add(newObject);
         objectToSpawn = null;
+        onSpawnComplete?.call();
       }
     }
   }

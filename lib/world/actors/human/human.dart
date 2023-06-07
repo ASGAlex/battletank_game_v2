@@ -107,6 +107,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         data.coreState == ActorCoreState.removing ||
         data.coreState == ActorCoreState.dying) {
       lookDirection = Direction.up;
+      stopCameraFollowing();
       try {
         final shadow = findBehavior<ShadowBehavior>();
         shadow.removeFromParent();

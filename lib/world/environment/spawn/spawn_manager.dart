@@ -15,12 +15,14 @@ class SpawnManager {
 
   factory SpawnManager() => _instance;
 
-  bool spawnNewActor(
-      {required ActorMixin actor,
-      SpawnEntity? preferredSpawn,
-      Faction? faction,
-      Duration retryInterval = const Duration(seconds: 10),
-      int retryAttempts = 15}) {
+  bool spawnNewActor({
+    required ActorMixin actor,
+    SpawnEntity? preferredSpawn,
+    Faction? faction,
+    Duration retryInterval = const Duration(seconds: 10),
+    int retryAttempts = 15,
+    Function? onSpawnComplete,
+  }) {
     bool success;
     final spawn = preferredSpawn ?? findIdle(faction: faction);
     if (spawn == null) return false;
@@ -30,6 +32,7 @@ class SpawnManager {
         success = false;
       }
       behavior.objectToSpawn = actor;
+      behavior.onSpawnComplete = onSpawnComplete;
       behavior.spawnData.state = SpawnState.spawning;
       success = true;
     } on StateError catch (_) {
@@ -46,6 +49,7 @@ class SpawnManager {
             faction: faction,
             retryInterval: retryInterval,
             retryAttempts: retryAttempts - 1,
+            onSpawnComplete: onSpawnComplete,
           );
         });
       }

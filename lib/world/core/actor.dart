@@ -6,6 +6,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
 
@@ -78,6 +79,15 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   }
 
   void onCoreStateChanged() {}
+
+  void stopCameraFollowing() {
+    final currentPlayer = (spatialGrid?.game as MyGame).currentPlayer;
+    if (currentPlayer == this) {
+      final camera = (spatialGrid?.game as MyGame).cameraComponent;
+      camera.stop();
+      (spatialGrid?.game as MyGame).restorePlayer();
+    }
+  }
 }
 
 class ActorData {

@@ -11,6 +11,7 @@ enum PlayerAction {
   fire,
   triggerE,
   triggerF,
+  triggerK,
 }
 
 class InputEventsHandler {
@@ -39,6 +40,9 @@ class InputEventsHandler {
       }
       if (key == LogicalKeyboardKey.keyF) {
         actions.add(PlayerAction.triggerF);
+      }
+      if (key == LogicalKeyboardKey.keyK) {
+        actions.add(PlayerAction.triggerK);
       }
 
       if (key == LogicalKeyboardKey.space) {
