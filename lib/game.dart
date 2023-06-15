@@ -184,6 +184,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   @override
   void onInitializationDone() {
+    hideLoadingComponent();
     if (_initialized) return;
     cameraComponent.viewfinder.zoom = 5;
 
@@ -223,6 +224,30 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
 
   void onEndGame() {
     // player?.onRemove();
+  }
+
+  @override
+  Future<void> showLoadingComponent() async {
+    if (!_initialized) {
+      overlays.add('console');
+    }
+  }
+
+  @override
+  Future<void> hideLoadingComponent() async {
+    overlays.remove('console');
+  }
+
+  @override
+  void onLoadingProgress<M>(LoadingProgressMessage<M> message) {
+    if (message.data is String) {
+      consoleMessages
+          .sendMessage('${message.type} | progress: ${message.progress}% '
+              '| ${message.data}');
+    } else {
+      consoleMessages
+          .sendMessage('${message.type} | progress: ${message.progress}%');
+    }
   }
 
   @override
