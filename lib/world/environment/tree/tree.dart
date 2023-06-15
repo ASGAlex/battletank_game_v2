@@ -14,9 +14,6 @@ class TreeEntity extends SpriteComponent
     with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
   TreeEntity({required super.sprite, super.position, super.size})
       : super(priority: RenderPriority.tree.priority) {
-    boundingBox.collisionType =
-        boundingBox.defaultCollisionType = CollisionType.passive;
-    boundingBox.isSolid = true;
     paint.filterQuality = FilterQuality.none;
     paint.isAntiAlias = false;
   }
@@ -61,6 +58,9 @@ class TreeEntity extends SpriteComponent
   FutureOr<void> onLoad() {
     add(ShadowBehavior(shadowKey: 'tree'));
     super.onLoad();
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
   }
 }
 

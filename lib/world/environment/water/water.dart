@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/collisions.dart';
@@ -16,10 +17,15 @@ class WaterEntity extends SpriteAnimationComponent
         ActorWithBoundingBody {
   WaterEntity({required super.animation, super.position, super.size})
       : super(priority: RenderPriority.water.priority) {
+    paint.filterQuality = FilterQuality.none;
+    paint.isAntiAlias = false;
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    super.onLoad();
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
-    paint.filterQuality = FilterQuality.none;
-    paint.isAntiAlias = false;
   }
 }

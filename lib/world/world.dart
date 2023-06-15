@@ -74,38 +74,39 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
     final tapPosition = event.localPosition;
     final cellsUnderCursor = <Cell>[];
     try {
-      gameRef.spatialGrid.cells.forEach((rect, cell) {
-        if (cell.rect.containsPoint(tapPosition)) {
-          cellsUnderCursor.add(cell);
-          print('State:  + ${cell.state}');
-          print('Rect: $rect');
-          print('Out of bounds: ${cell.outOfBoundsCounter}');
-
-          final l = (game)
-              .layersManager
-              .getLayer(name: 'static-ground-procedural', cell: cell);
-          print(l);
-          // final animations =
-          //     cell.components.whereType<CellStaticAnimationLayer>();
-          // animations.forEach((element) {
-          //   element.compileToSingleLayer(element.children);
-          // });
-          // print('Components count: ${cell.components.length}');
-        }
-      });
+      print(gameRef.spatialGrid.cells.length);
+      // gameRef.spatialGrid.cells.forEach((rect, cell) {
+      //   if (cell.rect.containsPoint(tapPosition)) {
+      //     cellsUnderCursor.add(cell);
+      //     print('State:  + ${cell.state}');
+      //     print('Rect: $rect');
+      //     print('Out of bounds: ${cell.outOfBoundsCounter}');
+      //
+      //     final l = (game)
+      //         .layersManager
+      //         .getLayer(name: 'static-ground-procedural', cell: cell);
+      //     print(l);
+      //     // final animations =
+      //     //     cell.components.whereType<CellStaticAnimationLayer>();
+      //     // animations.forEach((element) {
+      //     //   element.compileToSingleLayer(element.children);
+      //     // });
+      //     // print('Components count: ${cell.components.length}');
+      //   }
+      // });
     } catch (e) {
       print(e);
     }
-
-    final list = componentsAtPoint(tapPosition).toList(growable: false);
-    for (final component in list) {
-      if (component is! HasGridSupport) continue;
-      if (component is CellLayer) {
-        print(component.name);
-      } else {
-        print(component.runtimeType);
-      }
-    }
+    //
+    // final list = componentsAtPoint(tapPosition).toList(growable: false);
+    // for (final component in list) {
+    //   if (component is! HasGridSupport) continue;
+    //   if (component is CellLayer) {
+    //     print(component.name);
+    //   } else {
+    //     print(component.runtimeType);
+    //   }
+    // }
 
     event.handled = true;
 

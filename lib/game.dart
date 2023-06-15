@@ -90,10 +90,11 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         debug: false,
         activeRadius: const Size(1, 1),
         unloadRadius: const Size(2, 2),
-        preloadRadius: const Size(2, 2),
+        preloadRadius: const Size(4, 4),
         buildCellsPerUpdate: 1,
-        cleanupCellsPerUpdate: 2,
-        processCellsLimitToPauseEngine: 2,
+        cleanupCellsPerUpdate: 1,
+        processCellsLimitToPauseEngine: 10,
+        // maxCells: 200,
         rootComponent: gameWorld,
         trackWindowSize: true,
         trackedComponent: SpatialGridCameraWrapper(cameraComponent),
@@ -105,7 +106,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
           }
         },
         suspendedCellLifetime: const Duration(seconds: 120),
-        suspendCellPrecision: const Duration(seconds: 30),
+        suspendCellPrecision: const Duration(seconds: 10),
         cellBuilderNoMap: map.noMapBuilder,
         // onAfterCellBuild: (cell, rootComponent) async {
         //   final trailLayer = CellTrailLayer(cell, name: 'trail');

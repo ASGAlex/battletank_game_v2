@@ -25,9 +25,6 @@ class BrickEntity extends SpriteComponent
     super.size,
     this.resizeOnHit = true,
   }) : super(priority: RenderPriority.player.priority) {
-    boundingBox.collisionType =
-        boundingBox.defaultCollisionType = CollisionType.passive;
-    boundingBox.isSolid = true;
     paint.filterQuality = FilterQuality.none;
     paint.isAntiAlias = false;
   }
@@ -41,6 +38,9 @@ class BrickEntity extends SpriteComponent
     add(ShadowBehavior(shadowKey: 'brick'));
     add(KillableBehavior(customApplyAttack: applyAttack));
     super.onLoad();
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.passive;
+    boundingBox.isSolid = true;
     _halfSize.setFrom(size / 2);
   }
 
