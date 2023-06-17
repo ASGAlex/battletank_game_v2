@@ -26,7 +26,7 @@ class TreeEntity extends SpriteComponent
     if (!(other as ActorMixin).hasBehavior<HideInTreesBehavior>()) {
       return false;
     }
-    return super.onComponentTypeCheck(other);
+    return true;
   }
 
   @override

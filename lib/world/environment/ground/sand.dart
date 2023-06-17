@@ -38,7 +38,7 @@ class SandEntity extends SpriteAnimationComponent
     if (!(other as ActorMixin).hasBehavior<SlowDownBySandBehavior>()) {
       return false;
     }
-    return super.onComponentTypeCheck(other);
+    return true;
   }
 
   @override
