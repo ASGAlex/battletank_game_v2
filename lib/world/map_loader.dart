@@ -14,6 +14,7 @@ import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
 
 import 'core/faction.dart';
+import 'environment/ground/sand.dart';
 
 class GameMapLoader extends TiledMapLoader {
   GameMapLoader(String fileName) {
@@ -33,6 +34,7 @@ class GameMapLoader extends TiledMapLoader {
   Map<String, TileBuilderFunction>? get tileBuilders => {
         'tree': onBuildTree,
         'water': onBuildWater,
+        'sand_slow': onBuildSand,
         'brick': onBuildBrick,
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
@@ -200,6 +202,25 @@ class GameMapLoader extends TiledMapLoader {
         layerType: MapLayerType.animated,
         layerName: 'Water',
         priority: RenderPriority.water.priority);
+  }
+
+  Future onBuildSand(CellBuilderContext context) async {
+    // return;
+    final data = context.tileDataProvider;
+    if (data == null) return;
+    final animation = await data.getSpriteAnimation();
+    final sand = SandEntity(
+      animation: animation,
+      position: context.absolutePosition,
+      size: context.size,
+    );
+    sand.currentCell = context.cell;
+
+    game.layersManager.addComponent(
+        component: sand,
+        layerType: MapLayerType.animated,
+        layerName: 'Sand',
+        priority: RenderPriority.ground.priority);
   }
 
   Future onBuildBrick(CellBuilderContext context) async {

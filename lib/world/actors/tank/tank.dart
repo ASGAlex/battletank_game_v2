@@ -26,6 +26,7 @@ import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior
 import 'package:tank_game/world/core/behaviors/movement/speed_penalty.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
 class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -147,6 +148,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         return false;
       },
     ));
+    add(SlowDownBySandBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
     smoke = SmokeBehavior(game.world.skyLayer);

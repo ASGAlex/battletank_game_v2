@@ -8,6 +8,7 @@ import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
+import 'package:tank_game/world/environment/ground/sand.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 
@@ -86,6 +87,7 @@ class MovementHitbox extends MovementCheckerHitbox {
     if (other == SpawnBoundingHitbox ||
         other == TreeBoundingHitbox ||
         other == BoundingHitbox ||
+        other == SandBoundingHitbox ||
         other == WeakBodyHitbox) {
       return false;
     }

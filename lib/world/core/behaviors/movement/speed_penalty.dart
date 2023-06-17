@@ -24,7 +24,7 @@ class SpeedPenaltyBehavior extends CoreBehavior<ActorMixin> {
 
   @override
   void update(double dt) {
-    if (_time >= duration) {
+    if (duration > 0 && _time >= duration) {
       _restoreSpeed();
       removeFromParent();
       return;
