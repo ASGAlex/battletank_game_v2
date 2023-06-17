@@ -24,6 +24,8 @@ class BulletData extends ActorData {
   double haloRadius = 0;
   double haloBlur = 5;
   Color haloColor = Colors.orangeAccent.withOpacity(0.3);
+  double speedPenalty = 0;
+  double speedPenaltyDuration = 0;
 }
 
 class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -42,12 +44,16 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     required double range,
     required this.animationConfigs,
     double haloRadius = 0,
+    double speedPenalty = 0,
+    double speedPenaltyDuration = 0,
     Vector2? offset,
   }) {
     anchor = Anchor.center;
     data = BulletData();
     (data as BulletData).range = range;
     (data as BulletData).haloRadius = haloRadius;
+    (data as BulletData).speedPenalty = speedPenalty;
+    (data as BulletData).speedPenaltyDuration = speedPenaltyDuration;
     data.health = health;
     data.speed = speed;
     data.lookDirection = lookDirection;
@@ -157,6 +163,8 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     this.bulletOffset,
     this.haloRadius = 0,
     this.scale = 1,
+    this.speedPenalty = 0,
+    this.speedPenaltyDuration = 0,
   });
 
   final _offsetRotations = <Direction, Vector2>{};
@@ -194,6 +202,8 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
   double haloRadius = 0;
   bool _tryFire = false;
   double scale = 1;
+  double speedPenalty = 0;
+  double speedPenaltyDuration = 0;
 
   void tryFire() {
     _tryFire = true;
@@ -208,6 +218,8 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         speed: attackerData.ammoSpeed,
         lookDirection: attackerData.lookDirection,
         health: attackerData.ammoHealth,
+        speedPenalty: speedPenalty,
+        speedPenaltyDuration: speedPenaltyDuration,
         offset: offset,
         haloRadius: haloRadius);
     bullet.scale = Vector2.all(scale);

@@ -23,6 +23,7 @@ import 'package:tank_game/world/core/behaviors/interaction/interaction_set_playe
 import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/speed_penalty.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
@@ -135,7 +136,17 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(0, 0),
     ));
-    add(KillableBehavior());
+    add(KillableBehavior(
+      customApplyAttack: (attackedBy, killable) {
+        if (attackedBy is BulletEntity) {
+          final penalty = (attackedBy.data as BulletData).speedPenalty;
+          final duration = (attackedBy.data as BulletData).speedPenaltyDuration;
+          killable
+              .add(SpeedPenaltyBehavior(penalty: penalty, duration: duration));
+        }
+        return false;
+      },
+    ));
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
     smoke = SmokeBehavior(game.world.skyLayer);

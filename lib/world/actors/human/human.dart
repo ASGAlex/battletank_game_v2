@@ -83,6 +83,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(FireBulletBehavior(
       scale: 0.4,
       bulletsRootComponent: game.world.bulletLayer,
+      speedPenalty: 40,
+      speedPenaltyDuration: 1,
       animationFactory: () => {
         ActorCoreState.idle: const AnimationConfig(
             tileset: 'bullet', tileType: 'bullet', loop: true),
