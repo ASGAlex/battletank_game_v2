@@ -69,7 +69,7 @@ class MovementHitbox extends MovementCheckerHitbox {
     required super.position,
     required super.size,
   }) {
-    collisionType = CollisionType.active;
+    collisionType = defaultCollisionType = CollisionType.active;
   }
 
   @override
