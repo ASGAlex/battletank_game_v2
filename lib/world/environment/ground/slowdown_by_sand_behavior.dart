@@ -28,6 +28,9 @@ class SlowDownBySandBehavior extends CollisionBehavior {
         _originalSpeed = parent.data.speed;
       }
       parent.data.speed = _originalSpeed - 20;
+      if (parent.data.speed < 0) {
+        parent.data.speed = 0;
+      }
     }
 
     if (isSlowedDown != _last) {
