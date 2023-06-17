@@ -1,3 +1,4 @@
+import 'package:flame/collisions.dart';
 import 'package:flame/effects.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
@@ -7,6 +8,7 @@ import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dar
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_player_out.dart';
+import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
@@ -37,6 +39,13 @@ class InteractionSetPlayer extends InteractableBehavior {
         paused = true;
         currentPlayerEntity.coreState = ActorCoreState.idle;
         if (removeAfterSet) {
+          final children = currentPlayerEntity.children.toList(growable: false);
+          for (final child in children) {
+            if (child is! ShapeHitbox) {
+              continue;
+            }
+            child.collisionType = CollisionType.inactive;
+          }
           final effect = OpacityEffect.to(
             0.01,
             EffectController(duration: 0.75),
@@ -67,6 +76,9 @@ class InteractionSetPlayer extends InteractableBehavior {
         }
         if (!parent.hasBehavior<InteractionPlayerOut>()) {
           parent.add(InteractionPlayerOut());
+        }
+        if (!parent.hasBehavior<AvailableDirectionChecker>()) {
+          parent.add(AvailableDirectionChecker(outerWidth: parent.width));
         }
         parent.data.health = 1000000;
 

@@ -248,6 +248,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
       consoleMessages
           .sendMessage('${message.type} | progress: ${message.progress}%');
     }
+    refreshWidget();
+    super.onLoadingProgress(message);
   }
 
   @override

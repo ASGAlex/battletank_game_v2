@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -88,7 +89,16 @@ class SpawnEntity extends SpriteAnimationComponent
           break;
         case 'tank_type':
           spawn.spawnData.typeOfTank = property.value.toString();
-          break;
+          if (spawn.spawnData.typeOfTank == 'any') {
+            spawn.spawnData.typeOfTank = {
+                  0: 'simple',
+                  1: 'middle',
+                  2: 'advanced',
+                  3: 'heavy',
+                  4: 'fast',
+                }[Random().nextInt(4)] ??
+                'simple';
+          }
       }
     }
     return spawn;

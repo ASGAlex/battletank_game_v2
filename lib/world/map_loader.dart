@@ -37,7 +37,8 @@ class GameMapLoader extends TiledMapLoader {
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
         'spawn_player': onBuildSpawn,
-        'spawn_test': onBuildSpawnTest,
+        'spawn_test': onBuildSpawnNeutral,
+        'spawn_neutral': onBuildSpawnNeutral,
         'target': onBuildTarget,
       };
 
@@ -248,7 +249,7 @@ class GameMapLoader extends TiledMapLoader {
     SpawnManager().add(newSpawn);
   }
 
-  Future onBuildSpawnTest(CellBuilderContext context) async {
+  Future onBuildSpawnNeutral(CellBuilderContext context) async {
     final newSpawn = SpawnEntity.fromContext(
       rootComponent: game.world.tankLayer,
       context: context,

@@ -7,6 +7,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
+import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 
@@ -44,18 +45,35 @@ class MovementForwardCollisionBehavior extends MovementBehavior {
   }
 }
 
-class MovementHitbox extends BoundingHitbox {
+abstract class MovementCheckerHitbox extends BoundingHitbox {
+  MovementCheckerHitbox({super.position, super.size});
+
+  Direction get direction;
+
+  bool get isMovementBlocked => activeCollisions.isNotEmpty;
+
+  bool get isMovementAllowed => activeCollisions.isEmpty;
+
+  Direction get globalMapDirection {
+    var globalValue =
+        direction.value + (parent as ActorMixin).data.lookDirection.value;
+    if (globalValue > 3) {
+      return Direction.fromValue(globalValue - 4);
+    }
+    return Direction.fromValue(globalValue);
+  }
+}
+
+class MovementHitbox extends MovementCheckerHitbox {
   MovementHitbox({
     required super.position,
     required super.size,
   }) {
     collisionType = CollisionType.active;
-    // debugMode = true;
   }
 
-  bool get isMovementBlocked => activeCollisions.isNotEmpty;
-
-  bool get isMovementAllowed => activeCollisions.isEmpty;
+  @override
+  final Direction direction = Direction.up;
 
   @override
   FutureOr<void> onLoad() {

@@ -3,23 +3,36 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 
 class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
+  AvailableDirectionChecker({this.outerWidth = 0}) {
+    _movementSideHitboxes = <MovementSideHitbox>[
+      MovementSideHitbox(direction: Direction.left, outerWidth: outerWidth),
+      MovementSideHitbox(direction: Direction.right, outerWidth: outerWidth),
+      MovementSideHitbox(direction: Direction.down, outerWidth: outerWidth)
+    ];
+  }
+
   bool _sideHitboxesEnabled = true;
+  final double outerWidth;
 
   bool get hitboxesEnabled => _sideHitboxesEnabled;
-  late final MovementHitbox movementHitbox;
+  late final MovementCheckerHitbox movementHitbox;
 
   @override
   FutureOr onLoad() {
-    final moveForwardBehavior =
-        parent.findBehavior<MovementForwardCollisionBehavior>();
-    movementHitbox = moveForwardBehavior.movementHitbox;
+    try {
+      final moveForwardBehavior =
+          parent.findBehavior<MovementForwardCollisionBehavior>();
+      movementHitbox = moveForwardBehavior.movementHitbox;
+    } catch (_) {
+      movementHitbox = MovementSideHitbox(direction: Direction.up);
+      parent.add(movementHitbox);
+    }
     parent.addAll(_movementSideHitboxes);
   }
 
@@ -31,11 +44,7 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
     } catch (_) {}
   }
 
-  final _movementSideHitboxes = <MovementSideHitbox>[
-    MovementSideHitbox(direction: Direction.left),
-    MovementSideHitbox(direction: Direction.right),
-    MovementSideHitbox(direction: Direction.down)
-  ];
+  late final List<MovementSideHitbox> _movementSideHitboxes;
 
   List<Direction> getAvailableDirections() {
     final availableDirections = <Direction>[];
@@ -46,6 +55,19 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
     }
     if (movementHitbox.isMovementAllowed) {
       availableDirections.add(parent.data.lookDirection);
+    }
+    return availableDirections;
+  }
+
+  Map<Direction, MovementCheckerHitbox> getAvailableDirectionsWithHitbox() {
+    final availableDirections = <Direction, MovementCheckerHitbox>{};
+    for (final hitbox in _movementSideHitboxes) {
+      if (hitbox.isMovementAllowed) {
+        availableDirections[hitbox.globalMapDirection] = hitbox;
+      }
+    }
+    if (movementHitbox.isMovementAllowed) {
+      availableDirections[parent.data.lookDirection] = movementHitbox;
     }
     return availableDirections;
   }
@@ -66,32 +88,21 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
   }
 }
 
-class MovementSideHitbox extends BoundingHitbox {
-  MovementSideHitbox({required this.direction})
+class MovementSideHitbox extends MovementCheckerHitbox {
+  MovementSideHitbox({required this.direction, this.outerWidth = 0})
       : super(position: Vector2(0, 0)) {
     anchor = Anchor.topLeft;
   }
 
+  @override
   final Direction direction;
-
-  bool get isMovementBlocked => activeCollisions.isNotEmpty;
-
-  bool get isMovementAllowed => activeCollisions.isEmpty;
-
-  Direction get globalMapDirection {
-    var globalValue =
-        direction.value + (parent as ActorMixin).data.lookDirection.value;
-    if (globalValue > 3) {
-      return Direction.fromValue(globalValue - 4);
-    }
-    return Direction.fromValue(globalValue);
-  }
+  final double outerWidth;
 
   @override
   Future? onLoad() {
     assert(parent is ActorMixin);
     final parentSize = (parent as ActorMixin).size;
-    final width = parentSize.x / 2;
+    final width = outerWidth == 0 ? parentSize.x / 2 : outerWidth;
     switch (direction) {
       case Direction.left:
         position = Vector2(-width, 0);
@@ -110,8 +121,9 @@ class MovementSideHitbox extends BoundingHitbox {
         size = Vector2(parentSize.x, width);
         break;
     }
+    defaultCollisionType = CollisionType.passive;
+    collisionType = CollisionType.inactive;
     super.onLoad();
-    // debugMode = true;
     return null;
   }
 
