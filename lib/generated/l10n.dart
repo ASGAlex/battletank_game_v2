@@ -90,71 +90,51 @@ class S {
     );
   }
 
-  /// `Graphics quality`
-  String get graphics_quality {
+  /// `Processor speed`
+  String get processor_speed {
     return Intl.message(
-      'Graphics quality',
-      name: 'graphics_quality',
+      'Processor speed',
+      name: 'processor_speed',
       desc: '',
       args: [],
     );
   }
 
-  /// `Low`
-  String get graphics_low {
+  /// `Web browser`
+  String get processor_speed_web {
     return Intl.message(
-      'Low',
-      name: 'graphics_low',
+      'Web browser',
+      name: 'processor_speed_web',
       desc: '',
       args: [],
     );
   }
 
-  /// `Shadows for trees and tanks`
-  String get graphics_treeShadow {
+  /// `An office PC`
+  String get processor_speed_office {
     return Intl.message(
-      'Shadows for trees and tanks',
-      name: 'graphics_treeShadow',
+      'An office PC',
+      name: 'processor_speed_office',
       desc: '',
       args: [],
     );
   }
 
-  /// `Pseudo-3D walls`
-  String get graphics_walls3D_low {
+  /// `Nice fast processor`
+  String get processor_speed_middle {
     return Intl.message(
-      'Pseudo-3D walls',
-      name: 'graphics_walls3D_low',
+      'Nice fast processor',
+      name: 'processor_speed_middle',
       desc: '',
       args: [],
     );
   }
 
-  /// `Pseudo-3D walls with shadows`
-  String get graphics_walls3dShadows_low {
+  /// `High-end CPU for gaming`
+  String get processor_speed_powerful {
     return Intl.message(
-      'Pseudo-3D walls with shadows',
-      name: 'graphics_walls3dShadows_low',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Well-detailed 3D`
-  String get graphics_walls3DShadows_medium {
-    return Intl.message(
-      'Well-detailed 3D',
-      name: 'graphics_walls3DShadows_medium',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Highest 3D detalisation`
-  String get graphics_walls3dShadows_high {
-    return Intl.message(
-      'Highest 3D detalisation',
-      name: 'graphics_walls3dShadows_high',
+      'High-end CPU for gaming',
+      name: 'processor_speed_powerful',
       desc: '',
       args: [],
     );
@@ -205,6 +185,26 @@ class S {
     return Intl.message(
       'Got it!',
       name: 'ok',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back`
+  String get back {
+    return Intl.message(
+      'Back',
+      name: 'back',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you really want to leave the game and exit to mission menu?`
+  String get leave_game {
+    return Intl.message(
+      'Do you really want to leave the game and exit to mission menu?',
+      name: 'leave_game',
       desc: '',
       args: [],
     );

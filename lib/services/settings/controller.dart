@@ -5,34 +5,28 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 
-enum GraphicsQuality {
-  low(0),
-  treeShadow(1),
-  walls3D_low(2),
-  walls3dShadows_low(3),
-  walls3DShadows_medium(4),
-  walls3dShadows_hight(5);
+enum ProcessorSpeed {
+  web(0),
+  office(1),
+  middle(2),
+  powerful(3);
 
   final int qualityValue;
 
-  const GraphicsQuality(this.qualityValue);
+  const ProcessorSpeed(this.qualityValue);
 
-  static GraphicsQuality fromInt(int value) {
+  static ProcessorSpeed fromInt(int value) {
     switch (value) {
       case 0:
-        return GraphicsQuality.low;
+        return ProcessorSpeed.web;
       case 1:
-        return GraphicsQuality.treeShadow;
+        return ProcessorSpeed.office;
       case 2:
-        return GraphicsQuality.walls3D_low;
+        return ProcessorSpeed.middle;
       case 3:
-        return GraphicsQuality.walls3dShadows_low;
-      case 4:
-        return GraphicsQuality.walls3DShadows_medium;
-      case 5:
-        return GraphicsQuality.walls3dShadows_hight;
+        return ProcessorSpeed.powerful;
       default:
-        return GraphicsQuality.low;
+        return ProcessorSpeed.web;
     }
   }
 }
@@ -75,18 +69,18 @@ class SettingsController with ChangeNotifier {
 
   loadSettings() async {
     _missionRepository.initMissionList();
-    _graphicsQuality = await prefs.then((value) =>
-        GraphicsQuality.fromInt(value.getInt('graphics_quality') ?? 0));
+    _processor = await prefs.then((value) =>
+        ProcessorSpeed.fromInt(value.getInt('processor_speed') ?? 0));
   }
 
-  GraphicsQuality _graphicsQuality = GraphicsQuality.low;
+  ProcessorSpeed _processor = ProcessorSpeed.web;
 
-  GraphicsQuality get graphicsQuality => _graphicsQuality;
+  ProcessorSpeed get processor => _processor;
 
-  set graphicsQuality(GraphicsQuality quality) {
-    _graphicsQuality = quality;
+  set processor(ProcessorSpeed quality) {
+    _processor = quality;
     prefs.then((value) {
-      value.setInt('graphics_quality', quality.qualityValue);
+      value.setInt('processor_speed', quality.qualityValue);
       notifyListeners();
     });
   }

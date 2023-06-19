@@ -15,8 +15,8 @@ class MissionRepository {
   initMissionList() {
     const mapFiles = <String, String>{
       'collisiontest.tmx': 'Small to test collisions',
-      'mission.tmx': 'Real mission on relatively big map',
-      'huge.tmx': 'Boring but very big map for performance testing'
+      // 'mission.tmx': 'Real mission on relatively big map',
+      'performance_test.tmx': 'Boring but very big map for performance testing'
     };
     mapFiles.forEach((key, value) {
       _missions.add(MissionDescription(

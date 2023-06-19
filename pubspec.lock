@@ -73,6 +73,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -125,20 +133,18 @@ packages:
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "65422895b19c79ace8d04e8f0f7d40e4453aaa06"
-      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
-    source: git
+      path: "../cluisterizer_test"
+      relative: true
+    source: path
     version: "1.0.0"
   flame_tiled:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: "592a4ccc166ccb39f97560e528e867290459d5070390436ebffcde95a87c6b18"
+      sha256: "76f1e7a8ec112d527077d3ee96bb1a49051250b82ac4b0a9991fbca02b809dbd"
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.2"
+    version: "1.11.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -157,6 +163,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_mini_sprite:
+    dependency: transitive
+    description:
+      name: flutter_mini_sprite
+      sha256: ece0c9b189dce5310db7ba4f5976a4e30698cbcd9486327a2d49d8b45b5f55eb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -167,6 +181,30 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  google_fonts:
+    dependency: transitive
+    description:
+      name: google_fonts
+      sha256: e20ff62b158b96f392bfc8afe29dee1503c94fbea2cbe8186fd59b756b8ae982
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      sha256: "4c3f04bfb64d3efd508d06b41b825542f08122d30bda4933fb95c069d22a4fa3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  http_parser:
+    dependency: transitive
+    description:
+      name: http_parser
+      sha256: "2aa08ce0341cc9b354a498388e30986515406668dbcc4f7c950c3e715496693b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
   intl:
     dependency: transitive
     description:
@@ -215,6 +253,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  mini_sprite:
+    dependency: transitive
+    description:
+      name: mini_sprite
+      sha256: b92bb4fcd81991b39798ce2f58ed3c044035cf22688df44977ee38c7765667e9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  nes_ui:
+    dependency: "direct main"
+    description:
+      name: nes_ui
+      sha256: dd234c8dabace7520eefc75f94709f7e4b5ab4e5134fc1c741b7adc401b4b443
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   ordered_set:
     dependency: transitive
     description:
@@ -231,6 +285,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.3"
+  path_provider:
+    dependency: transitive
+    description:
+      name: path_provider
+      sha256: "3087813781ab814e4157b172f1a11c46be20179fcc9bea043e0fba36bc0acaa2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.15"
+  path_provider_android:
+    dependency: transitive
+    description:
+      name: path_provider_android
+      sha256: "2cec049d282c7f13c594b4a73976b0b4f2d7a1838a6dd5aaf7bd9719196bee86"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.27"
+  path_provider_foundation:
+    dependency: transitive
+    description:
+      name: path_provider_foundation
+      sha256: "1995d88ec2948dac43edf8fe58eb434d35d22a2940ecee1a9fefcd62beee6eb3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.3"
   path_provider_linux:
     dependency: transitive
     description:
@@ -263,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.0"
+  phased:
+    dependency: transitive
+    description:
+      name: phased
+      sha256: "4dc19d589fd059268b07357767ac96eef2861eb5e8ceedf9d23fb933f0128396"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   platform:
     dependency: transitive
     description:
@@ -299,10 +385,10 @@ packages:
     dependency: "direct main"
     description:
       name: shared_preferences
-      sha256: "16d3fb6b3692ad244a695c0183fca18cf81fd4b821664394a781de42386bf022"
+      sha256: "396f85b8afc6865182610c0a2fc470853d56499f75f7499e2a73a9f0539d23d0"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "2.1.2"
   shared_preferences_android:
     dependency: transitive
     description:
@@ -454,4 +540,4 @@ packages:
     version: "6.3.0"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.10.0"

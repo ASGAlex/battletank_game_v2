@@ -53,8 +53,7 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
             killable?.killParent();
           } catch (_) {}
           break;
-        case PlayerAction.triggerE:
-        case PlayerAction.triggerF:
+        default:
           // should not to handle
           break;
       }

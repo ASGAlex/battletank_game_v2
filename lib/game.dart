@@ -1,14 +1,19 @@
 import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:nes_ui/nes_ui.dart';
 import 'package:tank_game/controls/gamepad.dart';
+import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/keyboard.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
+import 'package:tank_game/ui/intl.dart';
+import 'package:tank_game/ui/route_builder.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -33,7 +38,11 @@ abstract class MyGameFeatures extends FlameGame
   GameWorld get world => rootComponent as GameWorld;
 }
 
-class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
+class MyGame extends MyGameFeatures
+    with
+        GameHardwareKeyboard,
+        XInputGamePad,
+        MessageListenerMixin<List<PlayerAction>> {
   MyGame(this.mapFile, this.context);
 
   static const zoomPerScrollUnit = 0.22;
@@ -85,15 +94,56 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
         viewport: FixedAspectRatioViewport(aspectRatio: 400 / 250));
     cameraComponent.viewfinder.zoom = 5;
 
+    final settings = SettingsController();
+    Size activeRadius;
+    Size unloadRadius;
+    Size preloadRadius;
+    int processCellsLimitToPauseEngine;
+    Duration suspendedCellLifetime;
+
+    switch (settings.processor) {
+      case ProcessorSpeed.web:
+        activeRadius = const Size(1, 1);
+        unloadRadius = const Size(2, 2);
+        preloadRadius = const Size(4, 4);
+        processCellsLimitToPauseEngine = 10;
+        suspendedCellLifetime = const Duration(seconds: 120);
+        break;
+
+      case ProcessorSpeed.office:
+        activeRadius = const Size(1, 1);
+        unloadRadius = const Size(3, 3);
+        preloadRadius = const Size(6, 6);
+        processCellsLimitToPauseEngine = 10;
+        suspendedCellLifetime = const Duration(seconds: 180);
+        break;
+
+      case ProcessorSpeed.middle:
+        activeRadius = const Size(1, 1);
+        unloadRadius = const Size(3, 3);
+        preloadRadius = const Size(6, 6);
+        processCellsLimitToPauseEngine = 15;
+        suspendedCellLifetime = const Duration(seconds: 180);
+        break;
+
+      case ProcessorSpeed.powerful:
+        activeRadius = const Size(1, 1);
+        unloadRadius = const Size(3, 3);
+        preloadRadius = const Size(6, 6);
+        processCellsLimitToPauseEngine = 30;
+        suspendedCellLifetime = const Duration(seconds: 240);
+        break;
+    }
+
     await initializeSpatialGrid(
         blockSize: 100,
         debug: false,
-        activeRadius: const Size(1, 1),
-        unloadRadius: const Size(2, 2),
-        preloadRadius: const Size(4, 4),
+        activeRadius: activeRadius,
+        unloadRadius: unloadRadius,
+        preloadRadius: preloadRadius,
         buildCellsPerUpdate: 1,
         cleanupCellsPerUpdate: 1,
-        processCellsLimitToPauseEngine: 10,
+        processCellsLimitToPauseEngine: processCellsLimitToPauseEngine,
         // maxCells: 200,
         rootComponent: gameWorld,
         trackWindowSize: true,
@@ -105,7 +155,7 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
                 mapOffset + Vector2(object.x, object.y);
           }
         },
-        suspendedCellLifetime: const Duration(seconds: 120),
+        suspendedCellLifetime: suspendedCellLifetime,
         suspendCellPrecision: const Duration(seconds: 10),
         cellBuilderNoMap: map.noMapBuilder,
         // onAfterCellBuild: (cell, rootComponent) async {
@@ -138,8 +188,6 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     add(gameWorld);
     cameraComponent.viewport.add(hudVisibility);
     cameraComponent.viewport.add(hudFlashMessage);
-
-    consoleMessages.sendMessage('Spawning the Player...');
 
     // Spawn.waitFree(true).then((playerSpawn) async {
     //   if (player == null || player?.dead == true) {
@@ -186,6 +234,8 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
   void onInitializationDone() {
     hideLoadingComponent();
     if (_initialized) return;
+
+    listenProvider(inputEventsHandler.messageProvider);
     cameraComponent.viewfinder.zoom = 5;
 
     onAfterZoom();
@@ -263,5 +313,48 @@ class MyGame extends MyGameFeatures with GameHardwareKeyboard, XInputGamePad {
     }
 
     return true;
+  }
+
+  @override
+  void onStreamMessage(List<PlayerAction> message) {
+    for (final msg in message) {
+      switch (msg) {
+        case PlayerAction.console:
+          if (overlays.isActive('console')) {
+            overlays.remove('console');
+            resumeEngine();
+          } else {
+            pauseEngine();
+            overlays.add('console');
+          }
+
+          break;
+        case PlayerAction.escape:
+          pauseEngine();
+          NesConfirmDialog.show(
+                  context: context,
+                  message: context.loc().leave_game,
+                  confirmLabel: context.loc().ok,
+                  cancelLabel: context.loc().back)
+              .then((run) {
+            if (run == true) {
+              RouteBuilder.gotoMissions(context, false);
+            } else {
+              resumeEngine();
+            }
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  @override
+  void onRemove() {
+    dispose();
+    pauseEngine();
+    super.onRemove();
   }
 }

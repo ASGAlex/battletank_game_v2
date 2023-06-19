@@ -37,24 +37,14 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "app_title": MessageLookupByLibrary.simpleMessage("Танки"),
+        "back": MessageLookupByLibrary.simpleMessage("Назад"),
         "continue_play":
             MessageLookupByLibrary.simpleMessage("Продолжить игру"),
         "defeat": MessageLookupByLibrary.simpleMessage("Поражение!"),
         "exit": MessageLookupByLibrary.simpleMessage("Выйти из игры"),
-        "graphics_low": MessageLookupByLibrary.simpleMessage("Всё плоское"),
-        "graphics_quality":
-            MessageLookupByLibrary.simpleMessage("Качество графики"),
-        "graphics_treeShadow":
-            MessageLookupByLibrary.simpleMessage("Тени танков и деревьев"),
-        "graphics_walls3DShadows_medium":
-            MessageLookupByLibrary.simpleMessage("Улучшенная детализация 3D"),
-        "graphics_walls3D_low":
-            MessageLookupByLibrary.simpleMessage("3D-стены"),
-        "graphics_walls3dShadows_high":
-            MessageLookupByLibrary.simpleMessage("Максимальная детализация 3D"),
-        "graphics_walls3dShadows_low":
-            MessageLookupByLibrary.simpleMessage("3D стены с тенями"),
         "hidden": MessageLookupByLibrary.simpleMessage("СКРЫТЫЙ"),
+        "leave_game": MessageLookupByLibrary.simpleMessage(
+            "Точно хочешь остаовить игру и вернуться в меню выбора миссий?"),
         "mission_objectives":
             MessageLookupByLibrary.simpleMessage("Задачи миссии"),
         "mission_objectives_empty": MessageLookupByLibrary.simpleMessage(
@@ -76,6 +66,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("Так точно!"),
         "p404_title":
             MessageLookupByLibrary.simpleMessage("Unknown routing error"),
+        "processor_speed":
+            MessageLookupByLibrary.simpleMessage("Скорость процессора"),
+        "processor_speed_middle":
+            MessageLookupByLibrary.simpleMessage("Мощный, но не топовый"),
+        "processor_speed_office":
+            MessageLookupByLibrary.simpleMessage("Офисный компьютер"),
+        "processor_speed_powerful": MessageLookupByLibrary.simpleMessage(
+            "Крутой процессор для гейминга"),
+        "processor_speed_web":
+            MessageLookupByLibrary.simpleMessage("Web-браузер"),
         "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
         "start_new_game": MessageLookupByLibrary.simpleMessage("Играть!"),
         "victory": MessageLookupByLibrary.simpleMessage("Победа!"),

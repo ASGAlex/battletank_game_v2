@@ -35,24 +35,14 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "app_title": MessageLookupByLibrary.simpleMessage("Tank game"),
+        "back": MessageLookupByLibrary.simpleMessage("Back"),
         "continue_play":
             MessageLookupByLibrary.simpleMessage("Continue to play"),
         "defeat": MessageLookupByLibrary.simpleMessage("DEFEAT!"),
         "exit": MessageLookupByLibrary.simpleMessage("Exit the game"),
-        "graphics_low": MessageLookupByLibrary.simpleMessage("Low"),
-        "graphics_quality":
-            MessageLookupByLibrary.simpleMessage("Graphics quality"),
-        "graphics_treeShadow":
-            MessageLookupByLibrary.simpleMessage("Shadows for trees and tanks"),
-        "graphics_walls3DShadows_medium":
-            MessageLookupByLibrary.simpleMessage("Well-detailed 3D"),
-        "graphics_walls3D_low":
-            MessageLookupByLibrary.simpleMessage("Pseudo-3D walls"),
-        "graphics_walls3dShadows_high":
-            MessageLookupByLibrary.simpleMessage("Highest 3D detalisation"),
-        "graphics_walls3dShadows_low": MessageLookupByLibrary.simpleMessage(
-            "Pseudo-3D walls with shadows"),
         "hidden": MessageLookupByLibrary.simpleMessage("HIDDEN"),
+        "leave_game": MessageLookupByLibrary.simpleMessage(
+            "Do you really want to leave the game and exit to mission menu?"),
         "mission_objectives":
             MessageLookupByLibrary.simpleMessage("Mission objectives"),
         "mission_objectives_empty": MessageLookupByLibrary.simpleMessage(
@@ -74,6 +64,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("Got it!"),
         "p404_title":
             MessageLookupByLibrary.simpleMessage("Unknown routing error"),
+        "processor_speed":
+            MessageLookupByLibrary.simpleMessage("Processor speed"),
+        "processor_speed_middle":
+            MessageLookupByLibrary.simpleMessage("Nice fast processor"),
+        "processor_speed_office":
+            MessageLookupByLibrary.simpleMessage("An office PC"),
+        "processor_speed_powerful":
+            MessageLookupByLibrary.simpleMessage("High-end CPU for gaming"),
+        "processor_speed_web":
+            MessageLookupByLibrary.simpleMessage("Web browser"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "start_new_game": MessageLookupByLibrary.simpleMessage("Play!"),
         "victory": MessageLookupByLibrary.simpleMessage("VICTORY!"),

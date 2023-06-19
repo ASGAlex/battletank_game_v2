@@ -4,6 +4,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:nes_ui/nes_ui.dart';
 import 'package:tank_game/generated/l10n.dart';
 import 'package:tank_game/ui/route_builder.dart';
 
@@ -110,9 +111,7 @@ class _MyAppState extends State<MyApp> {
               ],
               onGenerateTitle: (BuildContext context) =>
                   context.loc().app_title,
-              theme: ThemeData(),
-              darkTheme: ThemeData.dark(),
-              themeMode: ThemeMode.dark,
+              theme: flutterNesTheme(brightness: Brightness.light),
               onGenerateRoute: (RouteSettings routeSettings) {
                 return MaterialPageRoute<void>(
                     settings: routeSettings,

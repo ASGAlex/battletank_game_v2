@@ -37,9 +37,10 @@ dependencies:
 #  dart_numerics: ^0.0.6
 #   intl: any
   shared_preferences: ^2.0.18
+  nes_ui: ^0.7.0
   flame_spatial_grid:
-#    path: ../cluisterizer_test
-    git: https://github.com/ASGAlex/flame_spatial_grid.git
+    path: ../cluisterizer_test
+#    git: https://github.com/ASGAlex/flame_spatial_grid.git
 
   flame_message_stream:
     git: https://github.com/ASGAlex/flame_message_stream.git

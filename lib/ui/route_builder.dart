@@ -5,18 +5,18 @@ import 'game/screen.dart';
 import 'intl.dart';
 import 'menu/main_menu.dart';
 import 'menu/mission_menu.dart';
-import 'menu/settings/setings_view.dart';
+import 'menu/setings_menu.dart';
 
 typedef RouteItem = Widget Function(BuildContext context);
 
 class RouteBuilder {
   static final _routeMap = <String, RouteItem>{
-    // '/': (ctx) => const MainMenu(),
-    '/': (ctx) => _gameRoute(),
+    '/': (ctx) => const MainMenu(),
+    // '/': (ctx) => _gameRoute(),
     '/main': (ctx) => const MainMenu(),
     '/missions': (ctx) => const MissionMenu(),
-    '/settings': (ctx) => const SettingsView(),
-    '/game': (ctx) => _gameRoute(),
+    '/settings': (ctx) => const SettingsMenu(),
+    '/game': (ctx) => _gameRoute(ctx),
   };
 
   static Widget build(String? routeName, BuildContext context) {
@@ -35,8 +35,18 @@ class RouteBuilder {
         body: Container(),
       );
 
-  static Widget _gameRoute() {
+  static Widget _gameRoute([BuildContext? context]) {
+    if (context != null) {
+      final mission = ModalRoute.of(context)?.settings.arguments;
+      if (mission != null && mission is MissionDescription) {
+        return GameScreen(
+          key: UniqueKey(),
+          mission: mission,
+        );
+      }
+    }
     return GameScreen(
+      key: UniqueKey(),
       mission: MissionDescription(
           name: 'mission',
           description: 'description',
@@ -56,8 +66,13 @@ class RouteBuilder {
         .pushNamedAndRemoveUntil('/game', (route) => false, arguments: mission);
   }
 
-  static gotoMissions(BuildContext context) {
-    Navigator.of(context).restorablePushNamed('/missions');
+  static gotoMissions(BuildContext context, [bool restorable = true]) {
+    if (restorable) {
+      Navigator.of(context).restorablePushNamed('/missions');
+    } else {
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/missions', (route) => false);
+    }
   }
 
   static gotoSettings(BuildContext context) {

@@ -12,6 +12,8 @@ enum PlayerAction {
   triggerE,
   triggerF,
   triggerK,
+  console,
+  escape,
 }
 
 class InputEventsHandler {
@@ -43,6 +45,14 @@ class InputEventsHandler {
       }
       if (key == LogicalKeyboardKey.keyK) {
         actions.add(PlayerAction.triggerK);
+      }
+
+      if (key == LogicalKeyboardKey.escape) {
+        actions.add(PlayerAction.escape);
+      }
+      if (key == LogicalKeyboardKey.tilde ||
+          key == LogicalKeyboardKey.backquote) {
+        actions.add(PlayerAction.console);
       }
 
       if (key == LogicalKeyboardKey.space) {
