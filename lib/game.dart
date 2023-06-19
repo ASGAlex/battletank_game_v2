@@ -76,15 +76,13 @@ class MyGame extends MyGameFeatures
 
   @override
   Future<void> onLoad() async {
-    consoleMessages.sendMessage('Start loading!');
+    consoleMessages.sendMessage('Start loading map $mapFile');
     super.onLoad();
     initColorFilter<MyGame>();
 
-    consoleMessages.sendMessage('loading sounds...');
+    // consoleMessages.sendMessage('loading sounds...');
     // SoundLibrary().init();
-    consoleMessages.sendMessage('done.');
-
-    consoleMessages.sendMessage('loading map...');
+    // consoleMessages.sendMessage('done.');
 
     final gameWorld = GameWorld();
     map = GameMapLoader(mapFile);
@@ -166,11 +164,12 @@ class MyGame extends MyGameFeatures
         //   layersManager.addLayer(trailLayer);
         // },
         maps: [map]);
-    await _loadExternalTileSets();
-
     consoleMessages.sendMessage('done.');
+    consoleMessages.sendMessage('Loading additional tilesets...');
+    await _loadExternalTileSets();
+    consoleMessages.sendMessage('Done...');
 
-    consoleMessages.sendMessage('Starting UI');
+    // consoleMessages.sendMessage('Starting UI');
     // if (Platform.isAndroid || Platform.isIOS) {
     // initJoystick(inputEventsHandler.handleFireEvent);
     // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
@@ -183,11 +182,13 @@ class MyGame extends MyGameFeatures
     hudFlashMessage = FlashMessage(
         position: hudVisibility.position.clone()..translate(100, 0));
 
-    consoleMessages.sendMessage('done.');
+    // consoleMessages.sendMessage('done.');
 
     add(gameWorld);
     cameraComponent.viewport.add(hudVisibility);
     cameraComponent.viewport.add(hudFlashMessage);
+
+    consoleMessages.sendMessage('Start building game cells...');
 
     // Spawn.waitFree(true).then((playerSpawn) async {
     //   if (player == null || player?.dead == true) {

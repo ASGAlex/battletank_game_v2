@@ -38,6 +38,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "back": MessageLookupByLibrary.simpleMessage("Back"),
         "continue_play":
             MessageLookupByLibrary.simpleMessage("Continue to play"),
+        "controls_description": MessageLookupByLibrary.simpleMessage(
+            "Use WASD for moving \nPress SPACE for fire\nPress E to enter into a vehicle\nPress F to leave a vehicle\nPress ~ to view console\nPress ESC to interrupt a mission"),
+        "controls_description_title":
+            MessageLookupByLibrary.simpleMessage("How to play?"),
         "defeat": MessageLookupByLibrary.simpleMessage("DEFEAT!"),
         "exit": MessageLookupByLibrary.simpleMessage("Exit the game"),
         "hidden": MessageLookupByLibrary.simpleMessage("HIDDEN"),

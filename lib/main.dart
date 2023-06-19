@@ -97,6 +97,15 @@ class _MyAppState extends State<MyApp> {
       child: AnimatedBuilder(
         animation: SettingsController(),
         builder: (BuildContext context, Widget? child) {
+          var nesTheme = flutterNesTheme(brightness: Brightness.light);
+          nesTheme = nesTheme.copyWith(
+              scrollbarTheme: ScrollbarTheme.of(context).copyWith(
+            radius: Radius.zero,
+            thickness: const MaterialStatePropertyAll<double>(20),
+            thumbColor: const MaterialStatePropertyAll<Color>(Colors.white54),
+            trackVisibility: const MaterialStatePropertyAll<bool>(false),
+            thumbVisibility: const MaterialStatePropertyAll<bool>(true),
+          ));
           return MaterialApp(
               restorationScopeId: 'app',
               localizationsDelegates: const [
@@ -111,7 +120,7 @@ class _MyAppState extends State<MyApp> {
               ],
               onGenerateTitle: (BuildContext context) =>
                   context.loc().app_title,
-              theme: flutterNesTheme(brightness: Brightness.light),
+              theme: nesTheme,
               onGenerateRoute: (RouteSettings routeSettings) {
                 return MaterialPageRoute<void>(
                     settings: routeSettings,

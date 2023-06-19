@@ -40,6 +40,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "back": MessageLookupByLibrary.simpleMessage("Назад"),
         "continue_play":
             MessageLookupByLibrary.simpleMessage("Продолжить игру"),
+        "controls_description": MessageLookupByLibrary.simpleMessage(
+            "WASD для передвижения \nSPACE - открыть огонь\nE - войти в транспорт\nF - покинуть транспорт\nЧтобы показать консоль - нажми ~\nESC - прервать миссию"),
+        "controls_description_title":
+            MessageLookupByLibrary.simpleMessage("Как играть"),
         "defeat": MessageLookupByLibrary.simpleMessage("Поражение!"),
         "exit": MessageLookupByLibrary.simpleMessage("Выйти из игры"),
         "hidden": MessageLookupByLibrary.simpleMessage("СКРЫТЫЙ"),

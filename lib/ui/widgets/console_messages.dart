@@ -31,31 +31,36 @@ class ConsoleMessages extends StatelessWidget {
     });
     return Container(
       color: Colors.black,
-      margin: const EdgeInsets.fromLTRB(32, 16, 16, 16),
-      child: ListView.builder(
-        itemExtent: 24,
+      padding: const EdgeInsets.fromLTRB(32, 16, 16, 16),
+      child: Scrollbar(
+        thickness: 20,
+        radius: Radius.zero,
         controller: msgScrollController,
-        itemCount: controller.gameMessages.length,
-        reverse: false,
-        itemBuilder: (BuildContext context, int index) {
-          return Row(
-            verticalDirection: VerticalDirection.up,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DefaultTextStyle(
-                style: const TextStyle(
-                    decoration: null,
-                    color: Colors.white,
-                    fontFamily: 'MonospaceRU',
-                    fontSize: 12),
-                child: Text(
-                  controller.gameMessages[index],
+        child: ListView.builder(
+          itemExtent: 24,
+          controller: msgScrollController,
+          itemCount: controller.gameMessages.length,
+          reverse: false,
+          itemBuilder: (BuildContext context, int index) {
+            return Row(
+              verticalDirection: VerticalDirection.up,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DefaultTextStyle(
+                  style: const TextStyle(
+                      decoration: null,
+                      color: Colors.white,
+                      fontFamily: 'MonospaceRU',
+                      fontSize: 12),
+                  child: Text(
+                    controller.gameMessages[index],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }

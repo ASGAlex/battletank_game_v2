@@ -210,6 +210,26 @@ class S {
     );
   }
 
+  /// `How to play?`
+  String get controls_description_title {
+    return Intl.message(
+      'How to play?',
+      name: 'controls_description_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use WASD for moving \nPress SPACE for fire\nPress E to enter into a vehicle\nPress F to leave a vehicle\nPress ~ to view console\nPress ESC to interrupt a mission`
+  String get controls_description {
+    return Intl.message(
+      'Use WASD for moving \nPress SPACE for fire\nPress E to enter into a vehicle\nPress F to leave a vehicle\nPress ~ to view console\nPress ESC to interrupt a mission',
+      name: 'controls_description',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `VISIBLE`
   String get visible {
     return Intl.message(
