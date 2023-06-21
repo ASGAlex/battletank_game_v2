@@ -21,17 +21,16 @@ class GameScreen extends StatelessWidget {
     if (selectedMission == null) {
       throw "Mission was not selected!!";
     }
+    final game =
+        SettingsController().startGameWithMission(selectedMission, context);
 
     return WillPopScope(
       onWillPop: () async {
-        SettingsController().gameInstance?.overlays.add('menu');
+        game.overlays.add('menu');
         return false;
       },
-      child: GameWidget.controlled(
-        gameFactory: () {
-          return SettingsController()
-              .startGameWithMission(selectedMission, context);
-        },
+      child: GameWidget(
+        game: game,
         overlayBuilderMap: {
           'console': (BuildContext context, MyGame game) {
             return ConsoleMessages(
@@ -52,10 +51,7 @@ class GameScreen extends StatelessWidget {
           }
         },
         loadingBuilder: (BuildContext ctx) {
-          final game = SettingsController().gameInstance;
-          if (game == null) throw 'game not created';
           return StreamBuilder(
-              key: GlobalKey(),
               stream: game.consoleMessages.stream,
               builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
                 return ConsoleMessages(controller: game.consoleMessages);

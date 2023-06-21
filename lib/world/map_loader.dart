@@ -8,7 +8,6 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
-import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
@@ -267,7 +266,7 @@ class GameMapLoader extends TiledMapLoader {
     );
 
     game.world.addSpawn(newSpawn);
-    SpawnManager().add(newSpawn);
+    game.spawnManager.add(newSpawn);
   }
 
   Future onBuildSpawnNeutral(CellBuilderContext context) async {
@@ -286,7 +285,7 @@ class GameMapLoader extends TiledMapLoader {
     newSpawn.spawnData.allowedFactions.add(faction);
 
     game.world.addSpawn(newSpawn);
-    SpawnManager().add(newSpawn);
+    game.spawnManager.add(newSpawn);
   }
 
   Future onBuildTarget(CellBuilderContext context) async {

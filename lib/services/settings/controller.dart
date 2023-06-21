@@ -39,7 +39,6 @@ class SettingsController with ChangeNotifier {
   SettingsController._();
 
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
-  MyGame? gameInstance;
   String mapFile = '';
   var xInputGamePadController = XInputGamePadController();
 
@@ -62,9 +61,7 @@ class SettingsController with ChangeNotifier {
       MissionDescription mission, BuildContext context) {
     _currentMission = mission;
     mapFile = mission.mapFile;
-    final game = MyGame(mapFile, context);
-    gameInstance = game;
-    return game;
+    return MyGame(mapFile, context);
   }
 
   loadSettings() async {

@@ -6,8 +6,6 @@ import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/route_builder.dart';
 import 'package:tank_game/ui/widgets/button.dart';
 
-import '../../services/settings/controller.dart';
-
 class InGameMenu extends StatelessWidget {
   const InGameMenu({Key? key, required this.game}) : super(key: key);
 
@@ -47,7 +45,6 @@ class InGameMenu extends StatelessWidget {
               child: MenuButton(
                 onPressed: () {
                   game.paused = true;
-                  SettingsController().gameInstance = null;
                   RouteBuilder.gotoMainMenu(context);
                 },
                 text: context.loc().exit,

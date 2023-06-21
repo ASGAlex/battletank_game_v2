@@ -7,13 +7,7 @@ import 'package:tank_game/world/environment/spawn/spawn_data.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
 class SpawnManager {
-  static final SpawnManager _instance = SpawnManager._();
-
-  SpawnManager._();
-
   final _spawns = HashSet<SpawnEntity>();
-
-  factory SpawnManager() => _instance;
 
   bool spawnNewActor({
     required ActorMixin actor,

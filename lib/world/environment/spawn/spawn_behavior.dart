@@ -2,16 +2,18 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 import 'package:tank_game/world/core/behaviors/distance_callback_mixin.dart';
 import 'package:tank_game/world/core/visibility_mixin.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
-import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 
 import 'spawn_data.dart';
 
-class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
+class SpawnBehavior extends CollisionBehavior
+    with DistanceCallbackMixin, HasGameReference<MyGame> {
   final _trackedObjectsDistances = <Component, List<double>>{};
   ActorMixin? objectToSpawn;
   Function? onSpawnComplete;
@@ -28,14 +30,14 @@ class SpawnBehavior extends CollisionBehavior with DistanceCallbackMixin {
   FutureOr<void> onLoad() {
     assert(parent is SpawnEntity);
     super.onLoad();
-    SpawnManager().add(parent as SpawnEntity);
+    game.spawnManager.add(parent as SpawnEntity);
     parent.boundingBox.collisionType = CollisionType.passive;
     parent.boundingBox.isDistanceCallbackEnabled = true;
   }
 
   @override
   void onRemove() {
-    SpawnManager().remove(parent as SpawnEntity);
+    game.spawnManager.remove(parent as SpawnEntity);
     parent.boundingBox.isDistanceCallbackEnabled = false;
     super.onRemove();
   }

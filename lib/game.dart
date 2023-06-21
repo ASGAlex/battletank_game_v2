@@ -33,8 +33,8 @@ abstract class MyGameFeatures extends FlameGame
     with
         ColorFilterMix,
         KeyboardEvents,
-        SingleGameInstance,
         HasSpatialGridFramework,
+        SingleGameInstance,
         ScrollDetector {
   GameWorld get world => rootComponent as GameWorld;
 }
@@ -66,6 +66,7 @@ class MyGame extends MyGameFeatures
   late final GameMapLoader map;
 
   final initialPlayerPosition = Vector2(0, 0);
+  final spawnManager = SpawnManager();
 
   @override
   void onScroll(PointerScrollInfo info) {
@@ -273,7 +274,7 @@ class MyGame extends MyGameFeatures
         ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 
-      SpawnManager().spawnNewActor(
+      spawnManager.spawnNewActor(
           actor: currentPlayer!,
           faction: Faction(name: 'Player'),
           onSpawnComplete: () {
@@ -358,6 +359,7 @@ class MyGame extends MyGameFeatures
                   cancelLabel: context.loc().back)
               .then((run) {
             if (run == true) {
+              resumeEngine();
               RouteBuilder.gotoMissions(context, false);
             } else {
               resumeEngine();
@@ -374,8 +376,7 @@ class MyGame extends MyGameFeatures
   @override
   void onRemove() {
     dispose();
-    pauseEngine();
-    SpawnManager().dispose();
+    spawnManager.dispose();
     FlameAudio.audioCache.clearAll().catchError((error) {
       consoleMessages.sendMessage(error.toString());
     });
