@@ -40,8 +40,8 @@ dependencies:
   nes_ui: ^0.7.0
   flame_audio: ^2.0.3
   flame_spatial_grid:
-    path: ../cluisterizer_test
-#    git: https://github.com/ASGAlex/flame_spatial_grid.git
+#    path: ../cluisterizer_test
+    git: https://github.com/ASGAlex/flame_spatial_grid.git
 
   flame_message_stream:
     git: https://github.com/ASGAlex/flame_message_stream.git
