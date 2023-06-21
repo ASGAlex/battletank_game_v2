@@ -375,11 +375,10 @@ class MyGame extends MyGameFeatures
   void onRemove() {
     dispose();
     pauseEngine();
-    try {
-      FlameAudio.audioCache.clearAll();
-    } catch (e) {
-      consoleMessages.sendMessage(e.toString());
-    }
+    SpawnManager().dispose();
+    FlameAudio.audioCache.clearAll().catchError((error) {
+      consoleMessages.sendMessage(error.toString());
+    });
     super.onRemove();
   }
 }

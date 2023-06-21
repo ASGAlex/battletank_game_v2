@@ -48,6 +48,7 @@ class ConsoleMessages extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DefaultTextStyle(
+                  softWrap: true,
                   style: const TextStyle(
                       decoration: null,
                       color: Colors.white,

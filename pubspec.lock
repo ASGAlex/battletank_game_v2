@@ -197,9 +197,11 @@ packages:
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "../cluisterizer_test"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "303f02fcaba4825d89b75cdc83b37775f7e48c83"
+      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
+    source: git
     version: "1.0.0"
   flame_tiled:
     dependency: "direct main"
