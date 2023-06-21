@@ -41,6 +41,9 @@ class AudioEffectLoop {
   }
 
   void dispose() {
-    _player.dispose();
+    stop();
+    _player.dispose().catchError((error) {
+      print(error);
+    });
   }
 }

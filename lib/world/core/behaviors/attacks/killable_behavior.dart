@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
@@ -39,6 +40,11 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
         FlameAudio.createPool('sfx/explosion_player.m4a', maxPlayers: 1)
             .then((value) {
           _audioPlayer = value;
+        });
+      } else if (parent is HumanEntity) {
+        FlameAudio.createPool('sfx/human_death.m4a', maxPlayers: 1)
+            .then((value) {
+          _audioEnemy = _audioPlayer = value;
         });
       }
     }

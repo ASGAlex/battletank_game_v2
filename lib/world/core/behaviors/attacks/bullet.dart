@@ -9,6 +9,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
@@ -197,14 +198,19 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         _offsetRotations[possibleDirection] = rotatedOffset;
       }
     }
-    if (parent is TankEntity) {
-      FlameAudio.createPool('sfx/player_fire_bullet.m4a', maxPlayers: 2)
-          .then((pool) {
-        _audioFire = pool;
-      });
-    }
-
     if (SettingsController().soundEnabled) {
+      if (parent is TankEntity) {
+        FlameAudio.createPool('sfx/player_fire_bullet.m4a', maxPlayers: 2)
+            .then((pool) {
+          _audioFire = pool;
+        });
+      } else if (parent is HumanEntity) {
+        FlameAudio.createPool('sfx/human_shoot.m4a', maxPlayers: 2)
+            .then((pool) {
+          _audioFire = pool;
+        });
+      }
+
       FlameAudio.createPool('sfx/player_bullet_wall.m4a', maxPlayers: 2)
           .then((value) {
         _audioHit['weak'] = value;

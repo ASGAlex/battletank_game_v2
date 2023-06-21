@@ -5,6 +5,7 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/audio_effect_loop.dart';
@@ -22,8 +23,13 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     if (SettingsController().soundEnabled) {
       if (parent is TankEntity) {
         _audioEffectLoop = AudioEffectLoop(
-          effectFile: 'music/move_player.m4a',
+          effectFile: 'sfx/move_player.m4a',
           effectDuration: const Duration(milliseconds: 990),
+        );
+      } else if (parent is HumanEntity) {
+        _audioEffectLoop = AudioEffectLoop(
+          effectFile: 'sfx/human_step_grass.m4a',
+          effectDuration: const Duration(milliseconds: 1000),
         );
       }
     }

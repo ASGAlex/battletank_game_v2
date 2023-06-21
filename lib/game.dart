@@ -199,9 +199,12 @@ class MyGame extends MyGameFeatures
         'sfx/player_bullet_strong_wall.m4a',
         'sfx/player_bullet_wall.m4a',
         'sfx/player_fire_bullet.m4a',
+        'sfx/move_player.m4a',
+        'sfx/human_step_grass.m4a',
+        'sfx/human_shoot.m4a',
+        'sfx/human_death.m4a',
         'music/intro.m4a',
         'music/move_enemies.m4a',
-        'music/move_player.m4a',
       ]);
     }
     consoleMessages.sendMessage('Start building game cells...');
