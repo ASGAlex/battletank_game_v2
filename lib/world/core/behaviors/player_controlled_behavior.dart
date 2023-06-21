@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flame/experimental.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/audio_effect_loop.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
@@ -21,15 +21,15 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     priority = -1;
     if (SettingsController().soundEnabled) {
       if (parent is TankEntity) {
-        FlameAudio.loopLongAudio('music/move_player.m4a').then((player) {
-          _player = player;
-          player.pause();
-        });
+        _audioEffectLoop = AudioEffectLoop(
+          effectFile: 'music/move_player.m4a',
+          effectDuration: const Duration(milliseconds: 990),
+        );
       }
     }
   }
 
-  AudioPlayer? _player;
+  AudioEffectLoop? _audioEffectLoop;
 
   @override
   void onStreamMessage(List<PlayerAction> message) {
@@ -76,21 +76,17 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
         parent.coreState != ActorCoreState.wreck) {
       if (isMovementAction) {
         parent.coreState = ActorCoreState.move;
-        if (_player?.state == PlayerState.paused) {
-          _player?.resume();
-        }
+        _audioEffectLoop?.play();
       } else {
+        _audioEffectLoop?.stop();
         parent.coreState = ActorCoreState.idle;
-        _player?.pause();
       }
     }
   }
 
   @override
   void onRemove() {
-    _player?.pause();
-    _player?.dispose();
-    _player = null;
+    _audioEffectLoop?.dispose();
     dispose();
   }
 }
