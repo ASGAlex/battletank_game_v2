@@ -71,11 +71,25 @@ class SettingsController with ChangeNotifier {
     _missionRepository.initMissionList();
     _processor = await prefs.then((value) =>
         ProcessorSpeed.fromInt(value.getInt('processor_speed') ?? 0));
+    _soundEnabled =
+        await prefs.then((value) => value.getBool('sound_enabled') ?? true);
   }
 
   ProcessorSpeed _processor = ProcessorSpeed.web;
 
   ProcessorSpeed get processor => _processor;
+
+  bool _soundEnabled = true;
+
+  bool get soundEnabled => _soundEnabled;
+
+  set soundEnabled(bool value) {
+    _soundEnabled = value;
+    prefs.then((value) {
+      value.setBool('sound_enabled', soundEnabled);
+      notifyListeners();
+    });
+  }
 
   set processor(ProcessorSpeed quality) {
     _processor = quality;

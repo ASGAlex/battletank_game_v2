@@ -51,6 +51,21 @@ class SettingsMenu extends StatelessWidget {
                     ],
                   ),
                 ),
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
+                    child: NesCheckBox(
+                      value: controller.soundEnabled,
+                      onChange: (value) {
+                        controller.soundEnabled = value;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(context.loc().sounds_enables),
+                  ),
+                ]),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

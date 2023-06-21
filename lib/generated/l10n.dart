@@ -140,6 +140,16 @@ class S {
     );
   }
 
+  /// `Enable sound`
+  String get sounds_enables {
+    return Intl.message(
+      'Enable sound',
+      name: 'sounds_enables',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Continue to play`
   String get continue_play {
     return Intl.message(

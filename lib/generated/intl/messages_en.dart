@@ -79,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "processor_speed_web":
             MessageLookupByLibrary.simpleMessage("Web browser"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "sounds_enables": MessageLookupByLibrary.simpleMessage("Enable sound"),
         "start_new_game": MessageLookupByLibrary.simpleMessage("Play!"),
         "victory": MessageLookupByLibrary.simpleMessage("VICTORY!"),
         "visible": MessageLookupByLibrary.simpleMessage("VISIBLE")

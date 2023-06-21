@@ -81,6 +81,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "processor_speed_web":
             MessageLookupByLibrary.simpleMessage("Web-браузер"),
         "settings": MessageLookupByLibrary.simpleMessage("Настройки"),
+        "sounds_enables": MessageLookupByLibrary.simpleMessage("Включить звук"),
         "start_new_game": MessageLookupByLibrary.simpleMessage("Играть!"),
         "victory": MessageLookupByLibrary.simpleMessage("Победа!"),
         "visible": MessageLookupByLibrary.simpleMessage("ВИДИМЫЙ")

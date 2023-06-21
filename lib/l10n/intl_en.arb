@@ -8,6 +8,7 @@
   "processor_speed_office": "An office PC",
   "processor_speed_middle": "Nice fast processor",
   "processor_speed_powerful": "High-end CPU for gaming",
+  "sounds_enables": "Enable sound",
   "continue_play": "Continue to play",
   "exit": "Exit the game",
   "mission_objectives": "Mission objectives",
@@ -17,7 +18,6 @@
   "leave_game": "Do you really want to leave the game and exit to mission menu?",
   "controls_description_title": "How to play?",
   "controls_description": "Use WASD for moving \nPress SPACE for fire\nPress E to enter into a vehicle\nPress F to leave a vehicle\nPress ~ to view console\nPress ESC to interrupt a mission",
-
   "visible": "VISIBLE",
   "hidden": "HIDDEN",
   "mo_protect_primary_target": "You must protect {count} primary target(s)",

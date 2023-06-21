@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:flame_audio/flame_audio.dart';
+import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
@@ -23,18 +28,43 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
   bool Function(ActorMixin attackedBy, ActorMixin killable)? factionCheck;
   bool Function(ActorMixin attackedBy, ActorMixin killable)? customApplyAttack;
 
-  void applyAttack(AttackBehavior attackedBy) {
+  @override
+  FutureOr<void> onLoad() {
+    if (SettingsController().soundEnabled) {
+      if (parent is TankEntity) {
+        FlameAudio.createPool('sfx/explosion_enemy.m4a', maxPlayers: 1)
+            .then((value) {
+          _audioEnemy = value;
+        });
+        FlameAudio.createPool('sfx/explosion_player.m4a', maxPlayers: 1)
+            .then((value) {
+          _audioPlayer = value;
+        });
+      }
+    }
+    return super.onLoad();
+  }
+
+  AudioPool? _audioEnemy;
+  AudioPool? _audioPlayer;
+
+  bool applyAttack(AttackBehavior attackedBy) {
     final killAllowed = factionCheck?.call(attackedBy.parent, parent) ?? true;
     if (killAllowed) {
       final processed =
           customApplyAttack?.call(attackedBy.parent, parent) ?? false;
       if (processed) {
-        return;
+        return false;
       }
       parent.data.health -= attackedBy.parent.data.health;
       attackedBy.parent.data.health = 0;
       if (parent.data.health <= 0) {
         killParent(attackedBy);
+
+        if (parent.data.coreState != ActorCoreState.removing) {
+          return true;
+        }
+        return false;
       } else {
         try {
           final colorFilter = parent.findBehavior<ColorFilterBehavior>();
@@ -42,6 +72,7 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
         } catch (_) {}
       }
     }
+    return false;
   }
 
   void killParent([AttackBehavior? attackedBy]) {
@@ -53,11 +84,23 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
     try {
       final controlled = parent.findBehavior<PlayerControlledBehavior>();
       controlled.removeFromParent();
-    } catch (_) {}
+      _audioPlayer?.start();
+    } catch (_) {
+      if (parent.data.coreState != ActorCoreState.wreck) {
+        _audioEnemy?.start();
+      }
+    }
     if (parent.data.coreState == ActorCoreState.wreck) {
       parent.coreState = ActorCoreState.removing;
     } else if (parent.data.coreState != ActorCoreState.dying) {
       parent.coreState = ActorCoreState.dying;
     }
+  }
+
+  @override
+  void onRemove() {
+    _audioPlayer?.dispose();
+    _audioEnemy?.dispose();
+    super.onRemove();
   }
 }

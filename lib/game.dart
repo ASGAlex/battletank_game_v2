@@ -1,6 +1,7 @@
 import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
@@ -134,7 +135,7 @@ class MyGame extends MyGameFeatures
     }
 
     await initializeSpatialGrid(
-        blockSize: 100,
+        blockSize: 128,
         debug: false,
         activeRadius: activeRadius,
         unloadRadius: unloadRadius,
@@ -188,6 +189,20 @@ class MyGame extends MyGameFeatures
     cameraComponent.viewport.add(hudVisibility);
     cameraComponent.viewport.add(hudFlashMessage);
 
+    if (SettingsController().soundEnabled) {
+      consoleMessages.sendMessage('Loading audio...');
+      await FlameAudio.audioCache.loadAll([
+        'sfx/bullet_strong_tank.m4a',
+        'sfx/explosion_enemy.m4a',
+        'sfx/explosion_player.m4a',
+        'sfx/player_bullet_strong_wall.m4a',
+        'sfx/player_bullet_wall.m4a',
+        'sfx/player_fire_bullet.m4a',
+        'music/intro.m4a',
+        'music/move_enemies.m4a',
+        'music/move_player.m4a',
+      ]);
+    }
     consoleMessages.sendMessage('Start building game cells...');
 
     // Spawn.waitFree(true).then((playerSpawn) async {
@@ -242,6 +257,10 @@ class MyGame extends MyGameFeatures
     onAfterZoom();
     if (!(currentPlayer?.isMounted ?? false)) {
       restorePlayer();
+    }
+
+    if (SettingsController().soundEnabled) {
+      FlameAudio.playLongAudio('music/intro.m4a');
     }
     _initialized = true;
   }
@@ -356,6 +375,11 @@ class MyGame extends MyGameFeatures
   void onRemove() {
     dispose();
     pauseEngine();
+    try {
+      FlameAudio.audioCache.clearAll();
+    } catch (e) {
+      consoleMessages.sendMessage(e.toString());
+    }
     super.onRemove();
   }
 }

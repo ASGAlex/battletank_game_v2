@@ -3,10 +3,13 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
@@ -43,6 +46,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     required this.owner,
     required double range,
     required this.animationConfigs,
+    required this.audio,
     double haloRadius = 0,
     double speedPenalty = 0,
     double speedPenaltyDuration = 0,
@@ -72,6 +76,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   final movementBehavior = MovementBehavior();
   final Map<ActorCoreState, AnimationConfig> animationConfigs;
   CircleComponent? halo;
+  final Map<String, AudioPool> audio;
 
   @override
   FutureOr<void> onLoad() {
@@ -83,7 +88,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(AnimationGroupBehavior<ActorCoreState>(
         animationConfigs: animationConfigs));
     add(movementBehavior);
-    add(AttackBehavior());
+    add(AttackBehavior(audio));
 
     final bulletData = (data as BulletData);
     if (bulletData.haloRadius > 0) {
@@ -192,8 +197,32 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         _offsetRotations[possibleDirection] = rotatedOffset;
       }
     }
+    if (parent is TankEntity) {
+      FlameAudio.createPool('sfx/player_fire_bullet.m4a', maxPlayers: 2)
+          .then((pool) {
+        _audioFire = pool;
+      });
+    }
+
+    if (SettingsController().soundEnabled) {
+      FlameAudio.createPool('sfx/player_bullet_wall.m4a', maxPlayers: 2)
+          .then((value) {
+        _audioHit['weak'] = value;
+      });
+      FlameAudio.createPool('sfx/player_bullet_strong_wall.m4a', maxPlayers: 2)
+          .then((value) {
+        _audioHit['strong'] = value;
+      });
+      FlameAudio.createPool('sfx/bullet_strong_tank.m4a', maxPlayers: 2)
+          .then((value) {
+        _audioHit['tank'] = value;
+      });
+    }
     return super.onLoad();
   }
+
+  final _audioHit = <String, AudioPool>{};
+  AudioPool? _audioFire;
 
   AttackerData get attackerData => (parent.data as AttackerData);
 
@@ -221,9 +250,11 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         speedPenalty: speedPenalty,
         speedPenaltyDuration: speedPenaltyDuration,
         offset: offset,
+        audio: _audioHit,
         haloRadius: haloRadius);
     bullet.scale = Vector2.all(scale);
     bulletsRootComponent.add(bullet);
+    _audioFire?.start();
   }
 
   @override
@@ -243,5 +274,15 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
       _tryFire = false;
     }
     super.update(dt);
+  }
+
+  @override
+  void onRemove() {
+    _audioFire?.dispose();
+    for (final poll in _audioHit.values) {
+      poll.dispose();
+    }
+    _audioHit.clear();
+    super.onRemove();
   }
 }
