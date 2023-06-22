@@ -21,6 +21,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
     required this.distance,
     required this.detectionType,
     required this.factionsToDetect,
+    this.pauseBetweenChecks = 0,
     this.onDetection,
     this.onNothingDetected,
     this.maxMomentum = 0,
@@ -34,13 +35,16 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
 
   double _momentum = 0;
 
+  final double pauseBetweenChecks;
+  double _dtBetweenChecks = 0;
+
   bool detected = false;
   final List<Faction> factionsToDetect;
 
   DetectionCallback? onDetection;
   Function? onNothingDetected;
 
-  final _checkedCOmponents = <Component>{};
+  final _checkedComponents = <Component>{};
 
   @override
   void onCalculateDistance(
@@ -82,7 +86,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
         if (detectable.detectionType != detectionType) {
           continue;
         }
-        _checkedCOmponents.add(other);
+        _checkedComponents.add(other);
         final finalDistance = distance * detectable.distanceModifier;
         if (distanceX < finalDistance && distanceY < finalDistance) {
           detected = true;
@@ -108,11 +112,20 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
 
   @override
   void update(double dt) {
+    if (pauseBetweenChecks > 0) {
+      _dtBetweenChecks += dt;
+      if (_dtBetweenChecks < pauseBetweenChecks) {
+        return;
+      } else {
+        _dtBetweenChecks = 0;
+      }
+    }
+
     final activeCollisions =
         game.collisionDetection.broadphase.activeCollisions;
     for (final hitbox in activeCollisions) {
       final component = hitbox.hitboxParent;
-      if (_checkedCOmponents.contains(component)) {
+      if (_checkedComponents.contains(component)) {
         continue;
       }
       if (!_canProcessComponent(component)) {
@@ -124,7 +137,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
       _processComponentDistance(component, distanceX, distanceY);
     }
 
-    _checkedCOmponents.clear();
+    _checkedComponents.clear();
 
     if (!detected) {
       if (_momentum < maxMomentum) {

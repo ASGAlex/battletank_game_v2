@@ -6,23 +6,21 @@ import 'package:tank_game/world/core/audio_effect_loop.dart';
 
 class EnemyAmbientVolume extends Component {
   EnemyAmbientVolume() {
-    _squaredMaxDistance = _audioDetectionDistance * _audioDetectionDistance * 2;
+    _squaredMaxDistance = _squaredMinDistance =
+        _audioDetectionDistance * _audioDetectionDistance * 2;
   }
 
   double volume = 0;
   AudioEffectLoop? _audioEffectLoop;
 
-  static const _audioDetectionDistance = 800.0;
+  static const _audioDetectionDistance = 300.0;
   late final double _squaredMaxDistance;
-  var _minDistanceX = _audioDetectionDistance + 1;
-  var _minDistanceY = _audioDetectionDistance + 1;
+  var _squaredMinDistance = 0.0;
 
   void onTankDetectedPlayer(double distanceX, double distanceY) {
-    if (distanceX < _minDistanceX) {
-      _minDistanceX = distanceX;
-    }
-    if (distanceY < _minDistanceY) {
-      _minDistanceY = distanceY;
+    final squared = distanceX * distanceX + distanceY * distanceY;
+    if (squared < _squaredMinDistance) {
+      _squaredMinDistance = squared;
     }
   }
 
@@ -40,11 +38,11 @@ class EnemyAmbientVolume extends Component {
   @override
   void update(double dt) {
     volume = 0;
-    if (_minDistanceX < _audioDetectionDistance &&
-        _minDistanceY < _audioDetectionDistance) {
-      final squaredDistance =
-          _minDistanceX * _minDistanceX + _minDistanceY * _minDistanceY;
-      volume = 1 - (squaredDistance / _squaredMaxDistance);
+    if (_squaredMinDistance < _squaredMaxDistance) {
+      volume = 1 - (_squaredMinDistance / _squaredMaxDistance);
+      if (volume < 0) {
+        volume = 0;
+      }
       if (volume > 0.01) {
         _audioEffectLoop?.volume = volume;
         _audioEffectLoop?.play();
@@ -54,7 +52,7 @@ class EnemyAmbientVolume extends Component {
       _audioEffectLoop?.volume = volume;
       _audioEffectLoop?.stop();
     }
-    _minDistanceX = _minDistanceY = _audioDetectionDistance + 1;
+    _squaredMinDistance = _squaredMaxDistance;
   }
 
   @override

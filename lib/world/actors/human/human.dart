@@ -13,10 +13,13 @@ import 'package:tank_game/world/core/behaviors/animation/animation_group_behavio
 import 'package:tank_game/world/core/behaviors/attacks/attacker_data.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
+import 'package:tank_game/world/core/faction.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -99,6 +102,9 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     ));
     add(ShadowBehavior());
     add(KillableBehavior());
+    if (data.factions.contains(Faction(name: 'Player'))) {
+      add(DetectableBehavior(detectionType: DetectionType.audial));
+    }
     boundingBox.collisionType = CollisionType.active;
   }
 
