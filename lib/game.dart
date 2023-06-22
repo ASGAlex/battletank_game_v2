@@ -67,7 +67,20 @@ class MyGame extends MyGameFeatures
 
   final hudHideInTreesProvider = MessageStreamProvider<bool>();
 
-  final functionsRegistry = ScenarioFunctionsRegistry();
+  late final ScenarioFunctionsRegistry functionsRegistry;
+
+  Widget Function(BuildContext context, MyGame game)
+      scenarioCurrentWidgetBuilder = (_, __) => Container();
+
+  void showScenarioMessage(Widget content) {
+    scenarioCurrentWidgetBuilder = (ctx, game) => content;
+    if (overlays.isActive('scenario')) {
+      overlays.remove('scenario');
+    }
+    overlays.add('scenario');
+  }
+
+  void hideScenarioMessage() => overlays.remove('scenario');
 
   @override
   void onScroll(PointerScrollInfo info) {
@@ -79,6 +92,7 @@ class MyGame extends MyGameFeatures
 
   @override
   Future<void> onLoad() async {
+    functionsRegistry = ScenarioFunctionsRegistry(this);
     consoleMessages.sendMessage('Start loading map $mapFile');
     super.onLoad();
     initColorFilter<MyGame>();

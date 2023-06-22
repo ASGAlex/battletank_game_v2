@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:intl/intl.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -16,6 +17,11 @@ class ScenarioObject extends PositionComponent
     final removeWhenLeave =
         tiledObject.properties.getValue<bool>('removeWhenLeave') ?? false;
     String text = tiledObject.properties.getValue<String>('text') ?? '';
+
+    final locale = Intl.getCurrentLocale();
+    if (tiledObject.properties.has('text_$locale')) {
+      text = tiledObject.properties.getValue<String>('text_$locale') ?? '';
+    }
 
     String factionsString =
         tiledObject.properties.getValue<String>('factions') ?? '';
@@ -111,13 +117,13 @@ mixin ActivationCallbacks {
   ScenarioCallbackFunction? activationCallback;
   ScenarioCallbackFunction? deactivationCallback;
 
-  void activatedBy(ScenarioObject object, ActorMixin other) {
+  void activatedBy(ScenarioObject object, ActorMixin other, MyGame game) {
     _activated = true;
-    activationCallback?.call(object, other);
+    activationCallback?.call(object, other, game);
   }
 
-  void deactivatedBy(ScenarioObject object, ActorMixin other) {
+  void deactivatedBy(ScenarioObject object, ActorMixin other, MyGame game) {
     _activated = false;
-    deactivationCallback?.call(object, other);
+    deactivationCallback?.call(object, other, game);
   }
 }

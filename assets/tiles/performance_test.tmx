@@ -1334,20 +1334,30 @@
   </object>
  </objectgroup>
  <objectgroup id="4" name="scenario">
-  <object id="305" name="initial greting" type="scenario" x="1150.99" y="407.386" width="72.3125" height="63.875">
+  <object id="305" name="initial greting" type="scenario" x="1144.63" y="408.659" width="72.3125" height="63.875">
    <properties>
     <property name="activationCallback" value="showMessage"/>
     <property name="deactivationCallback" value="hideMessage"/>
     <property name="factions" value="Player"/>
-    <property name="text" value="Enter into the tank that spawns nearby at right"/>
+    <property name="modal" type="bool" value="false"/>
+    <property name="removeWhenLeave" type="bool" value="true"/>
+    <property name="text">Use WASD for movement.
+Now, go and enter into the tank that spawns nearby at right.
+</property>
+    <property name="text_ru">Используй клавиши WASD, чтобы передвигаться.
+А теперь пойди и захвати танк, который спавнится справа от тебя!
+</property>
    </properties>
   </object>
-  <object id="306" name="how to enter into the tank" type="scenario" x="1247.47" y="429.188" width="48.3125" height="42.5">
+  <object id="306" name="how to enter into the tank" type="scenario" x="1245.29" y="429.551" width="48.3125" height="42.5">
    <properties>
     <property name="activationCallback" value="listenEnteringTheTank"/>
-    <property name="deactivationCallback" value=""/>
-    <property name="factions" value="Player"/>
+    <property name="deactivationCallback" value="hideMessageNoRemove"/>
+    <property name="factions" value="Player, Neutral"/>
+    <property name="modal" type="bool" value="false"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
     <property name="text" value="Press E to enter the tank"/>
+    <property name="text_ru" value="Нажми E, чтобы зайти в танк"/>
    </properties>
   </object>
  </objectgroup>

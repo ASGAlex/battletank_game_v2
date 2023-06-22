@@ -5,10 +5,9 @@ import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/gameover_screen.dart';
 import 'package:tank_game/ui/game/hud.dart';
+import 'package:tank_game/ui/menu/in_game_menu/ingame_menu.dart';
+import 'package:tank_game/ui/menu/in_game_menu/mission_objectives.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
-
-import 'ingame_menu.dart';
-import 'mission_objectives.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key, this.mission}) : super(key: key);
@@ -52,7 +51,10 @@ class GameScreen extends StatelessWidget {
           },
           'hud': (BuildContext context, MyGame game) {
             return HUDWidget(game: game);
-          }
+          },
+          'scenario': (BuildContext context, MyGame game) {
+            return game.scenarioCurrentWidgetBuilder(context, game);
+          },
         },
         loadingBuilder: (BuildContext ctx) {
           return StreamBuilder(
