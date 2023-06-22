@@ -55,7 +55,7 @@ class HideInTreesBehavior extends CollisionBehavior {
 
       try {
         final game = (parent.sgGame as MyGame);
-        game.hudVisibility.setVisibility(!isHiddenInTrees);
+        game.hudHideInTreesProvider.sendMessage(isHiddenInTrees);
       } catch (_) {}
 
       _last = isHiddenInTrees;

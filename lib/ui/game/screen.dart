@@ -4,6 +4,7 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/gameover_screen.dart';
+import 'package:tank_game/ui/game/hud.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 
 import 'ingame_menu.dart';
@@ -48,6 +49,9 @@ class GameScreen extends StatelessWidget {
           },
           'game_over_fail': (BuildContext context, MyGame game) {
             return GameOver(game: game, success: false);
+          },
+          'hud': (BuildContext context, MyGame game) {
+            return HUDWidget(game: game);
           }
         },
         loadingBuilder: (BuildContext ctx) {

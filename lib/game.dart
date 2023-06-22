@@ -10,8 +10,6 @@ import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/keyboard.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
-import 'package:tank_game/ui/game/flash_message.dart';
-import 'package:tank_game/ui/game/visibility_indicator.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -57,8 +55,6 @@ class MyGame extends MyGameFeatures
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
 
-  late VisibilityIndicator hudVisibility;
-  late FlashMessage hudFlashMessage;
   late final CameraComponent cameraComponent;
 
   late final GameMapLoader map;
@@ -66,6 +62,8 @@ class MyGame extends MyGameFeatures
   final initialPlayerPosition = Vector2(0, 0);
   final spawnManager = SpawnManager();
   final enemyAmbientVolume = EnemyAmbientVolume();
+
+  final hudHideInTreesProvider = MessageStreamProvider<bool>();
 
   @override
   void onScroll(PointerScrollInfo info) {
@@ -175,19 +173,9 @@ class MyGame extends MyGameFeatures
     // initJoystick(inputEventsHandler.handleFireEvent);
     // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
     // }
-    hudVisibility = VisibilityIndicator(this);
-    hudVisibility.setVisibility(true);
-    hudVisibility.x = 2;
-    hudVisibility.y = 2;
-
-    hudFlashMessage = FlashMessage(
-        position: hudVisibility.position.clone()..translate(100, 0));
-
     // consoleMessages.sendMessage('done.');
 
     add(gameWorld);
-    cameraComponent.viewport.add(hudVisibility);
-    cameraComponent.viewport.add(hudFlashMessage);
 
     if (SettingsController().soundEnabled) {
       consoleMessages.sendMessage('Loading audio...');
@@ -232,22 +220,6 @@ class MyGame extends MyGameFeatures
     return Future.wait(futures);
   }
 
-  onObjectivesStateChange(String message, FlashMessageType type,
-      [bool finishGame = false]) {
-    hudFlashMessage.showMessage(message, type);
-    if (finishGame) {
-      Future.delayed(const Duration(seconds: 5)).then((value) {
-        paused = true;
-        if (type == FlashMessageType.good) {
-          overlays.add('game_over_success');
-        } else {
-          overlays.add('game_over_fail');
-        }
-        onEndGame();
-      });
-    }
-  }
-
   bool _initialized = false;
 
   @override
@@ -257,6 +229,7 @@ class MyGame extends MyGameFeatures
 
     listenProvider(inputEventsHandler.messageProvider);
     cameraComponent.viewfinder.zoom = 5;
+    overlays.add('hud');
 
     onAfterZoom();
     if (!(currentPlayer?.isMounted ?? false)) {
@@ -373,6 +346,7 @@ class MyGame extends MyGameFeatures
   void onRemove() {
     dispose();
     spawnManager.dispose();
+    hudHideInTreesProvider.dispose();
     FlameAudio.audioCache.clearAll().catchError((error) {
       consoleMessages.sendMessage(error.toString());
     });
