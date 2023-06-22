@@ -1,10 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:nes_ui/nes_ui.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/ui/intl.dart';
 import 'package:tank_game/ui/route_builder.dart';
-import 'package:tank_game/ui/widgets/button.dart';
 
 class InGameMenu extends StatelessWidget {
   const InGameMenu({Key? key, required this.game}) : super(key: key);
@@ -22,33 +22,47 @@ class InGameMenu extends StatelessWidget {
           sigmaX: 5.0,
           sigmaY: 5.0,
         ),
-        child: Container(
-          alignment: Alignment.center,
+        child: NesContainer(
           width: 300,
-          padding: const EdgeInsets.only(top: 50),
           child: ListView(children: [
-            MenuButton(
-              onPressed: () {
-                game.overlays.remove('menu');
-                game.paused = false;
-              },
-              text: context.loc().continue_play,
-            ),
-            MenuButton(
-              onPressed: () {
-                game.overlays.add('mission_objectives');
-              },
-              text: context.loc().mission_objectives,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+              child: NesButton(
+                onPressed: () {
+                  game.overlays.remove('menu');
+                  game.paused = false;
+                },
+                type: NesButtonType.primary,
+                child: Text(context.loc().continue_play),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: MenuButton(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+              child: NesButton(
                 onPressed: () {
-                  game.paused = true;
-                  RouteBuilder.gotoMainMenu(context);
+                  game.overlays.add('mission_objectives');
                 },
-                text: context.loc().exit,
+                type: NesButtonType.primary,
+                child: Text(context.loc().mission_objectives),
               ),
+            ),
+            const Divider(),
+            NesButton(
+              onPressed: () {
+                NesConfirmDialog.show(
+                        context: context,
+                        message: context.loc().leave_game,
+                        cancelLabel: context.loc().back,
+                        confirmLabel: context.loc().ok)
+                    .then((leave) {
+                  if (leave == true) {
+                    game.resumeEngine();
+                    RouteBuilder.gotoMissions(context, false);
+                  }
+                });
+              },
+              type: NesButtonType.warning,
+              child: Text(context.loc().exit),
             ),
           ]),
         ),

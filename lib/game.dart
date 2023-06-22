@@ -5,7 +5,6 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:nes_ui/nes_ui.dart';
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/keyboard.dart';
@@ -13,8 +12,6 @@ import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/flash_message.dart';
 import 'package:tank_game/ui/game/visibility_indicator.dart';
-import 'package:tank_game/ui/intl.dart';
-import 'package:tank_game/ui/route_builder.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -357,20 +354,13 @@ class MyGame extends MyGameFeatures
 
           break;
         case PlayerAction.escape:
-          pauseEngine();
-          NesConfirmDialog.show(
-                  context: context,
-                  message: context.loc().leave_game,
-                  confirmLabel: context.loc().ok,
-                  cancelLabel: context.loc().back)
-              .then((run) {
-            if (run == true) {
-              resumeEngine();
-              RouteBuilder.gotoMissions(context, false);
-            } else {
-              resumeEngine();
-            }
-          });
+          if (overlays.isActive('menu')) {
+            overlays.remove('menu');
+            resumeEngine();
+          } else {
+            pauseEngine();
+            overlays.add('menu');
+          }
           break;
 
         default:
