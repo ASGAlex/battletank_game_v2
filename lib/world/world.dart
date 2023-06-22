@@ -36,6 +36,7 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
   final tankLayer = Component(priority: RenderPriority.player.priority);
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final spawnLayer = Component(priority: RenderPriority.spawn.priority);
+  final scenarioLayer = Component(priority: RenderPriority.sky.priority);
 
   final fadeOutConfig = FadeOutConfig(
       transparencyPerStep: 0.05, fadeOutTimeout: const Duration(seconds: 2));
@@ -59,6 +60,10 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
     spawnLayer.add(component);
   }
 
+  addScenario(Component component) {
+    scenarioLayer.add(component);
+  }
+
   @override
   Future<void>? onLoad() {
     final root = game.layersManager.layersRootComponent;
@@ -66,6 +71,7 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
     root.add(tankLayer);
     root.add(bulletLayer);
     root.add(spawnLayer);
+    root.add(scenarioLayer);
     return null;
   }
 

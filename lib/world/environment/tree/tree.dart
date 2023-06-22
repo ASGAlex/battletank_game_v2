@@ -64,4 +64,10 @@ class TreeEntity extends SpriteComponent
   }
 }
 
-class TreeBoundingHitbox extends BoundingHitbox {}
+class TreeBoundingHitbox extends BoundingHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    collisionType = defaultCollisionType = CollisionType.passive;
+    return super.onLoad();
+  }
+}

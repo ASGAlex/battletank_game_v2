@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="1000" height="100" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="305">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="1000" height="100" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="307">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <layer id="1" name="ground" width="1000" height="100">
@@ -1323,13 +1323,31 @@
     <property name="trigger_distance" type="float" value="128"/>
    </properties>
   </object>
-  <object id="303" name="spawn_player" type="spawn_player" x="1190.33" y="454" width="16" height="16"/>
-  <object id="304" name="spawn_test" type="spawn_test" x="1227" y="453.334" width="16" height="16">
+  <object id="303" name="spawn_player" type="spawn_player" x="1187.06" y="447.636" width="16" height="16"/>
+  <object id="304" name="spawn_test" type="spawn_test" x="1262.27" y="448.789" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="int" value="5"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="100"/>
     <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="scenario">
+  <object id="305" name="initial greting" type="scenario" x="1150.99" y="407.386" width="72.3125" height="63.875">
+   <properties>
+    <property name="activationCallback" value="showMessage"/>
+    <property name="deactivationCallback" value="hideMessage"/>
+    <property name="factions" value="Player"/>
+    <property name="text" value="Enter into the tank that spawns nearby at right"/>
+   </properties>
+  </object>
+  <object id="306" name="how to enter into the tank" type="scenario" x="1247.47" y="429.188" width="48.3125" height="42.5">
+   <properties>
+    <property name="activationCallback" value="listenEnteringTheTank"/>
+    <property name="deactivationCallback" value=""/>
+    <property name="factions" value="Player"/>
+    <property name="text" value="Press E to enter the tank"/>
    </properties>
   </object>
  </objectgroup>

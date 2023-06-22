@@ -67,4 +67,10 @@ class SandEntity extends SpriteAnimationComponent
   }
 }
 
-class SandBoundingHitbox extends BoundingHitbox {}
+class SandBoundingHitbox extends BoundingHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    collisionType = defaultCollisionType = CollisionType.passive;
+    return super.onLoad();
+  }
+}

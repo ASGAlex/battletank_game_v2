@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/scenario/scenario_object.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -41,6 +42,7 @@ class GameMapLoader extends TiledMapLoader {
         'spawn_test': onBuildSpawnNeutral,
         'spawn_neutral': onBuildSpawnNeutral,
         'target': onBuildTarget,
+        'scenario': onBuildScenario,
       };
 
   @override
@@ -308,5 +310,15 @@ class GameMapLoader extends TiledMapLoader {
     //     primary: primary,
     //     protectFromEnemies: protectFromEnemies);
     // game.world.addSpawn(newTarget);
+  }
+
+  Future onBuildScenario(CellBuilderContext context) async {
+    final tiledObject = context.tiledObject;
+    if (tiledObject == null) return;
+
+    final scenario = ScenarioObject.fromTiled(tiledObject);
+    scenario.currentCell = context.cell;
+
+    game.world.addScenario(scenario);
   }
 }

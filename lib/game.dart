@@ -17,6 +17,8 @@ import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/detection/enemy_ambient_volume.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/functions_registry.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
@@ -64,6 +66,8 @@ class MyGame extends MyGameFeatures
   final enemyAmbientVolume = EnemyAmbientVolume();
 
   final hudHideInTreesProvider = MessageStreamProvider<bool>();
+
+  final functionsRegistry = ScenarioFunctionsRegistry();
 
   @override
   void onScroll(PointerScrollInfo info) {
@@ -133,36 +137,37 @@ class MyGame extends MyGameFeatures
     }
 
     await initializeSpatialGrid(
-        blockSize: 128,
-        debug: false,
-        activeRadius: activeRadius,
-        unloadRadius: unloadRadius,
-        preloadRadius: preloadRadius,
-        buildCellsPerUpdate: 1,
-        cleanupCellsPerUpdate: 1,
-        processCellsLimitToPauseEngine: processCellsLimitToPauseEngine,
-        // maxCells: 200,
-        rootComponent: gameWorld,
-        trackWindowSize: true,
-        trackedComponent: SpatialGridCameraWrapper(cameraComponent),
-        initialPositionChecker: (layer, object, mapOffset, worldName) {
-          if (object.name == 'spawn_player') {
-            initialPlayerPosition.setValues(object.x, object.y);
-            return cameraComponent.viewfinder.position =
-                mapOffset + Vector2(object.x, object.y);
-          }
-        },
-        suspendedCellLifetime: suspendedCellLifetime,
-        suspendCellPrecision: const Duration(seconds: 10),
-        cellBuilderNoMap: map.noMapBuilder,
-        // onAfterCellBuild: (cell, rootComponent) async {
-        //   final trailLayer = CellTrailLayer(cell, name: 'trail');
-        //   trailLayer.priority = RenderPriority.trackTrail.priority;
-        //   trailLayer.optimizeCollisions = false;
-        //   trailLayer.fadeOutConfig = world.fadeOutConfig;
-        //   layersManager.addLayer(trailLayer);
-        // },
-        maps: [map]);
+      blockSize: 128,
+      debug: false,
+      activeRadius: activeRadius,
+      unloadRadius: unloadRadius,
+      preloadRadius: preloadRadius,
+      buildCellsPerUpdate: 1,
+      cleanupCellsPerUpdate: 1,
+      processCellsLimitToPauseEngine: processCellsLimitToPauseEngine,
+      // maxCells: 200,
+      rootComponent: gameWorld,
+      trackWindowSize: true,
+      trackedComponent: SpatialGridCameraWrapper(cameraComponent),
+      initialPositionChecker: (layer, object, mapOffset, worldName) {
+        if (object.name == 'spawn_player') {
+          initialPlayerPosition.setValues(object.x, object.y);
+          return cameraComponent.viewfinder.position =
+              mapOffset + Vector2(object.x, object.y);
+        }
+      },
+      suspendedCellLifetime: suspendedCellLifetime,
+      suspendCellPrecision: const Duration(seconds: 10),
+      cellBuilderNoMap: map.noMapBuilder,
+      // onAfterCellBuild: (cell, rootComponent) async {
+      //   final trailLayer = CellTrailLayer(cell, name: 'trail');
+      //   trailLayer.priority = RenderPriority.trackTrail.priority;
+      //   trailLayer.optimizeCollisions = false;
+      //   trailLayer.fadeOutConfig = world.fadeOutConfig;
+      //   layersManager.addLayer(trailLayer);
+      // },
+      maps: [map],
+    );
     consoleMessages.sendMessage('done.');
     consoleMessages.sendMessage('Loading additional tilesets...');
     await _loadExternalTileSets();
@@ -247,6 +252,7 @@ class MyGame extends MyGameFeatures
       currentPlayer = HumanEntity()
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
+        ..add(ScenarioActivatorBehavior())
         ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 

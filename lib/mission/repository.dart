@@ -1,3 +1,5 @@
+import 'package:tank_game/world/core/scenario/functions_registry.dart';
+
 class MissionDescription {
   MissionDescription(
       {required this.name, required this.description, required this.mapFile});
@@ -7,6 +9,7 @@ class MissionDescription {
   String mapFile;
 
   List<String> objectives = [];
+  final Map<String, ScenarioCallbackFunction> functions = {};
 }
 
 class MissionRepository {

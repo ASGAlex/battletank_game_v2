@@ -116,7 +116,6 @@ class BodyHitbox extends BoundingHitbox {
   @override
   FutureOr<void> onLoad() {
     collisionType = defaultCollisionType = CollisionType.active;
-    // debugMode = true;
     return super.onLoad();
   }
 
