@@ -19,6 +19,7 @@ import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/detection/enemy_ambient_volume.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -67,6 +68,7 @@ class MyGame extends MyGameFeatures
 
   final initialPlayerPosition = Vector2(0, 0);
   final spawnManager = SpawnManager();
+  final enemyAmbientVolume = EnemyAmbientVolume();
 
   @override
   void onScroll(PointerScrollInfo info) {
@@ -203,9 +205,10 @@ class MyGame extends MyGameFeatures
         'sfx/human_step_grass.m4a',
         'sfx/human_shoot.m4a',
         'sfx/human_death.m4a',
+        'sfx/move_enemies.m4a',
         'music/intro.m4a',
-        'music/move_enemies.m4a',
       ]);
+      add(enemyAmbientVolume);
     }
     consoleMessages.sendMessage('Start building game cells...');
 

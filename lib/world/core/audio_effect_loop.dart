@@ -15,6 +15,7 @@ class AudioEffectLoop {
   late AudioPool _player;
   StopFunction? _playerStop;
   Timer? _replayTimer;
+  double volume = 1.0;
 
   void play() {
     if (!_playing) {
@@ -25,17 +26,18 @@ class AudioEffectLoop {
     }
   }
 
-  void stop() {
-    _playerStop?.call();
+  Future<void>? stop() {
+    final future = _playerStop?.call();
     _playerStop = null;
     _playing = false;
     _replayTimer?.cancel();
     _replayTimer = null;
+    return future;
   }
 
   void _play() {
     _playing = true;
-    _player.start().then((value) {
+    _player.start(volume: volume).then((value) {
       _playerStop = value;
     });
   }

@@ -161,11 +161,12 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       if (data.factions.contains(Faction(name: 'Enemy'))) {
         add(createRandomMovement());
         add(DetectorBehavior(
-            distance: 1500,
+            distance: 800,
             detectionType: DetectionType.audial,
             factionsToDetect: [Faction(name: 'Player')],
             maxMomentum: 120,
             onDetection: (player, x, y) {
+              game.enemyAmbientVolume.onTankDetectedPlayer(x, y);
               final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
               if (!forceIdle) {
                 coreState = ActorCoreState.move;
@@ -173,7 +174,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             }));
 
         add(DetectorBehavior(
-            distance: 800,
+            distance: 500,
             detectionType: DetectionType.visual,
             factionsToDetect: [Faction(name: 'Player')],
             maxMomentum: 0,
