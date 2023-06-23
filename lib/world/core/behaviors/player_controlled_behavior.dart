@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flame/experimental.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/audio/audio_effect_loop.dart';
-import 'package:tank_game/services/audio/sfx.dart';
+import 'package:tank_game/services/audio/effect_loop/effect_loop.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
@@ -27,13 +25,11 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
         _audioEffectLoop = AudioEffectLoop(
           effectFile: 'sfx/move_player.m4a',
           effectDuration: const Duration(milliseconds: 990),
-          effectMode: kIsWeb ? EffectMode.webAudioAPI : EffectMode.audioPool,
         );
       } else if (parent is HumanEntity) {
         _audioEffectLoop = AudioEffectLoop(
           effectFile: 'sfx/human_step_grass.m4a',
           effectDuration: const Duration(milliseconds: 1000),
-          effectMode: kIsWeb ? EffectMode.webAudioAPI : EffectMode.audioPool,
         );
       }
     }

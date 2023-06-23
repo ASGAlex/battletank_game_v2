@@ -7,7 +7,7 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/services/audio/sfx.dart';
+import 'package:tank_game/services/audio/sfx/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';

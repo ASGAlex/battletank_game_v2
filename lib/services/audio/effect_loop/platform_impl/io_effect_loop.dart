@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
-import 'package:tank_game/services/audio/howl_interop.dart';
-import 'package:tank_game/services/audio/sfx.dart';
 
-class AudioEffectLoop {
-  AudioEffectLoop(
+import 'interface.dart';
+
+class AudioEffectLoopImpl implements AudioEffectLoopInterface {
+  AudioEffectLoopImpl(
       {required this.effectFile,
       required this.effectDuration,
       this.effectMode = EffectMode.audioPool}) {
-    print(effectFile);
     switch (effectMode) {
       case EffectMode.standard:
         FlameAudio.loop(effectFile).then((value) {
@@ -30,19 +29,8 @@ class AudioEffectLoop {
           }
         });
         break;
-
-      case EffectMode.webAudioAPI:
-        _howlPlayer = Howl(HowlOptions(
-          src: ['/assets/audio/$effectFile'],
-          html5: false,
-          preload: true,
-          loop: true,
-        ));
-        break;
     }
   }
-
-  EffectMode effectMode = EffectMode.audioPool;
 
   bool _initialized = false;
   bool _playAfterSetup = false;
@@ -50,16 +38,25 @@ class AudioEffectLoop {
   AudioPlayer? _standardPlayer;
   Future? _playStartedFuture;
 
-  Howl? _howlPlayer;
-
+  @override
   final Duration effectDuration;
+
+  @override
   final String effectFile;
   bool _playing = false;
   AudioPool? _player;
   StopFunction? _playerStop;
   Timer? _replayTimer;
-  double volume = 1.0;
 
+  @override
+  void dispose() {
+    stop();
+    _standardPlayer?.stop();
+    _standardPlayer?.dispose();
+    _player?.dispose();
+  }
+
+  @override
   void play() {
     switch (effectMode) {
       case EffectMode.standard:
@@ -77,16 +74,21 @@ class AudioEffectLoop {
           });
         }
         break;
-      case EffectMode.webAudioAPI:
-        _howlPlayer?.volume(volume);
-        if (!_playing) {
-          _howlPlayer?.play();
-          _playing = true;
-        }
-        break;
     }
   }
 
+  void _play() {
+    _playing = true;
+    if (_initialized) {
+      _player?.start(volume: volume).then((value) {
+        _playerStop = value;
+      });
+    } else {
+      _playAfterSetup = true;
+    }
+  }
+
+  @override
   Future<void>? stop() {
     switch (effectMode) {
       case EffectMode.standard:
@@ -103,32 +105,12 @@ class AudioEffectLoop {
         _replayTimer = null;
         return future;
         break;
-      case EffectMode.webAudioAPI:
-        if (_playing) {
-          _howlPlayer?.pause();
-          _playing = false;
-        }
-        break;
     }
   }
 
-  void _play() {
-    _playing = true;
-    if (_initialized) {
-      _player?.start(volume: volume).then((value) {
-        _playerStop = value;
-      });
-    } else {
-      _playAfterSetup = true;
-    }
-  }
+  @override
+  EffectMode effectMode;
 
-  void dispose() {
-    stop();
-    _howlPlayer?.stop();
-    _howlPlayer?.unload();
-    _standardPlayer?.stop();
-    _standardPlayer?.dispose();
-    _player?.dispose();
-  }
+  @override
+  double volume = 1.0;
 }

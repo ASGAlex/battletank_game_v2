@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:tank_game/services/audio/sfx.dart';
+import 'package:tank_game/services/audio/sfx/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';

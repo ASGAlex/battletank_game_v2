@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
-import 'package:tank_game/services/audio/sfx.dart';
+import 'package:tank_game/services/audio/sfx/sfx.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
