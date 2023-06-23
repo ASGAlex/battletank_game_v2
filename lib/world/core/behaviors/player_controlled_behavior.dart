@@ -12,6 +12,8 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_audio_effect.dart';
+import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 
 class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
@@ -20,22 +22,36 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
   FutureOr<void> onLoad() {
     listenProvider(game.inputEventsHandler.messageProvider);
     priority = -1;
+  }
+
+  MovementForwardCollisionBehavior get movementForward {
+    _cachedBehavior ??= parent.findBehavior<MovementForwardCollisionBehavior>();
+    return _cachedBehavior!;
+  }
+
+  MovementForwardCollisionBehavior? _cachedBehavior;
+
+  @override
+  void onMount() {
     if (SettingsController().soundEnabled) {
+      AudioEffectLoop? audioEffectLoop;
       if (parent is TankEntity) {
-        _audioEffectLoop = AudioEffectLoop(
+        audioEffectLoop = AudioEffectLoop(
           effectFile: 'sfx/move_player.m4a',
           effectDuration: const Duration(milliseconds: 990),
         );
       } else if (parent is HumanEntity) {
-        _audioEffectLoop = AudioEffectLoop(
+        audioEffectLoop = AudioEffectLoop(
           effectFile: 'sfx/human_step_grass.m4a',
           effectDuration: const Duration(milliseconds: 1000),
         );
       }
+      if (audioEffectLoop != null) {
+        parent.add(MovementAudioEffectBehavior(effect: audioEffectLoop));
+      }
     }
+    super.onMount();
   }
-
-  AudioEffectLoop? _audioEffectLoop;
 
   @override
   void onStreamMessage(List<PlayerAction> message) {
@@ -85,9 +101,7 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
         parent.coreState != ActorCoreState.wreck) {
       if (isMovementAction) {
         parent.coreState = ActorCoreState.move;
-        _audioEffectLoop?.play();
       } else {
-        _audioEffectLoop?.stop();
         parent.coreState = ActorCoreState.idle;
       }
     }
@@ -96,8 +110,10 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
   @override
   void onRemove() {
     if (!isRemoved) {
-      _audioEffectLoop?.dispose();
-      _audioEffectLoop = null;
+      try {
+        final audioEffect = parent.findBehavior<MovementAudioEffectBehavior>();
+        audioEffect.removeFromParent();
+      } catch (_) {}
       dispose();
       super.onRemove();
     }

@@ -95,17 +95,19 @@ class AudioEffectLoopImpl implements AudioEffectLoopInterface {
         _playStartedFuture?.then((value) {
           _standardPlayer?.pause();
         });
-        return null;
         break;
       case EffectMode.audioPool:
-        final future = _playerStop?.call();
-        _playerStop = null;
-        _playing = false;
-        _replayTimer?.cancel();
-        _replayTimer = null;
-        return future;
+        if (_playing) {
+          final future = _playerStop?.call();
+          _playerStop = null;
+          _playing = false;
+          _replayTimer?.cancel();
+          _replayTimer = null;
+          return future;
+        }
         break;
     }
+    return null;
   }
 
   @override

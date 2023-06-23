@@ -22,6 +22,7 @@ class MovementForwardCollisionBehavior extends MovementBehavior {
       position: hitboxRelativePosition,
       size: hitboxSize,
     );
+    priority = 0;
   }
 
   @override
