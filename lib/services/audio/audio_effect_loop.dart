@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/foundation.dart';
 
 class AudioEffectLoop {
-  static bool standard = false;
-
   AudioEffectLoop({required this.effectFile, required this.effectDuration}) {
+    standard = kIsWeb;
     if (standard) {
       FlameAudio.loop(effectFile).then((value) {
         value.pause();
@@ -26,10 +26,13 @@ class AudioEffectLoop {
     }
   }
 
+  bool standard = false;
+
   bool _initialized = false;
   bool _playAfterSetup = false;
 
   AudioPlayer? _standardPlayer;
+  Future? _playStartedFuture;
 
   final Duration effectDuration;
   final String effectFile;
@@ -41,8 +44,11 @@ class AudioEffectLoop {
 
   void play() {
     if (standard) {
-      _standardPlayer?.setVolume(volume);
-      _standardPlayer?.resume();
+      _standardPlayer?.setVolume(volume).then((value) {
+        if (_standardPlayer?.state != PlayerState.playing) {
+          _playStartedFuture = _standardPlayer?.resume();
+        }
+      });
     } else {
       if (!_playing) {
         _play();
@@ -55,7 +61,9 @@ class AudioEffectLoop {
 
   Future<void>? stop() {
     if (standard) {
-      _standardPlayer?.pause();
+      _playStartedFuture?.then((value) {
+        _standardPlayer?.pause();
+      });
       return null;
     } else {
       final future = _playerStop?.call();
