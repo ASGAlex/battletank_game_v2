@@ -1,14 +1,8 @@
 import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
-
-import 'howl_interop.dart';
-
-enum EffectMode {
-  standard,
-  audioPool,
-  webAudioAPI,
-}
+import 'package:tank_game/services/audio/howl_interop.dart';
+import 'package:tank_game/services/audio/sfx.dart';
 
 class AudioEffectLoop {
   AudioEffectLoop(

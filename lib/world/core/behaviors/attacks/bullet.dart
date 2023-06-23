@@ -3,11 +3,11 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/services/audio/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
@@ -77,7 +77,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   final movementBehavior = MovementBehavior();
   final Map<ActorCoreState, AnimationConfig> animationConfigs;
   CircleComponent? halo;
-  final Map<String, AudioPool> audio;
+  final Map<String, Sfx> audio;
 
   @override
   FutureOr<void> onLoad() {
@@ -200,35 +200,20 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     }
     if (SettingsController().soundEnabled) {
       if (parent is TankEntity) {
-        FlameAudio.createPool('sfx/player_fire_bullet.m4a', maxPlayers: 2)
-            .then((pool) {
-          _audioFire = pool;
-        });
+        _audioFire = Sfx(effectName: 'sfx/player_fire_bullet.m4a');
       } else if (parent is HumanEntity) {
-        FlameAudio.createPool('sfx/human_shoot.m4a', maxPlayers: 2)
-            .then((pool) {
-          _audioFire = pool;
-        });
+        _audioFire = Sfx(effectName: 'sfx/human_shoot.m4a');
       }
-
-      FlameAudio.createPool('sfx/player_bullet_wall.m4a', maxPlayers: 2)
-          .then((value) {
-        _audioHit['weak'] = value;
-      });
-      FlameAudio.createPool('sfx/player_bullet_strong_wall.m4a', maxPlayers: 2)
-          .then((value) {
-        _audioHit['strong'] = value;
-      });
-      FlameAudio.createPool('sfx/bullet_strong_tank.m4a', maxPlayers: 2)
-          .then((value) {
-        _audioHit['tank'] = value;
-      });
+      _audioHit['weak'] = Sfx(effectName: 'sfx/player_bullet_wall.m4a');
+      _audioHit['strong'] =
+          Sfx(effectName: 'sfx/player_bullet_strong_wall.m4a');
+      _audioHit['tank'] = Sfx(effectName: 'sfx/bullet_strong_tank.m4a');
     }
     return super.onLoad();
   }
 
-  final _audioHit = <String, AudioPool>{};
-  AudioPool? _audioFire;
+  final _audioHit = <String, Sfx>{};
+  Sfx? _audioFire;
 
   AttackerData get attackerData => (parent.data as AttackerData);
 
@@ -260,7 +245,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
         haloRadius: haloRadius);
     bullet.scale = Vector2.all(scale);
     bulletsRootComponent.add(bullet);
-    _audioFire?.start();
+    _audioFire?.play();
   }
 
   @override

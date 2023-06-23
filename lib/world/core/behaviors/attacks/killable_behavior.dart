@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flame_audio/flame_audio.dart';
+import 'package:tank_game/services/audio/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
@@ -33,26 +33,17 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
   FutureOr<void> onLoad() {
     if (SettingsController().soundEnabled) {
       if (parent is TankEntity) {
-        FlameAudio.createPool('sfx/explosion_enemy.m4a', maxPlayers: 1)
-            .then((value) {
-          _audioEnemy = value;
-        });
-        FlameAudio.createPool('sfx/explosion_player.m4a', maxPlayers: 1)
-            .then((value) {
-          _audioPlayer = value;
-        });
+        _audioEnemy = Sfx(effectName: 'sfx/explosion_enemy.m4a');
+        _audioPlayer = Sfx(effectName: 'sfx/explosion_player.m4a');
       } else if (parent is HumanEntity) {
-        FlameAudio.createPool('sfx/human_death.m4a', maxPlayers: 1)
-            .then((value) {
-          _audioEnemy = _audioPlayer = value;
-        });
+        _audioEnemy = Sfx(effectName: 'sfx/human_death.m4a');
       }
     }
     return super.onLoad();
   }
 
-  AudioPool? _audioEnemy;
-  AudioPool? _audioPlayer;
+  Sfx? _audioEnemy;
+  Sfx? _audioPlayer;
 
   bool applyAttack(AttackBehavior attackedBy) {
     final killAllowed = factionCheck?.call(attackedBy.parent, parent) ?? true;
@@ -90,10 +81,10 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
     try {
       final controlled = parent.findBehavior<PlayerControlledBehavior>();
       controlled.removeFromParent();
-      _audioPlayer?.start();
+      _audioPlayer?.play();
     } catch (_) {
       if (parent.data.coreState != ActorCoreState.wreck) {
-        _audioEnemy?.start();
+        _audioEnemy?.play();
       }
     }
     if (parent.data.coreState == ActorCoreState.wreck) {

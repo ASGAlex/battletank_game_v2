@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
+import 'package:tank_game/services/audio/sfx.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
@@ -15,7 +15,7 @@ class AttackBehavior extends CollisionBehavior {
   AttackBehavior(this.audio);
 
   var _hitTarget = false;
-  final Map<String, AudioPool> audio;
+  final Map<String, Sfx> audio;
 
   @override
   FutureOr<void> onLoad() {
@@ -61,11 +61,11 @@ class AttackBehavior extends CollisionBehavior {
 
   void _playSound(EntityMixin target) {
     if (target is HeavyBrickEntity) {
-      audio['strong']?.start();
+      audio['strong']?.play();
     } else if (target is BrickEntity) {
-      audio['weak']?.start();
+      audio['weak']?.play();
     } else if (target is TankEntity) {
-      audio['tank']?.start();
+      audio['tank']?.play();
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/services/audio/audio_effect_loop.dart';
+import 'package:tank_game/services/audio/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';

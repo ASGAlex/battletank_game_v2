@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tank_game/services/audio/audio_effect_loop.dart';
+import 'package:tank_game/services/audio/sfx.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
 class EnemyAmbientVolume extends Component {
