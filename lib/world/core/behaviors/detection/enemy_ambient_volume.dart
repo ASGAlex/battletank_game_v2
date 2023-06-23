@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tank_game/services/audio/audio_effect_loop.dart';
 import 'package:tank_game/services/settings/controller.dart';
 
@@ -30,6 +31,7 @@ class EnemyAmbientVolume extends Component {
       _audioEffectLoop = AudioEffectLoop(
         effectFile: 'sfx/move_enemies.m4a',
         effectDuration: const Duration(seconds: 2),
+        effectMode: kIsWeb ? EffectMode.webAudioAPI : EffectMode.audioPool,
       );
     }
     return super.onLoad();
