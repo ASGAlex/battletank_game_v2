@@ -57,7 +57,9 @@ class EnemyAmbientVolume extends Component {
 
   @override
   void onRemove() {
-    _audioEffectLoop?.dispose();
-    super.onRemove();
+    if (!isRemoved) {
+      // _audioEffectLoop?.dispose();
+      super.onRemove();
+    }
   }
 }

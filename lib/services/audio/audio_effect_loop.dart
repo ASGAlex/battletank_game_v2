@@ -9,9 +9,16 @@ class AudioEffectLoop {
     } else {
       FlameAudio.createPool(effectFile, maxPlayers: 2).then((value) {
         _player = value;
+        _initialized = true;
+        if (_playAfterSetup) {
+          play();
+        }
       });
     }
   }
+
+  bool _initialized = false;
+  bool _playAfterSetup = false;
 
   final Duration effectDuration;
   final String effectFile;
@@ -37,7 +44,7 @@ class AudioEffectLoop {
     if (kIsWeb) {
       return null;
     } else {
-      final future = _playerStop?.call().catchError((_) {});
+      final future = _playerStop?.call();
       _playerStop = null;
       _playing = false;
       _replayTimer?.cancel();
@@ -48,14 +55,17 @@ class AudioEffectLoop {
 
   void _play() {
     _playing = true;
-    _player.start(volume: volume).then((value) {
-      _playerStop = value;
-    }).catchError((_) {});
-    ;
+    if (_initialized) {
+      _player.start(volume: volume).then((value) {
+        _playerStop = value;
+      });
+    } else {
+      _playAfterSetup = true;
+    }
   }
 
   void dispose() {
     stop();
-    _player.dispose().catchError((_) {});
+    _player.dispose();
   }
 }

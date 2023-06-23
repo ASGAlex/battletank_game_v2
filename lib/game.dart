@@ -371,9 +371,7 @@ class MyGame extends MyGameFeatures
     dispose();
     spawnManager.dispose();
     hudHideInTreesProvider.dispose();
-    FlameAudio.audioCache.clearAll().catchError((error) {
-      consoleMessages.sendMessage(error.toString());
-    });
+    FlameAudio.audioCache.clearAll();
     super.onRemove();
   }
 }

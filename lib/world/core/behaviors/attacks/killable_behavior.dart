@@ -105,8 +105,12 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
 
   @override
   void onRemove() {
-    _audioPlayer?.dispose();
-    _audioEnemy?.dispose();
-    super.onRemove();
+    if (!isRemoved) {
+      _audioPlayer?.dispose();
+      if (_audioPlayer != _audioEnemy) {
+        _audioEnemy?.dispose();
+      }
+      super.onRemove();
+    }
   }
 }

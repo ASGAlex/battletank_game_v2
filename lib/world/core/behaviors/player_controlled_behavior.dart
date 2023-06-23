@@ -39,6 +39,9 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
 
   @override
   void onStreamMessage(List<PlayerAction> message) {
+    if (isRemoved || isRemoving) {
+      return;
+    }
     var isMovementAction = false;
     for (final msg in message) {
       switch (msg) {
@@ -92,7 +95,11 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
 
   @override
   void onRemove() {
-    _audioEffectLoop?.dispose();
-    dispose();
+    if (!isRemoved) {
+      _audioEffectLoop?.dispose();
+      _audioEffectLoop = null;
+      dispose();
+      super.onRemove();
+    }
   }
 }
