@@ -6,6 +6,7 @@ import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/tank/tank_step_trail.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -25,6 +26,7 @@ import 'package:tank_game/world/core/behaviors/movement/movement_forward_collisi
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/speed_penalty.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
+import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
@@ -146,6 +148,14 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
           final duration = (attackedBy.data as BulletData).speedPenaltyDuration;
           killable
               .add(SpeedPenaltyBehavior(penalty: penalty, duration: duration));
+
+          if (hasBehavior<PlayerControlledBehavior>()) {
+            game.colorFilter?.animateTo(Colors.red,
+                blendMode: BlendMode.colorBurn,
+                duration: const Duration(milliseconds: 250), onFinish: () {
+              game.colorFilter?.config.color = null;
+            });
+          }
         }
         return false;
       },

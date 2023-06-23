@@ -19,6 +19,7 @@ import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/functions_registry.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator.dart';
+import 'package:tank_game/world/core/scenario/scenario_object.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
@@ -33,6 +34,7 @@ abstract class MyGameFeatures extends FlameGame
         KeyboardEvents,
         HasSpatialGridFramework,
         SingleGameInstance,
+        ColorFilterMix,
         ScrollDetector {
   GameWorld get world => rootComponent as GameWorld;
 }
@@ -92,6 +94,7 @@ class MyGame extends MyGameFeatures
 
   @override
   Future<void> onLoad() async {
+    initColorFilter<MyGame>();
     functionsRegistry = ScenarioFunctionsRegistry(this);
     consoleMessages.sendMessage('Start loading map $mapFile');
     super.onLoad();
@@ -324,7 +327,8 @@ class MyGame extends MyGameFeatures
     if (activeItemType == BulletEntity) {
       if (potentialItemType == WaterEntity ||
           potentialItemType == TreeEntity ||
-          potentialItemType == SpawnEntity) {
+          potentialItemType == SpawnEntity ||
+          potentialItemType == ScenarioObject) {
         return false;
       }
     }

@@ -37,7 +37,7 @@ class AudioEffectLoop {
     if (kIsWeb) {
       return null;
     } else {
-      final future = _playerStop?.call();
+      final future = _playerStop?.call().catchError((_) {});
       _playerStop = null;
       _playing = false;
       _replayTimer?.cancel();
@@ -50,13 +50,12 @@ class AudioEffectLoop {
     _playing = true;
     _player.start(volume: volume).then((value) {
       _playerStop = value;
-    });
+    }).catchError((_) {});
+    ;
   }
 
   void dispose() {
     stop();
-    _player.dispose().catchError((error) {
-      print(error);
-    });
+    _player.dispose().catchError((_) {});
   }
 }
