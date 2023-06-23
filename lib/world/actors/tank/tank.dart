@@ -90,7 +90,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       ..secondsBetweenFire = 1
       ..ammoHealth = 1
       ..ammoRange = 200;
-    boundingBox.debugMode = true;
+
+    boundingBox.collisionType =
+        boundingBox.defaultCollisionType = CollisionType.inactive;
   }
 
   final String _tileType;
@@ -195,8 +197,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(DetectableBehavior(detectionType: DetectionType.visual));
       add(HideInTreesBehavior());
     }
-    boundingBox.collisionType = CollisionType.active;
-    boundingBox.isSolid = true;
   }
 
   TargetedMovementBehavior? _targetedMovementBehavior;
@@ -323,3 +323,5 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     // }
   }
 }
+
+class TankBoundingHitbox extends BodyHitbox {}

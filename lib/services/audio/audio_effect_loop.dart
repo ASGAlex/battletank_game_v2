@@ -1,12 +1,16 @@
 import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/foundation.dart';
 
 class AudioEffectLoop {
   AudioEffectLoop({required this.effectFile, required this.effectDuration}) {
-    FlameAudio.createPool(effectFile, maxPlayers: 2).then((value) {
-      _player = value;
-    });
+    if (kIsWeb) {
+    } else {
+      FlameAudio.createPool(effectFile, maxPlayers: 2).then((value) {
+        _player = value;
+      });
+    }
   }
 
   final Duration effectDuration;
@@ -18,21 +22,28 @@ class AudioEffectLoop {
   double volume = 1.0;
 
   void play() {
-    if (!_playing) {
-      _play();
-      _replayTimer ??= Timer.periodic(effectDuration, (timer) {
+    if (kIsWeb) {
+    } else {
+      if (!_playing) {
         _play();
-      });
+        _replayTimer ??= Timer.periodic(effectDuration, (timer) {
+          _play();
+        });
+      }
     }
   }
 
   Future<void>? stop() {
-    final future = _playerStop?.call();
-    _playerStop = null;
-    _playing = false;
-    _replayTimer?.cancel();
-    _replayTimer = null;
-    return future;
+    if (kIsWeb) {
+      return null;
+    } else {
+      final future = _playerStop?.call();
+      _playerStop = null;
+      _playing = false;
+      _replayTimer?.cancel();
+      _replayTimer = null;
+      return future;
+    }
   }
 
   void _play() {
