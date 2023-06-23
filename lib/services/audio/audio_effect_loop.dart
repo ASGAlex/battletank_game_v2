@@ -1,11 +1,20 @@
 import 'dart:async';
 
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flutter/foundation.dart';
 
 class AudioEffectLoop {
+  static bool standard = false;
+
   AudioEffectLoop({required this.effectFile, required this.effectDuration}) {
-    if (kIsWeb) {
+    if (standard) {
+      FlameAudio.loop(effectFile).then((value) {
+        value.pause();
+        _standardPlayer = value;
+        _initialized = true;
+        if (_playAfterSetup) {
+          play();
+        }
+      });
     } else {
       FlameAudio.createPool(effectFile, maxPlayers: 2).then((value) {
         _player = value;
@@ -20,16 +29,20 @@ class AudioEffectLoop {
   bool _initialized = false;
   bool _playAfterSetup = false;
 
+  AudioPlayer? _standardPlayer;
+
   final Duration effectDuration;
   final String effectFile;
   bool _playing = false;
-  late AudioPool _player;
+  AudioPool? _player;
   StopFunction? _playerStop;
   Timer? _replayTimer;
   double volume = 1.0;
 
   void play() {
-    if (kIsWeb) {
+    if (standard) {
+      _standardPlayer?.setVolume(volume);
+      _standardPlayer?.resume();
     } else {
       if (!_playing) {
         _play();
@@ -41,7 +54,8 @@ class AudioEffectLoop {
   }
 
   Future<void>? stop() {
-    if (kIsWeb) {
+    if (standard) {
+      _standardPlayer?.pause();
       return null;
     } else {
       final future = _playerStop?.call();
@@ -56,7 +70,7 @@ class AudioEffectLoop {
   void _play() {
     _playing = true;
     if (_initialized) {
-      _player.start(volume: volume).then((value) {
+      _player?.start(volume: volume).then((value) {
         _playerStop = value;
       });
     } else {
@@ -66,6 +80,8 @@ class AudioEffectLoop {
 
   void dispose() {
     stop();
-    _player.dispose();
+    _standardPlayer?.stop();
+    _standardPlayer?.dispose();
+    _player?.dispose();
   }
 }
