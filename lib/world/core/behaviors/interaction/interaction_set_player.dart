@@ -66,6 +66,8 @@ class InteractionSetPlayer extends InteractableBehavior {
         parent.data.factions.addAll(currentPlayerEntity.data.factions);
         if (!parent.hasBehavior<TriggerSpawnBehavior>()) {
           parent.add(TriggerSpawnBehavior());
+          parent.boundingBox.collisionType =
+              parent.boundingBox.defaultCollisionType = CollisionType.active;
         }
         if (!parent.hasBehavior<DetectableBehavior>()) {
           parent.add(DetectableBehavior(detectionType: DetectionType.visual));

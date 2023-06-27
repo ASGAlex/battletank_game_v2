@@ -96,18 +96,19 @@ class SpawnEntity extends SpriteAnimationComponent
           break;
         case 'tank_type':
           spawn.spawnData.typeOfTank = property.value.toString();
-          if (spawn.spawnData.typeOfTank == 'any' ||
-              spawn.spawnData.typeOfTank.isEmpty) {
-            spawn.spawnData.typeOfTank = {
-                  0: 'simple',
-                  1: 'middle',
-                  2: 'advanced',
-                  3: 'heavy',
-                  4: 'fast',
-                }[Random().nextInt(4)] ??
-                'simple';
-          }
+          break;
       }
+    }
+    if (spawn.spawnData.typeOfTank == 'any' ||
+        spawn.spawnData.typeOfTank.isEmpty) {
+      spawn.spawnData.typeOfTank = {
+            0: 'simple',
+            1: 'middle',
+            2: 'advanced',
+            3: 'heavy',
+            4: 'fast',
+          }[Random().nextInt(4)] ??
+          'simple';
     }
     return spawn;
   }

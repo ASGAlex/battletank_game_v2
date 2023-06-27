@@ -117,8 +117,6 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
 
   ActorMixin _createHuman([Direction direction = Direction.down]) {
     final restoredEntity = HumanEntity()..isInteractionEnabled = true;
-    print('look: ' + parent.lookDirection.toString());
-    print('preffered: ' + direction.toString());
 
     switch (direction) {
       case Direction.down:
