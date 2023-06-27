@@ -44,24 +44,12 @@ class SettingsController with ChangeNotifier {
 
   final consoleMessages = ConsoleMessagesController();
 
-  final _missionRepository = MissionRepository();
+  final _missionRepository = ScenarioRepository();
 
-  List<MissionDescription> get missions => _missionRepository.missions;
+  List<Scenario> get missions => _missionRepository.scenarios;
 
-  MissionDescription? _currentMission;
-
-  MissionDescription get currentMission {
-    if (_currentMission == null) {
-      throw 'Mission not set!';
-    }
-    return _currentMission!;
-  }
-
-  MyGame startGameWithMission(
-      MissionDescription mission, BuildContext context) {
-    _currentMission = mission;
-    mapFile = mission.mapFile;
-    return MyGame(mapFile, context);
+  MyGame startGameWithMission(Scenario mission, BuildContext context) {
+    return MyGame(mission, context);
   }
 
   loadSettings() async {

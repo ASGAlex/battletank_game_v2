@@ -38,7 +38,7 @@ class RouteBuilder {
   static Widget _gameRoute([BuildContext? context]) {
     if (context != null) {
       final mission = ModalRoute.of(context)?.settings.arguments;
-      if (mission != null && mission is MissionDescription) {
+      if (mission != null && mission is Scenario) {
         return GameScreen(
           key: UniqueKey(),
           mission: mission,
@@ -47,7 +47,7 @@ class RouteBuilder {
     }
     return GameScreen(
       key: UniqueKey(),
-      mission: MissionDescription(
+      mission: Scenario(
           name: 'mission',
           description: 'description',
           mapFile: 'performance_test.tmx'),
@@ -61,7 +61,7 @@ class RouteBuilder {
     );
   }
 
-  static gotoGameProcess(BuildContext context, MissionDescription mission) {
+  static gotoGameProcess(BuildContext context, Scenario mission) {
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/game', (route) => false, arguments: mission);
   }

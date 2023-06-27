@@ -20,6 +20,9 @@ import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/environment/brick/brick.dart';
+import 'package:tank_game/world/environment/brick/heavy_brick.dart';
+import 'package:tank_game/world/environment/water/water.dart';
 
 class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     with
@@ -141,5 +144,16 @@ class WeakBodyHitbox extends BodyHitbox {
       return true;
     }
     return false;
+  }
+
+  @override
+  bool onComponentTypeCheck(PositionComponent other) {
+    if (other.parent is BrickEntity ||
+        other.parent is WaterEntity ||
+        other.parent is HeavyBrickEntity) {
+      return false;
+    }
+
+    return true;
   }
 }

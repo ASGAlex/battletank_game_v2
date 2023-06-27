@@ -123,8 +123,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     current = ActorCoreState.idle;
 
     add(MovementForwardCollisionBehavior(
-      hitboxRelativePosition: Vector2(0, -2),
-      hitboxSize: Vector2(14, 2),
+      hitboxRelativePosition: Vector2(1, 1),
+      hitboxSize: Vector2(12, 2),
     ));
     add(FireBulletBehavior(
       bulletsRootComponent: game.world.bulletLayer,
@@ -167,8 +167,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(smoke);
     super.onLoad();
     add(ShadowBehavior());
-    // if enemy
-    if (!data.factions.contains(Faction(name: 'Player'))) {
+    if (data.factions.contains(Faction(name: 'Player'))) {
+      add(DetectableBehavior(detectionType: DetectionType.audial));
+      add(DetectableBehavior(detectionType: DetectionType.visual));
+      add(HideInTreesBehavior());
+    } else {
       add(ColorFilterBehavior());
       if (data.factions.contains(Faction(name: 'Enemy'))) {
         add(createRandomMovement());
@@ -202,10 +205,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
               }
             }));
       }
-    } else {
-      add(DetectableBehavior(detectionType: DetectionType.audial));
-      add(DetectableBehavior(detectionType: DetectionType.visual));
-      add(HideInTreesBehavior());
     }
   }
 

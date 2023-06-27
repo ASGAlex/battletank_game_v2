@@ -81,6 +81,7 @@ class MovementHitbox extends MovementCheckerHitbox {
   @override
   FutureOr<void> onLoad() {
     isSolid = true;
+    // debugMode = true;
     return super.onLoad();
   }
 

@@ -17,7 +17,7 @@ import 'core/faction.dart';
 import 'environment/ground/sand.dart';
 
 class GameMapLoader extends TiledMapLoader {
-  GameMapLoader(String fileName) {
+  GameMapLoader([String fileName = '']) {
     this.fileName = fileName;
   }
 
@@ -162,12 +162,12 @@ class GameMapLoader extends TiledMapLoader {
     }
   }
 
-  Future groundBuilder(CellBuilderContext context) async {
+  Future groundBuilder(TileBuilderContext context) async {
     context.priorityOverride = RenderPriority.ground.priority;
     return genericTileBuilder(context);
   }
 
-  Future onBuildTree(CellBuilderContext context) async {
+  Future onBuildTree(TileBuilderContext context) async {
     // return;
     final sprite = await context.tileDataProvider?.getSprite();
     if (sprite == null) return;
@@ -186,7 +186,7 @@ class GameMapLoader extends TiledMapLoader {
     (layer as CellStaticLayer).renderAsImage = true;
   }
 
-  Future onBuildWater(CellBuilderContext context) async {
+  Future onBuildWater(TileBuilderContext context) async {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
@@ -205,7 +205,7 @@ class GameMapLoader extends TiledMapLoader {
         priority: RenderPriority.water.priority);
   }
 
-  Future onBuildSand(CellBuilderContext context) async {
+  Future onBuildSand(TileBuilderContext context) async {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
@@ -224,7 +224,7 @@ class GameMapLoader extends TiledMapLoader {
         priority: RenderPriority.ground.priority);
   }
 
-  Future onBuildBrick(CellBuilderContext context) async {
+  Future onBuildBrick(TileBuilderContext context) async {
     // return;
     final data = context.tileDataProvider;
     if (data == null) {
@@ -243,7 +243,7 @@ class GameMapLoader extends TiledMapLoader {
         priority: RenderPriority.walls.priority);
   }
 
-  Future onBuildHeavyBrick(CellBuilderContext context) async {
+  Future onBuildHeavyBrick(TileBuilderContext context) async {
     // return;
     final data = context.tileDataProvider;
     if (data == null) return;
@@ -260,7 +260,7 @@ class GameMapLoader extends TiledMapLoader {
         priority: RenderPriority.walls.priority);
   }
 
-  Future onBuildSpawn(CellBuilderContext context) async {
+  Future onBuildSpawn(TileBuilderContext context) async {
     final newSpawn = SpawnEntity.fromContext(
       rootComponent: game.world.tankLayer,
       context: context,
@@ -271,7 +271,7 @@ class GameMapLoader extends TiledMapLoader {
     game.spawnManager.add(newSpawn);
   }
 
-  Future onBuildSpawnNeutral(CellBuilderContext context) async {
+  Future onBuildSpawnNeutral(TileBuilderContext context) async {
     final newSpawn = SpawnEntity.fromContext(
       rootComponent: game.world.tankLayer,
       context: context,
@@ -290,7 +290,7 @@ class GameMapLoader extends TiledMapLoader {
     game.spawnManager.add(newSpawn);
   }
 
-  Future onBuildTarget(CellBuilderContext context) async {
+  Future onBuildTarget(TileBuilderContext context) async {
     // final properties = context.tiledObject?.properties;
     // if (properties == null) return;
     // var primary = true;
@@ -312,7 +312,7 @@ class GameMapLoader extends TiledMapLoader {
     // game.world.addSpawn(newTarget);
   }
 
-  Future onBuildScenario(CellBuilderContext context) async {
+  Future onBuildScenario(TileBuilderContext context) async {
     final tiledObject = context.tiledObject;
     if (tiledObject == null) return;
 

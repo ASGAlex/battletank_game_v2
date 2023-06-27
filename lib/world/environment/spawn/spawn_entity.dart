@@ -22,16 +22,20 @@ class SpawnEntity extends SpriteAnimationComponent
         EntityMixin,
         HasGridSupport,
         VisibilityMixin,
-        ActorMixin {
+        ActorMixin,
+        RestorableStateMixin<SpawnData> {
   SpawnEntity({required this.rootComponent}) {
     data = SpawnData();
   }
 
   MyGame? game;
 
+  @override
+  SpawnData? get userData => spawnData;
+
   factory SpawnEntity.fromContext({
     required Component rootComponent,
-    required CellBuilderContext context,
+    required TileBuilderContext context,
     required MyGame game,
   }) {
     final tiledObject = context.tiledObject;
@@ -54,6 +58,9 @@ class SpawnEntity extends SpriteAnimationComponent
     }
     newSpawn.spawnData.factions.add(faction);
     newSpawn.spawnData.allowedFactions.add(faction);
+    if (context.userData != null) {
+      newSpawn.data = context.userData;
+    }
     return newSpawn;
   }
 
@@ -89,7 +96,8 @@ class SpawnEntity extends SpriteAnimationComponent
           break;
         case 'tank_type':
           spawn.spawnData.typeOfTank = property.value.toString();
-          if (spawn.spawnData.typeOfTank == 'any') {
+          if (spawn.spawnData.typeOfTank == 'any' ||
+              spawn.spawnData.typeOfTank.isEmpty) {
             spawn.spawnData.typeOfTank = {
                   0: 'simple',
                   1: 'middle',

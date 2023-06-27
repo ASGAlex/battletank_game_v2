@@ -12,12 +12,12 @@ import 'package:tank_game/ui/widgets/console_messages.dart';
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key, this.mission}) : super(key: key);
 
-  final MissionDescription? mission;
+  final Scenario? mission;
 
   @override
   Widget build(BuildContext context) {
-    final selectedMission = mission ??
-        ModalRoute.of(context)?.settings.arguments as MissionDescription?;
+    final selectedMission =
+        mission ?? ModalRoute.of(context)?.settings.arguments as Scenario?;
     if (selectedMission == null) {
       throw "Mission was not selected!!";
     }

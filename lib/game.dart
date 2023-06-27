@@ -8,6 +8,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/keyboard.dart';
+import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
@@ -44,14 +45,14 @@ class MyGame extends MyGameFeatures
         GameHardwareKeyboard,
         XInputGamePad,
         MessageListenerMixin<List<PlayerAction>> {
-  MyGame(this.mapFile, this.context);
+  MyGame(this.scenario, this.context);
 
   static const zoomPerScrollUnit = 0.22;
   static final fpsTextPaint = TextPaint(
     style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
   );
 
-  final String mapFile;
+  final Scenario scenario;
   final BuildContext context;
 
   ActorMixin? currentPlayer;
@@ -60,8 +61,6 @@ class MyGame extends MyGameFeatures
       SettingsController().consoleMessages;
 
   late final CameraComponent cameraComponent;
-
-  late final GameMapLoader map;
 
   final initialPlayerPosition = Vector2(0, 0);
   final spawnManager = SpawnManager();
@@ -96,7 +95,7 @@ class MyGame extends MyGameFeatures
   Future<void> onLoad() async {
     initColorFilter<MyGame>();
     functionsRegistry = ScenarioFunctionsRegistry(this);
-    consoleMessages.sendMessage('Start loading map $mapFile');
+    consoleMessages.sendMessage('Start loading scenario ${scenario.name}');
     super.onLoad();
     initColorFilter<MyGame>();
 
@@ -105,7 +104,6 @@ class MyGame extends MyGameFeatures
     // consoleMessages.sendMessage('done.');
 
     final gameWorld = GameWorld();
-    map = GameMapLoader(mapFile);
 
     cameraComponent = CameraComponent(
         world: gameWorld,
@@ -153,6 +151,22 @@ class MyGame extends MyGameFeatures
         break;
     }
 
+    WorldLoader? worldLoader;
+    if (scenario.worldFile != null) {
+      worldLoader = WorldLoader(
+        fileName: scenario.worldFile!,
+        mapLoader: {'all': GameMapLoader.new},
+      );
+    }
+
+    final listOfMaps = <GameMapLoader>[];
+    if (worldLoader == null) {
+      if (scenario.mapFile == null) {
+        throw 'Cant load scenario!';
+      }
+      listOfMaps.add(GameMapLoader(scenario.mapFile!));
+    }
+
     await initializeSpatialGrid(
       blockSize: 128,
       debug: false,
@@ -169,13 +183,15 @@ class MyGame extends MyGameFeatures
       initialPositionChecker: (layer, object, mapOffset, worldName) {
         if (object.name == 'spawn_player') {
           initialPlayerPosition.setValues(object.x, object.y);
-          return cameraComponent.viewfinder.position =
+          cameraComponent.viewfinder.position =
               mapOffset + Vector2(object.x, object.y);
+          return cameraComponent.viewfinder.position;
         }
+        return null;
       },
       suspendedCellLifetime: suspendedCellLifetime,
       suspendCellPrecision: const Duration(seconds: 10),
-      cellBuilderNoMap: map.noMapBuilder,
+      // cellBuilderNoMap: map.noMapBuilder,
       // onAfterCellBuild: (cell, rootComponent) async {
       //   final trailLayer = CellTrailLayer(cell, name: 'trail');
       //   trailLayer.priority = RenderPriority.trackTrail.priority;
@@ -183,7 +199,8 @@ class MyGame extends MyGameFeatures
       //   trailLayer.fadeOutConfig = world.fadeOutConfig;
       //   layersManager.addLayer(trailLayer);
       // },
-      maps: [map],
+      maps: listOfMaps,
+      worldLoader: worldLoader,
     );
     consoleMessages.sendMessage('done.');
     consoleMessages.sendMessage('Loading additional tilesets...');
@@ -372,6 +389,7 @@ class MyGame extends MyGameFeatures
     spawnManager.dispose();
     hudHideInTreesProvider.dispose();
     FlameAudio.audioCache.clearAll();
+    functionsRegistry.removeScenario();
     super.onRemove();
   }
 }
