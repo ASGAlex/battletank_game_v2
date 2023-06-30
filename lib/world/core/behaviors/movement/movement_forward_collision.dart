@@ -49,7 +49,9 @@ class MovementForwardCollisionBehavior extends MovementBehavior {
 }
 
 abstract class MovementCheckerHitbox extends BoundingHitbox {
-  MovementCheckerHitbox({super.position, super.size});
+  MovementCheckerHitbox({super.position, super.size}) {
+    triggersParentCollision = false;
+  }
 
   Direction get direction;
 

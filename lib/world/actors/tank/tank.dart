@@ -101,6 +101,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   late final SmokeBehavior smoke;
 
   @override
+  BoundingHitboxFactory get boundingHitboxFactory => () => TankBoundingHitbox();
+
+  @override
   FutureOr<void> onLoad() {
     anchor = Anchor.center;
     add(AnimationGroupBehavior<ActorCoreState>(animationConfigs: {
@@ -333,4 +336,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 }
 
-class TankBoundingHitbox extends BodyHitbox {}
+class TankBoundingHitbox extends BodyHitbox {
+  TankBoundingHitbox() {
+    triggersParentCollision = false;
+  }
+}
