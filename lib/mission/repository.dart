@@ -1,4 +1,7 @@
+import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/scenario/functions_registry.dart';
+import 'package:tank_game/world/core/scenario/scenario_object.dart';
 
 class Scenario {
   Scenario(
@@ -31,7 +34,16 @@ class ScenarioRepository {
     // });
 
     scenarios.add(DemoScenario());
+    scenarios.add(CellTestScenario());
   }
+}
+
+class CellTestScenario extends Scenario {
+  CellTestScenario(
+      {super.name = 'Cell Test', super.description = 'Not just test map!'});
+
+  @override
+  String? get mapFile => 'cell_test.tmx';
 }
 
 class DemoScenario extends Scenario {
@@ -39,4 +51,11 @@ class DemoScenario extends Scenario {
 
   @override
   String? get worldFile => 'demo.world';
+
+  final Map<String, ScenarioCallbackFunction> functions = {
+    'onFirstSpawn': onFirstSpawn,
+  };
+
+  static void onFirstSpawn(
+      ScenarioObject scenario, ActorMixin actor, MyGame game) {}
 }

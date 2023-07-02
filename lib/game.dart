@@ -109,6 +109,7 @@ class MyGame extends MyGameFeatures
         world: gameWorld,
         viewport: FixedAspectRatioViewport(aspectRatio: 400 / 250));
     cameraComponent.viewfinder.zoom = 5;
+    cameraComponent.priority = 999;
 
     final settings = SettingsController();
     Size activeRadius;
@@ -169,7 +170,7 @@ class MyGame extends MyGameFeatures
 
     await initializeSpatialGrid(
       blockSize: 128,
-      debug: false,
+      // debug: true,
       activeRadius: activeRadius,
       unloadRadius: unloadRadius,
       preloadRadius: preloadRadius,

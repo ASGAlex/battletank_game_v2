@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="26">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="27">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <tileset firstgid="15" source="tank.tsx"/>
@@ -577,9 +577,24 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="6" name="scenario">
+ <objectgroup id="6" name="scenario" visible="0">
   <properties>
    <property name="primary" type="bool" value="true"/>
   </properties>
+  <object id="26" name="initial greting" type="scenario" x="369.662" y="680.972" width="89.4034" height="70.6023">
+   <properties>
+    <property name="activationCallback" value="showMessage"/>
+    <property name="deactivationCallback" value="hideMessage"/>
+    <property name="factions" value="Player"/>
+    <property name="modal" type="bool" value="false"/>
+    <property name="removeWhenLeave" type="bool" value="true"/>
+    <property name="text">Use WASD for movement.
+Now, go and enter into the tank that spawns nearby at right.
+</property>
+    <property name="text_ru">Используй клавиши WASD, чтобы передвигаться.
+А теперь пойди и захвати танк, который спавнится справа от тебя!
+Для этого подойди вплотную и нажми клавишу E</property>
+   </properties>
+  </object>
  </objectgroup>
 </map>

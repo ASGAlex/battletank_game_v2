@@ -65,12 +65,11 @@ class ScenarioFunctionsRegistry {
         ));
       }
     },
-    'hideMessageNoRemove': (scenario, actor, game) {
-      game.hideScenarioMessage();
-    },
     'hideMessage': (scenario, actor, game) {
       game.hideScenarioMessage();
-      scenario.removeFromParent();
+      if (scenario.removeWhenLeave) {
+        scenario.removeFromParent();
+      }
     },
   };
 

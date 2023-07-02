@@ -1,6 +1,7 @@
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/direction.dart';
 
 enum PlayerAction {
@@ -17,6 +18,7 @@ enum PlayerAction {
 }
 
 class InputEventsHandler {
+  MyGame? game;
   final messageProvider = MessageStreamProvider<List<PlayerAction>>();
 
   KeyEventResult onKeyEvent(
@@ -45,6 +47,14 @@ class InputEventsHandler {
       }
       if (key == LogicalKeyboardKey.keyK) {
         actions.add(PlayerAction.triggerK);
+      }
+
+      if (key == LogicalKeyboardKey.keyU) {
+        game?.removeUnusedCells(forceCleanup: true);
+      }
+      if (key == LogicalKeyboardKey.keyO) {
+        game?.isSpatialGridDebugEnabled =
+            !(game?.isSpatialGridDebugEnabled ?? false);
       }
 
       if (key == LogicalKeyboardKey.escape) {

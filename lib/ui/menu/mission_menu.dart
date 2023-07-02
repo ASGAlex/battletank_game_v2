@@ -13,11 +13,11 @@ class MissionMenu extends StatelessWidget {
     return NesContainer(
         backgroundColor: Colors.blueGrey,
         child: ListView.builder(
-            itemCount: settings.missions.length + 2,
+            itemCount: settings.scenarios.length + 2,
             itemBuilder: (BuildContext context, int index) {
-              if (index == settings.missions.length) {
+              if (index == settings.scenarios.length) {
                 return const Divider();
-              } else if (index == settings.missions.length + 1) {
+              } else if (index == settings.scenarios.length + 1) {
                 return NesButton(
                   type: NesButtonType.primary,
                   child: Text(context.loc().back),
@@ -26,7 +26,7 @@ class MissionMenu extends StatelessWidget {
                   },
                 );
               } else {
-                final mission = settings.missions[index];
+                final mission = settings.scenarios[index];
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                   child: NesButton(
