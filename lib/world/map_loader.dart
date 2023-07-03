@@ -5,7 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/core/scenario/scenario_object.dart';
+import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -316,7 +316,7 @@ class GameMapLoader extends TiledMapLoader {
     final tiledObject = context.tiledObject;
     if (tiledObject == null) return;
 
-    final scenario = ScenarioObject.fromTiled(tiledObject);
+    final scenario = ScenarioComponent.fromTiled(tiledObject);
     scenario.currentCell = context.cell;
 
     game.world.addScenario(scenario);

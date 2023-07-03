@@ -28,7 +28,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   args: any
-  flame: ^1.8.0
+  flame: ^1.8.1
 #  audioplayers: ^3.0.1
 #  audioplayers_windows: ^1.1.3
 #  soundpool: ^2.3.0
@@ -40,8 +40,8 @@ dependencies:
   nes_ui: ^0.7.0
   flame_audio: ^2.0.3
   flame_spatial_grid:
-#    path: ../cluisterizer_test
-    git: https://github.com/ASGAlex/flame_spatial_grid.git
+    path: ../cluisterizer_test
+#    git: https://github.com/ASGAlex/flame_spatial_grid.git
 
   flame_message_stream:
     git: https://github.com/ASGAlex/flame_message_stream.git

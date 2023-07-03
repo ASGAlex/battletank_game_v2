@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tank_game/mission/repository.dart';
+import 'package:tank_game/world/core/scenario/scenario_description.dart';
 
 import 'game/screen.dart';
 import 'intl.dart';

@@ -8,7 +8,6 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/keyboard.dart';
-import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
@@ -18,9 +17,8 @@ import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/detection/enemy_ambient_volume.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/core/scenario/functions_registry.dart';
-import 'package:tank_game/world/core/scenario/scenario_activator.dart';
-import 'package:tank_game/world/core/scenario/scenario_object.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
+import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
@@ -28,6 +26,8 @@ import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
+
+import 'world/core/scenario/scenario_description.dart';
 
 abstract class MyGameFeatures extends FlameGame
     with
@@ -68,8 +68,6 @@ class MyGame extends MyGameFeatures
 
   final hudHideInTreesProvider = MessageStreamProvider<bool>();
 
-  late final ScenarioFunctionsRegistry functionsRegistry;
-
   Widget Function(BuildContext context, MyGame game)
       scenarioCurrentWidgetBuilder = (_, __) => Container();
 
@@ -94,7 +92,6 @@ class MyGame extends MyGameFeatures
   @override
   Future<void> onLoad() async {
     initColorFilter<MyGame>();
-    functionsRegistry = ScenarioFunctionsRegistry(this);
     consoleMessages.sendMessage('Start loading scenario ${scenario.name}');
     super.onLoad();
     initColorFilter<MyGame>();
@@ -346,7 +343,7 @@ class MyGame extends MyGameFeatures
       if (potentialItemType == WaterEntity ||
           potentialItemType == TreeEntity ||
           potentialItemType == SpawnEntity ||
-          potentialItemType == ScenarioObject) {
+          potentialItemType == ScenarioComponent) {
         return false;
       }
     }
@@ -390,7 +387,6 @@ class MyGame extends MyGameFeatures
     spawnManager.dispose();
     hudHideInTreesProvider.dispose();
     FlameAudio.audioCache.clearAll();
-    functionsRegistry.removeScenario();
     super.onRemove();
   }
 }

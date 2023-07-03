@@ -104,15 +104,15 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
       print(e);
     }
     //
-    // final list = componentsAtPoint(tapPosition).toList(growable: false);
-    // for (final component in list) {
-    //   if (component is! HasGridSupport) continue;
-    //   if (component is CellLayer) {
-    //     print(component.name);
-    //   } else {
-    //     print(component.runtimeType);
-    //   }
-    // }
+    final list = componentsAtPoint(tapPosition).toList(growable: false);
+    for (final component in list) {
+      if (component is! HasGridSupport) continue;
+      if (component is CellLayer) {
+        print(component.name);
+      } else {
+        print(component.runtimeType);
+      }
+    }
 
     event.handled = true;
 

@@ -1,13 +1,13 @@
 import 'package:flame/game.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/mission/repository.dart';
 import 'package:tank_game/services/settings/controller.dart';
 import 'package:tank_game/ui/game/gameover_screen.dart';
 import 'package:tank_game/ui/game/hud.dart';
 import 'package:tank_game/ui/menu/in_game_menu/ingame_menu.dart';
 import 'package:tank_game/ui/menu/in_game_menu/mission_objectives.dart';
 import 'package:tank_game/ui/widgets/console_messages.dart';
+import 'package:tank_game/world/core/scenario/scenario_description.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key, this.mission}) : super(key: key);
