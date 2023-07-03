@@ -12,15 +12,21 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent> {
   final bool modal;
 
   factory AreaMessageComponent.fromTiled(TiledObject tiledObject) {
-    final modal = tiledObject.properties.getValue<bool>('modal') ?? false;
-    final removeWhenLeave =
-        tiledObject.properties.getValue<bool>('removeWhenLeave') ?? false;
-    String text = tiledObject.properties.getValue<String>('text') ?? '';
+    final modal = tiledObject.properties.has('modal')
+        ? tiledObject.properties.getValue<bool>('modal') ?? false
+        : false;
+
+    final removeWhenLeave = tiledObject.properties.has('removeWhenLeave')
+        ? tiledObject.properties.getValue<bool>('removeWhenLeave') ?? false
+        : false;
+    String text = tiledObject.properties.has('text')
+        ? tiledObject.properties.getValue<String>('text') ?? ''
+        : '';
     final locale = Intl.getCurrentLocale();
     if (tiledObject.properties.has('text_$locale')) {
       text = tiledObject.properties.getValue<String>('text_$locale') ?? '';
     }
-    final coreObject = ScenarioComponent.fromTiled(tiledObject);
+    final coreObject = ScenarioComponent.parseTiledObject(tiledObject);
     return AreaMessageComponent(
       name: coreObject.name,
       position: coreObject.position,

@@ -18,5 +18,7 @@ class Scenario {
 
   final customFunctions = <String, ScenarioCallbackFunction>{};
 
-  void resetVariables() {}
+  void init() {
+    ScenarioComponent.restoreDefaults();
+  }
 }

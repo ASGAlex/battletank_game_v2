@@ -96,6 +96,8 @@ class MyGame extends MyGameFeatures
     super.onLoad();
     initColorFilter<MyGame>();
 
+    scenario.init();
+
     // consoleMessages.sendMessage('loading sounds...');
     // SoundLibrary().init();
     // consoleMessages.sendMessage('done.');

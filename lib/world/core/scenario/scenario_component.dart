@@ -43,7 +43,7 @@ class ScenarioComponent<T extends ScenarioComponentCore>
     _availableTypes[name] = factory;
   }
 
-  static resetRegisteredTypes() {
+  static restoreDefaults() {
     _availableTypes.clear();
     _availableTypes.addAll({
       'AreaMessage': (tiledObject) =>
@@ -52,27 +52,37 @@ class ScenarioComponent<T extends ScenarioComponentCore>
   }
 
   static ScenarioComponent fromTiled(TiledObject tiledObject) {
-    final typeName = tiledObject.properties.getValue<String>('type') ?? '';
-    final typeFactory = _availableTypes[typeName];
+    ScenarioTypeFactory? typeFactory;
+    try {
+      final typeName = tiledObject.properties.getValue<String>('type') ?? '';
+      typeFactory = _availableTypes[typeName];
+    } catch (_) {}
     if (typeFactory == null) {
+      return parseTiledObject(tiledObject);
+    } else {
+      return typeFactory.call(tiledObject);
+    }
+  }
+
+  static ScenarioComponent parseTiledObject(TiledObject tiledObject) {
+    final factions = <Faction>[];
+    try {
       String factionsString =
           tiledObject.properties.getValue<String>('factions') ?? '';
-      final factions = <Faction>[];
       if (factionsString.isNotEmpty) {
         final list = factionsString.split(',');
         for (final factionName in list) {
           factions.add(Faction(name: factionName.trim()));
         }
       }
-      return ScenarioComponent(
-        name: tiledObject.name,
-        position: Vector2(tiledObject.x, tiledObject.y),
-        size: Vector2(tiledObject.width, tiledObject.height),
-        factions: factions,
-      )..tiledObject = tiledObject;
-    } else {
-      return typeFactory.call(tiledObject);
-    }
+    } catch (_) {}
+
+    return ScenarioComponent(
+      name: tiledObject.name,
+      position: Vector2(tiledObject.x, tiledObject.y),
+      size: Vector2(tiledObject.width, tiledObject.height),
+      factions: factions,
+    )..tiledObject = tiledObject;
   }
 
   ScenarioComponent({
