@@ -7,8 +7,8 @@ class ConfigurableAnimation extends SpriteAnimation {
   void Function()? onComplete;
 
   @override
-  SpriteAnimationTicker ticker() {
-    final ticker = super.ticker();
+  SpriteAnimationTicker createTicker() {
+    final ticker = super.createTicker();
     ticker.onComplete = onComplete;
     return ticker;
   }
