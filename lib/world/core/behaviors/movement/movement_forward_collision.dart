@@ -5,6 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/actors/human/human.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
@@ -94,7 +95,10 @@ class MovementHitbox extends MovementCheckerHitbox {
         other == BoundingHitbox ||
         other == SandBoundingHitbox ||
         other == WeakBodyHitbox ||
-        other == ScenarioHitbox) {
+        other == ScenarioHitbox ||
+        other == MovementHitbox ||
+        other == MovementCheckerHitbox ||
+        other == TankBoundingHitbox) {
       return false;
     }
     return true;
