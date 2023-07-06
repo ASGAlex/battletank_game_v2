@@ -52,6 +52,7 @@ class MovementForwardCollisionBehavior extends MovementBehavior {
 abstract class MovementCheckerHitbox extends BoundingHitbox {
   MovementCheckerHitbox({super.position, super.size}) {
     triggersParentCollision = false;
+    // debugMode = true;
   }
 
   Direction get direction;
@@ -67,6 +68,16 @@ abstract class MovementCheckerHitbox extends BoundingHitbox {
       return Direction.fromValue(globalValue - 4);
     }
     return Direction.fromValue(globalValue);
+  }
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    canvas.drawRect(
+      Rect.fromLTWH(position.x, position.y, size.x, size.y),
+      Paint()
+        ..color = const Color.fromRGBO(119, 0, 255, 1.0)
+        ..style = PaintingStyle.stroke,
+    );
   }
 }
 
@@ -84,7 +95,6 @@ class MovementHitbox extends MovementCheckerHitbox {
   @override
   FutureOr<void> onLoad() {
     isSolid = true;
-    // debugMode = true;
     return super.onLoad();
   }
 
@@ -119,15 +129,5 @@ class MovementHitbox extends MovementCheckerHitbox {
       return shouldCareAboutIt;
     }
     return true;
-  }
-
-  @override
-  void renderDebugMode(Canvas canvas) {
-    canvas.drawRect(
-      Rect.fromLTWH(position.x, position.y, size.x, size.y),
-      Paint()
-        ..color = const Color.fromRGBO(119, 0, 255, 1.0)
-        ..style = PaintingStyle.stroke,
-    );
   }
 }

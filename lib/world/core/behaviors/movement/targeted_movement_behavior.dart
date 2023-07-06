@@ -33,13 +33,12 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   Function? onShouldFire;
 
   late final MovementForwardCollisionBehavior _moveForwardBehavior;
-  RandomMovementBehavior? _randomMovementBehavior;
 
-  final maxDtFromLastDirectionChange = 0.25;
+  final maxDtFromLastDirectionChange = 0.5;
   double _dtFromLastDirectionChange = 0;
 
   bool forceIdle = false;
-  final maxAttemptsToChangeDirection = 3;
+  final maxAttemptsToChangeDirection = 2;
   int _attemptsToChangeDirection = 0;
 
   @override
@@ -47,7 +46,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     _moveForwardBehavior =
         parent.findBehavior<MovementForwardCollisionBehavior>();
     try {
-      parent.findBehavior<RandomMovementBehavior>().removeFromParent();
+      parent.findBehavior<RandomMovementBehavior>().pauseBehavior = true;
     } catch (_) {}
 
     return super.onLoad();
@@ -66,8 +65,10 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     }
 
     _diff.setFrom(targetPosition - parent.data.positionCenter);
-    if (_diff.x.abs() <= parent.size.x + (parent.size.x / 2) &&
-        _diff.y.abs() <= parent.size.y + (parent.size.y / 2)) {
+    if ((_diff.x.abs() <= parent.size.x + (parent.size.x) &&
+            _diff.y.abs() <= parent.size.y / 2) ||
+        (_diff.x.abs() <= parent.size.x / 2 &&
+            _diff.y.abs() <= parent.size.y + (parent.size.y))) {
       if (stopAtTarget) {
         parent.coreState = ActorCoreState.idle;
         forceIdle = true;
@@ -82,17 +83,17 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         forceIdle = false;
       }
     }
-
+    print(_attemptsToChangeDirection);
     bool directionChanged = false;
     if (_moveForwardBehavior.movementHitbox.isMovementBlocked && !forceIdle) {
       if (_attemptsToChangeDirection < maxAttemptsToChangeDirection) {
         if (parent.lookDirection == Direction.up ||
             parent.lookDirection == Direction.down) {
-          _changeDirection(_leftOrRight(_diff.x));
+          _changeDirectionTry(_leftOrRight(_diff.x));
           directionChanged = true;
         } else if (parent.lookDirection == Direction.right ||
             parent.lookDirection == Direction.left) {
-          _changeDirection(_upOrDown(_diff.y));
+          _changeDirectionTry(_upOrDown(_diff.y));
           directionChanged = true;
         }
       } else {
@@ -103,11 +104,17 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
       }
     }
 
-    if (directionChanged) {
+    if (directionChanged && !forceIdle) {
       _attemptsToChangeDirection++;
-    } else if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
-      final direction = _findShortestDirection();
-      _changeDirection(direction);
+    } else {
+      if (forceIdle) {
+        if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
+          forceIdle = false;
+          _changeDirectionTry();
+        }
+      } else if (!directionChanged) {
+        _changeDirectionTry();
+      }
     }
 
     if (shouldFire) {
@@ -115,32 +122,43 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     }
   }
 
-  void _changeDirection(Direction? direction) {
+  void _changeDirectionTry([Direction? direction]) {
     final newDirection = direction ?? _findShortestDirection();
 
-    if (newDirection != null &&
-        newDirection != parent.lookDirection &&
-        _dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
-      parent.lookDirection = newDirection;
-      _dtFromLastDirectionChange = 0;
+    if (newDirection != null && newDirection != parent.lookDirection) {
+      if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
+        parent.lookDirection = newDirection;
+        _dtFromLastDirectionChange = 0;
+      } else {
+        forceIdle = true;
+      }
     }
   }
 
   void _startRandomMovement() {
-    if (_randomMovementBehavior == null && parent is MovementFactoryMixin) {
-      _randomMovementBehavior =
-          (parent as MovementFactoryMixin).createRandomMovement();
-      parent.add(_randomMovementBehavior!);
+    if (parent is MovementFactoryMixin) {
+      try {
+        final randomMovementBehavior =
+            parent.findBehavior<RandomMovementBehavior>();
+        randomMovementBehavior.pauseBehavior = false;
+      } catch (_) {
+        final randomMovementBehavior =
+            (parent as MovementFactoryMixin).createRandomMovement();
+        parent.add(randomMovementBehavior);
+      }
       _randomMovementTimer = 0;
+      isRandomMovement = true;
     }
   }
 
   void _stopRandomMovement() {
-    _randomMovementBehavior?.removeFromParent();
-    _randomMovementBehavior = null;
+    try {
+      parent.findBehavior<RandomMovementBehavior>().pauseBehavior = true;
+    } catch (_) {}
+    isRandomMovement = false;
   }
 
-  bool get isRandomMovement => _randomMovementBehavior != null;
+  bool isRandomMovement = false;
 
   Direction? _findShortestDirection() {
     var diffBetweenAxis = _diff.x.abs() - _diff.y.abs();

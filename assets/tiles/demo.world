@@ -1,0 +1,34 @@
+{
+    "maps": [
+        {
+            "fileName": "mission.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "lake.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 0,
+            "y": 768
+        },
+        {
+            "fileName": "west_forest.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": -1152,
+            "y": 0
+        },
+        {
+            "fileName": "east_forest.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 1152,
+            "y": 0
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}

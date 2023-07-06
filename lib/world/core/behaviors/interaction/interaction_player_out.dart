@@ -9,6 +9,8 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/camera_zoom_effect.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
@@ -116,7 +118,9 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   }
 
   ActorMixin _createHuman([Direction direction = Direction.down]) {
-    final restoredEntity = HumanEntity()..isInteractionEnabled = true;
+    final restoredEntity = HumanEntity()
+      ..isInteractionEnabled = true
+      ..add(DetectableBehavior(detectionType: DetectionType.visual));
 
     switch (direction) {
       case Direction.down:

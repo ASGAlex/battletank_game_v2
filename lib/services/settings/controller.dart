@@ -49,8 +49,15 @@ class SettingsController with ChangeNotifier {
 
   List<Scenario> get scenarios => _missionRepository.scenarios;
 
+  MyGame? currentGame;
+
   MyGame startGameWithMission(Scenario scenario, BuildContext context) {
-    return MyGame(scenario, context);
+    currentGame ??= MyGame(scenario, context);
+    return currentGame!;
+  }
+
+  void endGame() {
+    currentGame = null;
   }
 
   loadSettings() async {

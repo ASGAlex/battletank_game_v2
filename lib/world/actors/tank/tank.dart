@@ -191,6 +191,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
                 if (!forceIdle) {
                   coreState = ActorCoreState.move;
                 }
+                if (_targetedMovementBehavior == null) {
+                  _randomMovementBehavior?.pauseBehavior = false;
+                }
               }
             }));
 
@@ -212,6 +215,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   TargetedMovementBehavior? _targetedMovementBehavior;
+  RandomMovementBehavior? _randomMovementBehavior;
 
   void _trackDetectedTarget(
       ActorMixin target, double distanceX, double distanceY) {
@@ -311,7 +315,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       TargetedMovementBehavior(
         targetPosition: targetPosition,
         targetSize: targetSize,
-        maxRandomMovementTime: 5,
+        maxRandomMovementTime: 15,
         onShouldFire: () {
           findBehavior<FireBulletBehavior>().tryFire();
         },

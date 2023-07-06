@@ -4,6 +4,7 @@ import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
@@ -14,6 +15,8 @@ import 'package:tank_game/ui/widgets/console_messages.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/enemy_ambient_volume.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -287,6 +290,7 @@ class MyGame extends MyGameFeatures
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
         ..add(ScenarioActivatorBehavior())
+        ..add(DetectableBehavior(detectionType: DetectionType.visual))
         ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 
@@ -385,10 +389,13 @@ class MyGame extends MyGameFeatures
 
   @override
   void onRemove() {
-    dispose();
-    spawnManager.dispose();
-    hudHideInTreesProvider.dispose();
-    FlameAudio.audioCache.clearAll();
-    super.onRemove();
+    if (!kDebugMode) {
+      dispose();
+      spawnManager.dispose();
+      hudHideInTreesProvider.dispose();
+      FlameAudio.audioCache.clearAll();
+      SettingsController().endGame();
+      super.onRemove();
+    }
   }
 }

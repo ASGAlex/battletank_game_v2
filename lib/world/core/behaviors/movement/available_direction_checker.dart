@@ -105,20 +105,20 @@ class MovementSideHitbox extends MovementCheckerHitbox {
     final width = outerWidth == 0 ? parentSize.x / 2 : outerWidth;
     switch (direction) {
       case Direction.left:
-        position = Vector2(-width, 0);
-        size = Vector2(width, parentSize.y);
+        position = Vector2(-width, 2);
+        size = Vector2(width, parentSize.y - 4);
         break;
       case Direction.right:
-        position = Vector2(parentSize.x, 0);
-        size = Vector2(width, parentSize.y);
+        position = Vector2(parentSize.x, 2);
+        size = Vector2(width, parentSize.y - 4);
         break;
       case Direction.up:
         position = Vector2(2, -width);
         size = Vector2(parentSize.x - 3, width);
         break;
       case Direction.down:
-        position = Vector2(0, parentSize.y);
-        size = Vector2(parentSize.x, width);
+        position = Vector2(2, parentSize.y);
+        size = Vector2(parentSize.x - 3, width);
         break;
     }
     defaultCollisionType = CollisionType.passive;
