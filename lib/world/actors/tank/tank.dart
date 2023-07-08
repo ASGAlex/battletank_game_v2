@@ -28,6 +28,8 @@ import 'package:tank_game/world/core/behaviors/movement/speed_penalty.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
@@ -41,7 +43,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         ActorWithSeparateBody,
         AnimationGroupCoreStateListenerMixin,
         MovementFactoryMixin,
-        HasGameReference<MyGame> {
+        HasGameReference<MyGame>,
+        ScenarioEventEmitter {
   static const _tileset = 'tank';
 
   factory TankEntity(String type, TilesetManager tilesetManager) {
@@ -144,25 +147,31 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       },
       bulletOffset: Vector2(0, 0),
     ));
-    add(KillableBehavior(
-      customApplyAttack: (attackedBy, killable) {
-        if (attackedBy is BulletEntity) {
-          final penalty = (attackedBy.data as BulletData).speedPenalty;
-          final duration = (attackedBy.data as BulletData).speedPenaltyDuration;
-          killable
-              .add(SpeedPenaltyBehavior(penalty: penalty, duration: duration));
+    add(KillableBehavior(customApplyAttack: (attackedBy, killable) {
+      if (attackedBy is BulletEntity) {
+        final penalty = (attackedBy.data as BulletData).speedPenalty;
+        final duration = (attackedBy.data as BulletData).speedPenaltyDuration;
+        killable
+            .add(SpeedPenaltyBehavior(penalty: penalty, duration: duration));
 
-          if (hasBehavior<PlayerControlledBehavior>()) {
-            game.colorFilter?.animateTo(Colors.red,
-                blendMode: BlendMode.colorBurn,
-                duration: const Duration(milliseconds: 250), onFinish: () {
-              game.colorFilter?.config.color = null;
-            });
-          }
+        if (hasBehavior<PlayerControlledBehavior>()) {
+          game.colorFilter?.animateTo(Colors.red,
+              blendMode: BlendMode.colorBurn,
+              duration: const Duration(milliseconds: 250), onFinish: () {
+            game.colorFilter?.config.color = null;
+          });
         }
-        return false;
-      },
-    ));
+      }
+      return false;
+    }, onBeingKilled: (attackedBy, killable) {
+      if (attackedBy != null) {
+        scenarioEvent(EventKilled(
+          name: 'tankKilled',
+          emitter: killable,
+          data: attackedBy,
+        ));
+      }
+    }));
     add(SlowDownBySandBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());

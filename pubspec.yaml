@@ -44,7 +44,8 @@ dependencies:
     git: https://github.com/ASGAlex/flame_spatial_grid.git
 
   flame_message_stream:
-    git: https://github.com/ASGAlex/flame_message_stream.git
+    path: ../flame_message_stream
+#    git: https://github.com/ASGAlex/flame_message_stream.git
   flutter:
     sdk: flutter
   flutter_localizations:

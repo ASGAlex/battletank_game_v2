@@ -188,18 +188,18 @@ packages:
   flame_message_stream:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "5db33c65af322e39c877447a69ab7509183df6a2"
-      url: "https://github.com/ASGAlex/flame_message_stream.git"
-    source: git
+      path: "../flame_message_stream"
+      relative: true
+    source: path
     version: "0.0.1+2"
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "../cluisterizer_test"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: bedc42e0bb4bbcd87ca3b18f7db74701deb5f255
+      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
+    source: git
     version: "1.0.0"
   flame_tiled:
     dependency: "direct main"
@@ -465,10 +465,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_foundation
-      sha256: "0dc5c49ad8a05ed358b991b60c7b0ba1a14e16dae58af9b420d6b9e82dc024ab"
+      sha256: b046999bf0ff58f04c364491bb803dcfa8f42e47b19c75478f53d323684a8cc1
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.0"
+    version: "2.3.1"
   shared_preferences_linux:
     dependency: transitive
     description:

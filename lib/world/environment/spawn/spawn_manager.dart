@@ -15,7 +15,7 @@ class SpawnManager {
     Faction? faction,
     Duration retryInterval = const Duration(seconds: 10),
     int retryAttempts = 15,
-    Function? onSpawnComplete,
+    Function(ActorMixin objectToSpawn)? onSpawnComplete,
   }) {
     bool success;
     final spawn = preferredSpawn ?? findIdle(faction: faction);
@@ -26,7 +26,9 @@ class SpawnManager {
         success = false;
       }
       behavior.objectToSpawn = actor;
-      behavior.onSpawnComplete = onSpawnComplete;
+      if (onSpawnComplete != null) {
+        behavior.onSpawnComplete = onSpawnComplete;
+      }
       behavior.spawnData.state = SpawnState.spawning;
       success = true;
     } on StateError catch (_) {

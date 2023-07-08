@@ -10,9 +10,14 @@ import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 
 class KillableBehavior extends CoreBehavior<ActorMixin> {
-  KillableBehavior({this.factionCheck, this.customApplyAttack}) {
+  KillableBehavior({
+    this.factionCheck,
+    this.customApplyAttack,
+    this.onBeingKilled,
+  }) {
     factionCheck ??= (attackedBy, killable) {
       final factionPlayer = Faction(name: 'Player');
       final factionEnemy = Faction(name: 'Enemy');
@@ -28,6 +33,7 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
 
   bool Function(ActorMixin attackedBy, ActorMixin killable)? factionCheck;
   bool Function(ActorMixin attackedBy, ActorMixin killable)? customApplyAttack;
+  void Function(ActorMixin? attackedBy, ActorMixin killable)? onBeingKilled;
 
   @override
   FutureOr<void> onLoad() {
@@ -73,6 +79,7 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
   }
 
   void killParent([AttackBehavior? attackedBy]) {
+    onBeingKilled?.call(attackedBy?.parent, parent);
     try {
       final filter = parent.findBehavior<ColorFilterBehavior>();
       filter.removeFromParent();
@@ -104,4 +111,8 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
       super.onRemove();
     }
   }
+}
+
+class EventKilled extends ScenarioEvent<ActorMixin> {
+  const EventKilled({required super.emitter, required super.name, super.data});
 }

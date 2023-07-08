@@ -22,6 +22,7 @@ import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
@@ -47,7 +48,8 @@ class MyGame extends MyGameFeatures
     with
         GameHardwareKeyboard,
         XInputGamePad,
-        MessageListenerMixin<List<PlayerAction>> {
+        MessageListenerMixin<List<PlayerAction>>,
+        HasMessageProviders {
   MyGame(this.scenario, this.context);
 
   static const zoomPerScrollUnit = 0.22;
@@ -69,7 +71,8 @@ class MyGame extends MyGameFeatures
   final spawnManager = SpawnManager();
   final enemyAmbientVolume = EnemyAmbientVolume();
 
-  final hudHideInTreesProvider = MessageStreamProvider<bool>();
+  late final MessageStreamProvider<bool> hudHideInTreesProvider;
+  late final MessageStreamProvider<ScenarioEvent> scenarioEventProvider;
 
   Widget Function(BuildContext context, MyGame game)
       scenarioCurrentWidgetBuilder = (_, __) => Container();
@@ -99,7 +102,10 @@ class MyGame extends MyGameFeatures
     super.onLoad();
     initColorFilter<MyGame>();
 
-    scenario.init();
+    hudHideInTreesProvider =
+        messageProvidersManager.getMessageProvider<bool>('hideInTrees');
+    scenarioEventProvider = messageProvidersManager
+        .getMessageProvider<ScenarioEvent>('scenarioEvent');
 
     // consoleMessages.sendMessage('loading sounds...');
     // SoundLibrary().init();
@@ -205,6 +211,8 @@ class MyGame extends MyGameFeatures
       maps: listOfMaps,
       worldLoader: worldLoader,
     );
+
+    scenario.onLoad();
     consoleMessages.sendMessage('done.');
     consoleMessages.sendMessage('Loading additional tilesets...');
     await _loadExternalTileSets();
@@ -297,7 +305,7 @@ class MyGame extends MyGameFeatures
       spawnManager.spawnNewActor(
           actor: currentPlayer!,
           faction: Faction(name: 'Player'),
-          onSpawnComplete: () {
+          onSpawnComplete: (objectToSpawn) {
             currentPlayer!.add(PlayerControlledBehavior());
             cameraComponent.follow(currentPlayer!);
           });
@@ -392,7 +400,7 @@ class MyGame extends MyGameFeatures
     if (!kDebugMode) {
       dispose();
       spawnManager.dispose();
-      hudHideInTreesProvider.dispose();
+      // hudHideInTreesProvider.dispose();
       FlameAudio.audioCache.clearAll();
       SettingsController().endGame();
       super.onRemove();

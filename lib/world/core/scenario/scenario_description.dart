@@ -1,3 +1,7 @@
+import 'package:flutter/foundation.dart';
+import 'package:tank_game/game.dart';
+import 'package:tank_game/services/settings/controller.dart';
+import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 
 class Scenario {
@@ -18,7 +22,11 @@ class Scenario {
 
   final customFunctions = <String, ScenarioCallbackFunction>{};
 
-  void init() {
+  MyGame get game => SettingsController().currentGame!;
+
+  @mustCallSuper
+  void onLoad() {
     ScenarioComponent.restoreDefaults();
+    AreaInitScriptComponent.restoreDefaults();
   }
 }

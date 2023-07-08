@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -11,6 +12,7 @@ import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/visibility_mixin.dart';
 import 'package:tank_game/world/environment/spawn/spawn_behavior.dart';
 
@@ -23,12 +25,12 @@ class SpawnEntity extends SpriteAnimationComponent
         HasGridSupport,
         VisibilityMixin,
         ActorMixin,
-        RestorableStateMixin<SpawnData> {
+        RestorableStateMixin<SpawnData>,
+        HasGameReference<MyGame>,
+        ScenarioEventEmitter {
   SpawnEntity({required this.rootComponent}) {
     data = SpawnData();
   }
-
-  MyGame? game;
 
   @override
   SpawnData? get userData => spawnData;
@@ -45,7 +47,6 @@ class SpawnEntity extends SpriteAnimationComponent
         rootComponent: game.world.tankLayer, properties: tiledObject.properties)
       ..position = Vector2(context.absolutePosition.x + context.size.x / 2,
           context.absolutePosition.y + context.size.y / 2);
-    newSpawn.game = game;
     newSpawn.currentCell = context.cell;
     Faction faction;
     if (tiledObject.name == 'spawn') {
@@ -65,15 +66,13 @@ class SpawnEntity extends SpriteAnimationComponent
   }
 
   void spawnCallback(SpawnEntity activeSpawn) {
-    if (game != null) {
-      final tank =
-          TankEntity(activeSpawn.spawnData.typeOfTank, game!.tilesetManager);
-      tank.currentCell = currentCell;
-      tank.data.factions.addAll(activeSpawn.data.factions);
-      activeSpawn.spawnBehavior.objectToSpawn = tank;
+    final tank =
+        TankEntity(activeSpawn.spawnData.typeOfTank, game.tilesetManager);
+    tank.currentCell = currentCell;
+    tank.data.factions.addAll(activeSpawn.data.factions);
+    activeSpawn.spawnBehavior.objectToSpawn = tank;
 
-      activeSpawn.spawnData.state = SpawnState.spawning;
-    }
+    activeSpawn.spawnData.state = SpawnState.spawning;
   }
 
   factory SpawnEntity.fromProperties({
@@ -133,6 +132,10 @@ class SpawnEntity extends SpriteAnimationComponent
       ),
     ));
     add(spawnBehavior);
+    spawnBehavior.onSpawnComplete = (spawned) {
+      scenarioEvent(
+          EventSpawned(emitter: this, name: 'ActorSpawned', data: spawned));
+    };
     super.onLoad();
   }
 }

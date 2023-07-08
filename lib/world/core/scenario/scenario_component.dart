@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 
@@ -18,18 +19,16 @@ typedef ScenarioTypeFactory = ScenarioComponent Function(TiledObject);
 abstract class ScenarioComponentCore extends PositionComponent
     with HasGridSupport, HasGameReference<MyGame> {
   ScenarioComponentCore({
-    required this.name,
-    required super.position,
-    required super.size,
+    this.tiledObject,
     Iterable<Faction> factions = const [],
   }) {
     this.factions.addAll(factions);
   }
 
-  @protected
   TiledObject? tiledObject;
-  final String name;
+  late final String name;
   final factions = <Faction>{};
+  bool removeWhenLeave = false;
 
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => ScenarioHitbox();
@@ -47,7 +46,9 @@ class ScenarioComponent<T extends ScenarioComponentCore>
     _availableTypes.clear();
     _availableTypes.addAll({
       'AreaMessage': (tiledObject) =>
-          AreaMessageComponent.fromTiled(tiledObject),
+          AreaMessageComponent(tiledObject: tiledObject),
+      'AreaInitScript': (tiledObject) =>
+          AreaInitScriptComponent(tiledObject: tiledObject),
     });
   }
 
@@ -58,37 +59,14 @@ class ScenarioComponent<T extends ScenarioComponentCore>
       typeFactory = _availableTypes[typeName];
     } catch (_) {}
     if (typeFactory == null) {
-      return parseTiledObject(tiledObject);
+      return ScenarioComponent(tiledObject: tiledObject);
     } else {
       return typeFactory.call(tiledObject);
     }
   }
 
-  static ScenarioComponent parseTiledObject(TiledObject tiledObject) {
-    final factions = <Faction>[];
-    try {
-      String factionsString =
-          tiledObject.properties.getValue<String>('factions') ?? '';
-      if (factionsString.isNotEmpty) {
-        final list = factionsString.split(',');
-        for (final factionName in list) {
-          factions.add(Faction(name: factionName.trim()));
-        }
-      }
-    } catch (_) {}
-
-    return ScenarioComponent(
-      name: tiledObject.name,
-      position: Vector2(tiledObject.x, tiledObject.y),
-      size: Vector2(tiledObject.width, tiledObject.height),
-      factions: factions,
-    )..tiledObject = tiledObject;
-  }
-
   ScenarioComponent({
-    required super.name,
-    required super.position,
-    required super.size,
+    super.tiledObject,
     Iterable<Faction> factions = const [],
   });
 
@@ -125,9 +103,40 @@ class ScenarioComponent<T extends ScenarioComponentCore>
         deactivationCallback = game.scenario.customFunctions[deactivationName];
       }
 
+      String factionsString = properties.getValue<String>('factions') ?? '';
+      if (factionsString.isNotEmpty) {
+        final list = factionsString.split(',');
+        for (final factionName in list) {
+          factions.add(Faction(name: factionName.trim()));
+        }
+      }
+
+      try {
+        removeWhenLeave = properties.getValue<bool>('removeWhenLeave') ?? false;
+      } catch (_) {}
+
+      try {
+        name = tiledObject!.name;
+      } catch (_) {}
+
+      if (position.isZero()) {
+        position = Vector2(tiledObject!.x, tiledObject!.y);
+      }
+      if (size.isZero()) {
+        size = Vector2(tiledObject!.width, tiledObject!.height);
+      }
+
       tiledObject = null;
     }
     super.onLoad();
+  }
+
+  @override
+  void deactivatedBy(T scenario, ActorMixin other, MyGame game) {
+    if (scenario.removeWhenLeave) {
+      removeFromParent();
+    }
+    super.deactivatedBy(scenario, other, game);
   }
 }
 

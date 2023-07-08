@@ -7,6 +7,7 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 import 'package:tank_game/world/core/behaviors/distance_callback_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/core/visibility_mixin.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
@@ -16,7 +17,7 @@ class SpawnBehavior extends CollisionBehavior
     with DistanceCallbackMixin, HasGameReference<MyGame> {
   final _trackedObjectsDistances = <Component, List<double>>{};
   ActorMixin? objectToSpawn;
-  Function? onSpawnComplete;
+  Function(ActorMixin objectToSpawn)? onSpawnComplete;
 
   SpawnData get spawnData {
     final spawnData = parent.data;
@@ -97,7 +98,7 @@ class SpawnBehavior extends CollisionBehavior
         newObject.currentCell = parent.currentCell;
         (parent as SpawnEntity).rootComponent.add(newObject);
         objectToSpawn = null;
-        onSpawnComplete?.call();
+        onSpawnComplete?.call(newObject);
       }
     }
   }
@@ -126,4 +127,8 @@ class SpawnBehavior extends CollisionBehavior
     }
     _trackedObjectsDistances.clear();
   }
+}
+
+class EventSpawned extends ScenarioEvent<ActorMixin> {
+  const EventSpawned({required super.emitter, required super.name, super.data});
 }

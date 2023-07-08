@@ -12,6 +12,7 @@ import 'package:tank_game/world/core/behaviors/movement/available_direction_chec
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
@@ -23,6 +24,7 @@ class InteractionSetPlayer extends InteractableBehavior {
   ActorMixin? prevPlayerEntity;
   var _actionInProgress = false;
   var paused = false;
+  Function(ActorMixin newPlayerComponent)? onComplete;
 
   @override
   void doTriggerAction() {
@@ -82,7 +84,7 @@ class InteractionSetPlayer extends InteractableBehavior {
         if (!parent.hasBehavior<AvailableDirectionChecker>()) {
           parent.add(AvailableDirectionChecker(outerWidth: parent.width));
         }
-        parent.data.health = 1000000;
+        // parent.data.health = 1000000;
 
         removeNpcBehaviors();
 
@@ -91,6 +93,7 @@ class InteractionSetPlayer extends InteractableBehavior {
             .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
         game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
         Future.delayed(const Duration(seconds: 2)).then((value) {
+          onComplete?.call(parent);
           game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
         });
       } catch (error) {
@@ -125,4 +128,8 @@ class InteractionSetPlayer extends InteractableBehavior {
       movement.removeFromParent();
     } catch (_) {}
   }
+}
+
+class EventSetPlayer extends ScenarioEvent {
+  const EventSetPlayer({required super.emitter, required super.name});
 }

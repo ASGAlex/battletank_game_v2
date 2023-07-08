@@ -20,6 +20,8 @@ import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/water/water.dart';
@@ -34,7 +36,8 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         ActorWithSeparateBody,
         Interactor,
         AnimationGroupCoreStateListenerMixin,
-        HasGameReference<MyGame> {
+        HasGameReference<MyGame>,
+        ScenarioEventEmitter {
   HumanEntity() {
     data = AttackerData();
     data.speed = 20;
@@ -104,7 +107,15 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       bulletOffset: Vector2(2.5, -2),
     ));
     add(ShadowBehavior());
-    add(KillableBehavior());
+    add(KillableBehavior(onBeingKilled: (attackedBy, killable) {
+      if (attackedBy != null) {
+        scenarioEvent(EventKilled(
+          name: 'humanKilled',
+          emitter: killable,
+          data: attackedBy,
+        ));
+      }
+    }));
     if (data.factions.contains(Faction(name: 'Player'))) {
       add(DetectableBehavior(detectionType: DetectionType.audial));
     }
