@@ -37,7 +37,7 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
 
   @override
   void onRemove() {
-    dispose();
+    disposeListener();
     super.onRemove();
   }
 

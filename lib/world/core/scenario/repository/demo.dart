@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_game/ui/game/scenario/bottom_message.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
+import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -31,10 +32,13 @@ class DemoScenario extends Scenario {
 class TutorialUseFirstTank extends ScriptCore {
   late final String textTaskToKill;
   late final String textTaskToKillSuccess;
+  late final String textTaskToKillCounter;
+  int killedTanks = 0;
 
   TutorialUseFirstTank(AreaInitScriptComponent initializer) {
     textTaskToKill = initializer.getTextMessage('textTaskToKill');
     textTaskToKillSuccess = initializer.getTextMessage('textTaskToKillSuccess');
+    textTaskToKillCounter = initializer.getTextMessage('textTaskToKillCounter');
   }
 
   @override
@@ -48,18 +52,28 @@ class TutorialUseFirstTank extends ScriptCore {
             text: [TextSpan(text: textTaskToKill)],
           ),
         ],
+        key: UniqueKey(),
       ));
     } else if (message is EventKilled) {
       if (message.emitter != game.currentPlayer &&
-          message.emitter is TankEntity) {
+          message.emitter is TankEntity &&
+          (message.emitter as TankEntity).data.coreState !=
+              ActorCoreState.wreck) {
+        var text = textTaskToKillSuccess;
+        killedTanks++;
+        if (killedTanks > 1) {
+          text = textTaskToKillCounter;
+          text = text.replaceFirst('%n', killedTanks.toString());
+        }
         game.showScenarioMessage(TalkDialog(
           // nextOnTap: true,
           // nextOnAnyKey: true,
           says: [
             Say(
-              text: [TextSpan(text: textTaskToKillSuccess)],
+              text: [TextSpan(text: text)],
             ),
           ],
+          key: UniqueKey(),
         ));
       }
     }

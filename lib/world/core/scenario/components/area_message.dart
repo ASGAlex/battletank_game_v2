@@ -61,6 +61,7 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
           // nextOnTap: true,
           // nextOnAnyKey: true,
           says: says,
+          provider: game.inputEventsHandler.messageProvider,
         ));
       } else {
         game.showScenarioMessage(TalkDialog(
@@ -71,6 +72,7 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
               text: [TextSpan(text: scenario.text)],
             ),
           ],
+          provider: game.inputEventsHandler.messageProvider,
         ));
       }
     }

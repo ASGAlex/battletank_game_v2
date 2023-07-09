@@ -53,7 +53,7 @@ abstract class ScriptCore extends Component
 
   @override
   void onRemove() {
-    dispose();
+    disposeListener();
     super.onRemove();
   }
 }

@@ -398,7 +398,7 @@ class MyGame extends MyGameFeatures
   @override
   void onRemove() {
     if (!kDebugMode) {
-      dispose();
+      disposeListener();
       spawnManager.dispose();
       // hudHideInTreesProvider.dispose();
       FlameAudio.audioCache.clearAll();

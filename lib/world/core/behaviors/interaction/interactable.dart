@@ -38,7 +38,7 @@ class InteractableBehavior extends CollisionBehavior
 
   set trigger(InteractableTrigger newTrigger) {
     if (_trigger == InteractableTrigger.userAction) {
-      dispose();
+      disposeListener();
     }
     _trigger = newTrigger;
     if (_trigger == InteractableTrigger.userAction) {
@@ -61,7 +61,7 @@ class InteractableBehavior extends CollisionBehavior
 
   @override
   void onRemove() {
-    dispose();
+    disposeListener();
   }
 
   @override

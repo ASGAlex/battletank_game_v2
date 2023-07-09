@@ -587,10 +587,12 @@
     <property name="modal" type="bool" value="false"/>
     <property name="removeWhenLeave" type="bool" value="true"/>
     <property name="split" type="bool" value="true"/>
-    <property name="text">Use WASD for movement.
+    <property name="text">Press E to show next dialog message
+Use WASD for movement.
 Now, go and enter into the tank that spawns nearby at right.
 </property>
-    <property name="text_ru">Используй клавиши WASD, чтобы передвигаться.
+    <property name="text_ru">Нажми E, чтобы показывать следующее сообщение
+Используй клавиши WASD, чтобы передвигаться.
 А теперь пойди и захвати танк, который спавнится справа от тебя!
 Для этого подойди вплотную и нажми клавишу E</property>
     <property name="type" value="AreaMessage"/>
@@ -605,6 +607,8 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="scriptName" value="TutorialUseFirstTank"/>
     <property name="scriptTarget" value="global"/>
     <property name="textTaskToKill" value="Well, let's hunt any enemy now!"/>
+    <property name="textTaskToKillCounter" value="You killed %n tanks!"/>
+    <property name="textTaskToKillCounter_ru" value="Вы взорвали %n танков"/>
     <property name="textTaskToKillSuccess" value="Congratulations! Your first crushed tank!"/>
     <property name="textTaskToKillSuccess_ru" value="Поздравляю, ваш первый уничтоженный танк!"/>
     <property name="textTaskToKill_ru" value="Отлично, а теперь пора кого-нибудь пристрелить!"/>

@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tank_game/controls/input_events_handler.dart';
 
 class TalkDialog extends StatefulWidget {
   const TalkDialog({
     Key? key,
     required this.says,
+    this.provider,
     this.onFinish,
     this.onChangeTalk,
     this.textBoxMinHeight = 100,
@@ -77,6 +80,7 @@ class TalkDialog extends StatefulWidget {
   final Alignment talkAlignment;
   final TextStyle? style;
   final bool isModal;
+  final MessageStreamProvider<List<PlayerAction>>? provider;
 
   /// in milliseconds
   final int speed;
@@ -85,7 +89,8 @@ class TalkDialog extends StatefulWidget {
   TalkDialogState createState() => TalkDialogState();
 }
 
-class TalkDialogState extends State<TalkDialog> {
+class TalkDialogState extends State<TalkDialog>
+    with MessageListenerMixin<List<PlayerAction>> {
   final FocusNode _focusNode = FocusNode();
   late Say currentSay;
   int currentIndexTalk = 0;
@@ -99,6 +104,9 @@ class TalkDialogState extends State<TalkDialog> {
     Future.delayed(Duration.zero, () {
       _focusNode.requestFocus();
     });
+    if (widget.provider != null) {
+      listenProvider(widget.provider!);
+    }
     super.initState();
   }
 
@@ -106,6 +114,7 @@ class TalkDialogState extends State<TalkDialog> {
   void dispose() {
     widget.onClose?.call();
     _focusNode.dispose();
+    disposeListener();
     super.dispose();
   }
 
@@ -260,6 +269,13 @@ class TalkDialogState extends State<TalkDialog> {
     return personDirection == PersonSayDirection.left
         ? Alignment.bottomLeft
         : Alignment.bottomRight;
+  }
+
+  @override
+  void onStreamMessage(List<PlayerAction> message) {
+    if (message.contains(PlayerAction.triggerE)) {
+      _nextOrFinish();
+    }
   }
 }
 

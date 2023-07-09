@@ -114,7 +114,7 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
         final audioEffect = parent.findBehavior<MovementAudioEffectBehavior>();
         audioEffect.removeFromParent();
       } catch (_) {}
-      dispose();
+      disposeListener();
       super.onRemove();
     }
   }
