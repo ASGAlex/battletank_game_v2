@@ -125,8 +125,6 @@ class ScenarioComponent<T extends ScenarioComponentCore>
       if (size.isZero()) {
         size = Vector2(tiledObject!.width, tiledObject!.height);
       }
-
-      tiledObject = null;
     }
     super.onLoad();
   }

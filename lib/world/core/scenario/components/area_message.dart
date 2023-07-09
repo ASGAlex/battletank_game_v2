@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/ui/game/scenario/bottom_message.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -9,17 +8,23 @@ import 'package:tank_game/world/core/scenario/scenario_component.dart';
 class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
     with HasTextMessage<AreaMessageComponent> {
   late final bool modal;
+  late final String text;
+  late final bool split;
 
   AreaMessageComponent({
     bool? modal = false,
     super.tiledObject,
     String text = '',
+    bool? split,
   }) {
     if (tiledObject == null) {
       this.text = text;
     }
     if (modal != null) {
       this.modal = modal;
+    }
+    if (split != null) {
+      this.split = split;
     }
   }
 
@@ -31,10 +36,11 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
         modal = properties.getValue<bool>('modal') ?? false;
       } catch (_) {}
 
-      var text = properties.getValue<String>('text') ?? '';
-      final locale = Intl.getCurrentLocale();
-      text = properties.getValue<String>('text_$locale') ?? text;
-      this.text = text;
+      try {
+        split = properties.getValue<bool>('split') ?? false;
+      } catch (_) {}
+
+      text = getTextMessage('text');
     }
     super.onLoad();
   }
@@ -46,15 +52,27 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
 
     final text = scenario.text;
     if (text.isNotEmpty) {
-      game.showScenarioMessage(TalkDialog(
-        // nextOnTap: true,
-        // nextOnAnyKey: true,
-        says: [
-          Say(
-            text: [TextSpan(text: scenario.text)],
-          ),
-        ],
-      ));
+      if (split) {
+        final says = text
+            .split('\n')
+            .map((e) => Say(text: [TextSpan(text: e)]))
+            .toList();
+        game.showScenarioMessage(TalkDialog(
+          // nextOnTap: true,
+          // nextOnAnyKey: true,
+          says: says,
+        ));
+      } else {
+        game.showScenarioMessage(TalkDialog(
+          // nextOnTap: true,
+          // nextOnAnyKey: true,
+          says: [
+            Say(
+              text: [TextSpan(text: scenario.text)],
+            ),
+          ],
+        ));
+      }
     }
   }
 

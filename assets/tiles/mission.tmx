@@ -586,6 +586,7 @@
     <property name="factions" value="Player"/>
     <property name="modal" type="bool" value="false"/>
     <property name="removeWhenLeave" type="bool" value="true"/>
+    <property name="split" type="bool" value="true"/>
     <property name="text">Use WASD for movement.
 Now, go and enter into the tank that spawns nearby at right.
 </property>
@@ -603,8 +604,10 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="removeWhenLeave" type="bool" value="true"/>
     <property name="scriptName" value="TutorialUseFirstTank"/>
     <property name="scriptTarget" value="global"/>
-    <property name="text" value="Well, let's hunt any enemy now!"/>
-    <property name="text_ru" value="Отлично, а теперь пора кого-нибудь пристрелить!"/>
+    <property name="textTaskToKill" value="Well, let's hunt any enemy now!"/>
+    <property name="textTaskToKillSuccess" value="Congratulations! Your first crushed tank!"/>
+    <property name="textTaskToKillSuccess_ru" value="Поздравляю, ваш первый уничтоженный танк!"/>
+    <property name="textTaskToKill_ru" value="Отлично, а теперь пора кого-нибудь пристрелить!"/>
     <property name="type" value="AreaInitScript"/>
    </properties>
   </object>

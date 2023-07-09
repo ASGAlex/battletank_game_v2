@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tank_game/ui/game/scenario/bottom_message.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
+import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
@@ -19,16 +20,22 @@ class DemoScenario extends Scenario {
   void onLoad() {
     super.onLoad();
     AreaInitScriptComponent.registerType('TutorialUseFirstTank',
-        (lifetimeMax, creator) => TutorialUseFirstTank(creator.text));
+        (lifetimeMax, creator) {
+      return TutorialUseFirstTank(creator);
+    });
 
     game.world.scenarioLayer.add(TrackTankCreation());
   }
 }
 
 class TutorialUseFirstTank extends ScriptCore {
-  final String text;
+  late final String textTaskToKill;
+  late final String textTaskToKillSuccess;
 
-  TutorialUseFirstTank(this.text);
+  TutorialUseFirstTank(AreaInitScriptComponent initializer) {
+    textTaskToKill = initializer.getTextMessage('textTaskToKill');
+    textTaskToKillSuccess = initializer.getTextMessage('textTaskToKillSuccess');
+  }
 
   @override
   void onStreamMessage(ScenarioEvent<dynamic> message) {
@@ -38,20 +45,36 @@ class TutorialUseFirstTank extends ScriptCore {
         // nextOnAnyKey: true,
         says: [
           Say(
-            text: [TextSpan(text: text)],
+            text: [TextSpan(text: textTaskToKill)],
           ),
         ],
       ));
-      removeFromParent();
-      game.world.scenarioLayer.children
-          .whereType<TrackTankCreation>()
-          .forEach(game.world.scenarioLayer.remove);
+    } else if (message is EventKilled) {
+      if (message.emitter != game.currentPlayer &&
+          message.emitter is TankEntity) {
+        game.showScenarioMessage(TalkDialog(
+          // nextOnTap: true,
+          // nextOnAnyKey: true,
+          says: [
+            Say(
+              text: [TextSpan(text: textTaskToKillSuccess)],
+            ),
+          ],
+        ));
+      }
     }
   }
 
   @override
   void scriptUpdate(double dt) {
     // TODO: implement scriptUpdate
+  }
+
+  void scriptFinish() {
+    removeFromParent();
+    game.world.scenarioLayer.children
+        .whereType<TrackTankCreation>()
+        .forEach(game.world.scenarioLayer.remove);
   }
 }
 

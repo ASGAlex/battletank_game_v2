@@ -2,17 +2,14 @@ import 'package:intl/intl.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 
 mixin HasTextMessage<T extends ScenarioComponentCore> on ScenarioComponent<T> {
-  late String text;
-
-  @override
-  void onLoad() {
+  String getTextMessage(String name) {
     final properties = tiledObject?.properties;
+    var text = '';
     if (properties != null) {
-      var text = properties.getValue<String>('text') ?? '';
+      text = properties.getValue<String>(name) ?? '';
       final locale = Intl.getCurrentLocale();
-      text = properties.getValue<String>('text_$locale') ?? text;
-      this.text = text;
+      text = properties.getValue<String>('${name}_${locale}') ?? text;
     }
-    super.onLoad();
+    return text;
   }
 }
