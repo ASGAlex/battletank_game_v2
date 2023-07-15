@@ -15,7 +15,7 @@ enum ActorCoreState { init, idle, move, dying, wreck, removing }
 typedef DistanceFunction = void Function(Component, double, double);
 
 mixin ActorWithSeparateBody on ActorMixin {
-  final bodyHitbox = BodyHitbox();
+  var bodyHitbox = BodyHitbox();
 
   @override
   FutureOr<void> onLoad() {

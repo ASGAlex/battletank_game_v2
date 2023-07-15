@@ -85,7 +85,6 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
 
     _lastDirection = parent.lookDirection;
     parent.lookDirection = availableDirections[i];
-    print(_maxActualDistanceAtCycle);
     var distance = random.nextInt(maxDirectionDistance);
     if (_maxActualDistanceAtCycle < maxDirectionDistance) {
       distance = random.nextInt(_maxActualDistanceAtCycle.ceil());

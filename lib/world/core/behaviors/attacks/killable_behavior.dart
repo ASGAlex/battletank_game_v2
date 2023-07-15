@@ -98,6 +98,15 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
       parent.coreState = ActorCoreState.removing;
     } else if (parent.data.coreState != ActorCoreState.dying) {
       parent.coreState = ActorCoreState.dying;
+      parent.data.factions.clear();
+      parent.data.factions.add(Faction(name: 'Neutral'));
+      // This is a hack to reset broadphase check cache for parent component
+      if (parent is ActorWithSeparateBody) {
+        (parent as ActorWithSeparateBody).bodyHitbox.removeFromParent();
+        (parent as ActorWithSeparateBody).bodyHitbox = BodyHitbox()
+          ..size.setFrom(parent.size);
+        parent.add((parent as ActorWithSeparateBody).bodyHitbox);
+      }
     }
   }
 

@@ -83,7 +83,6 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         forceIdle = false;
       }
     }
-    print(_attemptsToChangeDirection);
     bool directionChanged = false;
     if (_moveForwardBehavior.movementHitbox.isMovementBlocked && !forceIdle) {
       if (_attemptsToChangeDirection < maxAttemptsToChangeDirection) {
