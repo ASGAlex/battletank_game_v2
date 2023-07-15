@@ -75,7 +75,7 @@ class InputEventsHandler {
 
   double Function()? getCurrentAngle;
 
-  Direction Function()? getCurrentDirection;
+  DirectionExtended Function()? getCurrentDirection;
 
   void handleFireEvent() {
     // messageProvider.sendMessage([PlayerAction.fire]);

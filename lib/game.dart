@@ -177,7 +177,7 @@ class MyGame extends MyGameFeatures
     }
 
     await initializeSpatialGrid(
-      blockSize: 128,
+      cellSize: 128,
       // debug: true,
       activeRadius: activeRadius,
       unloadRadius: unloadRadius,

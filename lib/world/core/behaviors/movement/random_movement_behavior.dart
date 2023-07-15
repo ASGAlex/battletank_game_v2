@@ -30,7 +30,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
   late final MovementForwardCollisionBehavior _moveForwardBehavior;
   bool _chooseDirectionNextTick = false;
 
-  Direction? _lastDirection;
+  DirectionExtended? _lastDirection;
 
   final random = Random();
 

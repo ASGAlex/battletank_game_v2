@@ -55,19 +55,19 @@ abstract class MovementCheckerHitbox extends BoundingHitbox {
     // debugMode = true;
   }
 
-  Direction get direction;
+  DirectionExtended get direction;
 
   bool get isMovementBlocked => activeCollisions.isNotEmpty;
 
   bool get isMovementAllowed => activeCollisions.isEmpty;
 
-  Direction get globalMapDirection {
+  DirectionExtended get globalMapDirection {
     var globalValue =
         direction.value + (parent as ActorMixin).data.lookDirection.value;
     if (globalValue > 3) {
-      return Direction.fromValue(globalValue - 4);
+      return DirectionExtended.fromValue(globalValue - 4);
     }
-    return Direction.fromValue(globalValue);
+    return DirectionExtended.fromValue(globalValue);
   }
 
   @override
@@ -90,7 +90,7 @@ class MovementHitbox extends MovementCheckerHitbox {
   }
 
   @override
-  final Direction direction = Direction.up;
+  final DirectionExtended direction = DirectionExtended.up;
 
   @override
   FutureOr<void> onLoad() {

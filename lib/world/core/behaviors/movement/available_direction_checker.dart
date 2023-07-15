@@ -11,9 +11,12 @@ import 'package:tank_game/world/core/direction.dart';
 class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
   AvailableDirectionChecker({this.outerWidth = 0}) {
     _movementSideHitboxes = <MovementSideHitbox>[
-      MovementSideHitbox(direction: Direction.left, outerWidth: outerWidth),
-      MovementSideHitbox(direction: Direction.right, outerWidth: outerWidth),
-      MovementSideHitbox(direction: Direction.down, outerWidth: outerWidth)
+      MovementSideHitbox(
+          direction: DirectionExtended.left, outerWidth: outerWidth),
+      MovementSideHitbox(
+          direction: DirectionExtended.right, outerWidth: outerWidth),
+      MovementSideHitbox(
+          direction: DirectionExtended.down, outerWidth: outerWidth)
     ];
   }
 
@@ -30,7 +33,7 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
           parent.findBehavior<MovementForwardCollisionBehavior>();
       movementHitbox = moveForwardBehavior.movementHitbox;
     } catch (_) {
-      movementHitbox = MovementSideHitbox(direction: Direction.up);
+      movementHitbox = MovementSideHitbox(direction: DirectionExtended.up);
       parent.add(movementHitbox);
     }
     parent.addAll(_movementSideHitboxes);
@@ -46,8 +49,8 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
 
   late final List<MovementSideHitbox> _movementSideHitboxes;
 
-  List<Direction> getAvailableDirections() {
-    final availableDirections = <Direction>[];
+  List<DirectionExtended> getAvailableDirections() {
+    final availableDirections = <DirectionExtended>[];
     for (final hitbox in _movementSideHitboxes) {
       if (hitbox.isMovementAllowed) {
         availableDirections.add(hitbox.globalMapDirection);
@@ -59,8 +62,9 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
     return availableDirections;
   }
 
-  Map<Direction, MovementCheckerHitbox> getAvailableDirectionsWithHitbox() {
-    final availableDirections = <Direction, MovementCheckerHitbox>{};
+  Map<DirectionExtended, MovementCheckerHitbox>
+      getAvailableDirectionsWithHitbox() {
+    final availableDirections = <DirectionExtended, MovementCheckerHitbox>{};
     for (final hitbox in _movementSideHitboxes) {
       if (hitbox.isMovementAllowed) {
         availableDirections[hitbox.globalMapDirection] = hitbox;
@@ -95,7 +99,7 @@ class MovementSideHitbox extends MovementCheckerHitbox {
   }
 
   @override
-  final Direction direction;
+  final DirectionExtended direction;
   final double outerWidth;
 
   @override
@@ -104,19 +108,19 @@ class MovementSideHitbox extends MovementCheckerHitbox {
     final parentSize = (parent as ActorMixin).size;
     final width = outerWidth == 0 ? parentSize.x / 2 : outerWidth;
     switch (direction) {
-      case Direction.left:
+      case DirectionExtended.left:
         position = Vector2(-width, 2);
         size = Vector2(width, parentSize.y - 4);
         break;
-      case Direction.right:
+      case DirectionExtended.right:
         position = Vector2(parentSize.x, 2);
         size = Vector2(width, parentSize.y - 4);
         break;
-      case Direction.up:
+      case DirectionExtended.up:
         position = Vector2(2, -width);
         size = Vector2(parentSize.x - 3, width);
         break;
-      case Direction.down:
+      case DirectionExtended.down:
         position = Vector2(2, parentSize.y);
         size = Vector2(parentSize.x - 3, width);
         break;

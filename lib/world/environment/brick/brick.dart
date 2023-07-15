@@ -49,17 +49,17 @@ class BrickEntity extends SpriteComponent
     final attackerData = _attackedBy?.data;
     if (attackerData != null) {
       switch (attackerData.lookDirection) {
-        case Direction.right:
+        case DirectionExtended.right:
           size.x -= _halfSize.x;
           position.x += _halfSize.x;
           break;
-        case Direction.up:
+        case DirectionExtended.up:
           size.y -= _halfSize.y;
           break;
-        case Direction.left:
+        case DirectionExtended.left:
           size.x -= _halfSize.x;
           break;
-        case Direction.down:
+        case DirectionExtended.down:
           size.y -= _halfSize.y;
           position.y += _halfSize.y;
           break;

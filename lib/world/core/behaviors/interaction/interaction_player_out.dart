@@ -27,7 +27,7 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   var _actionInProgress = false;
   var paused = false;
 
-  final Map<Direction, MovementCheckerHitbox> _availableDirections = {};
+  final Map<DirectionExtended, MovementCheckerHitbox> _availableDirections = {};
 
   @override
   FutureOr<void> onLoad() {
@@ -62,14 +62,14 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
           paused = false;
           return;
         }
-        Direction? preferredDirection;
+        DirectionExtended? preferredDirection;
         for (final entry in _availableDirections.entries) {
-          if (entry.value.direction == Direction.down) {
+          if (entry.value.direction == DirectionExtended.down) {
             preferredDirection = entry.key;
             break;
           }
-          if (entry.value.direction == Direction.left ||
-              entry.value.direction == Direction.right) {
+          if (entry.value.direction == DirectionExtended.left ||
+              entry.value.direction == DirectionExtended.right) {
             preferredDirection = entry.key;
           }
         }
@@ -117,25 +117,26 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
     _actionInProgress = false;
   }
 
-  ActorMixin _createHuman([Direction direction = Direction.down]) {
+  ActorMixin _createHuman(
+      [DirectionExtended direction = DirectionExtended.down]) {
     final restoredEntity = HumanEntity()
       ..isInteractionEnabled = true
       ..add(DetectableBehavior(detectionType: DetectionType.visual));
 
     switch (direction) {
-      case Direction.down:
+      case DirectionExtended.down:
         restoredEntity.position
             .setFrom(parent.position + Vector2(0, parent.size.y));
         break;
-      case Direction.up:
+      case DirectionExtended.up:
         restoredEntity.position
             .setFrom(parent.position + Vector2(0, -parent.size.y));
         break;
-      case Direction.left:
+      case DirectionExtended.left:
         restoredEntity.position
             .setFrom(parent.position + Vector2(-parent.size.x, 0));
         break;
-      case Direction.right:
+      case DirectionExtended.right:
         restoredEntity.position
             .setFrom(parent.position + Vector2(parent.size.x, 0));
         break;

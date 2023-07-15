@@ -63,12 +63,12 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
 
   ActorCoreState get coreState => data.coreState;
 
-  set lookDirection(Direction direction) {
+  set lookDirection(DirectionExtended direction) {
     data.lookDirection = direction;
     angle = direction.angle;
   }
 
-  Direction get lookDirection => data.lookDirection;
+  DirectionExtended get lookDirection => data.lookDirection;
 
   @override
   void onCalculateDistance(
@@ -95,7 +95,7 @@ class ActorData {
   double health = 1;
   double speed = 0;
   double cameraSpeed = 40;
-  Direction lookDirection = Direction.up;
+  DirectionExtended lookDirection = DirectionExtended.up;
   ActorCoreState coreState = ActorCoreState.init;
   Vector2 positionCenter = Vector2.zero();
   Vector2 size = Vector2.zero();

@@ -11,15 +11,15 @@ import 'package:tank_game/world/core/direction.dart';
 class TankStepTrailBehavior extends MovementTrailBehavior {
   TankStepTrailBehavior() : super(stepSize: 2);
 
-  final topLeftRotated1 = <Direction, Vector2>{};
-  final bottomRightRotated1 = <Direction, Vector2>{};
+  final topLeftRotated1 = <DirectionExtended, Vector2>{};
+  final bottomRightRotated1 = <DirectionExtended, Vector2>{};
 
-  final topLeftRotated2 = <Direction, Vector2>{};
-  final bottomRightRotated2 = <Direction, Vector2>{};
+  final topLeftRotated2 = <DirectionExtended, Vector2>{};
+  final bottomRightRotated2 = <DirectionExtended, Vector2>{};
 
   @override
   FutureOr<void> onLoad() {
-    for (final possibleDirection in Direction.values) {
+    for (final possibleDirection in DirectionExtended.values) {
       final topLeft1 = TankStep.topLeftDefault.clone();
       final bottomRight1 = TankStep.bottomRightDefault.clone();
 
@@ -29,9 +29,9 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
         ..translate(TankStep.distanceBetweenTracks, 0);
 
       switch (possibleDirection) {
-        case Direction.up:
+        case DirectionExtended.up:
           break;
-        case Direction.left:
+        case DirectionExtended.left:
           topLeft1.rotate(270 * pi / 180);
           bottomRight1.rotate(270 * pi / 180);
 
@@ -39,7 +39,7 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
           bottomRight2.rotate(270 * pi / 180);
 
           break;
-        case Direction.down:
+        case DirectionExtended.down:
           topLeft1.rotate(180 * pi / 180);
           bottomRight1.rotate(180 * pi / 180);
 
@@ -47,7 +47,7 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
           bottomRight2.rotate(180 * pi / 180);
 
           break;
-        case Direction.right:
+        case DirectionExtended.right:
           topLeft1.rotate(90 * pi / 180);
           bottomRight1.rotate(90 * pi / 180);
 

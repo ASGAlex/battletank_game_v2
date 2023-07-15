@@ -87,12 +87,12 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     bool directionChanged = false;
     if (_moveForwardBehavior.movementHitbox.isMovementBlocked && !forceIdle) {
       if (_attemptsToChangeDirection < maxAttemptsToChangeDirection) {
-        if (parent.lookDirection == Direction.up ||
-            parent.lookDirection == Direction.down) {
+        if (parent.lookDirection == DirectionExtended.up ||
+            parent.lookDirection == DirectionExtended.down) {
           _changeDirectionTry(_leftOrRight(_diff.x));
           directionChanged = true;
-        } else if (parent.lookDirection == Direction.right ||
-            parent.lookDirection == Direction.left) {
+        } else if (parent.lookDirection == DirectionExtended.right ||
+            parent.lookDirection == DirectionExtended.left) {
           _changeDirectionTry(_upOrDown(_diff.y));
           directionChanged = true;
         }
@@ -122,7 +122,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     }
   }
 
-  void _changeDirectionTry([Direction? direction]) {
+  void _changeDirectionTry([DirectionExtended? direction]) {
     final newDirection = direction ?? _findShortestDirection();
 
     if (newDirection != null && newDirection != parent.lookDirection) {
@@ -160,7 +160,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
   bool isRandomMovement = false;
 
-  Direction? _findShortestDirection() {
+  DirectionExtended? _findShortestDirection() {
     var diffBetweenAxis = _diff.x.abs() - _diff.y.abs();
 
     if (diffBetweenAxis.abs() <= minDiff) {
@@ -179,7 +179,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         } else {
           shouldFire = false;
         }
-        return Direction.down;
+        return DirectionExtended.down;
       } else {
         if (_diff.y >= -minDiff) {
           shouldFire = true;
@@ -187,7 +187,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         } else {
           shouldFire = false;
         }
-        return Direction.up;
+        return DirectionExtended.up;
       }
     } else {
       if (_diff.x > 0) {
@@ -197,7 +197,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         } else {
           shouldFire = false;
         }
-        return Direction.right;
+        return DirectionExtended.right;
       } else {
         if (_diff.x >= -minDiff) {
           shouldFire = true;
@@ -205,24 +205,24 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         } else {
           shouldFire = false;
         }
-        return Direction.left;
+        return DirectionExtended.left;
       }
     }
   }
 
-  Direction _leftOrRight(double diffX) {
+  DirectionExtended _leftOrRight(double diffX) {
     if (diffX > 0) {
-      return Direction.right;
+      return DirectionExtended.right;
     } else {
-      return Direction.left;
+      return DirectionExtended.left;
     }
   }
 
-  Direction _upOrDown(double diffY) {
+  DirectionExtended _upOrDown(double diffY) {
     if (diffY > 0) {
-      return Direction.down;
+      return DirectionExtended.down;
     } else {
-      return Direction.up;
+      return DirectionExtended.up;
     }
   }
 }

@@ -21,7 +21,6 @@ import 'package:tank_game/world/core/behaviors/movement/movement_forward_collisi
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
-import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/water/water.dart';
@@ -128,7 +127,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     if (data.coreState == ActorCoreState.wreck ||
         data.coreState == ActorCoreState.removing ||
         data.coreState == ActorCoreState.dying) {
-      lookDirection = Direction.up;
+      lookDirection = DirectionExtended.up;
       resetCamera();
       try {
         final shadow = findBehavior<ShadowBehavior>();

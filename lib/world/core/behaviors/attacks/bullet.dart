@@ -42,7 +42,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         AnimationGroupCoreStateListenerMixin {
   BulletEntity({
     required double speed,
-    required Direction lookDirection,
+    required DirectionExtended lookDirection,
     required double health,
     required this.owner,
     required double range,
@@ -173,25 +173,25 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     this.speedPenaltyDuration = 0,
   });
 
-  final _offsetRotations = <Direction, Vector2>{};
+  final _offsetRotations = <DirectionExtended, Vector2>{};
   final Map<ActorCoreState, AnimationConfig> Function() animationFactory;
 
   @override
   FutureOr<void> onLoad() {
     assert(parent.data is AttackerData);
     if (bulletOffset != null) {
-      for (final possibleDirection in Direction.values) {
+      for (final possibleDirection in DirectionExtended.values) {
         var rotatedOffset = bulletOffset!.clone();
         switch (possibleDirection) {
-          case Direction.up:
+          case DirectionExtended.up:
             break;
-          case Direction.left:
+          case DirectionExtended.left:
             rotatedOffset.rotate(270 * pi / 180);
             break;
-          case Direction.down:
+          case DirectionExtended.down:
             rotatedOffset.rotate(180 * pi / 180);
             break;
-          case Direction.right:
+          case DirectionExtended.right:
             rotatedOffset.rotate(90 * pi / 180);
             break;
         }

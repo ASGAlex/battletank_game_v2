@@ -598,7 +598,7 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="type" value="AreaMessage"/>
    </properties>
   </object>
-  <object id="28" type="scenario" x="408.545" y="707.636" width="52" height="50">
+  <object id="28" name="scenarioTutorial" type="scenario" x="408.545" y="707.636" width="52" height="50">
    <properties>
     <property name="factions" value="Player"/>
     <property name="limitedByArea" type="bool" value="true"/>

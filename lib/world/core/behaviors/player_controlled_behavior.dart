@@ -62,19 +62,19 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     for (final msg in message) {
       switch (msg) {
         case PlayerAction.moveUp:
-          parent.lookDirection = Direction.up;
+          parent.lookDirection = DirectionExtended.up;
           isMovementAction = true;
           break;
         case PlayerAction.moveDown:
-          parent.lookDirection = Direction.down;
+          parent.lookDirection = DirectionExtended.down;
           isMovementAction = true;
           break;
         case PlayerAction.moveLeft:
-          parent.lookDirection = Direction.left;
+          parent.lookDirection = DirectionExtended.left;
           isMovementAction = true;
           break;
         case PlayerAction.moveRight:
-          parent.lookDirection = Direction.right;
+          parent.lookDirection = DirectionExtended.right;
           isMovementAction = true;
           break;
         case PlayerAction.fire:

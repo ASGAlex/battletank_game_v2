@@ -16,16 +16,16 @@ class MovementBehavior extends CoreBehavior<ActorMixin> {
     }
     lastInnerSpeed = parent.data.speed * dt;
     switch (parent.data.lookDirection) {
-      case Direction.left:
+      case DirectionExtended.left:
         lastDisplacement.setValues(-lastInnerSpeed, 0);
         break;
-      case Direction.right:
+      case DirectionExtended.right:
         lastDisplacement.setValues(lastInnerSpeed, 0);
         break;
-      case Direction.up:
+      case DirectionExtended.up:
         lastDisplacement.setValues(0, -lastInnerSpeed);
         break;
-      case Direction.down:
+      case DirectionExtended.down:
         lastDisplacement.setValues(0, lastInnerSpeed);
         break;
     }

@@ -182,16 +182,16 @@ class ShadowPictureComponent extends PositionComponent
       Vector2? offset;
       final shadowOffset = game.world.shadowOffset;
       switch (targetEntity.data.lookDirection) {
-        case Direction.up:
+        case DirectionExtended.up:
           offset = Vector2(shadowOffset.x, shadowOffset.y);
           break;
-        case Direction.left:
+        case DirectionExtended.left:
           offset = Vector2(shadowOffset.x, -shadowOffset.y);
           break;
-        case Direction.down:
+        case DirectionExtended.down:
           offset = Vector2(-shadowOffset.x, -shadowOffset.y);
           break;
-        case Direction.right:
+        case DirectionExtended.right:
           offset = Vector2(-shadowOffset.x, shadowOffset.y);
           break;
       }

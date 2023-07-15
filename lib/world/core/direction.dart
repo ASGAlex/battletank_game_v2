@@ -2,66 +2,66 @@ import 'dart:math';
 
 const PI_180 = (180 / pi);
 
-enum Direction {
+enum DirectionExtended {
   up(0),
   left(1),
   down(2),
   right(3);
 
-  const Direction(this.value);
+  const DirectionExtended(this.value);
 
-  factory Direction.fromValue(int value) {
-    if (value == 0) return Direction.up;
-    if (value == 1) return Direction.left;
-    if (value == 2) return Direction.down;
-    if (value == 3) return Direction.right;
+  factory DirectionExtended.fromValue(int value) {
+    if (value == 0) return DirectionExtended.up;
+    if (value == 1) return DirectionExtended.left;
+    if (value == 2) return DirectionExtended.down;
+    if (value == 3) return DirectionExtended.right;
 
     throw 'invalid value: $value';
   }
 
   final int value;
 
-  Direction rotateCCW() {
+  DirectionExtended rotateCCW() {
     int newVal = value + 1;
     if (newVal > 3) {
       newVal = 0;
     }
-    return Direction.fromValue(newVal);
+    return DirectionExtended.fromValue(newVal);
   }
 
-  Direction rotateCW() {
+  DirectionExtended rotateCW() {
     int newVal = value - 1;
     if (newVal < 0) {
       newVal = 3;
     }
-    return Direction.fromValue(newVal);
+    return DirectionExtended.fromValue(newVal);
   }
 
-  Direction get opposite {
+  DirectionExtended get opposite {
     switch (this) {
-      case Direction.up:
-        return Direction.down;
-      case Direction.left:
-        return Direction.right;
-      case Direction.down:
-        return Direction.up;
-      case Direction.right:
-        return Direction.left;
+      case DirectionExtended.up:
+        return DirectionExtended.down;
+      case DirectionExtended.left:
+        return DirectionExtended.right;
+      case DirectionExtended.down:
+        return DirectionExtended.up;
+      case DirectionExtended.right:
+        return DirectionExtended.left;
     }
   }
 
   double get angle {
     switch (this) {
-      case Direction.down:
+      case DirectionExtended.down:
         return 180 / PI_180;
-      case Direction.up:
+      case DirectionExtended.up:
         // we can't use 0 here because then no movement happens
         // we're just going as close to 0.0 without being exactly 0.0
         // if you have a better idea. Please be my guest
         return 0.0000001 / PI_180;
-      case Direction.left:
+      case DirectionExtended.left:
         return -90 / PI_180;
-      case Direction.right:
+      case DirectionExtended.right:
         return 90 / PI_180;
       default:
         return 0;
