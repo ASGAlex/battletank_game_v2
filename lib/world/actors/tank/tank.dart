@@ -28,8 +28,8 @@ import 'package:tank_game/world/core/behaviors/movement/speed_penalty.dart';
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
-import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
@@ -44,6 +44,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         AnimationGroupCoreStateListenerMixin,
         MovementFactoryMixin,
         HasGameReference<MyGame>,
+        CollisionPrecisionMixin,
         ScenarioEventEmitter {
   static const _tileset = 'tank';
 
@@ -220,7 +221,20 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
               }
             }));
       }
+      setCollisionHighPrecision(false);
     }
+  }
+
+  @override
+  List<BoundingHitbox> setCollisionHighPrecision(bool highPrecision,
+      [List<String> tags = const []]) {
+    final hitboxes = super.setCollisionHighPrecision(highPrecision, tags);
+    if (!highPrecision && !hasBehavior<PlayerControlledBehavior>()) {
+      for (final hitbox in hitboxes) {
+        hitbox.groupCollisionsTags.addAll(['Water', 'Brick', 'HeavyBrick']);
+      }
+    }
+    return hitboxes;
   }
 
   TargetedMovementBehavior? _targetedMovementBehavior;

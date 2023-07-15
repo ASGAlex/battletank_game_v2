@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="29">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="8" nextobjectid="37">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <tileset firstgid="15" source="tank.tsx"/>
@@ -613,6 +613,50 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="textTaskToKillSuccess_ru" value="Поздравляю, ваш первый уничтоженный танк!"/>
     <property name="textTaskToKill_ru" value="Отлично, а теперь пора кого-нибудь пристрелить!"/>
     <property name="type" value="AreaInitScript"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="collision precision">
+  <object id="31" name="collision precision" type="scenario" x="158.833" y="310" width="627" height="457.333">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
+   </properties>
+  </object>
+  <object id="32" name="collision precision" type="scenario" x="883.833" y="207.333" width="317.667" height="490.666">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
+   </properties>
+  </object>
+  <object id="33" name="collision precision" type="scenario" x="778.167" y="685" width="345" height="73.9997">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
+   </properties>
+  </object>
+  <object id="34" name="collision precision" type="scenario" x="470.666" y="0.250333" width="49.0837" height="47.2493">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
+   </properties>
+  </object>
+  <object id="35" name="collision precision" type="scenario" x="481.958" y="132.125" width="49.0837" height="47.2493">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
+   </properties>
+  </object>
+  <object id="36" name="collision precision" type="scenario" x="672.208" y="143.125" width="66.0837" height="47.2493">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
    </properties>
   </object>
  </objectgroup>

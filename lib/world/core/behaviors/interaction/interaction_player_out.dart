@@ -17,6 +17,7 @@ import 'package:tank_game/world/core/behaviors/movement/available_direction_chec
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
+import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 
 class InteractionPlayerOut extends CoreBehavior<ActorMixin>
     with HasGameReference<MyGame>, MessageListenerMixin<List<PlayerAction>> {
@@ -150,6 +151,9 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   void _restoreEntity(ActorMixin restoredEntity) {
     final playerControlled = parent.findBehavior<PlayerControlledBehavior>();
     playerControlled.removeFromParent();
+    if (parent is CollisionPrecisionMixin) {
+      (parent as CollisionPrecisionMixin).setCollisionHighPrecision(false);
+    }
     restoredEntity.add(PlayerControlledBehavior());
 
     game.currentPlayer = restoredEntity;

@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
+import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
@@ -49,6 +50,8 @@ class ScenarioComponent<T extends ScenarioComponentCore>
           AreaMessageComponent(tiledObject: tiledObject),
       'AreaInitScript': (tiledObject) =>
           AreaInitScriptComponent(tiledObject: tiledObject),
+      'AreaCollisionHighPrecision': (tiledObject) =>
+          AreaCollisionHighPrecisionComponent(tiledObject: tiledObject),
     });
   }
 
