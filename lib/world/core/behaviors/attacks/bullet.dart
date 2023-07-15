@@ -110,6 +110,10 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(halo!);
     }
 
+    boundingBox.parentSpeedGetter = () {
+      return data.speed;
+    };
+
     super.onLoad();
   }
 

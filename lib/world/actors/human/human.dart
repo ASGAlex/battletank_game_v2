@@ -119,6 +119,15 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(DetectableBehavior(detectionType: DetectionType.audial));
     }
     boundingBox.collisionType = CollisionType.active;
+    boundingBox.parentSpeedGetter = _getCurrentSpeed;
+    bodyHitbox.parentSpeedGetter = _getCurrentSpeed;
+  }
+
+  double _getCurrentSpeed() {
+    if (coreState == ActorCoreState.move) {
+      return data.speed;
+    }
+    return 0;
   }
 
   @override

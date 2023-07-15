@@ -109,6 +109,13 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => TankBoundingHitbox();
 
+  double _getCurrentSpeed() {
+    if (coreState == ActorCoreState.move) {
+      return data.speed;
+    }
+    return 0;
+  }
+
   @override
   FutureOr<void> onLoad() {
     anchor = Anchor.center;
@@ -229,6 +236,11 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             }));
       }
       setCollisionHighPrecision(false);
+    }
+
+    final hitboxes = children.whereType<BoundingHitbox>();
+    for (final hitbox in hitboxes) {
+      hitbox.parentSpeedGetter = _getCurrentSpeed;
     }
   }
 
