@@ -363,10 +363,7 @@ class MyGame extends MyGameFeatures
           potentialItemType == ScenarioComponent ||
           potentialItemType == AreaInitScriptComponent ||
           potentialItemType == AreaMessageComponent ||
-          potentialItemType == AreaCollisionHighPrecisionComponent ||
-          potentialItemType == CellLayer ||
-          potentialItemType == CellStaticLayer ||
-          potentialItemType == CellStaticAnimationLayer) {
+          potentialItemType == AreaCollisionHighPrecisionComponent) {
         return false;
       }
     }

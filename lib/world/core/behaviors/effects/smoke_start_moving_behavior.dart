@@ -76,7 +76,7 @@ class SmokeStartMovingBehavior extends CoreBehavior<ActorMixin> {
                       renderer: (Canvas c, Particle particle) {
                         final paint = Paint()
                           ..color =
-                              Colors.grey.withOpacity(1 - particle.progress);
+                              Color.fromRGBO(82, 82, 82, 1 - particle.progress);
                         c.drawCircle(
                             Offset.zero, particle.progress * w / 4, paint);
                       }))));
@@ -91,7 +91,7 @@ class SmokeStartMovingBehavior extends CoreBehavior<ActorMixin> {
                       renderer: (Canvas c, Particle particle) {
                         final paint = Paint()
                           ..color =
-                              Colors.grey.withOpacity(1 - particle.progress);
+                              Color.fromRGBO(82, 82, 82, 1 - particle.progress);
                         c.drawCircle(
                             Offset.zero, particle.progress * w / 4, paint);
                       }))));
