@@ -6,6 +6,7 @@ import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
@@ -43,6 +44,8 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
         _audioPlayer = Sfx(effectName: 'sfx/explosion_player.m4a');
       } else if (parent is HumanEntity) {
         _audioEnemy = Sfx(effectName: 'sfx/human_death.m4a');
+      } else if (parent is BulletEntity) {
+        _audioEnemy = Sfx(effectName: 'sfx/player_bullet_wall.m4a');
       }
     }
     return super.onLoad();
