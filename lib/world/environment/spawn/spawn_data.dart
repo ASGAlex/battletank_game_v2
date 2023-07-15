@@ -12,7 +12,7 @@ class SpawnData extends ActorData {
   final triggerFactions = <Faction>[];
 
   double secondsBetweenSpawns = 60;
-  double secondsDuringSpawn = 3;
+  double secondsDuringSpawn = 0;
   double timeoutSecondsElapsed = 0;
 
   /// How many entities it contains. -1 means infinity
@@ -20,7 +20,7 @@ class SpawnData extends ActorData {
 
   /// squared distance to player to trigger spawn process. -1 means that spawn
   /// does not react on player
-  double triggerDistanceSquared = -1;
+  double triggerDistanceSquared = 0;
   SpawnTriggerCallback? triggerCallback;
 
   String typeOfTank = '';

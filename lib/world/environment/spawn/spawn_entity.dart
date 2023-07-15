@@ -80,24 +80,16 @@ class SpawnEntity extends SpriteAnimationComponent
     required CustomProperties properties,
   }) {
     final spawn = SpawnEntity(rootComponent: rootComponent);
-    for (final property in properties) {
-      switch (property.name) {
-        case 'cooldown_seconds':
-          spawn.spawnData.secondsBetweenSpawns =
-              double.parse(property.value.toString());
-          break;
-        case 'tanks_inside':
-          spawn.spawnData.capacity = int.parse(property.value.toString());
-          break;
-        case 'trigger_distance':
-          final distance = double.parse(property.value.toString());
-          spawn.spawnData.triggerDistanceSquared = distance * distance;
-          break;
-        case 'tank_type':
-          spawn.spawnData.typeOfTank = property.value.toString();
-          break;
-      }
-    }
+    spawn.spawnData.secondsBetweenSpawns =
+        properties.getValue<double>('cooldown_seconds') ?? 0.0;
+    spawn.spawnData.secondsDuringSpawn =
+        properties.getValue<double>('spawn_seconds') ?? 0.0;
+    spawn.spawnData.capacity = properties.getValue<int>('tanks_inside') ?? 1;
+    spawn.spawnData.capacity = properties.getValue<int>('tanks_inside') ?? 1;
+    final distance = properties.getValue<double>('trigger_distance') ?? 0;
+    spawn.spawnData.triggerDistanceSquared = distance * distance;
+    spawn.spawnData.typeOfTank =
+        properties.getValue<String>('tank_type') ?? 'any';
     if (spawn.spawnData.typeOfTank == 'any' ||
         spawn.spawnData.typeOfTank.isEmpty) {
       spawn.spawnData.typeOfTank = {

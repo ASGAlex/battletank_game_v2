@@ -117,7 +117,8 @@ class SpawnBehavior extends CollisionBehavior
       final dx = entry.value.first;
       final dy = entry.value.last;
       final squared = dx * dx + dy * dy;
-      if (squared < spawnData.triggerDistanceSquared) {
+      if (spawnData.triggerDistanceSquared == 0 ||
+          squared < spawnData.triggerDistanceSquared) {
         spawnData.triggerCallback?.call(parent as SpawnEntity);
         if (spawnData.capacity != -1) {
           spawnData.capacity--;
