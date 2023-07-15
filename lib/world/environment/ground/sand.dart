@@ -6,6 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/effects/smoke_start_moving_behavior.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/world.dart';
 
@@ -46,8 +47,10 @@ class SandEntity extends SpriteAnimationComponent
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is ActorMixin) {
       try {
-        final hideBehavior = other.findBehavior<SlowDownBySandBehavior>();
-        hideBehavior.collisionsWithSand++;
+        final slowDownBehavior = other.findBehavior<SlowDownBySandBehavior>();
+        slowDownBehavior.collisionsWithSand++;
+        final smokeBehavior = other.findBehavior<SmokeStartMovingBehavior>();
+        smokeBehavior.isEnabled = true;
       } catch (_) {}
     }
     super.onCollisionStart(intersectionPoints, other);
@@ -57,9 +60,9 @@ class SandEntity extends SpriteAnimationComponent
   void onCollisionEnd(PositionComponent other) {
     if (other is ActorMixin) {
       try {
-        final hideBehavior = other.findBehavior<SlowDownBySandBehavior>();
-        if (hideBehavior.collisionsWithSand > 0) {
-          hideBehavior.collisionsWithSand--;
+        final slowDownBehavior = other.findBehavior<SlowDownBySandBehavior>();
+        if (slowDownBehavior.collisionsWithSand > 0) {
+          slowDownBehavior.collisionsWithSand--;
         }
       } catch (_) {}
     }

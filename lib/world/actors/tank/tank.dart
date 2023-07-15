@@ -20,6 +20,7 @@ import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart'
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
+import 'package:tank_game/world/core/behaviors/effects/smoke_start_moving_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
@@ -103,6 +104,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   final String _tileType;
   late final SmokeBehavior smoke;
+  late final SmokeStartMovingBehavior smokeStartMoving;
 
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => TankBoundingHitbox();
@@ -176,8 +178,13 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(SlowDownBySandBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
+
+    smokeStartMoving = SmokeStartMovingBehavior(game.world.skyLayer);
+    add(smokeStartMoving);
+
     smoke = SmokeBehavior(game.world.skyLayer);
     add(smoke);
+
     super.onLoad();
     add(ShadowBehavior());
     if (data.factions.contains(Faction(name: 'Player'))) {
@@ -262,7 +269,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   void onCoreStateChanged() {
     super.onCoreStateChanged();
-    if (data.coreState == ActorCoreState.dying) {
+    if (data.coreState == ActorCoreState.move) {
+      smokeStartMoving.isEnabled = true;
+    } else if (data.coreState == ActorCoreState.dying) {
       resetCamera();
       try {
         findBehaviors<RandomMovementBehavior>().forEach((element) {
