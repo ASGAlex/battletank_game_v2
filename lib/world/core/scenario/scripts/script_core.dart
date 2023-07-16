@@ -32,16 +32,15 @@ abstract class ScriptCore extends Component
 
   @override
   void update(double dt) {
-    if (_lifetimeMax > 0 && !_timeOver) {
+    if (_lifetimeMax > 0) {
       if (_lifeTimeDt < _lifetimeMax) {
         scriptUpdate(dt);
-        // super.update(dt);
-      } else if (_lifeTimeDt >= _lifetimeMax) {
+      } else {
         _timeOver = true;
       }
       _lifeTimeDt += dt;
     } else {
-      // super.update(dt);
+      scriptUpdate(dt);
     }
   }
 

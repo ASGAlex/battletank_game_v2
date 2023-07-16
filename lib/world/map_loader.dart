@@ -6,6 +6,7 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
+import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
@@ -43,6 +44,7 @@ class GameMapLoader extends TiledMapLoader {
         'spawn_neutral': onBuildSpawnNeutral,
         'target': onBuildTarget,
         'scenario': onBuildScenario,
+        'moving_path': onBuildMovingPath,
       };
 
   @override
@@ -320,5 +322,18 @@ class GameMapLoader extends TiledMapLoader {
     scenario.currentCell = context.cell;
 
     game.world.addScenario(scenario);
+  }
+
+  Future onBuildMovingPath(TileBuilderContext context) async {
+    final tiledObject = context.tiledObject;
+    if (tiledObject == null) return;
+
+    if (tiledObject.polyline.isEmpty) return;
+
+    final initialPosition = Vector2(tiledObject.x, tiledObject.y);
+    final points = tiledObject.polyline
+        .map((e) => Vector2(initialPosition.x + e.x, initialPosition.y + e.y))
+        .toList(growable: false);
+    MovingPathScript.namedLists[tiledObject.name] = points;
   }
 }

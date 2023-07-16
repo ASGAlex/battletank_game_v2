@@ -31,6 +31,7 @@ import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
@@ -185,6 +186,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(SlowDownBySandBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
+    add(ScenarioActivatorBehavior());
 
     smokeStartMoving = SmokeStartMovingBehavior(game.world.skyLayer);
     add(smokeStartMoving);

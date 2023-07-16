@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flame/extensions.dart';
+import 'package:flame/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
@@ -11,13 +11,16 @@ import 'package:tank_game/world/core/direction.dart';
 
 class TargetedMovementBehavior extends AvailableDirectionChecker {
   TargetedMovementBehavior({
-    required this.targetPosition,
+    required Vector2 targetPosition,
     required Vector2 targetSize,
     this.stopMovementDistance = 0,
     this.maxRandomMovementTime = 5,
     this.onShouldFire,
     this.stopAtTarget = true,
+    this.precision = 1,
+    this.maxDtFromLastDirectionChange = 0.5,
   }) {
+    this.targetPosition.setFrom(targetPosition);
     minDiff = max(targetSize.x, targetSize.y) / 2;
   }
 
@@ -25,21 +28,24 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   double stopMovementDistance;
   double maxRandomMovementTime;
   double _randomMovementTimer = 0;
-  final Vector2 targetPosition;
+  final NotifyingVector2 targetPosition = NotifyingVector2.zero();
   late final double minDiff;
   final _diff = Vector2(0, 0);
   bool shouldFire = false;
+  double precision;
 
   Function? onShouldFire;
 
   late final MovementForwardCollisionBehavior _moveForwardBehavior;
 
-  final maxDtFromLastDirectionChange = 0.5;
+  double maxDtFromLastDirectionChange;
   double _dtFromLastDirectionChange = 0;
 
   bool forceIdle = false;
   final maxAttemptsToChangeDirection = 2;
   int _attemptsToChangeDirection = 0;
+
+  bool isTargetReached = false;
 
   @override
   FutureOr onLoad() {
@@ -49,7 +55,16 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
       parent.findBehavior<RandomMovementBehavior>().pauseBehavior = true;
     } catch (_) {}
 
+    targetPosition.addListener(() {
+      isTargetReached = false;
+    });
     return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    targetPosition.dispose();
+    super.onRemove();
   }
 
   @override
@@ -65,13 +80,14 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     }
 
     _diff.setFrom(targetPosition - parent.data.positionCenter);
-    if ((_diff.x.abs() <= parent.size.x + (parent.size.x) &&
+    if ((_diff.x.abs() <= parent.size.x * precision &&
             _diff.y.abs() <= parent.size.y / 2) ||
         (_diff.x.abs() <= parent.size.x / 2 &&
-            _diff.y.abs() <= parent.size.y + (parent.size.y))) {
+            _diff.y.abs() <= parent.size.y * precision)) {
       if (stopAtTarget) {
         parent.coreState = ActorCoreState.idle;
         forceIdle = true;
+        isTargetReached = true;
       } else {
         _startRandomMovement();
         // removeFromParent();

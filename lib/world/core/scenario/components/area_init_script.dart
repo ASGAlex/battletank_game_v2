@@ -39,11 +39,11 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
   /// Или отнаследовать класс, т.к. с билдером будет медленнее?.. Хмм...
   ScriptCore? script;
   ScriptTypeFactory? scriptFactory;
-  late final AreaScriptTarget scriptTarget;
-  late final double lifetimeMax;
-  late final int activationTimes;
+  AreaScriptTarget scriptTarget;
+  double lifetimeMax;
+  int activationTimes;
   int _activationCount = 0;
-  late final bool limitedByArea;
+  bool limitedByArea;
 
   static final _availableTypes = <String, ScriptTypeFactory>{};
 
@@ -69,12 +69,11 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
       this.script = script;
     } else {
       final scriptName = tiledObject?.properties.getValue<String>('scriptName');
-      if (scriptName == null) {
-        throw 'scriptName must be specified!';
-      }
-      final scriptFactory = _availableTypes[scriptName];
-      if (scriptFactory == null) {
-        throw 'script with name $scriptName id not registered';
+      if (scriptName != null) {
+        final scriptFactory = _availableTypes[scriptName];
+        if (scriptFactory == null) {
+          throw 'script with name $scriptName id not registered';
+        }
       }
       this.scriptFactory = scriptFactory;
     }
