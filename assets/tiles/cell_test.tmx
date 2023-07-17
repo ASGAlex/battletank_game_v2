@@ -112,7 +112,7 @@
  </layer>
  <objectgroup id="2" name="Object Layer 1">
   <object id="4" name="spawn_player" type="spawn_player" x="18.0003" y="75.333" width="16" height="16"/>
-  <object id="5" name="spawn_neutral" type="spawn_neutral" x="152" y="73" width="16" height="16">
+  <object id="5" name="spawn" type="spawn" x="152" y="73" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="0"/>
     <property name="tank_type" value="fast"/>

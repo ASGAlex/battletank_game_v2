@@ -46,6 +46,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   int _attemptsToChangeDirection = 0;
 
   bool isTargetReached = false;
+  bool pauseBehavior = false;
 
   @override
   FutureOr onLoad() {
@@ -69,6 +70,8 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
 
   @override
   void update(double dt) {
+    if (pauseBehavior) return;
+
     _dtFromLastDirectionChange += dt;
     if (isRandomMovement) {
       if (_randomMovementTimer <= maxRandomMovementTime) {

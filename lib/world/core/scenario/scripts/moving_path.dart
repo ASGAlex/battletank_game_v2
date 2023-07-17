@@ -57,12 +57,13 @@ class MovingPathScript extends ScriptCore {
       final targetMovements = actor.findBehaviors<TargetedMovementBehavior>();
       for (final behavior in targetMovements) {
         if (behavior == _targetedMovementBehavior) continue;
-        if (!behavior.forceIdle) {
+        if (!behavior.isTargetReached) {
+          _targetedMovementBehavior?.pauseBehavior = true;
           return;
         }
       }
     } catch (_) {}
-
+    _targetedMovementBehavior?.pauseBehavior = false;
     if (_targetedMovementBehavior?.isTargetReached == true) {
       final finished = !_iterator.moveNext();
       if (finished) {
