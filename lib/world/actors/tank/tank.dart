@@ -237,7 +237,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
               }
             }));
       }
-      setCollisionHighPrecision(false);
     }
 
     final hitboxes = children.whereType<BoundingHitbox>();

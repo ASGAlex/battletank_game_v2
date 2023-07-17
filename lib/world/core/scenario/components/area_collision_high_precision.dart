@@ -78,7 +78,7 @@ mixin CollisionPrecisionMixin on HasGridSupport {
       return [];
     }
     final hitboxes = children.whereType<BoundingHitbox>();
-    if (highPrecision) {
+    if (highPrecision || forceHighPrecision) {
       for (final hitbox in hitboxes) {
         if (tags.isEmpty) {
           hitbox.groupCollisionsTags.clear();

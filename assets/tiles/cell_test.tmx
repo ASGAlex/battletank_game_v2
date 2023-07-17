@@ -111,16 +111,8 @@
 </data>
  </layer>
  <objectgroup id="2" name="Object Layer 1">
-  <object id="4" name="spawn_player" type="spawn_player" x="18.0003" y="75.333" width="16" height="16"/>
-  <object id="5" name="spawn" type="spawn" x="152" y="73" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="6" name="spawn" type="spawn" x="372" y="173.333" width="16" height="16">
+  <object id="4" name="spawn_player" type="spawn_player" x="271" y="171.333" width="16" height="16"/>
+  <object id="6" name="spawn" type="spawn" x="370.5" y="188.333" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="0"/>
     <property name="tank_type" value="fast"/>
@@ -137,7 +129,7 @@
   <object id="8" name="testPath" type="moving_path" x="135.667" y="79.6667">
    <polyline points="10.75,0.125 -24.125,0.375 -24.0833,40.7917 79.9167,40.7917 80,-54.6667 -32,-55.6667 -31.6667,-32 64.3333,-31.3333 63.3333,40 -16.3333,38.6667 -15.6667,-23"/>
   </object>
-  <object id="9" name="spawn_neutral" type="spawn_neutral" x="36.375" y="75" width="16" height="16">
+  <object id="9" name="spawn_neutral" type="spawn_neutral" x="289.375" y="171" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="0"/>
     <property name="tank_type" value="fast"/>
