@@ -42,7 +42,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     if (_chooseDirectionNextTick) {
       _chooseDirectionNextTick = false;
       chooseNewDirection();
-      disableSideHitboxes();
+      provider.disableSideHitboxes();
 
       if (_fullDistanceWithoutBlock > 4) {
         _fullDistanceWithoutBlock = 0;
@@ -64,7 +64,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       } else if (isDistanceEnd) {
         _fullDistanceWithoutBlock++;
       }
-      enableSideHitboxes();
+      provider.enableSideHitboxes();
       _chooseDirectionNextTick = true;
     }
   }

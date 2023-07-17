@@ -8,9 +8,9 @@ import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 
-class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
-  AvailableDirectionChecker({this.outerWidth = 0}) {
-    _movementSideHitboxes = <MovementSideHitbox>[
+class MovementSideHitboxesProvider extends CoreBehavior<ActorMixin> {
+  MovementSideHitboxesProvider({this.outerWidth = 0}) {
+    movementSideHitboxes = <MovementSideHitbox>[
       MovementSideHitbox(
           direction: DirectionExtended.left, outerWidth: outerWidth),
       MovementSideHitbox(
@@ -20,11 +20,48 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
     ];
   }
 
-  bool _sideHitboxesEnabled = true;
   final double outerWidth;
+  late final List<MovementSideHitbox> movementSideHitboxes;
+  bool _sideHitboxesEnabled = true;
 
   bool get hitboxesEnabled => _sideHitboxesEnabled;
+
+  @override
+  FutureOr<void> onLoad() {
+    parent.addAll(movementSideHitboxes);
+    return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    disableSideHitboxes();
+    try {
+      parent.removeAll(movementSideHitboxes);
+    } catch (_) {}
+  }
+
+  enableSideHitboxes([bool enable = true]) {
+    for (var hb in movementSideHitboxes) {
+      if (enable) {
+        hb.collisionType = CollisionType.active;
+      } else {
+        hb.collisionType = CollisionType.inactive;
+      }
+    }
+    _sideHitboxesEnabled = enable;
+  }
+
+  disableSideHitboxes() {
+    enableSideHitboxes(false);
+  }
+}
+
+class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
+  AvailableDirectionChecker({this.outerWidth = 0});
+
+  final double outerWidth;
   late final MovementCheckerHitbox movementHitbox;
+  late final MovementSideHitboxesProvider provider;
 
   @override
   FutureOr onLoad() {
@@ -36,22 +73,18 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
       movementHitbox = MovementSideHitbox(direction: DirectionExtended.up);
       parent.add(movementHitbox);
     }
-    parent.addAll(_movementSideHitboxes);
-  }
 
-  @override
-  void onRemove() {
-    disableSideHitboxes();
     try {
-      parent.removeAll(_movementSideHitboxes);
-    } catch (_) {}
+      provider = parent.findBehavior<MovementSideHitboxesProvider>();
+    } catch (_) {
+      provider = MovementSideHitboxesProvider(outerWidth: outerWidth);
+      parent.add(provider);
+    }
   }
-
-  late final List<MovementSideHitbox> _movementSideHitboxes;
 
   List<DirectionExtended> getAvailableDirections() {
     final availableDirections = <DirectionExtended>[];
-    for (final hitbox in _movementSideHitboxes) {
+    for (final hitbox in provider.movementSideHitboxes) {
       if (hitbox.isMovementAllowed) {
         availableDirections.add(hitbox.globalMapDirection);
       }
@@ -65,7 +98,7 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
   Map<DirectionExtended, MovementCheckerHitbox>
       getAvailableDirectionsWithHitbox() {
     final availableDirections = <DirectionExtended, MovementCheckerHitbox>{};
-    for (final hitbox in _movementSideHitboxes) {
+    for (final hitbox in provider.movementSideHitboxes) {
       if (hitbox.isMovementAllowed) {
         availableDirections[hitbox.globalMapDirection] = hitbox;
       }
@@ -74,21 +107,6 @@ class AvailableDirectionChecker extends CoreBehavior<ActorMixin> {
       availableDirections[parent.data.lookDirection] = movementHitbox;
     }
     return availableDirections;
-  }
-
-  enableSideHitboxes([bool enable = true]) {
-    for (var hb in _movementSideHitboxes) {
-      if (enable) {
-        hb.collisionType = CollisionType.active;
-      } else {
-        hb.collisionType = CollisionType.inactive;
-      }
-    }
-    _sideHitboxesEnabled = enable;
-  }
-
-  disableSideHitboxes() {
-    enableSideHitboxes(false);
   }
 }
 

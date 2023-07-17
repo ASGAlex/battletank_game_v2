@@ -80,7 +80,7 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
         _restoreEntity(human);
         _actionInProgress = false;
         _availableDirections.clear();
-        directionChecker.disableSideHitboxes();
+        directionChecker.provider.disableSideHitboxes();
       } catch (_) {}
     }
   }
@@ -100,7 +100,7 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
         try {
           final directionChecker =
               parent.findBehavior<AvailableDirectionChecker>();
-          directionChecker.enableSideHitboxes();
+          directionChecker.provider.enableSideHitboxes();
           return;
         } catch (_) {
           restoredEntity = _createHuman();

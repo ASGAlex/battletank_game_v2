@@ -188,18 +188,18 @@ packages:
   flame_message_stream:
     dependency: "direct main"
     description:
-      path: "../flame_message_stream"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: c517051b35d37365eeba479b708f2937a15449ed
+      url: "https://github.com/ASGAlex/flame_message_stream.git"
+    source: git
     version: "0.0.1+2"
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: bedc42e0bb4bbcd87ca3b18f7db74701deb5f255
-      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
-    source: git
+      path: "../cluisterizer_test"
+      relative: true
+    source: path
     version: "1.0.0"
   flame_tiled:
     dependency: "direct main"
