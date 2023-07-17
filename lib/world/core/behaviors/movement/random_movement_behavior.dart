@@ -32,7 +32,18 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
 
   DirectionExtended? _lastDirection;
 
+  set trackCorners(bool value) {
+    _trackCorners = value;
+    if (_trackCorners) {
+      provider.enableSideHitboxes();
+    }
+  }
+
+  bool get trackCorners => _trackCorners;
+  bool _trackCorners = false;
+
   final random = Random();
+  final List<DirectionExtended> _lastAvailableDirections = [];
 
   @override
   void update(double dt) {
@@ -42,7 +53,9 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     if (_chooseDirectionNextTick) {
       _chooseDirectionNextTick = false;
       chooseNewDirection();
-      provider.disableSideHitboxes();
+      if (!trackCorners) {
+        provider.disableSideHitboxes();
+      }
 
       if (_fullDistanceWithoutBlock > 4) {
         _fullDistanceWithoutBlock = 0;
@@ -66,25 +79,48 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       }
       provider.enableSideHitboxes();
       _chooseDirectionNextTick = true;
+    } else if (trackCorners) {
+      final availableDirections = getAvailableDirections();
+      final directionsToTry = <DirectionExtended>[];
+      for (final direction in availableDirections) {
+        if (direction == _lastDirection ||
+            _lastAvailableDirections.contains(direction)) continue;
+        directionsToTry.add(direction);
+      }
+      if (directionsToTry.length > 1 && random.nextInt(100) > 20) {
+        print('!!!!!!!!!!!!!!! CORNER !!!!!!!!!!!!!!!!');
+        print(directionsToTry);
+        final i = random.nextInt(directionsToTry.length);
+        setNewDirection(directionsToTry[i]);
+        _lastAvailableDirections
+          ..clear()
+          ..addAll(availableDirections);
+      }
     }
   }
 
   void chooseNewDirection() {
-    final availableDirections = getAvailableDirections();
-    if (availableDirections.isEmpty) return;
+    _lastAvailableDirections
+      ..clear()
+      ..addAll(getAvailableDirections());
+    if (_lastAvailableDirections.isEmpty) return;
 
-    if (availableDirections.contains(parent.lookDirection) &&
-        availableDirections.length > 1) {
-      availableDirections.remove(parent.lookDirection);
+    if (_lastAvailableDirections.contains(parent.lookDirection) &&
+        _lastAvailableDirections.length > 1) {
+      _lastAvailableDirections.remove(parent.lookDirection);
     }
-    if (_lastDirection != null && availableDirections.length > 1) {
-      availableDirections.remove(_lastDirection!);
+    if (_lastDirection != null && _lastAvailableDirections.length > 1) {
+      _lastAvailableDirections.remove(_lastDirection!);
     }
 
-    final i = random.nextInt(availableDirections.length);
+    final i = random.nextInt(_lastAvailableDirections.length);
 
+    setNewDirection(_lastAvailableDirections[i]);
+  }
+
+  void setNewDirection(DirectionExtended direction) {
     _lastDirection = parent.lookDirection;
-    parent.lookDirection = availableDirections[i];
+    parent.lookDirection = direction;
     var distance = random.nextInt(maxDirectionDistance);
     if (_maxActualDistanceAtCycle < maxDirectionDistance) {
       distance = random.nextInt(_maxActualDistanceAtCycle.ceil());

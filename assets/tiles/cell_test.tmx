@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="10">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="11">
  <tileset firstgid="1" source="bricks.tsx"/>
  <tileset firstgid="9" source="ground.tsx"/>
  <layer id="3" name="Tile Layer 2" width="50" height="50">
@@ -143,6 +143,13 @@
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="1"/>
     <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="10" name="collision precision" type="scenario" x="167.833" y="0.000166667" width="233.667" height="396">
+   <properties>
+    <property name="factions" value="Enemy, Neutral"/>
+    <property name="removeWhenLeave" type="bool" value="false"/>
+    <property name="type" value="AreaCollisionHighPrecision"/>
    </properties>
   </object>
  </objectgroup>

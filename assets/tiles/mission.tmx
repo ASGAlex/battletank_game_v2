@@ -643,7 +643,7 @@ Now, go and enter into the tank that spawns nearby at right.
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="7" name="collision precision" visible="0">
+ <objectgroup id="7" name="collision precision">
   <object id="31" name="collision precision" type="scenario" x="158.833" y="310" width="627" height="457.333">
    <properties>
     <property name="factions" value="Enemy, Neutral"/>
