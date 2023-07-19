@@ -50,6 +50,11 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     if (pauseBehavior) {
       return;
     }
+
+    for (var value in provider.movementSideHitboxes) {
+      value.debugMode = false;
+    }
+
     if (_chooseDirectionNextTick) {
       _chooseDirectionNextTick = false;
       chooseNewDirection();
@@ -80,21 +85,23 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       provider.enableSideHitboxes();
       _chooseDirectionNextTick = true;
     } else if (trackCorners) {
-      final availableDirections = getAvailableDirections();
+      final availableDirections = getAvailableDirectionsWithHitbox();
       final directionsToTry = <DirectionExtended>[];
-      for (final direction in availableDirections) {
-        if (direction == _lastDirection ||
-            _lastAvailableDirections.contains(direction)) continue;
-        directionsToTry.add(direction);
+      for (final direction in availableDirections.entries) {
+        if (direction.key == parent.lookDirection ||
+            direction.key == parent.lookDirection.opposite ||
+            _lastAvailableDirections.contains(direction.key)) continue;
+        directionsToTry.add(direction.key);
+        direction.value.debugMode = true;
       }
-      if (directionsToTry.length > 1 && random.nextInt(100) > 20) {
-        print('!!!!!!!!!!!!!!! CORNER !!!!!!!!!!!!!!!!');
-        print(directionsToTry);
+      if (directionsToTry.isNotEmpty && random.nextInt(100) > 50) {
+        // print('!!!!!!!!!!!!!!! CORNER !!!!!!!!!!!!!!!!');
+        // print(directionsToTry);
         final i = random.nextInt(directionsToTry.length);
         setNewDirection(directionsToTry[i]);
         _lastAvailableDirections
           ..clear()
-          ..addAll(availableDirections);
+          ..addAll(availableDirections.keys);
       }
     }
   }
@@ -131,6 +138,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       }
     }
     _plannedDistance = distance.toDouble();
+    _maxActualDistanceAtCycle = maxDirectionDistance.toDouble();
     _actualDistance = 0;
     parent.coreState = ActorCoreState.move;
   }

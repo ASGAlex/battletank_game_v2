@@ -18,6 +18,9 @@ class AreaCollisionHighPrecisionComponent
   }
 
   @override
+  bool get activated => false;
+
+  @override
   void onLoad() {
     final properties = tiledObject?.properties;
     if (properties != null) {

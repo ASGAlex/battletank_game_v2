@@ -111,8 +111,8 @@
 </data>
  </layer>
  <objectgroup id="2" name="Object Layer 1">
-  <object id="4" name="spawn_player" type="spawn_player" x="271" y="171.333" width="16" height="16"/>
-  <object id="6" name="spawn" type="spawn" x="370.5" y="188.333" width="16" height="16">
+  <object id="4" name="spawn_player" type="spawn_player" x="42.5" y="78.333" width="16" height="16"/>
+  <object id="6" name="spawn" type="spawn" x="156" y="78.333" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="0"/>
     <property name="tank_type" value="fast"/>
@@ -122,6 +122,7 @@
   </object>
   <object id="7" name="Moving path trigger" type="scenario" x="144.892" y="66.3958" width="28.2159" height="29.875">
    <properties>
+    <property name="highPriority" type="bool" value="true"/>
     <property name="pathName" value="testPath"/>
     <property name="type" value="AreaMovingPath"/>
    </properties>
@@ -129,7 +130,7 @@
   <object id="8" name="testPath" type="moving_path" x="135.667" y="79.6667">
    <polyline points="10.75,0.125 -24.125,0.375 -24.0833,40.7917 79.9167,40.7917 80,-54.6667 -32,-55.6667 -31.6667,-32 64.3333,-31.3333 63.3333,40 -16.3333,38.6667 -15.6667,-23"/>
   </object>
-  <object id="9" name="spawn_neutral" type="spawn_neutral" x="289.375" y="171" width="16" height="16">
+  <object id="9" name="spawn_neutral" type="spawn_neutral" x="60.875" y="78" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="0"/>
     <property name="tank_type" value="fast"/>

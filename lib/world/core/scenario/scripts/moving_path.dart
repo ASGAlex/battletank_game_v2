@@ -9,7 +9,11 @@ import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
 class MovingPathScript extends ScriptCore {
   static final namedLists = <String, List<Vector2>>{};
 
-  MovingPathScript({this.points = const [], this.loop = false});
+  MovingPathScript({
+    this.points = const [],
+    this.loop = false,
+    this.highPriority = false,
+  });
 
   factory MovingPathScript.fromNamed(String name) {
     final points = namedLists[name];
@@ -25,8 +29,10 @@ class MovingPathScript extends ScriptCore {
   final List<Vector2> points;
   late Iterator<Vector2> _iterator;
   bool loop;
+  bool highPriority;
 
   TargetedMovementBehavior? _targetedMovementBehavior;
+  final _pausedBehaviors = <TargetedMovementBehavior>[];
 
   @override
   void onStreamMessage(ScenarioEvent<dynamic> message) {
@@ -58,8 +64,13 @@ class MovingPathScript extends ScriptCore {
       for (final behavior in targetMovements) {
         if (behavior == _targetedMovementBehavior) continue;
         if (!behavior.isTargetReached) {
-          _targetedMovementBehavior?.pauseBehavior = true;
-          return;
+          if (highPriority) {
+            behavior.pauseBehavior = true;
+            _pausedBehaviors.add(behavior);
+          } else {
+            _targetedMovementBehavior?.pauseBehavior = true;
+            return;
+          }
         }
       }
     } catch (_) {}
@@ -74,6 +85,10 @@ class MovingPathScript extends ScriptCore {
         } else {
           removeFromParent();
           _targetedMovementBehavior?.removeFromParent();
+          for (final behavior in _pausedBehaviors) {
+            behavior.pauseBehavior = false;
+          }
+          _pausedBehaviors.clear();
         }
       } else {
         print(_iterator.current);

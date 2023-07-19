@@ -349,10 +349,13 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   @override
-  RandomMovementBehavior createRandomMovement() => RandomMovementBehavior(
-        maxDirectionDistance: 300,
-        minDirectionDistance: 50,
-      );
+  RandomMovementBehavior createRandomMovement() {
+    _randomMovementBehavior ??= RandomMovementBehavior(
+      maxDirectionDistance: 300,
+      minDirectionDistance: 50,
+    );
+    return _randomMovementBehavior!;
+  }
 
   @override
   TargetedMovementBehavior createTargetedMovement(
