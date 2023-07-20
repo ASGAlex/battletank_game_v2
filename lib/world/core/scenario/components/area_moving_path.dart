@@ -5,6 +5,7 @@ import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
 class AreaMovingPathComponent extends AreaInitScriptComponent {
   String pathName = '';
   bool highPriority = false;
+  bool loop = false;
 
   AreaMovingPathComponent({super.tiledObject});
 
@@ -16,6 +17,7 @@ class AreaMovingPathComponent extends AreaInitScriptComponent {
     if (properties != null) {
       pathName = properties.getValue<String>('pathName') ?? '';
       highPriority = properties.getValue<bool>('highPriority') ?? false;
+      loop = properties.getValue<bool>('loop') ?? false;
     }
     if (pathName.isEmpty) {
       throw 'pathName must be specified!';
@@ -26,6 +28,8 @@ class AreaMovingPathComponent extends AreaInitScriptComponent {
 
   ScriptCore _buildMovingScript(
       double lifetimeMax, AreaInitScriptComponent creator) {
-    return MovingPathScript.fromNamed(pathName)..highPriority = highPriority;
+    return MovingPathScript.fromNamed(pathName)
+      ..highPriority = highPriority
+      ..loop = loop;
   }
 }

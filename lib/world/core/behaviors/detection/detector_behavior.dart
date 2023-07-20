@@ -35,6 +35,8 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
 
   double _momentum = 0;
 
+  bool get isMomentum => _momentum < maxMomentum;
+
   final double pauseBetweenChecks;
   double _dtBetweenChecks = 0;
 
@@ -42,9 +44,11 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
   final List<Faction> factionsToDetect;
 
   DetectionCallback? onDetection;
-  Function? onNothingDetected;
+  Function(bool isMomentum)? onNothingDetected;
 
   final _checkedComponents = <Component>{};
+  ActorMixin? _lastOther;
+  double? _lastDistanceX, _lastDistanceY;
 
   @override
   void onCalculateDistance(
@@ -91,14 +95,13 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
         if (distanceX < finalDistance && distanceY < finalDistance) {
           detected = true;
           onDetection?.call(other, distanceX, distanceY);
+          _lastDistanceX = distanceX;
+          _lastDistanceY = distanceY;
+          _lastOther = other;
           return;
         }
       }
     } catch (_) {}
-
-    if (_momentum < maxMomentum && onDetection != null) {
-      onDetection?.call(other, distanceX, distanceY);
-    }
   }
 
   (double distanceX, double distanceY) _getComponentDistance(ActorMixin other) {
@@ -140,10 +143,17 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
     _checkedComponents.clear();
 
     if (!detected) {
+      if (isMomentum &&
+          onDetection != null &&
+          _lastOther != null &&
+          _lastDistanceX != null &&
+          _lastDistanceY != null) {
+        onDetection!.call(_lastOther!, _lastDistanceX!, _lastDistanceY!);
+      }
       if (_momentum < maxMomentum) {
         _momentum += dt;
       }
-      onNothingDetected?.call();
+      onNothingDetected?.call(isMomentum);
     } else {
       _momentum = 0;
     }

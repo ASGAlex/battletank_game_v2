@@ -99,6 +99,9 @@ class SpawnBehavior extends CollisionBehavior
         (parent as SpawnEntity).rootComponent.add(newObject);
         objectToSpawn = null;
         onSpawnComplete?.call(newObject);
+        if (spawnData.capacity == 0) {
+          parent.removeFromParent();
+        }
       }
     }
   }

@@ -50,7 +50,7 @@ class MovingPathScript extends ScriptCore {
       maxRandomMovementTime: 15,
       stopAtTarget: true,
       precision: 0.5,
-      maxDtFromLastDirectionChange: 0.01,
+      maxDtFromLastDirectionChange: 0.0001,
     );
     parent!.add(_targetedMovementBehavior!);
     (parent as ActorMixin).coreState = ActorCoreState.move;

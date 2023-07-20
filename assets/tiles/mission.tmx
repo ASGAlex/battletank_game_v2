@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="49">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="82">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <tileset firstgid="15" source="tank.tsx"/>
@@ -463,7 +463,8 @@
     <property name="cooldown_seconds" type="float" value="120"/>
     <property name="instant" type="bool" value="true"/>
     <property name="tank_type" value="simple"/>
-    <property name="tanks_inside" type="int" value="4"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
   <object id="10" name="spawn" type="spawn" x="1088" y="495.5" width="16" height="16">
@@ -471,7 +472,8 @@
     <property name="cooldown_seconds" type="float" value="120"/>
     <property name="instant" type="bool" value="true"/>
     <property name="tank_type" value="middle"/>
-    <property name="tanks_inside" type="int" value="6"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
   <object id="11" name="spawn" type="spawn" x="1063.45" y="56.9091" width="16" height="16">
@@ -480,7 +482,7 @@
     <property name="instant" type="bool" value="true"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="5"/>
-    <property name="trigger_distance" type="float" value="150"/>
+    <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
   <object id="12" name="spawn" type="spawn" x="1019" y="57.3333" width="16" height="16">
@@ -488,7 +490,7 @@
     <property name="cooldown_seconds" type="float" value="120"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="5"/>
-    <property name="trigger_distance" type="float" value="150"/>
+    <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
   <object id="13" name="spawn" type="spawn" x="480.333" y="576.333" width="16" height="16">
@@ -583,15 +585,16 @@
     <property name="cooldown_seconds" type="float" value="120"/>
     <property name="instant" type="bool" value="true"/>
     <property name="tank_type" value="simple"/>
-    <property name="tanks_inside" type="int" value="3"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
   <object id="25" name="spawn_neutral" type="spawn_neutral" x="426" y="724.667" width="16" height="16">
    <properties>
-    <property name="cooldown_seconds" type="float" value="20"/>
-    <property name="spawn_seconds" type="float" value="3"/>
-    <property name="tank_type" value="any"/>
-    <property name="tanks_inside" type="int" value="99999"/>
+    <property name="cooldown_seconds" type="float" value="30"/>
+    <property name="spawn_seconds" type="float" value="5"/>
+    <property name="tank_type" value="heavy"/>
+    <property name="tanks_inside" type="int" value="100"/>
     <property name="trigger_distance" type="float" value="50"/>
    </properties>
   </object>
@@ -634,16 +637,162 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="type" value="AreaInitScript"/>
    </properties>
   </object>
-  <object id="46" name="path" type="moving_path" x="1009.19" y="66.8523">
-   <polyline points="-4.875,0.125 -11.4131,21.0623 -43.2231,35.0651 -54.6972,56.7159"/>
-  </object>
-  <object id="47" name="Moving path trigger" type="scenario" x="1011.78" y="50.125" width="28.2159" height="29.875">
+  <object id="50" name="patrol right trigger" type="scenario" x="1056.98" y="50.6989" width="28.2159" height="29.875">
    <properties>
-    <property name="type" value="AreMovingPath"/>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="false"/>
+    <property name="loop" type="bool" value="true"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="patrolRight"/>
+    <property name="type" value="AreaMovingPath"/>
    </properties>
   </object>
+  <object id="51" name="patrol left trigger" type="scenario" x="1014.62" y="53.0625" width="28.2159" height="29.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="patrolLeft"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="52" name="patrolLeft" type="moving_path" x="991.455" y="80.3636">
+   <polyline points="0,0 -0.181818,15.2727 -31.4242,15.7879 -31.5909,47.5 -63.6742,47.6288 -64.1212,111.03 -103.121,112.636 -103.455,126.97 -206.848,127.182 -206.879,104.242 -239.455,103.121 -237.455,-15.0303 -120.273,-14.5758 -119.758,9.66667"/>
+  </object>
+  <object id="53" name="patrolRight" type="moving_path" x="1103" y="63.3333">
+   <polyline points="63.75,0 538,-0.333333 537.333,17.6667 509.333,19.6667 506,42 474,68.6667 415.333,95.3333 399,110 399,168.667 437.667,221.333 438.333,245.333 359.667,244.667 313,183.333 289.667,161.333 204.333,161.333 64.6667,123.667 63.3333,33.3333"/>
+  </object>
+  <object id="54" name="out from spawn" type="scenario" x="493.392" y="150.563" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromForestSpawn1"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="55" name="outFromForestSpawn1" type="move_path" x="503.5" y="174">
+   <polyline points="0,0 0,21.5"/>
+  </object>
+  <object id="56" name="out from spawn" type="scenario" x="479.642" y="8.0625" width="17.9659" height="17.375">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromForestSpawn2"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="57" name="outFromForestSpawn2" type="mova_path" x="497.5" y="16.5">
+   <polyline points="0,0 0,35.5"/>
+  </object>
+  <object id="66" name="out from spawn" type="scenario" x="389.517" y="375.438" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase3"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="67" name="out from spawn" type="scenario" x="446.267" y="376.188" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase4"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="68" name="outFromSpawnBase1" type="move_path" x="288.125" y="409.875">
+   <polyline points="0,0 0,16.75"/>
+  </object>
+  <object id="69" name="outFromSpawnBase2" type="move_path" x="343.875" y="414.375">
+   <polyline points="0,0 0,16.75"/>
+  </object>
+  <object id="70" name="outFromSpawnBase4" type="move_path" x="456.375" y="416.125">
+   <polyline points="0,0 0,16.75"/>
+  </object>
+  <object id="71" name="out from spawn" type="scenario" x="278.017" y="377.188" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase1"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="72" name="out from spawn" type="scenario" x="333.267" y="375.938" width="21.2159" height="19.875">
+   <properties>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase2"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="73" name="outFromSpawnBase3" type="move_path" x="399.5" y="409">
+   <polyline points="0,0 0,16.75"/>
+  </object>
+  <object id="74" name="out from spawn" type="scenario" x="439.642" y="455.813" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase5"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="75" name="outFromSpawnBase5" type="move_path" x="455.75" y="479.75">
+   <polyline points="0,0 0,15.75 39.9375,16.25 40.2813,-15.4375 80.375,-15.5"/>
+  </object>
+  <object id="76" name="out from spawn" type="scenario" x="373.267" y="487.063" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase6"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="77" name="outFromSpawnBase6" type="move_path" x="384" y="514.5">
+   <polyline points="0,0 0,14.125 -47.125,13.25"/>
+  </object>
+  <object id="78" name="out from spawn" type="scenario" x="477.301" y="574.063" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="true"/>
+    <property name="loop" type="bool" value="false"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="outFromSpawnBase7"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="79" name="outFromSpawnBase7" type="move_path" x="463.909" y="584">
+   <polyline points="0,0 -23.8182,2.54545"/>
+  </object>
+  <object id="80" name="patrol right LOOP trigger" type="scenario" x="859.165" y="85.608" width="28.2159" height="29.875">
+   <properties>
+    <property name="factions" value="Enemy"/>
+    <property name="highPriority" type="bool" value="false"/>
+    <property name="loop" type="bool" value="true"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="patrolRightLoop"/>
+    <property name="type" value="AreaMovingPath"/>
+   </properties>
+  </object>
+  <object id="81" name="patrolRightLoop" type="move_path" x="891.273" y="112.545">
+   <polyline points="0,0 20.3636,-0.181818 20.7273,60.9091 20.7273,93.8182 -112.545,94.7273 -112.545,75.8182 -134.182,76.1818 -132.182,-41.6364 0.545455,-41.2727"/>
+  </object>
  </objectgroup>
- <objectgroup id="7" name="collision precision">
+ <objectgroup id="7" name="collision precision" visible="0">
   <object id="31" name="collision precision" type="scenario" x="158.833" y="310" width="627" height="457.333">
    <properties>
     <property name="factions" value="Enemy, Neutral"/>

@@ -32,6 +32,7 @@ import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
+import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
@@ -203,7 +204,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     } else {
       add(ColorFilterBehavior());
       if (data.factions.contains(Faction(name: 'Enemy'))) {
-        add(createRandomMovement());
         add(DetectorBehavior(
             distance: 300,
             detectionType: DetectionType.audial,
@@ -211,6 +211,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             maxMomentum: 120,
             // pauseBetweenChecks: 5,
             onDetection: (player, x, y) {
+              _randomMovementBehavior ??= createRandomMovement();
               game.enemyAmbientVolume.onTankDetectedPlayer(x, y);
               if (player is TankEntity) {
                 final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
@@ -221,6 +222,14 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
                   _randomMovementBehavior?.pauseBehavior = false;
                 }
               }
+            },
+            onNothingDetected: (bool isMomentum) {
+              if (isMomentum) return;
+              coreState = ActorCoreState.idle;
+              _randomMovementBehavior?.removeFromParent();
+              _randomMovementBehavior = null;
+              _targetedMovementBehavior?.removeFromParent();
+              _targetedMovementBehavior = null;
             }));
 
         add(DetectorBehavior(
@@ -230,11 +239,13 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             maxMomentum: 0,
             pauseBetweenChecks: 2,
             onDetection: _trackDetectedTarget,
-            onNothingDetected: () {
-              if (_targetedMovementBehavior != null) {
-                _targetedMovementBehavior?.removeFromParent();
-                _targetedMovementBehavior = null;
-              }
+            onNothingDetected: (isMomentum) {
+              if (isMomentum) return;
+              _targetedMovementBehavior?.removeFromParent();
+              _targetedMovementBehavior = null;
+
+              _randomMovementBehavior ??= createRandomMovement();
+              _randomMovementBehavior?.pauseBehavior = false;
             }));
       }
     }
@@ -327,14 +338,17 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         });
       } catch (_) {}
       try {
-        findBehaviors<TargetedMovementBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
         if (_targetedMovementBehavior != null) {
           _targetedMovementBehavior?.removeFromParent();
           _targetedMovementBehavior = null;
         }
+        findBehaviors<TargetedMovementBehavior>().forEach((element) {
+          element.removeFromParent();
+        });
       } catch (_) {}
+      children.whereType<MovingPathScript>().forEach((element) {
+        element.removeFromParent();
+      });
     } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
         component: this,
@@ -350,10 +364,13 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   RandomMovementBehavior createRandomMovement() {
-    _randomMovementBehavior ??= RandomMovementBehavior(
-      maxDirectionDistance: 300,
-      minDirectionDistance: 50,
-    );
+    if (_randomMovementBehavior == null) {
+      _randomMovementBehavior = RandomMovementBehavior(
+        maxDirectionDistance: 300,
+        minDirectionDistance: 50,
+      );
+      add(_randomMovementBehavior!);
+    }
     return _randomMovementBehavior!;
   }
 

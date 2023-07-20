@@ -160,9 +160,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
             parent.findBehavior<RandomMovementBehavior>();
         randomMovementBehavior.pauseBehavior = false;
       } catch (_) {
-        final randomMovementBehavior =
-            (parent as MovementFactoryMixin).createRandomMovement();
-        parent.add(randomMovementBehavior);
+        (parent as MovementFactoryMixin).createRandomMovement();
       }
       _randomMovementTimer = 0;
       isRandomMovement = true;

@@ -45,6 +45,7 @@ class GameMapLoader extends TiledMapLoader {
         'target': onBuildTarget,
         'scenario': onBuildScenario,
         'moving_path': onBuildMovingPath,
+        'move_path': onBuildMovingPath,
       };
 
   @override

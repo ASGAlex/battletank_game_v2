@@ -1,6 +1,7 @@
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/scenario/components/has_text_message_mixin.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
 
@@ -44,6 +45,7 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
   int activationTimes;
   int _activationCount = 0;
   bool limitedByArea;
+  bool oncePerActor = false;
 
   static final _availableTypes = <String, ScriptTypeFactory>{};
 
@@ -74,8 +76,8 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
         if (scriptFactory == null) {
           throw 'script with name $scriptName id not registered';
         }
+        this.scriptFactory = scriptFactory;
       }
-      this.scriptFactory = scriptFactory;
     }
   }
 
@@ -92,10 +94,14 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
         lifetimeMax = properties.getValue<double>('scriptLifetimeSeconds') ?? 0;
       } catch (_) {}
       try {
-        activationTimes = properties.getValue<int>('activationTimes') ?? 1;
+        activationTimes = properties.getValue<int>('activationTimes') ?? -1;
       } catch (_) {}
       try {
         limitedByArea = properties.getValue<bool>('limitedByArea') ?? false;
+      } catch (_) {}
+
+      try {
+        oncePerActor = properties.getValue<bool>('oncePerActor') ?? false;
       } catch (_) {}
     }
     super.onLoad();
@@ -104,10 +110,17 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
   @override
   void activatedBy(
       AreaInitScriptComponent scenario, ActorMixin other, MyGame game) {
-    super.activatedBy(scenario, other, game);
-    if (_activationCount >= activationTimes) {
+    if (activationTimes != -1 && _activationCount >= activationTimes) {
       return;
     }
+    if (oncePerActor &&
+        other
+            .findBehavior<ScenarioActivatorBehavior>()
+            .activatedScenariosHistory
+            .contains(this)) {
+      return;
+    }
+    super.activatedBy(scenario, other, game);
     final newScript = script ?? scriptFactory?.call(lifetimeMax, this);
     if (newScript != null) {
       switch (scriptTarget) {
