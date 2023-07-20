@@ -19,7 +19,7 @@ typedef ScenarioCallbackFunction = void Function(
 typedef ScenarioTypeFactory = ScenarioComponent Function(TiledObject);
 
 abstract class ScenarioComponentCore extends PositionComponent
-    with HasGridSupport, HasGameReference<MyGame> {
+    with HasGridSupport, HasGameReference<MyGame>, CollisionCallbacks {
   ScenarioComponentCore({
     this.tiledObject,
     Iterable<Faction> factions = const [],
@@ -90,6 +90,7 @@ class ScenarioComponent<T extends ScenarioComponentCore>
           }
         }
       }
+      return false;
     }
     return true;
   }

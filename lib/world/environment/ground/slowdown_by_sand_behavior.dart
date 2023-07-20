@@ -1,4 +1,12 @@
+import 'dart:async';
+
+import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
+
+mixin SlowDownBySandOptimizedCheckerMixin on ActorMixin {
+  bool canBeSlowedDownBySand = false;
+  SlowDownBySandBehavior? slowDownBySandBehavior;
+}
 
 class SlowDownBySandBehavior extends CollisionBehavior {
   final minimumTiles = 2;
@@ -20,6 +28,28 @@ class SlowDownBySandBehavior extends CollisionBehavior {
 
   bool get isSlowedDown => _slowDown;
   double _originalSpeed = 0;
+
+  @override
+  FutureOr<void> onLoad() {
+    if (parent is SlowDownBySandOptimizedCheckerMixin) {
+      (parent as SlowDownBySandOptimizedCheckerMixin).canBeSlowedDownBySand =
+          true;
+      (parent as SlowDownBySandOptimizedCheckerMixin).slowDownBySandBehavior =
+          this;
+    }
+    return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    if (parent is SlowDownBySandOptimizedCheckerMixin) {
+      (parent as SlowDownBySandOptimizedCheckerMixin).canBeSlowedDownBySand =
+          false;
+      (parent as SlowDownBySandOptimizedCheckerMixin).slowDownBySandBehavior =
+          null;
+    }
+    super.onRemove();
+  }
 
   @override
   void update(double dt) {

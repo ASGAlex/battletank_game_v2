@@ -1,7 +1,15 @@
+import 'dart:async';
+
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
+
+mixin HideInTreesOptimizedCheckerMixin on ActorMixin {
+  bool canHideInTrees = false;
+  HideInTreesBehavior? hideInTreesBehavior;
+}
 
 class HideInTreesBehavior extends CollisionBehavior {
   final minimumTrees = 3;
@@ -22,6 +30,24 @@ class HideInTreesBehavior extends CollisionBehavior {
   }
 
   bool get isHiddenInTrees => _hiddenInTrees;
+
+  @override
+  FutureOr<void> onLoad() {
+    if (parent is HideInTreesOptimizedCheckerMixin) {
+      (parent as HideInTreesOptimizedCheckerMixin).canHideInTrees = true;
+      (parent as HideInTreesOptimizedCheckerMixin).hideInTreesBehavior = this;
+    }
+    return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    if (parent is HideInTreesOptimizedCheckerMixin) {
+      (parent as HideInTreesOptimizedCheckerMixin).canHideInTrees = false;
+      (parent as HideInTreesOptimizedCheckerMixin).hideInTreesBehavior = null;
+    }
+    super.onRemove();
+  }
 
   @override
   void update(double dt) {

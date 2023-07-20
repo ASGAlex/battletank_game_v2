@@ -48,6 +48,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         MovementFactoryMixin,
         HasGameReference<MyGame>,
         CollisionPrecisionMixin,
+        HideInTreesOptimizedCheckerMixin,
+        SlowDownBySandOptimizedCheckerMixin,
         ScenarioEventEmitter {
   static const _tileset = 'tank';
 

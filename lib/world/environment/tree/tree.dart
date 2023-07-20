@@ -23,33 +23,31 @@ class TreeEntity extends SpriteComponent
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
-    if (!(other as ActorMixin).hasBehavior<HideInTreesBehavior>()) {
+    if (other is! HideInTreesOptimizedCheckerMixin) {
       return false;
     }
-    return true;
+    if (other.canHideInTrees) {
+      return true;
+    }
+    return false;
   }
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is ActorMixin) {
-      try {
-        final hideBehavior = other.findBehavior<HideInTreesBehavior>();
-        hideBehavior.collisionsWithTrees++;
-      } catch (_) {}
+    if (other is HideInTreesOptimizedCheckerMixin) {
+      other.hideInTreesBehavior?.collisionsWithTrees++;
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is ActorMixin) {
-      try {
-        final hideBehavior = other.findBehavior<HideInTreesBehavior>();
-        if (hideBehavior.collisionsWithTrees > 0) {
-          hideBehavior.collisionsWithTrees--;
-        }
-      } catch (_) {}
+    if (other is HideInTreesOptimizedCheckerMixin &&
+        other.hideInTreesBehavior != null) {
+      if (other.hideInTreesBehavior!.collisionsWithTrees > 0) {
+        other.hideInTreesBehavior?.collisionsWithTrees--;
+      }
     }
     super.onCollisionEnd(other);
   }

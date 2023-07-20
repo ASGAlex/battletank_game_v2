@@ -23,6 +23,7 @@ import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
+import 'package:tank_game/world/core/scenario/components/area_moving_path.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
@@ -363,6 +364,7 @@ class MyGame extends MyGameFeatures
           potentialItemType == ScenarioComponent ||
           potentialItemType == AreaInitScriptComponent ||
           potentialItemType == AreaMessageComponent ||
+          potentialItemType == AreaMovingPathComponent ||
           potentialItemType == AreaCollisionHighPrecisionComponent) {
         return false;
       }

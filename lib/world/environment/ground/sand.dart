@@ -36,8 +36,11 @@ class SandEntity extends SpriteAnimationComponent
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
-    if (!(other as ActorMixin).hasBehavior<SlowDownBySandBehavior>()) {
+    if (other is! SlowDownBySandOptimizedCheckerMixin) {
       return false;
+    }
+    if (other.canBeSlowedDownBySand) {
+      return true;
     }
     return true;
   }
@@ -45,26 +48,22 @@ class SandEntity extends SpriteAnimationComponent
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (other is ActorMixin) {
-      try {
-        final slowDownBehavior = other.findBehavior<SlowDownBySandBehavior>();
-        slowDownBehavior.collisionsWithSand++;
-        final smokeBehavior = other.findBehavior<SmokeStartMovingBehavior>();
-        smokeBehavior.isEnabled = true;
-      } catch (_) {}
+    if (other is SlowDownBySandOptimizedCheckerMixin &&
+        other.slowDownBySandBehavior != null) {
+      other.slowDownBySandBehavior!.collisionsWithSand++;
+      final smokeBehavior = other.findBehavior<SmokeStartMovingBehavior>();
+      smokeBehavior.isEnabled = true;
     }
     super.onCollisionStart(intersectionPoints, other);
   }
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is ActorMixin) {
-      try {
-        final slowDownBehavior = other.findBehavior<SlowDownBySandBehavior>();
-        if (slowDownBehavior.collisionsWithSand > 0) {
-          slowDownBehavior.collisionsWithSand--;
-        }
-      } catch (_) {}
+    if (other is SlowDownBySandOptimizedCheckerMixin &&
+        other.slowDownBySandBehavior != null) {
+      if (other.slowDownBySandBehavior!.collisionsWithSand > 0) {
+        other.slowDownBySandBehavior!.collisionsWithSand--;
+      }
     }
     super.onCollisionEnd(other);
   }

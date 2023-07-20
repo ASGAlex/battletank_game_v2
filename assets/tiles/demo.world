@@ -27,6 +27,20 @@
             "width": 1152,
             "x": 1152,
             "y": 0
+        },
+        {
+            "fileName": "nord_forest.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 0,
+            "y": -768
+        },
+        {
+            "fileName": "north_east_forest.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 1152,
+            "y": -768
         }
     ],
     "onlyShowAdjacentMaps": false,
