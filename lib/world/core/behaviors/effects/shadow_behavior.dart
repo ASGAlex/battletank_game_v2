@@ -20,7 +20,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
 
   final String? shadowKey;
 
-  static final generatedShadows = <String, Map<Picture, Vector2>>{};
+  static final generatedShadows = <String, Map<Image, Vector2>>{};
   final animationStateToKey = <dynamic, String>{};
   ShadowPictureComponent? shadowPictureComponent;
 
@@ -86,7 +86,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
       tilesetManager: game.tilesetManager,
     );
 
-    _renderSprite(animation.ticker().getSprite(), key);
+    _renderSprite(animation.createTicker().getSprite(), key);
   }
 
   void _renderSprite(Sprite sprite, String key) {
@@ -107,8 +107,11 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
       position: Vector2.zero(),
       overridePaint: shadowPaint,
     );
-    final picture = recorder.endRecording();
-    generatedShadows[key] = {picture: sprite.srcSize};
+    final image = recorder.endRecording().toImageSync(
+          sprite.srcSize.x.ceil(),
+          sprite.srcSize.y.ceil(),
+        );
+    generatedShadows[key] = {image: sprite.srcSize};
   }
 }
 
@@ -125,6 +128,9 @@ class ShadowPictureComponent extends PositionComponent
   final String? shadowKey;
   final ShadowBehavior shadowBehavior;
   late final ActorMixin targetEntity;
+  late final Image image;
+  final Vector2 offset = Vector2.zero();
+  final shadowOffsetDecorator = Transform2DDecorator();
 
   @override
   FutureOr<void>? onLoad() {
@@ -143,7 +149,40 @@ class ShadowPictureComponent extends PositionComponent
     if (spriteSize != null) {
       size.setFrom(spriteSize);
     }
+    if (targetEntity is SpriteAnimationGroupComponent) {
+      final state = (targetEntity as SpriteAnimationGroupComponent).current;
+      final key = shadowBehavior.animationStateToKey[state];
+      image = ShadowBehavior.generatedShadows[key]!.keys.first;
+    } else {
+      image = ShadowBehavior.generatedShadows[shadowKey]!.keys.first;
+    }
+    // image = picture.toImageSync(size.x.ceil(), size.y.ceil());
+    targetEntity.data.lookDirectionNotifier
+        .addListener(_onTargetLookDirectionUpdate);
+    _updateTransform();
+    _onTargetLookDirectionUpdate();
     return super.onLoad();
+  }
+
+  void _onTargetLookDirectionUpdate() {
+    final game = targetEntity.findGame() as MyGame;
+
+    final shadowOffset = game.world.shadowOffset;
+    switch (targetEntity.data.lookDirection) {
+      case DirectionExtended.up:
+        offset.setValues(shadowOffset.x, shadowOffset.y);
+        break;
+      case DirectionExtended.left:
+        offset.setValues(shadowOffset.x, -shadowOffset.y);
+        break;
+      case DirectionExtended.down:
+        offset.setValues(-shadowOffset.x, -shadowOffset.y);
+        break;
+      case DirectionExtended.right:
+        offset.setValues(-shadowOffset.x, shadowOffset.y);
+        break;
+    }
+    shadowOffsetDecorator.transform2d.position.setFrom(offset);
   }
 
   void _updateTransform() {
@@ -162,43 +201,13 @@ class ShadowPictureComponent extends PositionComponent
     if (parent is CellLayer) {
       (parent as CellLayer).isUpdateNeeded = true;
     }
+    targetEntity.data.lookDirectionNotifier
+        .removeListener(_onTargetLookDirectionUpdate);
     super.onRemove();
   }
 
   @override
   void render(Canvas canvas) {
-    Picture? picture;
-    if (targetEntity is SpriteAnimationGroupComponent) {
-      final state = (targetEntity as SpriteAnimationGroupComponent).current;
-      final key = shadowBehavior.animationStateToKey[state];
-      picture = ShadowBehavior.generatedShadows[key]?.keys.first;
-    } else {
-      picture = ShadowBehavior.generatedShadows[shadowKey]?.keys.first;
-    }
-
-    if (picture != null && parent != null) {
-      final game = targetEntity.findGame() as MyGame;
-      final decorator = Transform2DDecorator();
-      Vector2? offset;
-      final shadowOffset = game.world.shadowOffset;
-      switch (targetEntity.data.lookDirection) {
-        case DirectionExtended.up:
-          offset = Vector2(shadowOffset.x, shadowOffset.y);
-          break;
-        case DirectionExtended.left:
-          offset = Vector2(shadowOffset.x, -shadowOffset.y);
-          break;
-        case DirectionExtended.down:
-          offset = Vector2(-shadowOffset.x, -shadowOffset.y);
-          break;
-        case DirectionExtended.right:
-          offset = Vector2(-shadowOffset.x, shadowOffset.y);
-          break;
-      }
-      decorator.transform2d.position.setFrom(offset);
-      decorator.apply((p0) {
-        p0.drawPicture(picture!);
-      }, canvas);
-    }
+    canvas.drawImage(image, offset.toOffset(), paint);
   }
 }

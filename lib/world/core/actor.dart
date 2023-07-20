@@ -6,6 +6,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -91,11 +92,22 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   }
 }
 
+class LookDirectionNotifier extends ValueNotifier<DirectionExtended> {
+  LookDirectionNotifier(super.value);
+}
+
 class ActorData {
   double health = 1;
   double speed = 0;
   double cameraSpeed = 40;
-  DirectionExtended lookDirection = DirectionExtended.up;
+  final lookDirectionNotifier = LookDirectionNotifier(DirectionExtended.up);
+
+  DirectionExtended get lookDirection => lookDirectionNotifier.value;
+
+  set lookDirection(DirectionExtended value) {
+    lookDirectionNotifier.value = value;
+  }
+
   ActorCoreState coreState = ActorCoreState.init;
   Vector2 positionCenter = Vector2.zero();
   Vector2 size = Vector2.zero();
