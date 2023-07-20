@@ -41,6 +41,13 @@
             "width": 1152,
             "x": 1152,
             "y": -768
+        },
+        {
+            "fileName": "lake_south_west.tmx",
+            "height": 768,
+            "width": 1152,
+            "x": 1152,
+            "y": 768
         }
     ],
     "onlyShowAdjacentMaps": false,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="82">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="left-up" width="144" height="96" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="84">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <tileset firstgid="15" source="tank.tsx"/>
@@ -404,11 +404,6 @@
 </data>
  </layer>
  <objectgroup id="5" name="spawn" class="spawn">
-  <object id="1" name="spawn_player" type="spawn_player" x="909.508" y="6.477" width="16" height="16">
-   <properties>
-    <property name="spawn_seconds" type="float" value="3"/>
-   </properties>
-  </object>
   <object id="2" name="spawn" type="spawn" x="448.091" y="376.227" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="30"/>
@@ -609,7 +604,12 @@
     <property name="trigger_distance" type="float" value="999"/>
    </properties>
   </object>
-  <object id="25" name="spawn_neutral" type="spawn_neutral" x="951.5" y="11.667" width="16" height="16">
+  <object id="82" name="spawn_player" type="spawn_player" x="386.879" y="719.53" width="16" height="16">
+   <properties>
+    <property name="spawn_seconds" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="83" name="spawn_neutral" type="spawn_neutral" x="428.871" y="724.72" width="16" height="16">
    <properties>
     <property name="cooldown_seconds" type="float" value="30"/>
     <property name="spawn_seconds" type="float" value="5"/>
