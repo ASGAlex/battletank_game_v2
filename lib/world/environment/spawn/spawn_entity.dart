@@ -85,7 +85,10 @@ class SpawnEntity extends SpriteAnimationComponent
     spawn.spawnData.secondsDuringSpawn =
         properties.getValue<double>('spawn_seconds') ?? 0.0;
     spawn.spawnData.capacity = properties.getValue<int>('tanks_inside') ?? 1;
-    spawn.spawnData.capacity = properties.getValue<int>('tanks_inside') ?? 1;
+    spawn.spawnData.triggerFactions.addAll(
+        (properties.getValue<String>('triggerFactions') ?? '')
+            .split(',')
+            .map((e) => Faction(name: e)));
     final distance = properties.getValue<double>('trigger_distance') ?? 0;
     spawn.spawnData.triggerDistanceSquared = distance * distance;
     spawn.spawnData.typeOfTank =

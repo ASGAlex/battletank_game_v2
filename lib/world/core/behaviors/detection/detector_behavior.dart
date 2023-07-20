@@ -1,5 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
+import 'package:flutter/painting.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
@@ -32,6 +34,9 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
   final double distance;
   final DetectionType detectionType;
   final double maxMomentum;
+
+  // @override
+  // bool get debugMode => true;
 
   double _momentum = 0;
 
@@ -115,6 +120,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
 
   @override
   void update(double dt) {
+    debugMode = true;
     if (pauseBetweenChecks > 0) {
       _dtBetweenChecks += dt;
       if (_dtBetweenChecks < pauseBetweenChecks) {
@@ -158,5 +164,20 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
       _momentum = 0;
     }
     detected = false;
+  }
+
+  @override
+  void renderDebugMode(Canvas canvas) {
+    final rect = Rect.fromCenter(
+        center: Vector2.zero().toOffset(),
+        width: distance * 2,
+        height: distance * 2);
+
+    canvas.drawRect(
+        rect,
+        Paint()
+          ..color = (Color.fromRGBO(119, 0, 255, 1.0))
+          ..strokeWidth = 4
+          ..style = PaintingStyle.stroke);
   }
 }

@@ -205,7 +205,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(ColorFilterBehavior());
       if (data.factions.contains(Faction(name: 'Enemy'))) {
         add(DetectorBehavior(
-            distance: 300,
+            distance: 210,
             detectionType: DetectionType.audial,
             factionsToDetect: [Faction(name: 'Player')],
             maxMomentum: 120,
@@ -233,7 +233,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             }));
 
         add(DetectorBehavior(
-            distance: 150,
+            distance: 130,
             detectionType: DetectionType.visual,
             factionsToDetect: [Faction(name: 'Player')],
             maxMomentum: 0,
