@@ -167,7 +167,10 @@ class GameMapLoader extends TiledMapLoader {
 
   Future groundBuilder(TileBuilderContext context) async {
     context.priorityOverride = RenderPriority.ground.priority;
-    return genericTileBuilder(context);
+    final layer = await genericTileBuilder(context);
+    if (layer is CellStaticLayer) {
+      layer.renderAsImage = true;
+    }
   }
 
   Future onBuildTree(TileBuilderContext context) async {

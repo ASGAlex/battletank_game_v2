@@ -40,7 +40,9 @@ class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
   final scriptLayer = Component(priority: RenderPriority.sky.priority);
 
   final fadeOutConfig = FadeOutConfig(
-      transparencyPerStep: 0.05, fadeOutTimeout: const Duration(seconds: 2));
+    transparencyPerStep: 0.2,
+    fadeOutTimeout: const Duration(seconds: 8),
+  );
   final shadowsOpacity = 0.6;
 
   final shadowOffset = Vector2(-1.5, 1.5);

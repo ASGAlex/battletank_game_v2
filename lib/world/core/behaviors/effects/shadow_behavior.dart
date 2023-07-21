@@ -122,6 +122,8 @@ class ShadowPictureComponent extends PositionComponent
     anchor = targetEntity.anchor;
     currentCell = targetEntity.currentCell;
     scale = targetEntity.scale;
+    paint.isAntiAlias = false;
+    paint.filterQuality = FilterQuality.none;
     _updateTransform();
   }
 
