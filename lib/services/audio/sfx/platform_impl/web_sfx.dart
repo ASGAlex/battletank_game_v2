@@ -7,7 +7,7 @@ class SfxImpl implements SfxInterface {
     this.poolSize = 2,
   }) {
     _howlPlayer = Howl(HowlOptions(
-      src: ['/assets/audio/$effectName'],
+      src: ['${Uri.base}/assets/audio/$effectName'],
       html5: false,
       preload: true,
       loop: false,
