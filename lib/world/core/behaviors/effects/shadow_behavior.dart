@@ -57,12 +57,12 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
     shadowPictureComponent!.priority = parent.priority - 1;
 
     if (parent.parent is CellLayer) {
-      final layer = game.layersManager.addComponent(
+      game.layersManager.addComponent(
           component: shadowPictureComponent!,
           layerType: MapLayerType.static,
           layerName: 'Shadows',
+          renderMode: LayerRenderMode.image,
           priority: RenderPriority.shadows.priority);
-      (layer as CellStaticLayer).renderAsImage = true;
     } else {
       parent.parent!.add(shadowPictureComponent!);
     }

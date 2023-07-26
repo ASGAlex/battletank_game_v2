@@ -127,13 +127,14 @@ class GameMapLoader extends TiledMapLoader {
             );
             tree.currentCell = cell;
 
-            final layer = game.layersManager.addComponent(
-                component: tree,
-                layerType: MapLayerType.static,
-                absolutePosition: false,
-                layerName: 'Tree',
-                priority: RenderPriority.tree.priority);
-            (layer as CellStaticLayer).renderAsImage = true;
+            game.layersManager.addComponent(
+              component: tree,
+              layerType: MapLayerType.static,
+              absolutePosition: false,
+              layerName: 'Tree',
+              renderMode: LayerRenderMode.image,
+              priority: RenderPriority.tree.priority,
+            );
           } else if (random < 30) {
             final animation =
                 game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
@@ -167,10 +168,7 @@ class GameMapLoader extends TiledMapLoader {
 
   Future groundBuilder(TileBuilderContext context) async {
     context.priorityOverride = RenderPriority.ground.priority;
-    final layer = await genericTileBuilder(context);
-    if (layer is CellStaticLayer) {
-      layer.renderAsImage = true;
-    }
+    (await genericTileBuilder(context))?.renderMode = LayerRenderMode.image;
   }
 
   Future onBuildTree(TileBuilderContext context) async {
@@ -184,12 +182,12 @@ class GameMapLoader extends TiledMapLoader {
     );
     tree.currentCell = context.cell;
 
-    final layer = game.layersManager.addComponent(
+    game.layersManager.addComponent(
         component: tree,
         layerType: MapLayerType.static,
         layerName: 'Tree',
+        renderMode: LayerRenderMode.image,
         priority: RenderPriority.tree.priority);
-    (layer as CellStaticLayer).renderAsImage = true;
   }
 
   Future onBuildWater(TileBuilderContext context) async {
@@ -245,7 +243,6 @@ class GameMapLoader extends TiledMapLoader {
         component: brick,
         layerType: MapLayerType.static,
         layerName: 'Brick',
-        optimizeGraphics: false,
         priority: RenderPriority.walls.priority);
   }
 
@@ -261,7 +258,6 @@ class GameMapLoader extends TiledMapLoader {
     game.layersManager.addComponent(
         component: heavyBrick,
         layerType: MapLayerType.static,
-        optimizeGraphics: false,
         layerName: 'HeavyBrick',
         priority: RenderPriority.walls.priority);
   }
