@@ -262,6 +262,7 @@ class MyGame extends MyGameFeatures
     }
 
     initJoystick(cameraComponent.viewport);
+    add(inputEventsHandler);
 
     // if (kIsWeb) {
     // } else {

@@ -1,3 +1,4 @@
+import 'package:flame/components.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -16,7 +17,7 @@ enum PlayerAction {
   escape,
 }
 
-class InputEventsHandler {
+class InputEventsHandler extends Component {
   MyGame? game;
   final messageProvider = MessageStreamProvider<List<PlayerAction>>();
 
@@ -72,13 +73,19 @@ class InputEventsHandler {
     return KeyEventResult.handled;
   }
 
-  void onFireEvent() {
-    messageProvider.sendMessage([PlayerAction.fire]);
+  void onJoystickFireEvent() {
+    _isFirePressed = true;
   }
 
-  PlayerAction? _joystickPreviousMovement;
+  void onJoystickFireReleaseEvent() {
+    _isFirePressed = false;
+  }
 
-  bool onJoystickEvent(double angleDegrees) {
+  bool _isJoystickUsed = false;
+  PlayerAction? _joystickPreviousMovement;
+  bool _isFirePressed = false;
+
+  bool onJoystickMoveEvent(double angleDegrees) {
     PlayerAction? movement;
     if (angleDegrees <= 0.05) {
       movement = null;
@@ -96,13 +103,28 @@ class InputEventsHandler {
       movement = PlayerAction.moveLeft;
     }
     if (_joystickPreviousMovement != movement) {
-      if (movement == null) {
-        messageProvider.sendMessage([]);
-      } else {
-        messageProvider.sendMessage([movement]);
-      }
       _joystickPreviousMovement = movement;
     }
     return true;
+  }
+
+  @override
+  void update(double dt) {
+    if (!_isJoystickUsed &&
+        (_joystickPreviousMovement != null || _isFirePressed)) {
+      _isJoystickUsed = true;
+    }
+
+    if (_isJoystickUsed) {
+      final actions = <PlayerAction>[];
+      if (_isFirePressed) {
+        actions.add(PlayerAction.fire);
+      }
+      if (_joystickPreviousMovement != null) {
+        actions.add(_joystickPreviousMovement!);
+      }
+
+      messageProvider.sendMessage(actions);
+    }
   }
 }

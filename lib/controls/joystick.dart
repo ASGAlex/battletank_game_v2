@@ -10,7 +10,6 @@
 // import '../../../world/world.dart';
 //
 
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flame/components.dart'
@@ -36,7 +35,7 @@ mixin MyJoystickMix on MyGameFeatures {
       rows: 1,
     );
     joystick = MyJoystick(
-      onUpdate: inputEventsHandler.onJoystickEvent,
+      onUpdate: inputEventsHandler.onJoystickMoveEvent,
       priority: RenderPriority.ui.priority,
       knob: SpriteComponent(
         sprite: sheet.getSpriteById(1),
@@ -54,7 +53,8 @@ mixin MyJoystickMix on MyGameFeatures {
           ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
         buttonDown: SpriteComponent(
             sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
-        onPressed: inputEventsHandler.onFireEvent,
+        onPressed: inputEventsHandler.onJoystickFireEvent,
+        onReleased: inputEventsHandler.onJoystickFireReleaseEvent,
         priority: RenderPriority.ui.priority,
         margin: const EdgeInsets.only(bottom: 40, right: 20));
 
@@ -85,13 +85,8 @@ class MyJoystick extends JoystickComponent with ScreenPointOnComponentCached {
 
   double get knobAngleDegrees => _knobAngleDegrees;
 
-  /// The total amount the knob is dragged from the center of the joystick.
-  final Vector2 _unscaledDelta = Vector2.zero();
-
   /// The position where the knob rests.
   late Vector2 _baseKnobPosition;
-
-  late final knobRadius2;
 
   final Function(double angle) onUpdate;
 
@@ -99,12 +94,6 @@ class MyJoystick extends JoystickComponent with ScreenPointOnComponentCached {
   void onMount() {
     super.onMount();
     _baseKnobPosition = knob!.position.clone();
-  }
-
-  @override
-  FutureOr<void> onLoad() {
-    knobRadius2 = knobRadius * knobRadius;
-    return super.onLoad();
   }
 
   @override
