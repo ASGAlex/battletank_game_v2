@@ -210,8 +210,8 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             distance: 210,
             detectionType: DetectionType.audial,
             factionsToDetect: [Faction(name: 'Player')],
+            pauseBetweenChecks: 5,
             maxMomentum: 120,
-            // pauseBetweenChecks: 5,
             onDetection: (player, x, y) {
               _randomMovementBehavior ??= createRandomMovement();
               game.enemyAmbientVolume.onTankDetectedPlayer(x, y);
@@ -299,58 +299,31 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       smokeStartMoving.isEnabled = true;
     } else if (data.coreState == ActorCoreState.dying) {
       resetCamera();
-      try {
-        findBehaviors<RandomMovementBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<ColorFilterBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<TankStepTrailBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<DetectableBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<DetectorBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<MovementForwardCollisionBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<InteractionSetPlayer>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        findBehaviors<FireBulletBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      try {
-        if (_targetedMovementBehavior != null) {
-          _targetedMovementBehavior?.removeFromParent();
-          _targetedMovementBehavior = null;
+      final allBehaviors = children.query<Behavior>();
+      final typeList = <Type>[
+        RandomMovementBehavior,
+        ColorFilterBehavior,
+        TankStepTrailBehavior,
+        DetectableBehavior,
+        DetectorBehavior,
+        MovementForwardCollisionBehavior,
+        InteractionSetPlayer,
+        FireBulletBehavior,
+        TargetedMovementBehavior,
+      ];
+      for (final behavior in allBehaviors) {
+        if (typeList.contains(behavior.runtimeType)) {
+          behavior.removeFromParent();
         }
-        findBehaviors<TargetedMovementBehavior>().forEach((element) {
-          element.removeFromParent();
-        });
-      } catch (_) {}
-      children.whereType<MovingPathScript>().forEach((element) {
-        element.removeFromParent();
-      });
+      }
+      if (_targetedMovementBehavior != null) {
+        _targetedMovementBehavior?.removeFromParent();
+        _targetedMovementBehavior = null;
+      }
+      final scripts = children.whereType<MovingPathScript>();
+      for (final script in scripts) {
+        script.removeFromParent();
+      }
     } else if (data.coreState == ActorCoreState.removing) {
       final layer = sgGame.layersManager.addComponent(
         component: this,

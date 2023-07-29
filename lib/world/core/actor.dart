@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tank_game/game.dart';
@@ -32,10 +33,59 @@ mixin ActorWithBoundingBody on ActorMixin {
       () => BodyHitbox(parentWithGridSupport: this);
 }
 
+@immutable
+class ChildrenChangeMessage {
+  final Component child;
+  final ChildrenChangeType type;
+
+  const ChildrenChangeMessage(this.child, this.type);
+}
+
+class ChildrenChangeListener extends MessageListener<ChildrenChangeMessage> {
+  final Function(ChildrenChangeMessage message) callback;
+
+  ChildrenChangeListener(super.provider, this.callback);
+
+  @override
+  void onStreamMessage(ChildrenChangeMessage message) => callback(message);
+}
+
+mixin ChildrenChangeListenerMixin on Component {
+  ChildrenChangeListener? _listener;
+
+  @override
+  FutureOr<void> onLoad() {
+    if (parent is ActorMixin) {
+      _listener = ChildrenChangeListener(
+        (parent as ActorMixin).childrenChangeNotifier,
+        onParentChildrenChanged,
+      );
+    }
+    return super.onLoad();
+  }
+
+  void onParentChildrenChanged(ChildrenChangeMessage message);
+
+  @override
+  void onRemove() {
+    _listener?.dispose();
+    _listener = null;
+    super.onRemove();
+  }
+}
+
 mixin ActorMixin on HasGridSupport implements EntityMixin {
   ActorData data = ActorData();
 
   final distanceFunctions = <DistanceFunction>{};
+
+  final childrenChangeNotifier = MessageStreamProvider<ChildrenChangeMessage>();
+
+  @override
+  void onChildrenChanged(Component child, ChildrenChangeType type) {
+    childrenChangeNotifier.sendMessage(ChildrenChangeMessage(child, type));
+    super.onChildrenChanged(child, type);
+  }
 
   @override
   FutureOr<void> onLoad() {
@@ -47,6 +97,7 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   @override
   void onRemove() {
     transform.removeListener(_updateData);
+    childrenChangeNotifier.dispose();
     super.onRemove();
   }
 

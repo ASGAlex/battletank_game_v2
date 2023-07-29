@@ -18,7 +18,13 @@ abstract class ScriptCore extends Component
   }
 
   double _lifeTimeDt = 0;
+
   bool _timeOver = false;
+
+  bool get timeOver => _timeOver;
+
+  double frequency = 0;
+  double _frequencyDt = 0;
 
   void resetLifetime([double? newLifetime]) {
     _timeOver = false;
@@ -32,13 +38,25 @@ abstract class ScriptCore extends Component
 
   @override
   void update(double dt) {
+    if (frequency > 0) {
+      _frequencyDt += dt;
+      if (_frequencyDt >= frequency) {
+        _runScriptUpdate(_frequencyDt);
+        _frequencyDt = 0;
+      }
+    } else {
+      _runScriptUpdate(dt);
+    }
+  }
+
+  void _runScriptUpdate(double dt) {
     if (_lifetimeMax > 0) {
       if (_lifeTimeDt < _lifetimeMax) {
         scriptUpdate(dt);
+        _lifeTimeDt += dt;
       } else {
         _timeOver = true;
       }
-      _lifeTimeDt += dt;
     } else {
       scriptUpdate(dt);
     }
