@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flame/camera.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
+import 'package:tank_game/controls/joystick.dart';
 import 'package:tank_game/controls/keyboard.dart';
 import 'package:tank_game/packages/color_filter/lib/color_filter.dart';
 import 'package:tank_game/services/settings/controller.dart';
@@ -46,11 +49,19 @@ abstract class MyGameFeatures extends FlameGame
         ColorFilterMix,
         ScrollDetector {
   GameWorld get world => rootComponent as GameWorld;
+  final inputEventsHandler = InputEventsHandler();
+
+  @override
+  FutureOr<void> onLoad() {
+    inputEventsHandler.game = this as MyGame;
+    return super.onLoad();
+  }
 }
 
 class MyGame extends MyGameFeatures
     with
         GameHardwareKeyboard,
+        MyJoystickMix,
         XInputGamePad,
         MessageListenerMixin<List<PlayerAction>>,
         HasMessageProviders {
@@ -249,6 +260,16 @@ class MyGame extends MyGameFeatures
       ]);
       add(enemyAmbientVolume);
     }
+
+    initJoystick(cameraComponent.viewport);
+
+    // if (kIsWeb) {
+    // } else {
+    //   if (Platform.isAndroid) {
+    //     initJoystick(cameraComponent.viewport);
+    //   }
+    // }
+
     consoleMessages.sendMessage('Start building game cells...');
 
     // Spawn.waitFree(true).then((playerSpawn) async {

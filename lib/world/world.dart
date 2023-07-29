@@ -31,7 +31,7 @@ const distanceOfSilenceSquared = 300.0 * 300;
 const distanceOfViewSquared = 200.0 * 200;
 const distanceOfRevealSquared = 30 * 30;
 
-class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
+class GameWorld extends World with HasGameRef<MyGame> {
   final skyLayer = Component(priority: RenderPriority.sky.priority);
   final tankLayer = Component(priority: RenderPriority.player.priority);
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);

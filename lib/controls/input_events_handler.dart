@@ -2,7 +2,6 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/world/core/direction.dart';
 
 enum PlayerAction {
   moveUp,
@@ -73,35 +72,36 @@ class InputEventsHandler {
     return KeyEventResult.handled;
   }
 
-  double Function()? getCurrentAngle;
-
-  DirectionExtended Function()? getCurrentDirection;
-
-  void handleFireEvent() {
-    // messageProvider.sendMessage([PlayerAction.fire]);
+  void onFireEvent() {
+    messageProvider.sendMessage([PlayerAction.fire]);
   }
 
-  bool onJoystickEvent() {
-    final angleDegrees = getCurrentAngle?.call();
-    if (angleDegrees == null) {
-      return false;
-    }
+  PlayerAction? _joystickPreviousMovement;
 
-    if (angleDegrees == 0) {
-      return false;
-    }
-    if (angleDegrees >= 315 || angleDegrees <= 45) {
+  bool onJoystickEvent(double angleDegrees) {
+    PlayerAction? movement;
+    if (angleDegrees <= 0.05) {
+      movement = null;
+    } else if (angleDegrees >= 315 || angleDegrees <= 45) {
       //Up
-      messageProvider.sendMessage([PlayerAction.moveUp]);
+      movement = PlayerAction.moveUp;
     } else if (angleDegrees > 45 && angleDegrees < 135) {
       //Right
-      messageProvider.sendMessage([PlayerAction.moveRight]);
+      movement = PlayerAction.moveRight;
     } else if (angleDegrees >= 135 && angleDegrees <= 225) {
       //Bottom
-      messageProvider.sendMessage([PlayerAction.moveDown]);
+      movement = PlayerAction.moveDown;
     } else if (angleDegrees > 225 && angleDegrees < 315) {
       //Left
-      messageProvider.sendMessage([PlayerAction.moveLeft]);
+      movement = PlayerAction.moveLeft;
+    }
+    if (_joystickPreviousMovement != movement) {
+      if (movement == null) {
+        messageProvider.sendMessage([]);
+      } else {
+        messageProvider.sendMessage([movement]);
+      }
+      _joystickPreviousMovement = movement;
     }
     return true;
   }
