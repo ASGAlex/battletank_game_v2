@@ -13,13 +13,15 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flame/components.dart';
+import 'package:flame/components.dart'
+    hide JoystickComponent, JoystickDirection;
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
-import 'package:flame/input.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/flame_override/lib/flame_override.dart';
+import 'package:tank_game/packages/flame_override/lib/src/extensoins.dart';
 import 'package:tank_game/world/world.dart';
 
 mixin MyJoystickMix on MyGameFeatures {
@@ -65,7 +67,7 @@ mixin MyJoystickMix on MyGameFeatures {
   }
 }
 
-class MyJoystick extends JoystickComponent {
+class MyJoystick extends JoystickComponent with ScreenPointOnComponentCached {
   MyJoystick({
     super.knob,
     super.background,
