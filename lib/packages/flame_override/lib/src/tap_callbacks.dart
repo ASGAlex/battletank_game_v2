@@ -14,8 +14,6 @@ import 'package:tank_game/packages/flame_override/lib/src/has_tappable_component
 ///
 /// This mixin is the replacement of the Tappable mixin.
 mixin TapCallbacks on Component {
-  late final MultiTapDispatcher _dispatcher;
-
   void onTapDown(TapDownEvent event) {}
 
   void onLongTapDown(TapDownEvent event) {}
@@ -29,19 +27,21 @@ mixin TapCallbacks on Component {
   void onMount() {
     super.onMount();
     final game = findGame()! as FlameGame;
-
-    var dispatcher = game.firstChild<MultiTapDispatcher>();
+    var dispatcher =
+        game.findByKey<MultiTapDispatcher>(const MultiTapDispatcherKey());
     if (dispatcher == null) {
       dispatcher = MultiTapDispatcher();
+      game.registerKey(const MultiTapDispatcherKey(), dispatcher);
       game.add(dispatcher);
     }
     dispatcher.tapCallbacksComponents.add(this);
-    _dispatcher = dispatcher;
   }
 
   @override
   void onRemove() {
     super.onRemove();
-    _dispatcher.tapCallbacksComponents.remove(this);
+    final game = findGame()! as FlameGame;
+    final dispatcher = game.firstChild<MultiTapDispatcher>();
+    dispatcher!.tapCallbacksComponents.remove(this);
   }
 }

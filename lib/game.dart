@@ -128,9 +128,8 @@ class MyGame extends MyGameFeatures
 
     final gameWorld = GameWorld();
 
-    cameraComponent = CameraComponent(
-        world: gameWorld,
-        viewport: FixedAspectRatioViewport(aspectRatio: 400 / 250));
+    cameraComponent =
+        CameraComponent(world: gameWorld, viewport: MaxViewport());
     cameraComponent.viewfinder.zoom = 5;
     cameraComponent.priority = 999;
 

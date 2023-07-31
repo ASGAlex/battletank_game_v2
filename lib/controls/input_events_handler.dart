@@ -73,17 +73,17 @@ class InputEventsHandler extends Component {
     return KeyEventResult.handled;
   }
 
-  void onJoystickFireEvent() {
-    _isFirePressed = true;
+  void onJoystickButtonEvent(PlayerAction action) {
+    _joystickButtonEvents.add(action);
   }
 
-  void onJoystickFireReleaseEvent() {
-    _isFirePressed = false;
+  void onJoystickButtonReleaseEvent(PlayerAction action) {
+    _joystickButtonEvents.remove(action);
   }
 
   bool _isJoystickUsed = false;
   PlayerAction? _joystickPreviousMovement;
-  bool _isFirePressed = false;
+  final _joystickButtonEvents = <PlayerAction>{};
 
   bool onJoystickMoveEvent(double angleDegrees) {
     PlayerAction? movement;
@@ -111,14 +111,15 @@ class InputEventsHandler extends Component {
   @override
   void update(double dt) {
     if (!_isJoystickUsed &&
-        (_joystickPreviousMovement != null || _isFirePressed)) {
+        (_joystickPreviousMovement != null ||
+            _joystickButtonEvents.isNotEmpty)) {
       _isJoystickUsed = true;
     }
 
     if (_isJoystickUsed) {
       final actions = <PlayerAction>[];
-      if (_isFirePressed) {
-        actions.add(PlayerAction.fire);
+      if (_joystickButtonEvents.isNotEmpty) {
+        actions.addAll(_joystickButtonEvents);
       }
       if (_joystickPreviousMovement != null) {
         actions.add(_joystickPreviousMovement!);

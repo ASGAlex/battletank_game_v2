@@ -12,12 +12,22 @@ import 'package:meta/meta.dart';
 import 'package:tank_game/packages/flame_override/lib/src/extensoins.dart';
 import 'package:tank_game/packages/flame_override/lib/src/tap_callbacks.dart';
 
+class MultiTapDispatcherKey implements ComponentKey {
+  const MultiTapDispatcherKey();
+
+  @override
+  int get hashCode => 401913931; // 'MultiTapDispatcherKey' as hashCode
+
+  @override
+  bool operator ==(dynamic other) =>
+      other is MultiTapDispatcherKey && other.hashCode == hashCode;
+}
+
 @internal
 class MultiTapDispatcher extends Component implements MultiTapListener {
   /// The record of all components currently being touched.
   final Set<TaggedComponent<TapCallbacks>> _record = {};
   final Set<TapCallbacks> tapCallbacksComponents = {};
-  bool _eventHandlerRegistered = false;
 
   FlameGame get game => parent! as FlameGame;
 
@@ -181,33 +191,25 @@ class MultiTapDispatcher extends Component implements MultiTapListener {
 
   @override
   void onMount() {
-    if (game.firstChild<MultiTapDispatcher>() == null) {
-      game.gestureDetectors.add<MultiTapGestureRecognizer>(
-        MultiTapGestureRecognizer.new,
-        (MultiTapGestureRecognizer instance) {
-          instance.longTapDelay = Duration(
-            milliseconds: (longTapDelay * 1000).toInt(),
-          );
-          instance.onTap = handleTap;
-          instance.onTapDown = handleTapDown;
-          instance.onTapUp = handleTapUp;
-          instance.onTapCancel = handleTapCancel;
-          instance.onLongTapDown = handleLongTapDown;
-        },
-      );
-      _eventHandlerRegistered = true;
-    } else {
-      // Ensures that only one MultiTapDispatcher is attached to the Game.
-      removeFromParent();
-    }
+    game.gestureDetectors.add<MultiTapGestureRecognizer>(
+      MultiTapGestureRecognizer.new,
+      (MultiTapGestureRecognizer instance) {
+        instance.longTapDelay = Duration(
+          milliseconds: (longTapDelay * 1000).toInt(),
+        );
+        instance.onTap = handleTap;
+        instance.onTapDown = handleTapDown;
+        instance.onTapUp = handleTapUp;
+        instance.onTapCancel = handleTapCancel;
+        instance.onLongTapDown = handleLongTapDown;
+      },
+    );
   }
 
   @override
   void onRemove() {
-    if (_eventHandlerRegistered) {
-      game.gestureDetectors.remove<MultiTapGestureRecognizer>();
-      _eventHandlerRegistered = false;
-    }
+    game.gestureDetectors.remove<MultiTapGestureRecognizer>();
+    game.unregisterKey(const MultiTapDispatcherKey());
   }
 
   @override

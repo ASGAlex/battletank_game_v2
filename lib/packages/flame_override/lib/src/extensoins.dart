@@ -16,7 +16,6 @@ extension DeliverAtPoint on PositionEvent {
   }) {
     for (final component in supportedComponents) {
       if (!component.isScreenPointOnComponent(canvasPosition)) continue;
-      print('EVENT!!!!!!!!!!');
       eventHandler(component);
       if (!continuePropagation) {
         CameraComponent.currentCameras.clear();

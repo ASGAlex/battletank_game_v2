@@ -21,8 +21,6 @@ mixin DragCallbacks on Component {
   /// Returns true while the component is being dragged.
   bool get isDragged => _isDragged;
 
-  late final MultiDragDispatcher _dispatcher;
-
   /// The user initiated a drag gesture on top of this component.
   ///
   /// By default, only one component will receive a drag event. However, setting
@@ -69,18 +67,21 @@ mixin DragCallbacks on Component {
   void onMount() {
     super.onMount();
     final game = findGame()! as FlameGame;
-    var dispatcher = game.firstChild<MultiDragDispatcher>();
+    var dispatcher =
+        game.findByKey<MultiDragDispatcher>(const MultiDragDispatcherKey());
     if (dispatcher == null) {
       dispatcher = MultiDragDispatcher();
+      game.registerKey(const MultiDragDispatcherKey(), dispatcher);
       game.add(dispatcher);
     }
     dispatcher.dragCallbacksComponents.add(this);
-    _dispatcher = dispatcher;
   }
 
   @override
   void onRemove() {
     super.onRemove();
-    _dispatcher.dragCallbacksComponents.remove(this);
+    final game = findGame()! as FlameGame;
+    final dispatcher = game.firstChild<MultiDragDispatcher>();
+    dispatcher!.dragCallbacksComponents.remove(this);
   }
 }

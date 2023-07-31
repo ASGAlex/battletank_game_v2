@@ -18,15 +18,13 @@ import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/material.dart';
+import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/packages/flame_override/lib/flame_override.dart';
 import 'package:tank_game/packages/flame_override/lib/src/extensoins.dart';
 import 'package:tank_game/world/world.dart';
 
 mixin MyJoystickMix on MyGameFeatures {
-  MyJoystick? joystick;
-  HudButtonComponent? hudButton;
-
   initJoystick(Component rootComponent) async {
     final image = await images.load('joystick.png');
     final sheet = SpriteSheet.fromColumnsAndRows(
@@ -34,7 +32,7 @@ mixin MyJoystickMix on MyGameFeatures {
       columns: 6,
       rows: 1,
     );
-    joystick = MyJoystick(
+    final joystick = MyJoystick(
       onUpdate: inputEventsHandler.onJoystickMoveEvent,
       priority: RenderPriority.ui.priority,
       knob: SpriteComponent(
@@ -47,23 +45,40 @@ mixin MyJoystickMix on MyGameFeatures {
       ),
       margin: const EdgeInsets.only(left: 20, bottom: 40),
     );
-    hudButton = HudButtonComponent(
+
+    joystick.background
+        ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
+    joystick.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
+
+    final fireButton = HudButtonComponent(
         button: SpriteComponent(
             sprite: sheet.getSpriteById(3), size: Vector2.all(60))
           ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
         buttonDown: SpriteComponent(
             sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
-        onPressed: inputEventsHandler.onJoystickFireEvent,
-        onReleased: inputEventsHandler.onJoystickFireReleaseEvent,
+        onPressed: () =>
+            inputEventsHandler.onJoystickButtonEvent(PlayerAction.fire),
+        onReleased: () =>
+            inputEventsHandler.onJoystickButtonReleaseEvent(PlayerAction.fire),
         priority: RenderPriority.ui.priority,
         margin: const EdgeInsets.only(bottom: 40, right: 20));
 
-    rootComponent.add(joystick!);
-    rootComponent.add(hudButton!);
+    final primaryActionButton = HudButtonComponent(
+        button: SpriteComponent(
+            sprite: sheet.getSpriteById(2), size: Vector2.all(40))
+          ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
+        buttonDown: SpriteComponent(
+            sprite: sheet.getSpriteById(4), size: Vector2.all(40)),
+        onPressed: () =>
+            inputEventsHandler.onJoystickButtonEvent(PlayerAction.triggerE),
+        onReleased: () => inputEventsHandler
+            .onJoystickButtonReleaseEvent(PlayerAction.triggerE),
+        priority: RenderPriority.ui.priority,
+        margin: const EdgeInsets.only(bottom: 40, right: 100));
 
-    joystick?.background
-        ?.add(OpacityEffect.to(0.5, EffectController(duration: 0)));
-    joystick?.knob?.add(OpacityEffect.to(0.8, EffectController(duration: 0)));
+    rootComponent.add(joystick);
+    rootComponent.add(fireButton);
+    rootComponent.add(primaryActionButton);
   }
 }
 
