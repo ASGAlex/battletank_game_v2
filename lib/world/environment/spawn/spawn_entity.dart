@@ -30,6 +30,7 @@ class SpawnEntity extends SpriteAnimationComponent
         ScenarioEventEmitter {
   SpawnEntity({required this.rootComponent}) {
     data = SpawnData();
+    noVisibleChildren = true;
   }
 
   @override

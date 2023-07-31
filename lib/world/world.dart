@@ -69,12 +69,11 @@ class GameWorld extends World with HasGameRef<MyGame> {
 
   @override
   Future<void>? onLoad() {
-    final root = game.layersManager.layersRootComponent;
     add(skyLayer);
-    root.add(tankLayer);
-    root.add(bulletLayer);
-    root.add(spawnLayer);
-    root.add(scenarioLayer);
+    add(tankLayer);
+    add(bulletLayer);
+    add(spawnLayer);
+    add(scenarioLayer);
     return null;
   }
 

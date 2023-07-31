@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
@@ -34,6 +36,9 @@ abstract class ScenarioComponentCore extends PositionComponent
 
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => ScenarioHitbox();
+
+  @override
+  void renderTree(Canvas canvas) {}
 }
 
 class ScenarioComponent<T extends ScenarioComponentCore>

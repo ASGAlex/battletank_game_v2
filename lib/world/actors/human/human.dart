@@ -48,6 +48,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
     bodyHitbox.onCollisionStartCallback = onWeakBodyCollision;
     bodyHitbox.collisionType = CollisionType.passive;
+    noVisibleChildren = true;
   }
 
   @override

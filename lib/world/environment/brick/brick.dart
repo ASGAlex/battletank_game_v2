@@ -16,6 +16,7 @@ class BrickEntity extends SpriteComponent
         CollisionCallbacks,
         EntityMixin,
         HasGridSupport,
+        ComponentWithUpdate,
         ActorMixin,
         ActorWithBoundingBody,
         UpdateOnDemand {
@@ -26,6 +27,7 @@ class BrickEntity extends SpriteComponent
     this.resizeOnHit = true,
   }) : super(priority: RenderPriority.player.priority) {
     paint.filterQuality = FilterQuality.none;
+    noVisibleChildren = true;
     paint.isAntiAlias = false;
   }
 

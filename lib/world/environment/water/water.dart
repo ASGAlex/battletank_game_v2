@@ -19,6 +19,7 @@ class WaterEntity extends SpriteAnimationComponent
       : super(priority: RenderPriority.water.priority) {
     paint.filterQuality = FilterQuality.none;
     paint.isAntiAlias = false;
+    noVisibleChildren = true;
   }
 
   @override

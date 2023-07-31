@@ -72,6 +72,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     boundingBox.defaultCollisionType =
         boundingBox.collisionType = CollisionType.active;
     currentCell = owner.currentCell;
+    noVisibleChildren = true;
   }
 
   ActorMixin owner;

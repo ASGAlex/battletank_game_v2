@@ -104,6 +104,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.inactive;
+    noVisibleChildren = true;
   }
 
   final String _tileType;

@@ -16,6 +16,7 @@ class TreeEntity extends SpriteComponent
       : super(priority: RenderPriority.tree.priority) {
     paint.filterQuality = FilterQuality.none;
     paint.isAntiAlias = false;
+    noVisibleChildren = true;
   }
 
   @override
