@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:tank_game/game.dart';
-import 'package:tank_game/ui/game/scenario/bottom_message.dart';
+import 'package:tank_game/ui/game/scenario/message_widget.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/scenario/components/has_text_message_mixin.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
@@ -53,25 +52,18 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
     final text = scenario.text;
     if (text.isNotEmpty) {
       if (split) {
-        final says = text
-            .split('\n')
-            .map((e) => Say(text: [TextSpan(text: e)]))
-            .toList();
-        game.showScenarioMessage(TalkDialog(
+        final says = text.split('\n').toList();
+        game.showScenarioMessage(MessageWidget(
           // nextOnTap: true,
           // nextOnAnyKey: true,
-          says: says,
+          texts: says,
           provider: game.inputEventsHandler.messageProvider,
         ));
       } else {
-        game.showScenarioMessage(TalkDialog(
+        game.showScenarioMessage(MessageWidget(
           // nextOnTap: true,
           // nextOnAnyKey: true,
-          says: [
-            Say(
-              text: [TextSpan(text: scenario.text)],
-            ),
-          ],
+          texts: [scenario.text],
           provider: game.inputEventsHandler.messageProvider,
         ));
       }

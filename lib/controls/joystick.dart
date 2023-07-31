@@ -52,10 +52,10 @@ mixin MyJoystickMix on MyGameFeatures {
 
     final fireButton = HudButtonComponent(
         button: SpriteComponent(
-            sprite: sheet.getSpriteById(3), size: Vector2.all(60))
+            sprite: sheet.getSpriteById(3), size: Vector2.all(100))
           ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
         buttonDown: SpriteComponent(
-            sprite: sheet.getSpriteById(5), size: Vector2.all(60)),
+            sprite: sheet.getSpriteById(5), size: Vector2.all(100)),
         onPressed: () =>
             inputEventsHandler.onJoystickButtonEvent(PlayerAction.fire),
         onReleased: () =>
@@ -65,20 +65,38 @@ mixin MyJoystickMix on MyGameFeatures {
 
     final primaryActionButton = HudButtonComponent(
         button: SpriteComponent(
-            sprite: sheet.getSpriteById(2), size: Vector2.all(40))
+            sprite: sheet.getSpriteById(2), size: Vector2.all(50))
           ..add(OpacityEffect.to(0.5, EffectController(duration: 0))),
         buttonDown: SpriteComponent(
-            sprite: sheet.getSpriteById(4), size: Vector2.all(40)),
+            sprite: sheet.getSpriteById(4), size: Vector2.all(50)),
         onPressed: () =>
             inputEventsHandler.onJoystickButtonEvent(PlayerAction.triggerE),
         onReleased: () => inputEventsHandler
             .onJoystickButtonReleaseEvent(PlayerAction.triggerE),
         priority: RenderPriority.ui.priority,
-        margin: const EdgeInsets.only(bottom: 40, right: 100));
+        margin: const EdgeInsets.only(bottom: 40, right: 120));
+
+    final secondaryActionButton = HudButtonComponent(
+        button: SpriteComponent(
+            sprite: sheet.getSpriteById(2), size: Vector2.all(40))
+          ..add(OpacityEffect.to(0.5, EffectController(duration: 0)))
+          ..add(ColorEffect(
+              const Color.fromRGBO(119, 0, 255, 1.0),
+              const Offset(1, 1),
+              InfiniteEffectController(EffectController(duration: 100)))),
+        buttonDown: SpriteComponent(
+            sprite: sheet.getSpriteById(4), size: Vector2.all(40)),
+        onPressed: () =>
+            inputEventsHandler.onJoystickButtonEvent(PlayerAction.triggerF),
+        onReleased: () => inputEventsHandler
+            .onJoystickButtonReleaseEvent(PlayerAction.triggerF),
+        priority: RenderPriority.ui.priority,
+        margin: const EdgeInsets.only(top: 40, right: 40));
 
     rootComponent.add(joystick);
     rootComponent.add(fireButton);
     rootComponent.add(primaryActionButton);
+    rootComponent.add(secondaryActionButton);
   }
 }
 

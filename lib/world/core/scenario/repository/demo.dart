@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tank_game/ui/game/scenario/bottom_message.dart';
+import 'package:tank_game/ui/game/scenario/message_widget.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
@@ -44,14 +44,10 @@ class TutorialUseFirstTank extends ScriptCore {
   @override
   void onStreamMessage(ScenarioEvent<dynamic> message) {
     if (message is EventSetPlayer) {
-      game.showScenarioMessage(TalkDialog(
+      game.showScenarioMessage(MessageWidget(
         // nextOnTap: true,
         // nextOnAnyKey: true,
-        says: [
-          Say(
-            text: [TextSpan(text: textTaskToKill)],
-          ),
-        ],
+        texts: [textTaskToKill],
         key: UniqueKey(),
       ));
     } else if (message is EventKilled) {
@@ -65,14 +61,10 @@ class TutorialUseFirstTank extends ScriptCore {
           text = textTaskToKillCounter;
           text = text.replaceFirst('%n', killedTanks.toString());
         }
-        game.showScenarioMessage(TalkDialog(
+        game.showScenarioMessage(MessageWidget(
           // nextOnTap: true,
           // nextOnAnyKey: true,
-          says: [
-            Say(
-              text: [TextSpan(text: text)],
-            ),
-          ],
+          texts: [text],
           key: UniqueKey(),
         ));
       }
