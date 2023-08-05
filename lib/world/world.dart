@@ -12,9 +12,9 @@ enum RenderPriority {
   sky(25),
   walls(20),
   tree(15),
+  shadows(11),
   player(10),
   bullet(9),
-  shadows(6),
   water(5),
   spawn(3),
   trackTrail(1),
@@ -25,11 +25,6 @@ enum RenderPriority {
 
   const RenderPriority(this.priority);
 }
-
-const distanceOfSuspendingSquared = 250.0 * 250;
-const distanceOfSilenceSquared = 300.0 * 300;
-const distanceOfViewSquared = 200.0 * 200;
-const distanceOfRevealSquared = 30 * 30;
 
 class GameWorld extends World with HasGameRef<MyGame> {
   final skyLayer = Component(priority: RenderPriority.sky.priority);

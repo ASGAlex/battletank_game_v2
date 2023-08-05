@@ -179,6 +179,7 @@ class MyGame extends MyGameFeatures
       worldLoader = WorldLoader(
         fileName: scenario.worldFile!,
         mapLoader: {'all': GameMapLoader.new},
+        // loadWholeMap: false,
       );
     }
 
