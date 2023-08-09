@@ -142,7 +142,7 @@ class MyGame extends MyGameFeatures
     switch (settings.processor) {
       case ProcessorSpeed.web:
         activeRadius = const Size(1, 1);
-        unloadRadius = const Size(2, 2);
+        unloadRadius = const Size(1, 1);
         preloadRadius = const Size(4, 4);
         processCellsLimitToPauseEngine = 10;
         suspendedCellLifetime = const Duration(seconds: 120);
