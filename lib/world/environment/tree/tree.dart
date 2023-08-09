@@ -11,7 +11,12 @@ import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 import 'package:tank_game/world/world.dart';
 
 class TreeEntity extends SpriteComponent
-    with CollisionCallbacks, EntityMixin, HasGridSupport, ActorMixin {
+    with
+        CollisionCallbacks,
+        EntityMixin,
+        HasGridSupport,
+        ActorMixin,
+        UpdateOnDemand {
   TreeEntity({required super.sprite, super.position, super.size})
       : super(priority: RenderPriority.tree.priority) {
     paint.filterQuality = FilterQuality.none;

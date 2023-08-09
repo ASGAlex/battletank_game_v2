@@ -14,7 +14,7 @@ import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavi
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
-import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
 class InteractionSetPlayer extends InteractableBehavior {

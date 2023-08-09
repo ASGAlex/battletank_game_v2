@@ -9,7 +9,7 @@ import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/scenario_description.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
-import 'package:tank_game/world/environment/spawn/spawn_behavior.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 
 class DemoScenario extends Scenario {
   DemoScenario({super.name = 'Demo', super.description = 'Not just test map!'});

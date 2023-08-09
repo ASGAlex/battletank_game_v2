@@ -63,6 +63,8 @@ class HideInTreesBehavior extends CollisionBehavior {
               case DetectionType.audial:
                 detectable.distanceModifier = 0.5;
                 break;
+              default:
+                break;
             }
           }
         } else {
@@ -73,6 +75,8 @@ class HideInTreesBehavior extends CollisionBehavior {
                 break;
               case DetectionType.audial:
                 detectable.distanceModifier = 1;
+                break;
+              default:
                 break;
             }
           }

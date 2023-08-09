@@ -138,6 +138,7 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
       final game = (spatialGrid?.game as MyGame);
       game.cameraComponent.stop();
       game.cameraComponent.moveTo(game.initialPlayerPosition, speed: 100);
+      game.cameraComponent.viewfinder.zoom = 5;
       game.restorePlayer();
     }
   }

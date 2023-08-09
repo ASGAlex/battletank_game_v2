@@ -14,7 +14,8 @@ class WaterEntity extends SpriteAnimationComponent
         EntityMixin,
         HasGridSupport,
         ActorMixin,
-        ActorWithBoundingBody {
+        ActorWithBoundingBody,
+        UpdateOnDemand {
   WaterEntity({required super.animation, super.position, super.size})
       : super(priority: RenderPriority.water.priority) {
     paint.filterQuality = FilterQuality.none;

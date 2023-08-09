@@ -1,10 +1,10 @@
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 
 enum SpawnState { idle, spawning, timeout }
 
-typedef SpawnTriggerCallback = void Function(SpawnEntity spawn);
+typedef SpawnTriggerCallback = void Function(SpawnCoreEntity spawn);
 
 class SpawnData extends ActorData {
   var state = SpawnState.idle;
@@ -12,8 +12,10 @@ class SpawnData extends ActorData {
   final triggerFactions = <Faction>[];
 
   double secondsBetweenSpawns = 60;
+  double timeoutBetweenSpawnsElapsed = 0;
+
   double secondsDuringSpawn = 0;
-  double timeoutSecondsElapsed = 0;
+  double timeoutDuringSpawnsElapsed = 0;
 
   /// How many entities it contains. -1 means infinity
   int capacity = -1;

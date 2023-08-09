@@ -2,16 +2,15 @@ import 'dart:collection';
 
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
-import 'package:tank_game/world/environment/spawn/spawn_behavior.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_data.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
 
 class SpawnManager {
-  final _spawns = HashSet<SpawnEntity>();
+  final _spawns = HashSet<SpawnCoreEntity>();
 
   bool spawnNewActor({
     required ActorMixin actor,
-    SpawnEntity? preferredSpawn,
+    SpawnCoreEntity? preferredSpawn,
     Faction? faction,
     Duration retryInterval = const Duration(seconds: 10),
     int retryAttempts = 15,
@@ -19,25 +18,13 @@ class SpawnManager {
   }) {
     bool success;
     final spawn = preferredSpawn ?? findIdle(faction: faction);
-    if (spawn == null) return false;
-    try {
-      final behavior = spawn.findBehavior<SpawnBehavior>();
-      if (behavior.objectToSpawn != null) {
-        success = false;
-      }
-      behavior.objectToSpawn = actor;
-      if (onSpawnComplete != null) {
-        behavior.onSpawnComplete = onSpawnComplete;
-      }
-      behavior.spawnData.state = SpawnState.spawning;
-      success = true;
-    } on StateError catch (_) {
+    if (spawn == null) {
       success = false;
+    } else {
+      success = spawn.scheduleSpawn(actor);
     }
 
-    if (success) {
-      return success;
-    } else {
+    if (!success) {
       if (retryAttempts != 0) {
         Future.delayed(retryInterval).then((value) {
           spawnNewActor(
@@ -51,9 +38,15 @@ class SpawnManager {
       }
       return false;
     }
+
+    if (onSpawnComplete != null) {
+      onSpawnComplete(actor);
+    }
+
+    return true;
   }
 
-  SpawnEntity? findIdle({Faction? faction}) {
+  SpawnCoreEntity? findIdle({Faction? faction}) {
     for (final spawn in _spawns) {
       final data = spawn.data as SpawnData;
       if (data.state != SpawnState.idle) {
@@ -68,11 +61,11 @@ class SpawnManager {
     return null;
   }
 
-  void add(SpawnEntity spawn) {
+  void add(SpawnCoreEntity spawn) {
     _spawns.add(spawn);
   }
 
-  void remove(SpawnEntity spawn) {
+  void remove(SpawnCoreEntity spawn) {
     _spawns.remove(spawn);
   }
 

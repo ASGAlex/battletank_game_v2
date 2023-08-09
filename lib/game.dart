@@ -30,9 +30,8 @@ import 'package:tank_game/world/core/scenario/components/area_moving_path.dart';
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
-import 'package:tank_game/world/environment/spawn/trigger_spawn_behavior.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/map_loader.dart';
@@ -382,7 +381,7 @@ class MyGame extends MyGameFeatures
     if (activeItemType == BulletEntity) {
       if (potentialItemType == WaterEntity ||
           potentialItemType == TreeEntity ||
-          potentialItemType == SpawnEntity ||
+          potentialItemType == SpawnCoreEntity ||
           potentialItemType == ScenarioComponent ||
           potentialItemType == AreaInitScriptComponent ||
           potentialItemType == AreaMessageComponent ||

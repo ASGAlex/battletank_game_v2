@@ -16,7 +16,8 @@ class SandEntity extends SpriteAnimationComponent
         EntityMixin,
         HasGridSupport,
         ActorMixin,
-        ActorWithBoundingBody {
+        ActorWithBoundingBody,
+        UpdateOnDemand {
   SandEntity({required super.animation, super.position, super.size})
       : super(priority: RenderPriority.ground.priority) {
     paint.filterQuality = FilterQuality.none;

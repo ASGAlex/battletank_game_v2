@@ -95,6 +95,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   TankEntity.generic(this._tileType) {
+    anchor = Anchor.center;
     data = AttackerData();
     data.speed = 50;
     (data as AttackerData)
@@ -123,7 +124,6 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   FutureOr<void> onLoad() {
-    anchor = Anchor.center;
     add(AnimationGroupBehavior<ActorCoreState>(animationConfigs: {
       ActorCoreState.idle: AnimationConfig(
           tileset: _tileset, tileType: '${_tileType}_idle', loop: true),

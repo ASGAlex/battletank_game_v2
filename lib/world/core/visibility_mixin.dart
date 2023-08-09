@@ -15,9 +15,9 @@ mixin VisibilityMixin on PositionComponent {
   void toggleVisibility() => visible = !visible;
 
   @override
-  void render(Canvas canvas) {
+  void renderTree(Canvas canvas) {
     if (visible) {
-      super.render(canvas);
+      super.renderTree(canvas);
     }
   }
 }

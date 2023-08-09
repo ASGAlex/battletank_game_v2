@@ -12,6 +12,7 @@ import 'package:tank_game/world/core/faction.dart';
 enum DetectionType {
   visual,
   audial,
+  spawn,
 }
 
 typedef DetectionCallback = void Function(

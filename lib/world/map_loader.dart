@@ -9,7 +9,8 @@ import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
-import 'package:tank_game/world/environment/spawn/spawn_entity.dart';
+import 'package:tank_game/world/environment/spawn/actor_factory.dart';
+import 'package:tank_game/world/environment/spawn/spawn_teleport.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
@@ -39,7 +40,7 @@ class GameMapLoader extends TiledMapLoader {
         'brick': onBuildBrick,
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
-        'spawn_player': onBuildSpawn,
+        'spawn_player': onBuildSpawnHuman,
         'spawn_test': onBuildSpawnNeutral,
         'spawn_neutral': onBuildSpawnNeutral,
         'target': onBuildTarget,
@@ -263,30 +264,48 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildSpawn(TileBuilderContext context) async {
-    final newSpawn = SpawnEntity.fromContext(
+    final newSpawn = SpawnTeleport(
       rootComponent: game.world.tankLayer,
-      context: context,
-      game: game,
+      buildContext: context,
+      actorFactory: SpawnActorFactory.tankFromContext(
+              game: game, spawnBuilderContext: context)
+          .call,
     );
+
+    newSpawn.userData!.factions.clear();
+    newSpawn.userData!.factions.addAll(newSpawn.userData!.allowedFactions);
+
+    game.world.addSpawn(newSpawn);
+    game.spawnManager.add(newSpawn);
+  }
+
+  Future onBuildSpawnHuman(TileBuilderContext context) async {
+    final newSpawn = SpawnTeleport(
+      rootComponent: game.world.tankLayer,
+      buildContext: context,
+      actorFactory: SpawnActorFactory.human().call,
+    );
+    newSpawn.userData!.allowedFactions.add(Faction(name: 'Player'));
 
     game.world.addSpawn(newSpawn);
     game.spawnManager.add(newSpawn);
   }
 
   Future onBuildSpawnNeutral(TileBuilderContext context) async {
-    final newSpawn = SpawnEntity.fromContext(
+    final newSpawn = SpawnTeleport(
       rootComponent: game.world.tankLayer,
-      context: context,
-      game: game,
+      buildContext: context,
+      actorFactory: SpawnActorFactory.tankFromContext(
+              game: game, spawnBuilderContext: context)
+          .call,
     );
 
     final faction = Faction(name: 'Neutral');
-    newSpawn.boundingBox.isDistanceCallbackEnabled = true;
-    newSpawn.spawnData.triggerCallback = newSpawn.spawnCallback;
-    newSpawn.spawnData.factions.clear();
-    newSpawn.spawnData.factions.add(faction);
-    newSpawn.spawnData.allowedFactions.clear();
-    newSpawn.spawnData.allowedFactions.add(faction);
+
+    newSpawn.userData!.factions.clear();
+    newSpawn.userData!.factions.add(faction);
+    newSpawn.userData!.allowedFactions.clear();
+    newSpawn.userData!.allowedFactions.add(faction);
 
     game.world.addSpawn(newSpawn);
     game.spawnManager.add(newSpawn);
