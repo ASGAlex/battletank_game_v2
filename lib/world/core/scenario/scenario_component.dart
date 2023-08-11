@@ -150,7 +150,7 @@ class ScenarioComponent<T extends ScenarioComponentCore>
   }
 }
 
-class ScenarioHitbox extends BoundingHitbox {
+class ScenarioHitbox extends ActorDefaultHitbox {
   ScenarioHitbox() {
     collisionType = defaultCollisionType = CollisionType.passive;
     isSolid = true;

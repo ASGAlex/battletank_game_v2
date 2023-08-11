@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
+import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
@@ -22,6 +23,9 @@ class SmokeStartMovingBehavior extends CoreBehavior<ActorMixin> {
 
   @override
   void update(double dt) {
+    if (parent.currentCell?.state != CellState.active) {
+      return;
+    }
     if (isEnabled) {
       if (_elapsed <= _duration) {
         final direction = parent.lookDirection.opposite;

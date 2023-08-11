@@ -173,6 +173,8 @@ class ActorData {
 }
 
 class ActorDefaultHitbox extends BoundingHitbox {
+  ActorDefaultHitbox({super.position, super.size});
+
   @override
   FutureOr<void> onLoad() {
     fastCollisionForRects = true;

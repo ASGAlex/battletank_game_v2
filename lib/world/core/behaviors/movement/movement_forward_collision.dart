@@ -49,7 +49,7 @@ class MovementForwardCollisionBehavior extends MovementBehavior {
   }
 }
 
-abstract class MovementCheckerHitbox extends BoundingHitbox {
+abstract class MovementCheckerHitbox extends ActorDefaultHitbox {
   MovementCheckerHitbox({super.position, super.size}) {
     triggersParentCollision = false;
     // debugMode = true;

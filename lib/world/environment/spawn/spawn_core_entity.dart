@@ -213,7 +213,7 @@ class SpawnCoreEntity extends SpriteAnimationComponent
   }
 }
 
-class SpawnBoundingHitbox extends BoundingHitbox {
+class SpawnBoundingHitbox extends ActorDefaultHitbox {
   @override
   FutureOr<void> onLoad() {
     collisionType = defaultCollisionType = CollisionType.passive;
