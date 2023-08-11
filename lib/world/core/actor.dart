@@ -82,6 +82,9 @@ mixin ActorMixin on HasGridSupport implements EntityMixin {
   final childrenChangeNotifier = MessageStreamProvider<ChildrenChangeMessage>();
 
   @override
+  BoundingHitboxFactory get boundingHitboxFactory => () => ActorDefaultHitbox();
+
+  @override
   void onChildrenChanged(Component child, ChildrenChangeType type) {
     childrenChangeNotifier.sendMessage(ChildrenChangeMessage(child, type));
     super.onChildrenChanged(child, type);
@@ -169,6 +172,14 @@ class ActorData {
   final properties = HashMap<String, dynamic>();
 }
 
+class ActorDefaultHitbox extends BoundingHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    fastCollisionForRects = true;
+    return super.onLoad();
+  }
+}
+
 class BodyHitbox extends BoundingHitbox {
   BodyHitbox({
     super.size,
@@ -180,6 +191,7 @@ class BodyHitbox extends BoundingHitbox {
   @override
   FutureOr<void> onLoad() {
     collisionType = defaultCollisionType = CollisionType.active;
+    fastCollisionForRects = true;
     return super.onLoad();
   }
 
