@@ -9,6 +9,7 @@ import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
+import 'package:tank_game/world/environment/ground/asphalt.dart';
 import 'package:tank_game/world/environment/spawn/actor_factory.dart';
 import 'package:tank_game/world/environment/spawn/spawn_teleport.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
@@ -36,6 +37,7 @@ class GameMapLoader extends TiledMapLoader {
         'tree': onBuildTree,
         'water': onBuildWater,
         'sand_slow': onBuildSand,
+        'asphalt': onBuildAsphalt,
         'brick': onBuildBrick,
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
@@ -223,7 +225,7 @@ class GameMapLoader extends TiledMapLoader {
         component: sand,
         layerType: MapLayerType.animated,
         layerName: 'Sand',
-        priority: RenderPriority.ground.priority);
+        priority: RenderPriority.ground.priority + 1);
   }
 
   Future onBuildBrick(TileBuilderContext context) async {
@@ -242,6 +244,24 @@ class GameMapLoader extends TiledMapLoader {
         layerType: MapLayerType.static,
         layerName: 'Brick',
         priority: RenderPriority.walls.priority);
+  }
+
+  Future onBuildAsphalt(TileBuilderContext context) async {
+    // return;
+    final data = context.tileDataProvider;
+    if (data == null) {
+      return;
+    }
+    final sprite = await data.getSprite();
+    final asphalt = AsphaltEntity(
+        sprite: sprite, position: context.absolutePosition, size: context.size);
+    asphalt.currentCell = context.cell;
+
+    game.layersManager.addComponent(
+        component: asphalt,
+        layerType: MapLayerType.static,
+        layerName: 'Asphalt',
+        priority: RenderPriority.ground.priority + 1);
   }
 
   Future onBuildHeavyBrick(TileBuilderContext context) async {

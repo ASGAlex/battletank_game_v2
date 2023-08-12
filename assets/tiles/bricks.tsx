@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.8" tiledversion="1.8.1" name="bricks" tilewidth="8" tileheight="8" tilecount="8" columns="4">
+<tileset version="1.10" tiledversion="1.10.1" name="bricks" tilewidth="8" tileheight="8" tilecount="8" columns="4">
  <image source="../images/brick_tiles.png" width="32" height="16"/>
  <tile id="0" type="brick">
   <properties>
@@ -18,7 +18,7 @@
    <object id="1" x="0" y="0" width="8" height="8"/>
   </objectgroup>
  </tile>
- <tile id="2" type="ice"/>
+ <tile id="2" type="asphalt"/>
  <tile id="3" type="tree">
   <objectgroup draworder="index" id="2">
    <object id="3" x="0" y="0" width="8" height="8"/>

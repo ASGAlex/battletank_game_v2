@@ -1,0 +1,76 @@
+{
+    "maps": [
+        {
+            "fileName": "tutorial.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 0,
+            "y": 0
+        },
+        {
+            "fileName": "tutorial_left.tmx",
+            "height": 400,
+            "width": 400,
+            "x": -400,
+            "y": 0
+        },
+        {
+            "fileName": "tutorial_left_top.tmx",
+            "height": 400,
+            "width": 400,
+            "x": -400,
+            "y": -400
+        },
+        {
+            "fileName": "tutorial_top.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 0,
+            "y": -400
+        },
+        {
+            "fileName": "tutorial_top_right.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 400,
+            "y": -400
+        },
+        {
+            "fileName": "tutorial_right.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 400,
+            "y": 0
+        },
+        {
+            "fileName": "tutorial_right_bottom.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 400,
+            "y": 400
+        },
+        {
+            "fileName": "tutorial_left_bottom.tmx",
+            "height": 400,
+            "width": 400,
+            "x": -400,
+            "y": 400
+        },
+        {
+            "fileName": "tutorial_bottom.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 0,
+            "y": 400
+        },
+        {
+            "fileName": "tutorial_bottom_bottom.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 0,
+            "y": 800
+        }
+    ],
+    "onlyShowAdjacentMaps": false,
+    "type": "world"
+}

@@ -17,7 +17,7 @@ enum RenderPriority {
   bullet(9),
   water(5),
   spawn(3),
-  trackTrail(1),
+  trackTrail(2),
   ground(0),
   ui(100);
 

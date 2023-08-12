@@ -110,7 +110,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="collision areas" visible="0">
+ <objectgroup id="3" name="collision areas">
   <object id="15" name="collision precision" type="scenario" x="-0.3335" y="24" width="375.667" height="63.5">
    <properties>
     <property name="factions" value="Enemy, Neutral"/>
@@ -273,7 +273,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="scenario" visible="0">
+ <objectgroup id="5" name="scenario">
   <properties>
    <property name="limitedByArea" type="bool" value="true"/>
    <property name="scriptName" value="TutorialUseFirstTank"/>
@@ -340,7 +340,7 @@ Now, go and enter into the tank that spawns nearby at right.
    </properties>
   </object>
   <object id="23" name="patrolBasePerimeter" type="move_path" x="234.773" y="387.227">
-   <polyline points="-12.6364,1.54545 154.746,1.71401 154.727,-376.227 -252.773,-375.977 -250.273,3.27273 -57.7727,1.27273"/>
+   <polyline points="-12.6364,1.54545 154.746,1.71401 154.727,-376.227 -260.773,-377.977 -260.773,3.02273 -57.7727,1.27273"/>
   </object>
   <object id="24" name="patrol perimeter" type="scenario" x="190.392" y="381.063" width="21.2159" height="19.875">
    <properties>

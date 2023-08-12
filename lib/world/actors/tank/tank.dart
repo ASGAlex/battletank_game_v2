@@ -34,6 +34,7 @@ import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_
 import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
 import 'package:tank_game/world/environment/ground/slowdown_by_sand_behavior.dart';
+import 'package:tank_game/world/environment/ground/speed_up_by_asphalt_behavior.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
 class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -50,6 +51,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         CollisionPrecisionMixin,
         HideInTreesOptimizedCheckerMixin,
         SlowDownBySandOptimizedCheckerMixin,
+        SpeedUpByAsphaltOptimizedCheckerMixin,
         ScenarioEventEmitter {
   static const _tileset = 'tank';
 
@@ -188,6 +190,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       }
     }));
     add(SlowDownBySandBehavior());
+    add(SpeedUpByAsphaltBehavior());
     add(InteractionSetPlayer());
     add(TankStepTrailBehavior());
     add(ScenarioActivatorBehavior());
