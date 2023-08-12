@@ -173,16 +173,42 @@ class ActorData {
 }
 
 class ActorDefaultHitbox extends BoundingHitbox {
-  ActorDefaultHitbox({super.position, super.size});
+  ActorDefaultHitbox({
+    super.position,
+    super.size,
+    super.collisionType,
+    super.parentWithGridSupport,
+  });
 
   @override
   FutureOr<void> onLoad() {
     fastCollisionForRects = true;
+    if (parent is ActorMixin) {
+      cacheAbsoluteScaledSize = true;
+      (parent as ActorMixin).scale.addListener(absoluteScaledSizeCacheReset);
+      (parent as ActorMixin)
+          .data
+          .lookDirectionNotifier
+          .addListener(absoluteScaledSizeCacheReset);
+    }
     return super.onLoad();
+  }
+
+  @override
+  void onRemove() {
+    if (parent is ActorMixin) {
+      (parent as ActorMixin).scale.removeListener(absoluteScaledSizeCacheReset);
+
+      (parent as ActorMixin)
+          .data
+          .lookDirectionNotifier
+          .removeListener(absoluteScaledSizeCacheReset);
+    }
+    super.onRemove();
   }
 }
 
-class BodyHitbox extends BoundingHitbox {
+class BodyHitbox extends ActorDefaultHitbox {
   BodyHitbox({
     super.size,
     super.position,
