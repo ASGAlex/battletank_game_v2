@@ -10,6 +10,7 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
+import 'package:tank_game/world/core/scenario/components/area_event.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
 import 'package:tank_game/world/core/scenario/components/area_moving_path.dart';
@@ -54,6 +55,8 @@ class ScenarioComponent<T extends ScenarioComponentCore>
     _availableTypes.addAll({
       'AreaMessage': (tiledObject) =>
           AreaMessageComponent(tiledObject: tiledObject),
+      'AreaEvent': (tiledObject) =>
+          AreaEventComponent(tiledObject: tiledObject),
       'AreaInitScript': (tiledObject) =>
           AreaInitScriptComponent(tiledObject: tiledObject),
       'AreaCollisionHighPrecision': (tiledObject) =>

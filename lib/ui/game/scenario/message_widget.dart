@@ -14,7 +14,7 @@ class MessageWidget extends StatefulWidget {
     this.keyboardKeysToNext = const [],
     this.talkAlignment = Alignment.topCenter,
     this.style,
-    this.speed = const Duration(milliseconds: 100),
+    this.speed = const Duration(milliseconds: 10),
     this.isModal = false,
   }) : super(key: key);
 

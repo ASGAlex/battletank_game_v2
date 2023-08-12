@@ -91,15 +91,23 @@ class MyGame extends MyGameFeatures
   Widget Function(BuildContext context, MyGame game)
       scenarioCurrentWidgetBuilder = (_, __) => Container();
 
+  bool isActiveScenarioMessage() => overlays.isActive('scenario');
+
+  Widget? currentScenarioMessageContent;
+
   void showScenarioMessage(Widget content) {
     scenarioCurrentWidgetBuilder = (ctx, game) => content;
     if (overlays.isActive('scenario')) {
       overlays.remove('scenario');
     }
     overlays.add('scenario');
+    currentScenarioMessageContent = content;
   }
 
-  void hideScenarioMessage() => overlays.remove('scenario');
+  void hideScenarioMessage() {
+    overlays.remove('scenario');
+    currentScenarioMessageContent = null;
+  }
 
   @override
   void onScroll(PointerScrollInfo info) {
