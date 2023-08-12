@@ -52,19 +52,23 @@ class AreaMessageComponent extends ScenarioComponent<AreaMessageComponent>
     final text = scenario.text;
     if (text.isNotEmpty) {
       if (split) {
-        final says = text.split('\n').toList();
+        final says = text
+            .split('\n')
+            .map((e) => e.trim())
+            .where((element) => element.isNotEmpty)
+            .toList(growable: false);
         game.showScenarioMessage(MessageWidget(
-          // nextOnTap: true,
-          // nextOnAnyKey: true,
+          triggerComponent: other,
           texts: says,
           provider: game.inputEventsHandler.messageProvider,
+          scenarioEventProvider: game.scenarioEventProvider,
         ));
       } else {
         game.showScenarioMessage(MessageWidget(
-          // nextOnTap: true,
-          // nextOnAnyKey: true,
+          triggerComponent: other,
           texts: [scenario.text],
           provider: game.inputEventsHandler.messageProvider,
+          scenarioEventProvider: game.scenarioEventProvider,
         ));
       }
     }

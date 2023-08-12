@@ -72,7 +72,8 @@ class GameMapLoader extends TiledMapLoader {
     });
   }
 
-  Future<void> noMapBuilder(
+  static Future<void> noMapBuilder(
+    MyGame game,
     Cell cell,
     Component rootComponent,
     bool isFullyOutside,

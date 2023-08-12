@@ -24,6 +24,8 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     priority = -1;
   }
 
+  static final ignoredEvents = <PlayerAction>[];
+
   MovementForwardCollisionBehavior get movementForward {
     _cachedBehavior ??= parent.findBehavior<MovementForwardCollisionBehavior>();
     return _cachedBehavior!;
@@ -60,6 +62,9 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     }
     var isMovementAction = false;
     for (final msg in message) {
+      if (ignoredEvents.contains(msg)) {
+        continue;
+      }
       switch (msg) {
         case PlayerAction.moveUp:
           parent.lookDirection = DirectionExtended.up;

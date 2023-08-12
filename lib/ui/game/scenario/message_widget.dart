@@ -1,14 +1,17 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flame/components.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 
 class MessageWidget extends StatefulWidget {
   const MessageWidget({
     Key? key,
     required this.texts,
     this.provider,
+    this.scenarioEventProvider,
     this.onFinish,
     this.textBoxMaxHeight = 500,
     this.keyboardKeysToNext = const [],
@@ -16,8 +19,10 @@ class MessageWidget extends StatefulWidget {
     this.style,
     this.speed = const Duration(milliseconds: 10),
     this.isModal = false,
+    this.triggerComponent,
   }) : super(key: key);
 
+  final Component? triggerComponent;
   final List<String> texts;
   final VoidCallback? onFinish;
   final double textBoxMaxHeight;
@@ -26,6 +31,7 @@ class MessageWidget extends StatefulWidget {
   final TextStyle? style;
   final bool isModal;
   final MessageStreamProvider<List<PlayerAction>>? provider;
+  final MessageStreamProvider<ScenarioEvent>? scenarioEventProvider;
 
   /// in milliseconds
   final Duration speed;
@@ -131,7 +137,20 @@ class MessageWidgetState extends State<MessageWidget>
           currentIndex++;
           currentText = widget.texts[currentIndex];
         });
+      } else {
+        if (widget.triggerComponent != null &&
+            widget.scenarioEventProvider != null) {
+          widget.scenarioEventProvider!.sendMessage(MessageListFinishedEvent(
+            emitter: widget.triggerComponent!,
+            data: currentIndex,
+          ));
+        }
       }
     }
   }
+}
+
+class MessageListFinishedEvent extends ScenarioEvent {
+  const MessageListFinishedEvent({required super.emitter, required super.data})
+      : super(name: 'MessageListFinishedEvent');
 }

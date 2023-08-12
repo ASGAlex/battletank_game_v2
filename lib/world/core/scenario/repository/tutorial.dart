@@ -1,13 +1,18 @@
 import 'package:flame/components.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/ui/game/scenario/message_widget.dart';
+import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/interaction/interaction_player_out.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
+import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_event.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/has_text_message_mixin.dart';
+import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scenario_description.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
@@ -29,11 +34,14 @@ class TutorialScenario extends Scenario {
         (lifetimeMax, creator) {
       return TutorialHowToUseTank(creator);
     });
-    game.world.scenarioLayer.add(TrackTankCreation());
+    game.world.scenarioLayer.add(TrackActorCreation());
   }
 }
 
-class TrackTankCreation extends ScriptCore {
+class TrackActorCreation extends ScriptCore {
+  var _initialDisableControls = true;
+  ActorMixin? currentPlayer;
+
   @override
   void onStreamMessage(ScenarioEvent message) {
     if (message is EventSpawned) {
@@ -48,6 +56,33 @@ class TrackTankCreation extends ScriptCore {
             };
           } catch (_) {}
         });
+      }
+
+      if (actor is HumanEntity && _initialDisableControls) {
+        actor.loaded.then((value) {
+          try {
+            if (actor.hasBehavior<PlayerControlledBehavior>()) {
+              PlayerControlledBehavior.ignoredEvents.addAll([
+                PlayerAction.fire,
+                PlayerAction.moveLeft,
+                PlayerAction.moveRight,
+                PlayerAction.moveDown,
+                PlayerAction.moveUp,
+              ]);
+              _initialDisableControls = false;
+              currentPlayer = actor;
+            }
+          } catch (_) {}
+        });
+      }
+    } else if (message is MessageListFinishedEvent) {
+      if (message.emitter == currentPlayer) {
+        PlayerControlledBehavior.ignoredEvents.clear();
+        PlayerControlledBehavior.ignoredEvents.addAll([
+          PlayerAction.fire,
+          PlayerAction.triggerF,
+        ]);
+        InteractionPlayerOut.globalPaused = true;
       }
     }
   }
@@ -98,8 +133,6 @@ class TutorialHowToUseTank extends ScriptCore {
       case TutorialState.chooseTank:
         if (message is EventSetPlayer) {
           game.showScenarioMessage(MessageWidget(
-            // nextOnTap: true,
-            // nextOnAnyKey: true,
             texts: [txtMoveToPolygon],
             key: UniqueKey(),
           ));
@@ -153,14 +186,20 @@ class TutorialHowToUseTank extends ScriptCore {
           } else if (message.name == 'TakePositionEvent') {
             AreaEventComponent.unregisterEvent('InvalidPolygonEvent');
             AreaEventComponent.unregisterEvent('TakePositionEvent');
+            for (final scenario in game.world.scenarioLayer.children
+                .whereType<ScenarioComponent>()) {
+              if (scenario.name == 'initial greting' ||
+                  scenario.name == 'selecting tank' ||
+                  scenario.name == 'scenarioTutorial') {
+                scenario.removeFromParent();
+              }
+            }
             final data = message.data;
             if (data is AreaEventData) {
               if (data.activated) {
                 final text = data.properties?.getLocalizedTextMessage('text');
                 if (text != null) {
                   game.showScenarioMessage(MessageWidget(
-                    // nextOnTap: true,
-                    // nextOnAnyKey: true,
                     texts: [text],
                     key: UniqueKey(),
                   ));
@@ -174,6 +213,7 @@ class TutorialHowToUseTank extends ScriptCore {
         break;
 
       case TutorialState.fireToWall:
+        PlayerControlledBehavior.ignoredEvents.remove(PlayerAction.fire);
         break;
     }
   }

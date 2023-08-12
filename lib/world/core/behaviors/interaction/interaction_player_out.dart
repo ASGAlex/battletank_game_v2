@@ -26,6 +26,8 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   Function? action;
   final bool createHuman;
   var _actionInProgress = false;
+
+  static var globalPaused = false;
   var paused = false;
 
   final Map<DirectionExtended, MovementCheckerHitbox> _availableDirections = {};
@@ -57,7 +59,6 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
             parent.findBehavior<AvailableDirectionChecker>();
         _availableDirections
             .addAll(directionChecker.getAvailableDirectionsWithHitbox());
-        print(_availableDirections);
         if (_availableDirections.isEmpty) {
           _actionInProgress = false;
           paused = false;
@@ -86,7 +87,7 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
   }
 
   void doTriggerAction() {
-    if (_actionInProgress || paused) {
+    if (_actionInProgress || paused || globalPaused) {
       return;
     }
     _actionInProgress = true;

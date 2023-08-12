@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/camera.dart';
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -222,7 +223,9 @@ class MyGame extends MyGameFeatures
       },
       suspendedCellLifetime: suspendedCellLifetime,
       suspendCellPrecision: const Duration(seconds: 10),
-      // cellBuilderNoMap: map.noMapBuilder,
+      cellBuilderNoMap: (Cell cell, Component rootComponent,
+              bool isFullyOutside) =>
+          GameMapLoader.noMapBuilder(this, cell, rootComponent, isFullyOutside),
       // onAfterCellBuild: (cell, rootComponent) async {
       //   final trailLayer = CellTrailLayer(cell, name: 'trail');
       //   trailLayer.priority = RenderPriority.trackTrail.priority;
