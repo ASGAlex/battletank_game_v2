@@ -11,7 +11,7 @@ class HumanStepTrailBehavior extends MovementTrailBehavior {
 
   @override
   void updateTrail(double innerSpeed) {
-    final step = HumanStep(parent);
+    final step = HumanStep(parent.position);
     try {
       final game = parent.sgGame;
       final layer = game.layersManager.addComponent(
@@ -19,6 +19,7 @@ class HumanStepTrailBehavior extends MovementTrailBehavior {
         layerType: MapLayerType.trail,
         layerName: 'trail',
         optimizeCollisions: false,
+        currentCell: parent.currentCell!,
         priority: 1,
       );
 
@@ -29,20 +30,18 @@ class HumanStepTrailBehavior extends MovementTrailBehavior {
   }
 }
 
-class HumanStep extends PositionComponent with HasGridSupport, HasPaint {
-  HumanStep(this.human) {
+class HumanStep extends PositionComponent with HasPaint {
+  HumanStep(Vector2 parentPosition) {
     paint.color = Colors.black54;
     paint.strokeWidth = 1;
     paint.isAntiAlias = false;
-    final cell = human.currentCell;
-    if (cell != null) {
-      position = human.position - Vector2(2, 2);
-      size = Vector2(8, 3);
-      currentCell = cell;
-    }
+    // final cell = human.currentCell;
+    // if (cell != null) {
+    position = parentPosition - Vector2(2, 2);
+    size = Vector2(8, 3);
+    // currentCell = cell;
+    // }
   }
-
-  final HasGridSupport human;
 
   @override
   void render(Canvas canvas) {

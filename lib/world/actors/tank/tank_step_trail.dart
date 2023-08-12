@@ -76,6 +76,7 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
         layerType: MapLayerType.trail,
         layerName: 'trail',
         optimizeCollisions: false,
+        currentCell: parent.currentCell,
         priority: 1,
       );
 
@@ -86,17 +87,13 @@ class TankStepTrailBehavior extends MovementTrailBehavior {
   }
 }
 
-class TankStep extends PositionComponent with HasGridSupport, HasPaint {
+class TankStep extends PositionComponent with HasPaint {
   TankStep(this.behavior) {
     paint.color = Colors.black54;
     paint.strokeWidth = 1;
     paint.isAntiAlias = false;
-    final cell = behavior.parent.currentCell;
-    if (cell != null) {
-      position.setFrom(behavior.parent.position);
-      size = Vector2(16, 2);
-      currentCell = cell;
-    }
+    position.setFrom(behavior.parent.position);
+    size = Vector2(16, 2);
   }
 
   static Vector2 topLeftDefault = Vector2(-6, 6);

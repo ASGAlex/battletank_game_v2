@@ -190,6 +190,11 @@ class ActorDefaultHitbox extends BoundingHitbox {
           .data
           .lookDirectionNotifier
           .addListener(absoluteScaledSizeCacheReset);
+
+      (parent as ActorMixin)
+          .data
+          .lookDirectionNotifier
+          .addListener(absoluteAngleCacheReset);
     }
     return super.onLoad();
   }
@@ -203,6 +208,11 @@ class ActorDefaultHitbox extends BoundingHitbox {
           .data
           .lookDirectionNotifier
           .removeListener(absoluteScaledSizeCacheReset);
+
+      (parent as ActorMixin)
+          .data
+          .lookDirectionNotifier
+          .removeListener(absoluteAngleCacheReset);
     }
     super.onRemove();
   }
