@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="6" nextobjectid="21">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="6" nextobjectid="25">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <layer id="1" name="ground" width="50" height="50">
@@ -90,11 +90,11 @@
 0,0,0,0,0,0,0,0,0,10,10,10,10,10,10,7,7,7,7,7,7,7,7,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,0,0,0,0,10,0,0,0,
 0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,0,0,0,0,0,0,10,10,10,10,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,0,0,0,
 0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,7,0,0,0,0,0,0,0,10,10,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,0,0,
-0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,7,7,0,7,7,7,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,10,10,10,10,0,
-0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,0,0,7,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,10,10,10,10,0,
-0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,7,0,7,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,10,10,10,10,0,
-0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,7,7,0,7,7,7,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,10,10,10,10,0,
-0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,0,0,7,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,10,10,10,10,0,
+0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,7,7,0,7,7,7,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,7,10,10,10,10,0,
+0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,0,0,7,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,7,10,10,10,10,0,
+0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,7,0,7,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,7,10,10,10,10,0,
+0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,7,0,7,7,0,7,7,7,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,7,10,10,10,10,0,
+0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,0,0,7,10,10,10,10,10,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,7,10,10,10,10,0,
 0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,7,0,0,7,0,7,0,7,10,10,10,10,10,10,0,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,0,0,
 0,10,10,10,10,10,10,10,10,10,10,0,0,0,10,7,0,7,7,0,7,7,7,10,10,10,10,10,10,0,0,0,0,0,0,10,10,10,10,10,10,10,10,10,10,10,10,0,0,0,
 0,10,10,10,10,10,10,10,10,10,0,0,0,0,0,0,0,0,7,0,0,0,7,10,10,10,10,10,10,10,10,0,0,10,10,10,10,10,10,10,10,10,10,10,10,10,10,0,0,0,
@@ -110,7 +110,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="3" name="collision areas">
+ <objectgroup id="3" name="collision areas" visible="0">
   <object id="15" name="collision precision" type="scenario" x="-0.3335" y="24" width="375.667" height="63.5">
    <properties>
     <property name="factions" value="Enemy, Neutral"/>
@@ -120,109 +120,160 @@
   </object>
  </objectgroup>
  <objectgroup id="4" name="spawns">
-  <object id="1" name="spawn_player" type="spawn_player" x="168.459" y="240.91" width="13" height="13.25">
+  <object id="1" name="spawn_human_player" type="spawn_human" x="168.459" y="240.91" width="13" height="13.25">
    <properties>
+    <property name="allowedFactions" value="Player"/>
+    <property name="factions" value="Player"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
     <property name="spawn_seconds" type="float" value="3"/>
    </properties>
   </object>
-  <object id="3" name="spawn_neutral" type="spawn_neutral" x="271.75" y="168.25" width="16" height="16">
+  <object id="3" name="spawn_neutral" type="spawn" x="271.75" y="168.25" width="16" height="16">
    <properties>
+    <property name="allowedFactions" value="Neutral"/>
     <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="simple"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="4" name="spawn_neutral" type="spawn" x="304" y="168.5" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="1"/>
     <property name="trigger_distance" type="float" value="128"/>
    </properties>
   </object>
-  <object id="4" name="spawn_neutral" type="spawn_neutral" x="304" y="168.5" width="16" height="16">
+  <object id="5" name="spawn_neutral" type="spawn" x="336.25" y="168.25" width="16" height="16">
    <properties>
+    <property name="allowedFactions" value="Neutral"/>
     <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="1"/>
     <property name="trigger_distance" type="float" value="128"/>
    </properties>
   </object>
-  <object id="5" name="spawn_neutral" type="spawn_neutral" x="336.25" y="168.25" width="16" height="16">
+  <object id="6" name="spawn_neutral" type="spawn" x="271.75" y="135.75" width="16" height="16">
    <properties>
+    <property name="allowedFactions" value="Neutral"/>
     <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="middle"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="7" name="spawn_neutral" type="spawn" x="304" y="135.75" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="middle"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="8" name="spawn_neutral" type="spawn" x="336" y="136.25" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="simple"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="9" name="spawn_neutral" type="spawn" x="336" y="103.75" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="advanced"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="10" name="spawn_neutral" type="spawn" x="303.25" y="105.25" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="advanced"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="11" name="spawn_neutral" type="spawn" x="272" y="103.75" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="simple"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="12" name="spawn_neutral" type="spawn" x="272.25" y="71.25" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="heavy"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="13" name="spawn_neutral" type="spawn" x="303.5" y="72.25" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="simple"/>
+    <property name="tanks_inside" type="int" value="1"/>
+    <property name="trigger_distance" type="float" value="128"/>
+   </properties>
+  </object>
+  <object id="14" name="spawn_neutral" type="spawn" x="336" y="71.75" width="16" height="16">
+   <properties>
+    <property name="allowedFactions" value="Neutral"/>
+    <property name="cooldown_seconds" type="float" value="0"/>
+    <property name="factions" value="Neutral"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
     <property name="tank_type" value="fast"/>
     <property name="tanks_inside" type="int" value="1"/>
     <property name="trigger_distance" type="float" value="128"/>
    </properties>
   </object>
-  <object id="6" name="spawn_neutral" type="spawn_neutral" x="271.75" y="135.75" width="16" height="16">
+  <object id="21" name="spawn_patrol" type="spawn" x="191.75" y="383.25" width="16" height="16">
    <properties>
+    <property name="allowedFactions" value="Friendly"/>
     <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
+    <property name="factions" value="Friendly"/>
+    <property name="removeWhenEmpty" type="bool" value="true"/>
+    <property name="tank_type" value="heavy"/>
     <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="7" name="spawn_neutral" type="spawn_neutral" x="304" y="135.75" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="8" name="spawn_neutral" type="spawn_neutral" x="336" y="136.25" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="9" name="spawn_neutral" type="spawn_neutral" x="336" y="103.75" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="10" name="spawn_neutral" type="spawn_neutral" x="303.25" y="105.25" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="11" name="spawn_neutral" type="spawn_neutral" x="272" y="103.75" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="12" name="spawn_neutral" type="spawn_neutral" x="272.25" y="71.25" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="13" name="spawn_neutral" type="spawn_neutral" x="303.5" y="72.25" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
-    <property name="trigger_distance" type="float" value="128"/>
-   </properties>
-  </object>
-  <object id="14" name="spawn_neutral" type="spawn_neutral" x="336" y="71.75" width="16" height="16">
-   <properties>
-    <property name="cooldown_seconds" type="float" value="0"/>
-    <property name="tank_type" value="fast"/>
-    <property name="tanks_inside" type="int" value="1"/>
+    <property name="triggerFactions" value="Player, Enemy"/>
     <property name="trigger_distance" type="float" value="128"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="scenario">
+ <objectgroup id="5" name="scenario" visible="0">
   <properties>
    <property name="limitedByArea" type="bool" value="true"/>
    <property name="scriptName" value="TutorialUseFirstTank"/>
@@ -286,6 +337,19 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="text" value="FIRE!"/>
     <property name="text_ru" value="Отлично, мы на месте. Займи одну из трёх позиций и постреляй по стене, используя клавишу ПРОБЕЛ"/>
     <property name="type" value="AreaEvent"/>
+   </properties>
+  </object>
+  <object id="23" name="patrolBasePerimeter" type="move_path" x="234.773" y="387.227">
+   <polyline points="-12.6364,1.54545 154.746,1.71401 154.727,-376.227 -252.773,-375.977 -250.273,3.27273 -57.7727,1.27273"/>
+  </object>
+  <object id="24" name="patrol perimeter" type="scenario" x="190.392" y="381.063" width="21.2159" height="19.875">
+   <properties>
+    <property name="factions" value="Friendly"/>
+    <property name="highPriority" type="bool" value="false"/>
+    <property name="loop" type="bool" value="true"/>
+    <property name="oncePerActor" type="bool" value="true"/>
+    <property name="pathName" value="patrolBasePerimeter"/>
+    <property name="type" value="AreaMovingPath"/>
    </properties>
   </object>
  </objectgroup>

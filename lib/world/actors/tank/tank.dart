@@ -199,11 +199,56 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(smoke);
 
     super.onLoad();
+    add(DetectableBehavior(detectionType: DetectionType.audial));
+    add(DetectableBehavior(detectionType: DetectionType.visual));
+    add(HideInTreesBehavior());
     add(ShadowBehavior());
     if (data.factions.contains(Faction(name: 'Player'))) {
-      add(DetectableBehavior(detectionType: DetectionType.audial));
-      add(DetectableBehavior(detectionType: DetectionType.visual));
-      add(HideInTreesBehavior());
+      // player-specific options;
+    } else if (data.factions.contains(Faction(name: 'Friendly'))) {
+      add(DetectorBehavior(
+          distance: 210,
+          detectionType: DetectionType.audial,
+          factionsToDetect: [Faction(name: 'Enemy')],
+          pauseBetweenChecks: 5,
+          maxMomentum: 120,
+          onDetection: (player, x, y) {
+            _randomMovementBehavior ??= createRandomMovement();
+            game.enemyAmbientVolume.onTankDetectedPlayer(x, y);
+            if (player is TankEntity) {
+              final forceIdle = _targetedMovementBehavior?.forceIdle ?? false;
+              if (!forceIdle) {
+                coreState = ActorCoreState.move;
+              }
+              if (_targetedMovementBehavior == null) {
+                _randomMovementBehavior?.pauseBehavior = false;
+              }
+            }
+          },
+          onNothingDetected: (bool isMomentum) {
+            if (isMomentum) return;
+            coreState = ActorCoreState.idle;
+            _randomMovementBehavior?.removeFromParent();
+            _randomMovementBehavior = null;
+            _targetedMovementBehavior?.removeFromParent();
+            _targetedMovementBehavior = null;
+          }));
+
+      add(DetectorBehavior(
+          distance: 130,
+          detectionType: DetectionType.visual,
+          factionsToDetect: [Faction(name: 'Enemy')],
+          maxMomentum: 0,
+          pauseBetweenChecks: 2,
+          onDetection: _trackDetectedTarget,
+          onNothingDetected: (isMomentum) {
+            if (isMomentum) return;
+            _targetedMovementBehavior?.removeFromParent();
+            _targetedMovementBehavior = null;
+
+            _randomMovementBehavior ??= createRandomMovement();
+            _randomMovementBehavior?.pauseBehavior = false;
+          }));
     } else {
       add(ColorFilterBehavior());
       if (data.factions.contains(Faction(name: 'Enemy'))) {

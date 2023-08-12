@@ -50,6 +50,8 @@ class SpawnCoreEntity extends SpriteAnimationComponent
         buildContext.absolutePosition.y + buildContext.size.y / 2);
     currentCell = buildContext.cell;
 
+    userData!.removeWhenEmpty =
+        object.properties.getValue<bool>('removeWhenEmpty') ?? false;
     userData!.typeOfTank =
         object.properties.getValue<String>('tank_type') ?? 'any';
     userData!.capacity = object.properties.getValue<int>('tanks_inside') ??
@@ -65,13 +67,32 @@ class SpawnCoreEntity extends SpriteAnimationComponent
     userData!.secondsDuringSpawn =
         object.properties.getValue<double>('spawn_seconds') ?? 0;
 
-    userData!.triggerFactions.add(Faction(
-        name:
-            object.properties.getValue<String>('triggerFactions') ?? 'Player'));
+    var factionNames = <String>[];
+    factionNames =
+        object.properties.getValue<String>('triggerFactions')?.split(',') ??
+            ['Player'];
+    for (final name in factionNames) {
+      if (name.isNotEmpty) {
+        userData!.triggerFactions.add(Faction(name: name.trim()));
+      }
+    }
 
-    userData!.allowedFactions.add(Faction(
-        name:
-            object.properties.getValue<String>('allowedFactions') ?? 'Enemy'));
+    factionNames =
+        object.properties.getValue<String>('allowedFactions')?.split(',') ??
+            ['Enemy'];
+    for (final name in factionNames) {
+      if (name.isNotEmpty) {
+        userData!.allowedFactions.add(Faction(name: name.trim()));
+      }
+    }
+
+    factionNames =
+        object.properties.getValue<String>('factions')?.split(',') ?? ['Enemy'];
+    for (final name in factionNames) {
+      if (name.isNotEmpty) {
+        userData!.allowedFactions.add(Faction(name: name.trim()));
+      }
+    }
   }
 
   final TileBuilderContext buildContext;
@@ -204,6 +225,10 @@ class SpawnCoreEntity extends SpriteAnimationComponent
     userData!.timeoutDuringSpawnsElapsed = 0;
     if (userData!.capacity != -1) {
       userData!.capacity--;
+      if (userData!.capacity == 0 && userData!.removeWhenEmpty) {
+        game.spawnManager.remove(this);
+        removeFromParent();
+      }
     }
 
     spawnState = SpawnState.timeout;

@@ -27,6 +27,8 @@ class SpawnData extends ActorData {
 
   String typeOfTank = '';
 
+  bool removeWhenEmpty = false;
+
   SpawnData() {
     coreState = ActorCoreState.idle;
     health = -1;

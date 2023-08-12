@@ -212,7 +212,7 @@ class MyGame extends MyGameFeatures
       trackWindowSize: true,
       trackedComponent: SpatialGridCameraWrapper(cameraComponent),
       initialPositionChecker: (layer, object, mapOffset, worldName) {
-        if (object.name == 'spawn_player') {
+        if (object.name == 'spawn_human_player') {
           initialPlayerPosition.setValues(object.x, object.y);
           cameraComponent.viewfinder.position =
               mapOffset + Vector2(object.x, object.y);

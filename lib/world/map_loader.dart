@@ -15,7 +15,6 @@ import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/world.dart';
 
-import 'core/faction.dart';
 import 'environment/ground/sand.dart';
 
 class GameMapLoader extends TiledMapLoader {
@@ -40,9 +39,7 @@ class GameMapLoader extends TiledMapLoader {
         'brick': onBuildBrick,
         'heavy_brick': onBuildHeavyBrick,
         'spawn': onBuildSpawn,
-        'spawn_player': onBuildSpawnHuman,
-        'spawn_test': onBuildSpawnNeutral,
-        'spawn_neutral': onBuildSpawnNeutral,
+        'spawn_human': onBuildSpawnHuman,
         'target': onBuildTarget,
         'scenario': onBuildScenario,
         'moving_path': onBuildMovingPath,
@@ -285,31 +282,31 @@ class GameMapLoader extends TiledMapLoader {
       buildContext: context,
       actorFactory: SpawnActorFactory.human().call,
     );
-    newSpawn.userData!.allowedFactions.add(Faction(name: 'Player'));
+    // newSpawn.userData!.allowedFactions.add(Faction(name: 'Player'));
 
     game.world.addSpawn(newSpawn);
     game.spawnManager.add(newSpawn);
   }
 
-  Future onBuildSpawnNeutral(TileBuilderContext context) async {
-    final newSpawn = SpawnTeleport(
-      rootComponent: game.world.tankLayer,
-      buildContext: context,
-      actorFactory: SpawnActorFactory.tankFromContext(
-              game: game, spawnBuilderContext: context)
-          .call,
-    );
-
-    final faction = Faction(name: 'Neutral');
-
-    newSpawn.userData!.factions.clear();
-    newSpawn.userData!.factions.add(faction);
-    newSpawn.userData!.allowedFactions.clear();
-    newSpawn.userData!.allowedFactions.add(faction);
-
-    game.world.addSpawn(newSpawn);
-    game.spawnManager.add(newSpawn);
-  }
+  // Future onBuildSpawnNeutral(TileBuilderContext context) async {
+  //   final newSpawn = SpawnTeleport(
+  //     rootComponent: game.world.tankLayer,
+  //     buildContext: context,
+  //     actorFactory: SpawnActorFactory.tankFromContext(
+  //             game: game, spawnBuilderContext: context)
+  //         .call,
+  //   );
+  //
+  //   final faction = Faction(name: 'Neutral');
+  //
+  //   newSpawn.userData!.factions.clear();
+  //   newSpawn.userData!.factions.add(faction);
+  //   newSpawn.userData!.allowedFactions.clear();
+  //   newSpawn.userData!.allowedFactions.add(faction);
+  //
+  //   game.world.addSpawn(newSpawn);
+  //   game.spawnManager.add(newSpawn);
+  // }
 
   Future onBuildTarget(TileBuilderContext context) async {
     // final properties = context.tiledObject?.properties;
