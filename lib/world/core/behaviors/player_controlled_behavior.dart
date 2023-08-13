@@ -24,7 +24,7 @@ class PlayerControlledBehavior extends CoreBehavior<ActorMixin>
     priority = -1;
   }
 
-  static final ignoredEvents = <PlayerAction>[];
+  static final ignoredEvents = <PlayerAction>{};
 
   MovementForwardCollisionBehavior get movementForward {
     _cachedBehavior ??= parent.findBehavior<MovementForwardCollisionBehavior>();

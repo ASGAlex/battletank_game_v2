@@ -152,9 +152,9 @@ class MyGame extends MyGameFeatures
       case ProcessorSpeed.web:
         activeRadius = const Size(1, 1);
         unloadRadius = const Size(1, 1);
-        preloadRadius = const Size(4, 4);
+        preloadRadius = const Size(1, 1);
         processCellsLimitToPauseEngine = 10;
-        suspendedCellLifetime = const Duration(seconds: 120);
+        suspendedCellLifetime = const Duration(seconds: 200);
         break;
 
       case ProcessorSpeed.office:
@@ -162,7 +162,7 @@ class MyGame extends MyGameFeatures
         unloadRadius = const Size(3, 3);
         preloadRadius = const Size(6, 6);
         processCellsLimitToPauseEngine = 10;
-        suspendedCellLifetime = const Duration(seconds: 180);
+        suspendedCellLifetime = const Duration(seconds: 200);
         break;
 
       case ProcessorSpeed.middle:
@@ -170,7 +170,7 @@ class MyGame extends MyGameFeatures
         unloadRadius = const Size(3, 3);
         preloadRadius = const Size(6, 6);
         processCellsLimitToPauseEngine = 15;
-        suspendedCellLifetime = const Duration(seconds: 180);
+        suspendedCellLifetime = const Duration(seconds: 240);
         break;
 
       case ProcessorSpeed.powerful:
@@ -178,7 +178,7 @@ class MyGame extends MyGameFeatures
         unloadRadius = const Size(3, 3);
         preloadRadius = const Size(6, 6);
         processCellsLimitToPauseEngine = 30;
-        suspendedCellLifetime = const Duration(seconds: 240);
+        suspendedCellLifetime = const Duration(seconds: 300);
         break;
     }
 

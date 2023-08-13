@@ -204,6 +204,8 @@ class TutorialHowToUseTank extends ScriptCore {
                     key: UniqueKey(),
                   ));
                 }
+                PlayerControlledBehavior.ignoredEvents
+                    .remove(PlayerAction.fire);
                 state = TutorialState.fireToWall;
               }
             }
@@ -213,7 +215,6 @@ class TutorialHowToUseTank extends ScriptCore {
         break;
 
       case TutorialState.fireToWall:
-        PlayerControlledBehavior.ignoredEvents.remove(PlayerAction.fire);
         break;
     }
   }
