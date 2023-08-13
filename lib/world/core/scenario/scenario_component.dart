@@ -118,6 +118,8 @@ class ScenarioComponent<T extends ScenarioComponentCore>
         deactivationCallback = game.scenario.customFunctions[deactivationName];
       }
 
+      trackActivity = properties.getValue<bool>('trackActiveStatus') ?? true;
+
       String factionsString = properties.getValue<String>('factions') ?? '';
       if (factionsString.isNotEmpty) {
         final list = factionsString.split(',');
@@ -165,18 +167,32 @@ mixin ActivationCallbacks<T extends ScenarioComponentCore> {
 
   bool get activated => _activated;
 
+  bool _trackActivity = true;
+
+  set trackActivity(bool value) {
+    if (_trackActivity == value) return;
+    _trackActivity = value;
+    _activated = false;
+  }
+
+  bool get trackActivity => _trackActivity;
+
   ScenarioCallbackFunction? activationCallback;
   ScenarioCallbackFunction? deactivationCallback;
 
   @mustCallSuper
   void activatedBy(T scenario, ActorMixin other, MyGame game) {
-    _activated = true;
+    if (trackActivity) {
+      _activated = true;
+    }
     activationCallback?.call(scenario, other, game);
   }
 
   @mustCallSuper
   void deactivatedBy(T scenario, ActorMixin other, MyGame game) {
-    _activated = false;
+    if (trackActivity) {
+      _activated = false;
+    }
     deactivationCallback?.call(scenario, other, game);
   }
 }

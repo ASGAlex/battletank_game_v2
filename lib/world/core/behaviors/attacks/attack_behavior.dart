@@ -2,20 +2,26 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
+import 'package:tank_game/game.dart';
 import 'package:tank_game/services/audio/sfx/sfx.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/brick/brick.dart';
 import 'package:tank_game/world/environment/brick/heavy_brick.dart';
 
-class AttackBehavior extends CollisionBehavior {
+class AttackBehavior extends CollisionBehavior
+    with HasGameReference<MyGame>, ScenarioEventEmitter {
   AttackBehavior(this.audio);
 
   var _hitTarget = false;
   final Map<String, Sfx> audio;
+  bool emitEventOnHit = false;
 
   @override
   FutureOr<void> onLoad() {
@@ -51,6 +57,9 @@ class AttackBehavior extends CollisionBehavior {
             _playSound(other as EntityMixin);
           }
         }
+        if (emitEventOnHit && other is ActorMixin) {
+          scenarioEvent(AttackHitTargetEvent(emitter: parent, target: other));
+        }
       } catch (e) {}
     } else {
       killParent();
@@ -73,4 +82,10 @@ class AttackBehavior extends CollisionBehavior {
     parent.boundingBox.collisionType = CollisionType.inactive;
     parent.coreState = ActorCoreState.dying;
   }
+}
+
+class AttackHitTargetEvent extends ScenarioEvent {
+  const AttackHitTargetEvent(
+      {required super.emitter, required ActorMixin target})
+      : super(name: 'AttackHitTargetEvent', data: target);
 }

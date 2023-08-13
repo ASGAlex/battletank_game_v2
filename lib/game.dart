@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
@@ -9,6 +10,7 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:keep_screen_on/keep_screen_on.dart';
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/joystick.dart';
@@ -120,6 +122,9 @@ class MyGame extends MyGameFeatures
 
   @override
   Future<void> onLoad() async {
+    if (!kIsWeb && Platform.isAndroid) {
+      KeepScreenOn.turnOn();
+    }
     initColorFilter<MyGame>();
     consoleMessages.sendMessage('Start loading scenario ${scenario.name}');
     super.onLoad();
@@ -153,7 +158,7 @@ class MyGame extends MyGameFeatures
         activeRadius = const Size(1, 1);
         unloadRadius = const Size(1, 1);
         preloadRadius = const Size(1, 1);
-        processCellsLimitToPauseEngine = 10;
+        processCellsLimitToPauseEngine = 30;
         suspendedCellLifetime = const Duration(seconds: 200);
         break;
 
@@ -187,7 +192,7 @@ class MyGame extends MyGameFeatures
       worldLoader = WorldLoader(
         fileName: scenario.worldFile!,
         mapLoader: {'all': GameMapLoader.new},
-        loadWholeMap: false,
+        // loadWholeMap: false,
       );
     }
 
@@ -444,6 +449,10 @@ class MyGame extends MyGameFeatures
       FlameAudio.audioCache.clearAll();
       SettingsController().endGame();
       super.onRemove();
+
+      if (!kIsWeb && Platform.isAndroid) {
+        KeepScreenOn.turnOff();
+      }
     }
   }
 }

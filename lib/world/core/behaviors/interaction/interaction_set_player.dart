@@ -1,6 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/effects.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/camera_zoom_effect.dart';
@@ -65,6 +66,10 @@ class InteractionSetPlayer extends InteractableBehavior {
 
         parent.coreState = ActorCoreState.idle;
         parent.add(PlayerControlledBehavior());
+        try {
+          final fireBulletBehavior = parent.findBehavior<FireBulletBehavior>();
+          fireBulletBehavior.emitEvent = true;
+        } catch (_) {}
         parent.data.factions.clear();
         parent.data.factions.addAll(currentPlayerEntity.data.factions);
         if (!parent.hasBehavior<TriggerSpawnBehavior>()) {

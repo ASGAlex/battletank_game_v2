@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 
 class BulletData extends ActorData {
   /// -1 means infinity
@@ -77,6 +80,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   ActorMixin owner;
   final movementBehavior = MovementBehavior();
+  late final AttackBehavior attackBehavior;
   final Map<ActorCoreState, AnimationConfig> animationConfigs;
   CircleComponent? halo;
   final Map<String, Sfx> audio;
@@ -91,7 +95,8 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(AnimationGroupBehavior<ActorCoreState>(
         animationConfigs: animationConfigs));
     add(movementBehavior);
-    add(AttackBehavior(audio));
+    attackBehavior = AttackBehavior(audio);
+    add(attackBehavior);
     add(KillableBehavior(factionCheck: null));
 
     final bulletData = (data as BulletData);
@@ -169,7 +174,8 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 }
 
-class FireBulletBehavior extends CoreBehavior<ActorMixin> {
+class FireBulletBehavior extends CoreBehavior<ActorMixin>
+    with HasGameReference<MyGame>, ScenarioEventEmitter {
   FireBulletBehavior({
     required this.bulletsRootComponent,
     required this.animationFactory,
@@ -231,6 +237,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
   double scale = 1;
   double speedPenalty = 0;
   double speedPenaltyDuration = 0;
+  bool emitEvent = false;
 
   void tryFire() {
     _tryFire = true;
@@ -253,6 +260,9 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     bullet.scale = Vector2.all(scale);
     bulletsRootComponent.add(bullet);
     _audioFire?.play();
+    if (emitEvent) {
+      scenarioEvent(FireBulletEvent(emitter: bullet));
+    }
   }
 
   @override
@@ -283,4 +293,9 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin> {
     _audioHit.clear();
     super.onRemove();
   }
+}
+
+class FireBulletEvent extends ScenarioEvent {
+  const FireBulletEvent({required super.emitter})
+      : super(name: 'FireBulletEvent');
 }

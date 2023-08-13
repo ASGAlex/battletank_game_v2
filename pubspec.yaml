@@ -40,6 +40,7 @@ dependencies:
   nes_ui: ^0.7.0
   animated_text_kit: ^4.2.2
   flame_audio: ^2.0.3
+  keep_screen_on: ^2.1.0
   flame_spatial_grid:
     path: ../flame_spatial_grid
 #    git: https://github.com/ASGAlex/flame_spatial_grid.git

@@ -21,7 +21,8 @@ class ScenarioActivatorBehavior extends CollisionBehavior
 
   @override
   void onCollisionEnd(PositionComponent other) {
-    if (other is ScenarioComponent && other.activated) {
+    if (other is ScenarioComponent &&
+        (!other.trackActivity || other.activated)) {
       other.deactivatedBy(other, parent, game);
       deactivatedBy(other, parent, game);
     }
