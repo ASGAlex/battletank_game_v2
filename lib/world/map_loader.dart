@@ -356,6 +356,8 @@ class GameMapLoader extends TiledMapLoader {
     if (tiledObject == null) return;
 
     final scenario = ScenarioComponent.fromTiled(tiledObject);
+    scenario.position = context.absolutePosition;
+    scenario.size = context.size;
     scenario.currentCell = context.cell;
 
     game.world.addScenario(scenario);
@@ -367,7 +369,7 @@ class GameMapLoader extends TiledMapLoader {
 
     if (tiledObject.polyline.isEmpty) return;
 
-    final initialPosition = Vector2(tiledObject.x, tiledObject.y);
+    final initialPosition = context.absolutePosition;
     final points = tiledObject.polyline
         .map((e) => Vector2(initialPosition.x + e.x, initialPosition.y + e.y))
         .toList(growable: false);

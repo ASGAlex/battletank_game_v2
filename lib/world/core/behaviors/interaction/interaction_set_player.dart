@@ -18,6 +18,12 @@ import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
 
+mixin PlayerControlledTransitionInfo on ActorMixin {
+  var playerControlTransitionInProgress = false;
+
+  ActorMixin? nextPlayerController;
+}
+
 class InteractionSetPlayer extends InteractableBehavior {
   InteractionSetPlayer({this.removeAfterSet = true})
       : super(trigger: InteractableTrigger.userAction);
@@ -25,6 +31,8 @@ class InteractionSetPlayer extends InteractableBehavior {
   final bool removeAfterSet;
   ActorMixin? prevPlayerEntity;
   var _actionInProgress = false;
+
+  bool get actionInProgress => _actionInProgress;
   var paused = false;
   Function(ActorMixin newPlayerComponent)? onComplete;
 
@@ -36,6 +44,10 @@ class InteractionSetPlayer extends InteractableBehavior {
     _actionInProgress = true;
     final currentPlayerEntity = game.currentPlayer;
     if (currentPlayerEntity != null) {
+      if (currentPlayerEntity is PlayerControlledTransitionInfo) {
+        currentPlayerEntity.playerControlTransitionInProgress = true;
+        currentPlayerEntity.nextPlayerController = parent;
+      }
       try {
         final playerControlled =
             currentPlayerEntity.findBehavior<PlayerControlledBehavior>();
@@ -43,11 +55,8 @@ class InteractionSetPlayer extends InteractableBehavior {
         paused = true;
         currentPlayerEntity.coreState = ActorCoreState.idle;
         if (removeAfterSet) {
-          final children = currentPlayerEntity.children.toList(growable: false);
+          final children = currentPlayerEntity.children.query<ShapeHitbox>();
           for (final child in children) {
-            if (child is! ShapeHitbox) {
-              continue;
-            }
             child.collisionType = CollisionType.inactive;
           }
           final effect = OpacityEffect.to(
@@ -108,6 +117,10 @@ class InteractionSetPlayer extends InteractableBehavior {
     }
     super.doTriggerAction();
     _actionInProgress = false;
+    if (currentPlayerEntity is PlayerControlledTransitionInfo &&
+        !removeAfterSet) {
+      currentPlayerEntity.playerControlTransitionInProgress = false;
+    }
   }
 
   void removeNpcBehaviors() {

@@ -28,6 +28,7 @@ abstract class ScenarioComponentCore extends PositionComponent
     Iterable<Faction> factions = const [],
   }) {
     this.factions.addAll(factions);
+    debugMode = true;
   }
 
   TiledObject? tiledObject;
@@ -39,7 +40,16 @@ abstract class ScenarioComponentCore extends PositionComponent
   BoundingHitboxFactory get boundingHitboxFactory => () => ScenarioHitbox();
 
   @override
-  void renderTree(Canvas canvas) {}
+  void renderTree(Canvas canvas) {
+    if (debugMode) {
+      canvas.drawRect(
+        Rect.fromLTWH(position.x, position.y, size.x, size.y),
+        Paint()
+          ..color = const Color.fromRGBO(119, 0, 255, 1.0)
+          ..style = PaintingStyle.stroke,
+      );
+    }
+  }
 }
 
 class ScenarioComponent<T extends ScenarioComponentCore>
@@ -72,11 +82,13 @@ class ScenarioComponent<T extends ScenarioComponentCore>
       final typeName = tiledObject.properties.getValue<String>('type') ?? '';
       typeFactory = _availableTypes[typeName];
     } catch (_) {}
+    final ScenarioComponent component;
     if (typeFactory == null) {
-      return ScenarioComponent(tiledObject: tiledObject);
+      component = ScenarioComponent(tiledObject: tiledObject);
     } else {
-      return typeFactory.call(tiledObject);
+      component = typeFactory.call(tiledObject);
     }
+    return component;
   }
 
   ScenarioComponent({
@@ -135,13 +147,6 @@ class ScenarioComponent<T extends ScenarioComponentCore>
       try {
         name = tiledObject!.name;
       } catch (_) {}
-
-      if (position.isZero()) {
-        position = Vector2(tiledObject!.x, tiledObject!.y);
-      }
-      if (size.isZero()) {
-        size = Vector2(tiledObject!.width, tiledObject!.height);
-      }
     }
     super.onLoad();
   }

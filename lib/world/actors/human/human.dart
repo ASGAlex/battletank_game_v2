@@ -7,6 +7,7 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/human/human_step_trail.dart';
+import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
@@ -17,6 +18,7 @@ import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dar
 import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
+import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/faction.dart';
@@ -36,6 +38,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         Interactor,
         AnimationGroupCoreStateListenerMixin,
         HasGameReference<MyGame>,
+        PlayerControlledTransitionInfo,
         ScenarioEventEmitter {
   HumanEntity() {
     data = AttackerData();
@@ -172,6 +175,16 @@ class WeakBodyHitbox extends BodyHitbox {
         other.parent is WaterEntity ||
         other.parent is HeavyBrickEntity) {
       return false;
+    }
+
+    final tank = other.parent;
+    final actor = parent;
+    if (tank is TankEntity && actor is ActorMixin) {
+      if (actor.data.factions.contains(Faction(name: 'Player')) &&
+          (tank.data.factions.contains(Faction(name: 'Neutral')) ||
+              tank.data.factions.contains(Faction(name: 'Friendly')))) {
+        return false;
+      }
     }
 
     return true;

@@ -47,7 +47,15 @@ class TutorialScenario extends Scenario {
           required String name,
           dynamic data,
         }) =>
-            EnterToNoFireZone(emitter: emitter));
+            EnterToNoFireZone(emitter: emitter, data: data));
+    AreaEventComponent.registerEvent(
+        'EnterToFireTrainingZone',
+        ({
+          required Component emitter,
+          required String name,
+          dynamic data,
+        }) =>
+            EnterToFireTrainingZone(emitter: emitter, data: data));
     game.world.scenarioLayer.add(mainScript);
   }
 }
@@ -59,27 +67,62 @@ class MainTutorialScript extends ScriptCore {
   TutorialHowToUseTank? tutorialHowToUseTank;
   ActorMixin? currentPlayer;
 
+  bool _noFireZone = false;
   final _maxFriendlyFire = 10;
   int _friendlyFireCounter = 0;
 
+  bool _trainingFireZone = false;
+  int _trainingBricksKilled = 0;
+  final _maxTrainingBricksToFinishTraining = 10;
+
   @override
   void onStreamMessage(ScenarioEvent message) {
-    if (tutorialHowToUseTank != null) {
-      if (message is EnterToNoFireZone) {
-        final actor = message.emitter;
-        if (actor == tutorialHowToUseTank!.currentTank) {
-          (actor as ActorMixin).findBehavior<FireBulletBehavior>().emitEvent =
-              true;
+    if (message is EnterToNoFireZone || message is EnterToFireTrainingZone) {
+      final data = message.data as AreaEventData;
+      final actor = message.emitter;
+      if (actor is ActorMixin &&
+          actor.hasBehavior<PlayerControlledBehavior>()) {
+        if (actor is PlayerControlledTransitionInfo &&
+            actor.playerControlTransitionInProgress &&
+            actor.nextPlayerController != null) {
+          actor.nextPlayerController!
+              .findBehavior<FireBulletBehavior>()
+              .emitEvent = true;
+          if (message is EnterToNoFireZone) {
+            _noFireZone = true;
+          } else {
+            _trainingFireZone = true;
+          }
+        } else {
+          if (message is EnterToNoFireZone) {
+            if (_noFireZone != data.activated) {
+              _noFireZone = data.activated;
+              actor.findBehavior<FireBulletBehavior>().emitEvent =
+                  data.activated;
+            }
+          } else {
+            if (_trainingFireZone != data.activated) {
+              _trainingFireZone = data.activated;
+              actor.findBehavior<FireBulletBehavior>().emitEvent =
+                  data.activated;
+            }
+          }
         }
-      } else if (message is FireBulletEvent) {
-        final bullet = message.emitter;
-        if (bullet is BulletEntity) {
-          bullet.attackBehavior.emitEventOnHit = true;
-        }
-      } else if (message is AttackHitTargetEvent &&
-          (message.emitter as BulletEntity).owner ==
-              tutorialHowToUseTank!.currentTank) {
-        final otherActor = message.data as ActorMixin;
+      }
+
+      return;
+    } else if (message is FireBulletEvent) {
+      final bullet = message.emitter;
+      if (bullet is BulletEntity) {
+        bullet.attackBehavior.emitEventOnHit = true;
+      }
+      return;
+    } else if (message is AttackHitTargetEvent &&
+        tutorialHowToUseTank != null &&
+        (message.emitter as BulletEntity).owner ==
+            tutorialHowToUseTank!.currentTank) {
+      final otherActor = message.data as ActorMixin;
+      if (_noFireZone) {
         if (otherActor.data.factions.contains(Faction(name: 'Friendly')) ||
             otherActor.data.factions.contains(Faction(name: 'Neutral')) ||
             (otherActor is BrickEntity && otherActor is! HeavyBrickEntity)) {
@@ -97,7 +140,25 @@ class MainTutorialScript extends ScriptCore {
             ));
           }
         }
+      } else if (_trainingFireZone &&
+          otherActor is BrickEntity &&
+          tutorialHowToUseTank != null) {
+        _trainingBricksKilled++;
+        final number =
+            _maxTrainingBricksToFinishTraining - _trainingBricksKilled;
+        if (number <= 0) {
+          tutorialHowToUseTank!.state = TutorialState.returnToBase;
+        } else {
+          game.showScenarioMessage(MessageWidget(
+            texts: [
+              tutorialHowToUseTank!.txtTrainingFireHit
+                  .replaceFirst('%n', number.toString())
+            ],
+            key: UniqueKey(),
+          ));
+        }
       }
+      return;
     }
 
     if (message is EventSpawned) {
@@ -131,6 +192,7 @@ class MainTutorialScript extends ScriptCore {
           } catch (_) {}
         });
       }
+      return;
     } else if (message is MessageListFinishedEvent) {
       if (message.emitter == currentPlayer && _disableOnlyFire) {
         PlayerControlledBehavior.ignoredEvents.clear();
@@ -142,6 +204,7 @@ class MainTutorialScript extends ScriptCore {
         _disableOnlyFire = false;
         currentPlayer = null;
       }
+      return;
     }
   }
 
@@ -154,7 +217,8 @@ class MainTutorialScript extends ScriptCore {
 enum TutorialState {
   chooseTank(0),
   moveToPolygon(1),
-  fireToWall(2);
+  fireToWall(2),
+  returnToBase(3);
 
   final int stage;
 
@@ -167,11 +231,15 @@ class TutorialHowToUseTank extends ScriptCore {
     txtFriendlyFire = initializer.getTextMessage('txtFriendlyFire');
     txtFriendlyFireGameOver =
         initializer.getTextMessage('txtFriendlyFireGameOver');
+    txtTrainingFireHit = initializer.getTextMessage('txtTrainingFireHit');
   }
 
   late final String txtMoveToPolygon;
   late final String txtFriendlyFire;
   late final String txtFriendlyFireGameOver;
+  late final String txtReturnToBase;
+  late final String txtTrainingFireHit;
+
   String txtChangeTank = '';
 
   TutorialState _state = TutorialState.chooseTank;
@@ -189,7 +257,23 @@ class TutorialHowToUseTank extends ScriptCore {
     _state = value;
   }
 
-  void onChangeState(TutorialState newState, TutorialState previousState) {}
+  void onChangeState(TutorialState newState, TutorialState previousState) {
+    if (newState == TutorialState.returnToBase) {
+      game.showScenarioMessage(MessageWidget(
+        texts: [txtReturnToBase],
+        key: UniqueKey(),
+      ));
+      AreaEventComponent.unregisterEvent('InvalidPolygonEvent');
+      AreaEventComponent.unregisterEvent('EnterToFireTrainingZone');
+      for (final scenario
+          in game.world.scenarioLayer.children.whereType<ScenarioComponent>()) {
+        if (scenario.name == 'Destroy bricks' ||
+            scenario.name == 'invalid direction') {
+          scenario.removeFromParent();
+        }
+      }
+    }
+  }
 
   @override
   void onStreamMessage(ScenarioEvent message) {
@@ -246,11 +330,10 @@ class TutorialHowToUseTank extends ScriptCore {
               }
             }
           } else if (message.name == 'TakePositionEvent') {
-            AreaEventComponent.unregisterEvent('InvalidPolygonEvent');
             AreaEventComponent.unregisterEvent('TakePositionEvent');
             for (final scenario in game.world.scenarioLayer.children
                 .whereType<ScenarioComponent>()) {
-              if (scenario.name == 'initial greting' ||
+              if (scenario.name == 'initial greeting' ||
                   scenario.name == 'selecting tank' ||
                   scenario.name == 'scenarioTutorial') {
                 scenario.removeFromParent();
@@ -292,6 +375,9 @@ class TutorialHowToUseTank extends ScriptCore {
           PlayerControlledBehavior.ignoredEvents.remove(PlayerAction.triggerF);
         }
         break;
+
+      case TutorialState.returnToBase:
+        break;
     }
   }
 
@@ -312,6 +398,11 @@ class TakePositionEvent extends ScenarioEvent {
 }
 
 class EnterToNoFireZone extends ScenarioEvent {
-  const EnterToNoFireZone({required super.emitter})
+  const EnterToNoFireZone({required super.emitter, required super.data})
       : super(name: 'EnterToNoFireZone');
+}
+
+class EnterToFireTrainingZone extends ScenarioEvent {
+  const EnterToFireTrainingZone({required super.emitter, required super.data})
+      : super(name: 'EnterToFireTrainingZone');
 }
