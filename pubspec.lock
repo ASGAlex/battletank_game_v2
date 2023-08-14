@@ -205,9 +205,11 @@ packages:
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "../flame_spatial_grid"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "2979d66fdcc6c3f36448ec295f9635c8aeaf39f8"
+      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
+    source: git
     version: "0.8.1"
   flame_tiled:
     dependency: "direct main"
@@ -293,22 +295,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  keep_screen_on:
-    dependency: "direct main"
-    description:
-      name: keep_screen_on
-      sha256: "66e484936decb976e88b95551de9290550c5fcec744dbfa48093ad3909a40432"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  keep_screen_on_platform_interface:
-    dependency: transitive
-    description:
-      name: keep_screen_on_platform_interface
-      sha256: b56558be746f0bb136b13138d94de278c06bfffb33923adf148cc8a4b06e886e
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0+1"
   lints:
     dependency: transitive
     description:
@@ -610,14 +596,54 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  wakelock:
+    dependency: "direct main"
+    description:
+      name: wakelock
+      sha256: "769ecf42eb2d07128407b50cb93d7c10bd2ee48f0276ef0119db1d25cc2f87db"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.2"
+  wakelock_macos:
+    dependency: transitive
+    description:
+      name: wakelock_macos
+      sha256: "047c6be2f88cb6b76d02553bca5a3a3b95323b15d30867eca53a19a0a319d4cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
+  wakelock_platform_interface:
+    dependency: transitive
+    description:
+      name: wakelock_platform_interface
+      sha256: "1f4aeb81fb592b863da83d2d0f7b8196067451e4df91046c26b54a403f9de621"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
+  wakelock_web:
+    dependency: transitive
+    description:
+      name: wakelock_web
+      sha256: "1b256b811ee3f0834888efddfe03da8d18d0819317f20f6193e2922b41a501b5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
+  wakelock_windows:
+    dependency: transitive
+    description:
+      name: wakelock_windows
+      sha256: "857f77b3fe6ae82dd045455baa626bc4b93cb9bb6c86bf3f27c182167c3a5567"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   win32:
     dependency: transitive
     description:
       name: win32
-      sha256: f2add6fa510d3ae152903412227bda57d0d5a8da61d2c39c1fb022c9429a41c0
+      sha256: a6f0236dbda0f63aa9a25ad1ff9a9d8a4eaaa5012da0dc59d21afdb1dc361ca4
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.6"
+    version: "3.1.4"
   xdg_directories:
     dependency: transitive
     description:

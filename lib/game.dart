@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
@@ -10,7 +9,6 @@ import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:keep_screen_on/keep_screen_on.dart';
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/controls/joystick.dart';
@@ -39,6 +37,7 @@ import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/map_loader.dart';
 import 'package:tank_game/world/world.dart';
+import 'package:wakelock/wakelock.dart';
 
 import 'world/core/scenario/scenario_description.dart';
 
@@ -122,9 +121,8 @@ class MyGame extends MyGameFeatures
 
   @override
   Future<void> onLoad() async {
-    if (!kIsWeb && Platform.isAndroid) {
-      KeepScreenOn.turnOn();
-    }
+    Wakelock.enable();
+
     initColorFilter<MyGame>();
     consoleMessages.sendMessage('Start loading scenario ${scenario.name}');
     super.onLoad();
@@ -450,9 +448,7 @@ class MyGame extends MyGameFeatures
       SettingsController().endGame();
       super.onRemove();
 
-      if (!kIsWeb && Platform.isAndroid) {
-        KeepScreenOn.turnOff();
-      }
+      Wakelock.disable();
     }
   }
 }

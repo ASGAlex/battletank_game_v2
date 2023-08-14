@@ -1,7 +1,5 @@
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/scenario/repository/cell_test.dart';
-import 'package:tank_game/world/core/scenario/repository/demo.dart';
 import 'package:tank_game/world/core/scenario/repository/tutorial.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scenario_description.dart';
@@ -13,9 +11,9 @@ class ScenarioRepository {
   };
 
   initMissionList() {
-    scenarios.add(DemoScenario());
+    // scenarios.add(DemoScenario());
     scenarios.add(TutorialScenario());
-    scenarios.add(CellTestScenario());
+    // scenarios.add(CellTestScenario());
   }
 }
 
