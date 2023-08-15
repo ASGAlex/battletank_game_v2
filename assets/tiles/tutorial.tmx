@@ -326,6 +326,8 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="removeWhenLeave" type="bool" value="true"/>
     <property name="scriptName" value="TutorialHowToUseTank"/>
     <property name="scriptTarget" value="global"/>
+    <property name="txtEnterTrainingZone" value="FIRE"/>
+    <property name="txtEnterTrainingZone_ru" value="Вот мы и на полигоне. Наломай тут кирпичей в своё удовольствие!"/>
     <property name="txtFriendlyFire" value="Friendly fire not allowed!"/>
     <property name="txtFriendlyFireGameOver" value="Friendly fire game over"/>
     <property name="txtFriendlyFireGameOver_ru" value="Так, это слишком! Ты неадекватен вообще. Прерываем обучение. "/>

@@ -142,7 +142,8 @@ class MainTutorialScript extends ScriptCore {
         }
       } else if (_trainingFireZone &&
           otherActor is BrickEntity &&
-          tutorialHowToUseTank != null) {
+          tutorialHowToUseTank != null &&
+          tutorialHowToUseTank!.state == TutorialState.fireOldBuildings) {
         _trainingBricksKilled++;
         final number =
             _maxTrainingBricksToFinishTraining - _trainingBricksKilled;
@@ -218,7 +219,8 @@ enum TutorialState {
   chooseTank(0),
   moveToPolygon(1),
   fireToWall(2),
-  returnToBase(3);
+  fireOldBuildings(3),
+  returnToBase(4);
 
   final int stage;
 
@@ -232,6 +234,8 @@ class TutorialHowToUseTank extends ScriptCore {
     txtFriendlyFireGameOver =
         initializer.getTextMessage('txtFriendlyFireGameOver');
     txtTrainingFireHit = initializer.getTextMessage('txtTrainingFireHit');
+    txtReturnToBase = initializer.getTextMessage('txtReturnToBase');
+    txtEnterTrainingZone = initializer.getTextMessage('txtEnterTrainingZone');
   }
 
   late final String txtMoveToPolygon;
@@ -239,6 +243,7 @@ class TutorialHowToUseTank extends ScriptCore {
   late final String txtFriendlyFireGameOver;
   late final String txtReturnToBase;
   late final String txtTrainingFireHit;
+  late final String txtEnterTrainingZone;
 
   String txtChangeTank = '';
 
@@ -253,7 +258,7 @@ class TutorialHowToUseTank extends ScriptCore {
     if (state == value) {
       return;
     }
-    onChangeState(_state, value);
+    onChangeState(value, _state);
     _state = value;
   }
 
@@ -373,9 +378,18 @@ class TutorialHowToUseTank extends ScriptCore {
           }
           InteractionPlayerOut.globalPaused = false;
           PlayerControlledBehavior.ignoredEvents.remove(PlayerAction.triggerF);
+          state = TutorialState.fireOldBuildings;
         }
         break;
 
+      case TutorialState.fireOldBuildings:
+        if (message is EnterToFireTrainingZone) {
+          game.showScenarioMessage(MessageWidget(
+            texts: [txtEnterTrainingZone],
+            key: UniqueKey(),
+          ));
+        }
+        break;
       case TutorialState.returnToBase:
         break;
     }
