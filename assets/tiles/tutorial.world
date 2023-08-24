@@ -69,6 +69,27 @@
             "width": 400,
             "x": 0,
             "y": 800
+        },
+        {
+            "fileName": "tutorial_left_left_bottom.tmx",
+            "height": 400,
+            "width": 400,
+            "x": -800,
+            "y": 400
+        },
+        {
+            "fileName": "tutorial_left_left.tmx",
+            "height": 400,
+            "width": 400,
+            "x": -800,
+            "y": 0
+        },
+        {
+            "fileName": "tutorial_top_top.tmx",
+            "height": 400,
+            "width": 400,
+            "x": 0,
+            "y": -800
         }
     ],
     "onlyShowAdjacentMaps": false,

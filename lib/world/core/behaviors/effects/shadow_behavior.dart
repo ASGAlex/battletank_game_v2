@@ -61,6 +61,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
           component: shadowPictureComponent!,
           layerType: MapLayerType.static,
           layerName: 'Shadows',
+          isRenewable: false,
           renderMode: LayerRenderMode.image,
           priority: RenderPriority.shadows.priority);
     } else {
@@ -136,8 +137,14 @@ class ShadowPictureComponent extends PositionComponent
 
   @override
   FutureOr<void>? onLoad() {
-    targetEntity.transform.addListener(_updateTransform);
+    if ((parent is! CellLayer && parent != null) ||
+        (parent is CellLayer && (parent as CellLayer).isRenewable)) {
+      targetEntity.transform.addListener(_updateTransform);
+      targetEntity.data.lookDirectionNotifier
+          .addListener(_onTargetLookDirectionUpdate);
+    }
     _updateTransform();
+    _onTargetLookDirectionUpdate();
 
     Vector2? spriteSize;
     if (targetEntity is SpriteAnimationGroupComponent) {
@@ -159,10 +166,6 @@ class ShadowPictureComponent extends PositionComponent
       image = ShadowBehavior.generatedShadows[shadowKey]!.keys.first;
     }
     // image = picture.toImageSync(size.x.ceil(), size.y.ceil());
-    targetEntity.data.lookDirectionNotifier
-        .addListener(_onTargetLookDirectionUpdate);
-    _updateTransform();
-    _onTargetLookDirectionUpdate();
     return super.onLoad();
   }
 

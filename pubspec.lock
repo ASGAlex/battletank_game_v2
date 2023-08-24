@@ -205,11 +205,9 @@ packages:
   flame_spatial_grid:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "2979d66fdcc6c3f36448ec295f9635c8aeaf39f8"
-      url: "https://github.com/ASGAlex/flame_spatial_grid.git"
-    source: git
+      path: "../flame_spatial_grid"
+      relative: true
+    source: path
     version: "0.8.1"
   flame_tiled:
     dependency: "direct main"
