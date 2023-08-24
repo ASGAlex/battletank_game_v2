@@ -156,7 +156,7 @@ class MyGame extends MyGameFeatures
         activeRadius = const Size(1, 1);
         unloadRadius = const Size(1, 1);
         preloadRadius = const Size(1, 1);
-        processCellsLimitToPauseEngine = 30;
+        processCellsLimitToPauseEngine = 5;
         suspendedCellLifetime = const Duration(seconds: 200);
         break;
 
