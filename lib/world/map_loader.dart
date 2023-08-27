@@ -78,6 +78,7 @@ class GameMapLoader extends TiledMapLoader {
     Component rootComponent,
     bool isFullyOutside,
   ) async {
+    return;
     if (game.scenario.name == 'Tutorial') {
       if (cell.rect.left < 1 && cell.rect.top > 750) {
         buildWaterCell(game, cell, rootComponent, isFullyOutside);
@@ -160,7 +161,7 @@ class GameMapLoader extends TiledMapLoader {
           absolutePosition: false,
           layerName: 'static-ground-procedural',
           layerType: MapLayerType.static,
-          isRenewable: false,
+          componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
           optimizeCollisions: false,
           priority: -100,
         );
@@ -249,7 +250,7 @@ class GameMapLoader extends TiledMapLoader {
         absolutePosition: false,
         layerName: 'static-ground-procedural',
         layerType: MapLayerType.static,
-        isRenewable: false,
+        componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
         optimizeCollisions: false,
         priority: -100,
       );
@@ -426,7 +427,7 @@ class GameMapLoader extends TiledMapLoader {
         absolutePosition: false,
         layerName: 'static-ground-procedural',
         layerType: MapLayerType.static,
-        isRenewable: false,
+        componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
         optimizeCollisions: false,
         priority: -100,
       );

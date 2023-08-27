@@ -61,7 +61,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
           component: shadowPictureComponent!,
           layerType: MapLayerType.static,
           layerName: 'Shadows',
-          isRenewable: false,
+          componentsStorageMode: LayerComponentsStorageMode.internalLayerSet,
           renderMode: LayerRenderMode.image,
           priority: RenderPriority.shadows.priority);
     } else {
@@ -117,7 +117,7 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
 }
 
 class ShadowPictureComponent extends PositionComponent
-    with HasGridSupport, HasPaint {
+    with HasGridSupport, HasPaint, LayerChildComponent {
   ShadowPictureComponent(this.shadowKey, this.shadowBehavior) {
     targetEntity = shadowBehavior.parent;
     anchor = targetEntity.anchor;
@@ -138,11 +138,13 @@ class ShadowPictureComponent extends PositionComponent
   @override
   FutureOr<void>? onLoad() {
     if ((parent is! CellLayer && parent != null) ||
-        (parent is CellLayer && (parent as CellLayer).isRenewable)) {
-      targetEntity.transform.addListener(_updateTransform);
+        (parent is CellLayer &&
+            (parent as CellLayer).componentsStorageMode ==
+                LayerComponentsStorageMode.defaultComponentTree)) {
       targetEntity.data.lookDirectionNotifier
           .addListener(_onTargetLookDirectionUpdate);
     }
+    targetEntity.transform.addListener(_updateTransform);
     _updateTransform();
     _onTargetLookDirectionUpdate();
 
@@ -197,6 +199,8 @@ class ShadowPictureComponent extends PositionComponent
 
     if (parent is CellLayer) {
       (parent as CellLayer).isUpdateNeeded = true;
+    } else if (parentLayer != null) {
+      parentLayer!.isUpdateNeeded = true;
     }
   }
 
