@@ -7,7 +7,6 @@ import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:tank_game/controls/gamepad.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
@@ -440,15 +439,19 @@ class MyGame extends MyGameFeatures
 
   @override
   void onRemove() {
-    if (!kDebugMode) {
-      disposeListener();
-      spawnManager.dispose();
-      // hudHideInTreesProvider.dispose();
-      FlameAudio.audioCache.clearAll();
-      SettingsController().endGame();
-      super.onRemove();
-
-      Wakelock.disable();
-    }
+    // if (!kDebugMode) {
+    //   disposeListener();
+    //   spawnManager.dispose();
+    //   hudHideInTreesProvider.dispose();
+    //   FlameAudio.audioCache.clearAll();
+    //   removeAll(children);
+    //   processLifecycleEvents();
+    //   Flame.images.clearCache();
+    //   Flame.assets.clearCache();
+    //   SettingsController().endGame();
+    //   super.onRemove();
+    //
+    //   Wakelock.disable();
+    // }
   }
 }

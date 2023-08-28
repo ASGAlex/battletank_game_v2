@@ -28,7 +28,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   args: any
-  flame: 1.8.1
+  flame: ^1.8.2
 #  audioplayers: ^3.0.1
 #  audioplayers_windows: ^1.1.3
 #  soundpool: ^2.3.0

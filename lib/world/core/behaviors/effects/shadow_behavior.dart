@@ -14,6 +14,9 @@ import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/world.dart';
 
+mixin ShadowOfAnimationGroup on ActorMixin {}
+mixin ShadowOfAnimation on ActorMixin {}
+
 class ShadowBehavior extends CoreBehavior<ActorMixin>
     with HasGameReference<MyGame> {
   ShadowBehavior({this.shadowKey});
@@ -26,6 +29,34 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
 
   @override
   FutureOr<void> onLoad() {
+    if (parent is ShadowOfAnimationGroup) {
+      _loadForAnimationGroup();
+    } else if (parent is ShadowOfAnimation) {
+      _loadForAnimation();
+    } else {
+      _loadForStatic();
+    }
+
+    shadowPictureComponent = ShadowPictureComponent(shadowKey, this);
+
+    shadowPictureComponent!.priority = parent.priority - 1;
+
+    if (parent.parent is CellLayer) {
+      game.layersManager.addComponent(
+          component: shadowPictureComponent!,
+          layerType: MapLayerType.static,
+          layerName: 'Shadows',
+          currentCell: parent.currentCell,
+          componentsStorageMode: LayerComponentsStorageMode.internalLayerSet,
+          renderMode: LayerRenderMode.image,
+          priority: RenderPriority.shadows.priority);
+    } else {
+      parent.parent!.add(shadowPictureComponent!);
+    }
+    return super.onLoad();
+  }
+
+  void _loadForAnimationGroup() {
     try {
       final animationGroup = parent.findBehavior<AnimationGroupBehavior>();
       for (final configEntry in animationGroup.animationConfigs.entries) {
@@ -38,36 +69,28 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
         }
       }
     } catch (groupException) {
-      try {
-        final animation = parent.findBehavior<AnimationBehavior>();
-        if (animation.config.needShadow) {
-          final key = shadowKey ??
-              '${animation.config.tileset}_${animation.config.tileType}';
+      _loadForAnimation();
+    }
+  }
 
-          _processAnimation(animation.config, key);
-        }
-      } catch (animationException) {
-        if (parent is SpriteComponent && shadowKey != null) {
-          _renderSprite((parent as SpriteComponent).sprite!, shadowKey!);
-        }
+  void _loadForAnimation() {
+    try {
+      final animation = parent.findBehavior<AnimationBehavior>();
+      if (animation.config.needShadow) {
+        final key = shadowKey ??
+            '${animation.config.tileset}_${animation.config.tileType}';
+
+        _processAnimation(animation.config, key);
       }
+    } catch (animationException) {
+      _loadForStatic();
     }
-    shadowPictureComponent = ShadowPictureComponent(shadowKey, this);
+  }
 
-    shadowPictureComponent!.priority = parent.priority - 1;
-
-    if (parent.parent is CellLayer) {
-      game.layersManager.addComponent(
-          component: shadowPictureComponent!,
-          layerType: MapLayerType.static,
-          layerName: 'Shadows',
-          componentsStorageMode: LayerComponentsStorageMode.internalLayerSet,
-          renderMode: LayerRenderMode.image,
-          priority: RenderPriority.shadows.priority);
-    } else {
-      parent.parent!.add(shadowPictureComponent!);
+  void _loadForStatic() {
+    if (parent is SpriteComponent && shadowKey != null) {
+      _renderSprite((parent as SpriteComponent).sprite!, shadowKey!);
     }
-    return super.onLoad();
   }
 
   @override
@@ -91,6 +114,8 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
   }
 
   void _renderSprite(Sprite sprite, String key) {
+    if (generatedShadows[key] != null) return;
+
     final recorder = PictureRecorder();
     final canvas = Canvas(recorder);
 
@@ -117,11 +142,11 @@ class ShadowBehavior extends CoreBehavior<ActorMixin>
 }
 
 class ShadowPictureComponent extends PositionComponent
-    with HasGridSupport, HasPaint, LayerChildComponent {
+    with HasPaint, LayerChildComponent {
   ShadowPictureComponent(this.shadowKey, this.shadowBehavior) {
     targetEntity = shadowBehavior.parent;
     anchor = targetEntity.anchor;
-    currentCell = targetEntity.currentCell;
+    // currentCell = targetEntity.currentCell;
     scale = targetEntity.scale;
     paint.isAntiAlias = false;
     paint.filterQuality = FilterQuality.none;

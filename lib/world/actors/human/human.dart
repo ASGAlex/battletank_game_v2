@@ -39,6 +39,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         AnimationGroupCoreStateListenerMixin,
         HasGameReference<MyGame>,
         PlayerControlledTransitionInfo,
+        ShadowOfAnimationGroup,
         ScenarioEventEmitter {
   HumanEntity() {
     data = AttackerData();

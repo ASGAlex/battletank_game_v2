@@ -78,7 +78,7 @@ class GameMapLoader extends TiledMapLoader {
     Component rootComponent,
     bool isFullyOutside,
   ) async {
-    return;
+    // return;
     if (game.scenario.name == 'Tutorial') {
       if (cell.rect.left < 1 && cell.rect.top > 750) {
         buildWaterCell(game, cell, rootComponent, isFullyOutside);
