@@ -161,26 +161,26 @@ class MyGame extends MyGameFeatures
 
       case ProcessorSpeed.office:
         activeRadius = const Size(1, 1);
-        unloadRadius = const Size(3, 3);
+        unloadRadius = const Size(2, 2);
         preloadRadius = const Size(6, 6);
-        processCellsLimitToPauseEngine = 10;
+        processCellsLimitToPauseEngine = 30;
         suspendedCellLifetime = const Duration(seconds: 200);
         break;
 
       case ProcessorSpeed.middle:
         activeRadius = const Size(1, 1);
         unloadRadius = const Size(3, 3);
-        preloadRadius = const Size(6, 6);
-        processCellsLimitToPauseEngine = 15;
-        suspendedCellLifetime = const Duration(seconds: 240);
+        preloadRadius = const Size(8, 8);
+        processCellsLimitToPauseEngine = 30;
+        suspendedCellLifetime = const Duration(seconds: 300);
         break;
 
       case ProcessorSpeed.powerful:
         activeRadius = const Size(1, 1);
-        unloadRadius = const Size(3, 3);
-        preloadRadius = const Size(6, 6);
-        processCellsLimitToPauseEngine = 30;
-        suspendedCellLifetime = const Duration(seconds: 300);
+        unloadRadius = const Size(5, 5);
+        preloadRadius = const Size(12, 12);
+        processCellsLimitToPauseEngine = 50;
+        suspendedCellLifetime = const Duration(seconds: 500);
         break;
     }
 
@@ -386,7 +386,7 @@ class MyGame extends MyGameFeatures
           .sendMessage('${message.type} | progress: ${message.progress}%');
     }
     refreshWidget();
-    super.onLoadingProgress(message);
+    // super.onLoadingProgress(message);
   }
 
   @override
