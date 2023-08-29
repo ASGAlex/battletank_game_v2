@@ -269,11 +269,11 @@
     <property name="tank_type" value="heavy"/>
     <property name="tanks_inside" type="int" value="1"/>
     <property name="triggerFactions" value="Player, Enemy"/>
-    <property name="trigger_distance" type="float" value="128"/>
+    <property name="trigger_distance" type="float" value="512"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="scenario">
+ <objectgroup id="5" name="scenario" visible="0">
   <properties>
    <property name="limitedByArea" type="bool" value="true"/>
    <property name="scriptName" value="TutorialUseFirstTank"/>
