@@ -106,8 +106,7 @@ class KillableBehavior extends CoreBehavior<ActorMixin> {
       // This is a hack to reset broadphase check cache for parent component
       if (parent is ActorWithSeparateBody) {
         (parent as ActorWithSeparateBody).bodyHitbox.removeFromParent();
-        (parent as ActorWithSeparateBody).bodyHitbox = BodyHitbox()
-          ..size.setFrom(parent.size);
+        (parent as ActorWithSeparateBody).bodyHitbox = BodyHitbox();
         parent.add((parent as ActorWithSeparateBody).bodyHitbox);
       }
     }

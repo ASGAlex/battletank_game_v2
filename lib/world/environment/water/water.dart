@@ -24,10 +24,23 @@ class WaterEntity extends SpriteAnimationComponent
   }
 
   @override
+  BoundingHitboxFactory get boundingHitboxFactory =>
+      () => WaterBoundingHitbox();
+
+  @override
   FutureOr<void> onLoad() {
     super.onLoad();
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
+  }
+}
+
+class WaterBoundingHitbox extends ActorDefaultHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    groupAbsoluteCacheByType = true;
+    collisionType = defaultCollisionType = CollisionType.passive;
+    return super.onLoad();
   }
 }

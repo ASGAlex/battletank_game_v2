@@ -70,9 +70,10 @@ class SandEntity extends SpriteAnimationComponent
   }
 }
 
-class SandBoundingHitbox extends BoundingHitbox {
+class SandBoundingHitbox extends ActorDefaultHitbox {
   @override
   FutureOr<void> onLoad() {
+    groupAbsoluteCacheByType = true;
     collisionType = defaultCollisionType = CollisionType.passive;
     return super.onLoad();
   }

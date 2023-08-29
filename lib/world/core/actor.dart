@@ -22,7 +22,6 @@ mixin ActorWithSeparateBody on ActorMixin {
   @override
   FutureOr<void> onLoad() {
     super.onLoad();
-    bodyHitbox.size.setFrom(size);
     add(bodyHitbox);
   }
 }

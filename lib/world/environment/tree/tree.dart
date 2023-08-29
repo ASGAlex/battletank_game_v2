@@ -71,6 +71,7 @@ class TreeEntity extends SpriteComponent
 class TreeBoundingHitbox extends BoundingHitbox {
   @override
   FutureOr<void> onLoad() {
+    groupAbsoluteCacheByType = true;
     collisionType = defaultCollisionType = CollisionType.passive;
     return super.onLoad();
   }
