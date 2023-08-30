@@ -207,7 +207,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     add(DetectableBehavior(detectionType: DetectionType.audial));
     add(DetectableBehavior(detectionType: DetectionType.visual));
     add(HideInTreesBehavior());
-    add(ShadowBehavior());
+    add(ShadowBehavior(shadowKey: 'tank'));
     if (data.factions.contains(Faction(name: 'Player'))) {
       // player-specific options;
     } else if (data.factions.contains(Faction(name: 'Friendly'))) {

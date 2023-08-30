@@ -1,4 +1,4 @@
-import 'package:tank_game/world/environment/brick/brick.dart';
+import 'package:tank_game/world/environment/buildings/brick.dart';
 
 class HeavyBrickEntity extends BrickEntity {
   HeavyBrickEntity({super.sprite, super.position, super.size})

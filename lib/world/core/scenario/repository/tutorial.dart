@@ -18,8 +18,8 @@ import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scenario_description.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/core/scenario/scripts/script_core.dart';
-import 'package:tank_game/world/environment/brick/brick.dart';
-import 'package:tank_game/world/environment/brick/heavy_brick.dart';
+import 'package:tank_game/world/environment/buildings/brick.dart';
+import 'package:tank_game/world/environment/buildings/heavy_brick.dart';
 import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 
 class TutorialScenario extends Scenario {

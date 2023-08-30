@@ -7,8 +7,9 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/moving_path.dart';
-import 'package:tank_game/world/environment/brick/brick.dart';
-import 'package:tank_game/world/environment/brick/heavy_brick.dart';
+import 'package:tank_game/world/environment/buildings/brick.dart';
+import 'package:tank_game/world/environment/buildings/heavy_brick.dart';
+import 'package:tank_game/world/environment/buildings/radar.dart';
 import 'package:tank_game/world/environment/ground/asphalt.dart';
 import 'package:tank_game/world/environment/spawn/actor_factory.dart';
 import 'package:tank_game/world/environment/spawn/spawn_teleport.dart';
@@ -46,6 +47,7 @@ class GameMapLoader extends TiledMapLoader {
         'scenario': onBuildScenario,
         'moving_path': onBuildMovingPath,
         'move_path': onBuildMovingPath,
+        'radar_head': onBuildRadar,
       };
 
   @override
@@ -581,6 +583,14 @@ class GameMapLoader extends TiledMapLoader {
         layerType: MapLayerType.static,
         layerName: 'Asphalt',
         priority: RenderPriority.ground.priority + 1);
+  }
+
+  Future onBuildRadar(TileBuilderContext context) async {
+    final radar =
+        RadarEntity(position: context.absolutePosition + Vector2(0, -8));
+    radar.currentCell = context.cell;
+    radar.size = Vector2.all(16);
+    game.world.tankLayer.add(radar);
   }
 
   Future onBuildHeavyBrick(TileBuilderContext context) async {

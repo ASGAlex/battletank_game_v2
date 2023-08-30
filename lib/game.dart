@@ -305,6 +305,7 @@ class MyGame extends MyGameFeatures
     futures.add(tilesetManager.loadTileset('spawn.tsx'));
     futures.add(tilesetManager.loadTileset('target.tsx'));
     futures.add(tilesetManager.loadTileset('bullet.tsx'));
+    futures.add(tilesetManager.loadTileset('radar_head.tsx'));
     return Future.wait(futures);
   }
 

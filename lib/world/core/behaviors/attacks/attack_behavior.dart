@@ -12,8 +12,8 @@ import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/collision_behavior.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
-import 'package:tank_game/world/environment/brick/brick.dart';
-import 'package:tank_game/world/environment/brick/heavy_brick.dart';
+import 'package:tank_game/world/environment/buildings/brick.dart';
+import 'package:tank_game/world/environment/buildings/heavy_brick.dart';
 
 class AttackBehavior extends CollisionBehavior
     with HasGameReference<MyGame>, ScenarioEventEmitter {
