@@ -8,13 +8,21 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
 class SmokeBehavior extends CoreBehavior<ActorMixin> {
-  SmokeBehavior(this.rootComponent);
+  SmokeBehavior(
+    this.rootComponent, {
+    this.color,
+    this.particlePriority = 0,
+    this.nextParticleFrequency = 0.15,
+  });
 
   Component rootComponent;
   bool isEnabled = false;
 
+  Color? color;
+  int particlePriority;
+
   double _nextSmokeParticle = 0;
-  static const _nextSmokeParticleMax = 0.15;
+  double nextParticleFrequency;
 
   @override
   void update(double dt) {
@@ -27,6 +35,7 @@ class SmokeBehavior extends CoreBehavior<ActorMixin> {
           ..translate(
               w / 2 - r.nextInt(w).toDouble(), h / 2 - r.nextInt(h).toDouble());
         rootComponent.add(ParticleSystemComponent(
+            priority: particlePriority,
             position: newPos,
             particle: AcceleratedParticle(
                 acceleration:
@@ -35,13 +44,14 @@ class SmokeBehavior extends CoreBehavior<ActorMixin> {
                 child: ComputedParticle(
                     lifespan: 5,
                     renderer: (Canvas c, Particle particle) {
+                      final opacity = 1 - particle.progress;
                       final paint = Paint()
-                        ..color =
-                            Colors.grey.withOpacity(1 - particle.progress);
+                        ..color = color?.withOpacity(opacity) ??
+                            Colors.grey.withOpacity(opacity);
                       c.drawCircle(
                           Offset.zero, particle.progress * w / 2, paint);
                     }))));
-        _nextSmokeParticle = _nextSmokeParticleMax;
+        _nextSmokeParticle = nextParticleFrequency;
       } else {
         _nextSmokeParticle -= dt;
       }
