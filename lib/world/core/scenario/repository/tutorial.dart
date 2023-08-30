@@ -28,11 +28,11 @@ class TutorialScenario extends Scenario {
     super.description = 'Learn how to play game',
   });
 
-  // @override
-  // String? get worldFile => 'tutorial.world';
-
   @override
-  String? get mapFile => 'tutorial.tmx';
+  String? get worldFile => 'tutorial.world';
+
+  // @override
+  // String? get mapFile => 'tutorial.tmx';
 
   @override
   void onLoad() {
