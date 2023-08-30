@@ -42,6 +42,7 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   static const _tileset = 'radar_head';
   late SpriteComponent ground;
   late final ShadowPictureComponent groundShadow;
+  late final ShadowPictureComponent groundShadow1;
   late final ShadowPictureComponent headShadow;
   late final RotateEffect rotateEffect;
   late final SpriteAnimationComponent boom;
@@ -93,9 +94,14 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
     groundShadow = ShadowPictureComponent('radar_ground',
         targetEntity: ground, manuallyPositioned: true);
-    groundShadow.position = ground.position.translated(-2, 2);
+    groundShadow.position = ground.position.translated(-1.5, 1.5);
     groundShadow.priority = 1;
     parent?.add(groundShadow);
+    groundShadow1 = ShadowPictureComponent('radar_ground',
+        targetEntity: ground, manuallyPositioned: true);
+    groundShadow1.position = ground.position.translated(-2.5, 2.5);
+    groundShadow1.priority = 1;
+    parent?.add(groundShadow1);
 
     headShadow = ShadowPictureComponent('radar_head',
         targetEntity: this, manuallyPositioned: true);
@@ -126,6 +132,10 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   void onBeingKilled(ActorMixin? attackedBy, ActorMixin killable) {
+    if (coreState == ActorCoreState.removing) {
+      coreState = ActorCoreState.wreck;
+      return;
+    }
     smoke.isEnabled = true;
     parent?.add(boom);
     rotateEffect.removeFromParent();
@@ -141,6 +151,5 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     ground.priority = 2;
     parent?.add(ground);
     coreState = ActorCoreState.wreck;
-    findBehavior<KillableBehavior>().removeFromParent();
   }
 }
