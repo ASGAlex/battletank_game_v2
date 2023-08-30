@@ -28,8 +28,11 @@ class TutorialScenario extends Scenario {
     super.description = 'Learn how to play game',
   });
 
+  // @override
+  // String? get worldFile => 'tutorial.world';
+
   @override
-  String? get worldFile => 'tutorial.world';
+  String? get mapFile => 'tutorial.tmx';
 
   @override
   void onLoad() {
@@ -181,11 +184,11 @@ class MainTutorialScript extends ScriptCore {
           try {
             if (actor.hasBehavior<PlayerControlledBehavior>()) {
               PlayerControlledBehavior.ignoredEvents.addAll([
-                PlayerAction.fire,
-                PlayerAction.moveLeft,
-                PlayerAction.moveRight,
-                PlayerAction.moveDown,
-                PlayerAction.moveUp,
+                // PlayerAction.fire,
+                // PlayerAction.moveLeft,
+                // PlayerAction.moveRight,
+                // PlayerAction.moveDown,
+                // PlayerAction.moveUp,
               ]);
               _initialDisableControls = false;
               currentPlayer = actor;
@@ -198,7 +201,7 @@ class MainTutorialScript extends ScriptCore {
       if (message.emitter == currentPlayer && _disableOnlyFire) {
         PlayerControlledBehavior.ignoredEvents.clear();
         PlayerControlledBehavior.ignoredEvents.addAll([
-          PlayerAction.fire,
+          // PlayerAction.fire,
           PlayerAction.triggerF,
         ]);
         InteractionPlayerOut.globalPaused = true;

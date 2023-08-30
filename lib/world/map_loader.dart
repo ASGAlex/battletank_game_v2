@@ -80,7 +80,7 @@ class GameMapLoader extends TiledMapLoader {
     Component rootComponent,
     bool isFullyOutside,
   ) async {
-    // return;
+    return;
     if (game.scenario.name == 'Tutorial') {
       if (cell.rect.left < 1 && cell.rect.top > 750) {
         buildWaterCell(game, cell, rootComponent, isFullyOutside);
@@ -590,7 +590,7 @@ class GameMapLoader extends TiledMapLoader {
         RadarEntity(position: context.absolutePosition + Vector2(0, -8));
     radar.currentCell = context.cell;
     radar.size = Vector2.all(16);
-    game.world.tankLayer.add(radar);
+    game.world.skyLayer.add(radar);
   }
 
   Future onBuildHeavyBrick(TileBuilderContext context) async {

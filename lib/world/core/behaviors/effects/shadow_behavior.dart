@@ -119,6 +119,8 @@ class ShadowPictureComponent extends PositionComponent
       final key = shadowBehavior?.animationStateToKey[state];
       if (key != null) {
         spriteSize = generatedShadows[key]?.values.first;
+      } else {
+        spriteSize = generatedShadows[shadowKey]?.values.first;
       }
     } else {
       spriteSize = generatedShadows[shadowKey]?.values.first;
@@ -132,6 +134,8 @@ class ShadowPictureComponent extends PositionComponent
       final key = shadowBehavior?.animationStateToKey[state];
       if (key != null) {
         image = generatedShadows[key]!.keys.first;
+      } else {
+        image = generatedShadows[shadowKey]!.keys.first;
       }
     } else {
       image = generatedShadows[shadowKey]!.keys.first;
@@ -180,6 +184,15 @@ class ShadowPictureComponent extends PositionComponent
   void _loadForStatic() {
     if (targetEntity is SpriteComponent) {
       _renderSprite((targetEntity as SpriteComponent).sprite!, shadowKey);
+    } else if (targetEntity is SpriteAnimationGroupComponent) {
+      final firstFrameSprite = (targetEntity as SpriteAnimationGroupComponent)
+          .animations!
+          .values
+          .first
+          .frames
+          .first
+          .sprite;
+      _renderSprite(firstFrameSprite, shadowKey);
     } else if (targetEntity is SpriteAnimationComponent) {
       _renderSprite(
           (targetEntity as SpriteAnimationComponent)
