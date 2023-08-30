@@ -23,6 +23,9 @@ import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
+import 'package:tank_game/world/environment/tree/tree.dart';
+
+mixin CanBurnTreesMixin on PositionComponent {}
 
 class BulletData extends ActorData {
   /// -1 means infinity
@@ -43,6 +46,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         HasGridSupport,
         HasTrailSupport,
         ActorMixin,
+        HasGameReference<MyGame>,
         AnimationGroupCoreStateListenerMixin {
   BulletEntity({
     required double speed,
@@ -166,11 +170,57 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         final bulletData = data as BulletData;
         bulletData.fliedDistance += distance;
         if (bulletData.fliedDistance >= bulletData.range) {
+          game.world.bulletLayer
+              .add(TreeBurner(position: position, currentCell: currentCell!));
           coreState = ActorCoreState.wreck;
         }
       }
     }
     super.update(dt);
+  }
+}
+
+class TreeBurner extends PositionComponent
+    with HasGridSupport, CanBurnTreesMixin, CollisionCallbacks {
+  TreeBurner({super.position, required Cell currentCell}) {
+    currentCell = currentCell;
+    size = Vector2.all(8);
+    anchor = Anchor.center;
+  }
+
+  @override
+  BoundingHitboxFactory get boundingHitboxFactory => () => TreeBurnerHitbox();
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is TreeEntity && other.state == TreeState.normal) {
+      other.state = TreeState.burning;
+      removeFromParent();
+      return;
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+
+  bool checkFinished = false;
+
+  @override
+  void update(double dt) {
+    if (checkFinished) {
+      removeFromParent();
+      return;
+    }
+    checkFinished = true;
+  }
+}
+
+class TreeBurnerHitbox extends BodyHitbox {
+  @override
+  bool pureTypeCheck(Type other) {
+    if (other == TreeBoundingHitbox) {
+      return true;
+    }
+    return false;
   }
 }
 
