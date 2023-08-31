@@ -27,6 +27,7 @@ class TreeEntity extends SpriteComponent
         HasGridSupport,
         ActorMixin,
         HasGameReference<MyGame>,
+        LayerCacheKeyProvider,
         UpdateOnDemand {
   TreeEntity({required super.sprite, super.position, super.size})
       : super(priority: RenderPriority.tree.priority) {
@@ -34,6 +35,10 @@ class TreeEntity extends SpriteComponent
     paint.isAntiAlias = false;
     noVisibleChildren = true;
   }
+
+  @override
+  String getComponentUniqueString() =>
+      '${super.getComponentUniqueString()},${state.name}';
 
   var _state = TreeState.normal;
   BurningBehavior? _burningBehavior;
@@ -45,7 +50,7 @@ class TreeEntity extends SpriteComponent
 
     if (_state == TreeState.normal && value == TreeState.burning) {
       _burningBehavior = BurningBehavior(
-        burningPosition: absolutePosition.translated(-3, -8),
+        burningPosition: absolutePosition.translated(-2, -8),
         rootComponent: game.world.skyLayer,
         duration: const Duration(seconds: 10),
         onBurningFinished: () {
@@ -54,7 +59,12 @@ class TreeEntity extends SpriteComponent
       );
       add(_burningBehavior!);
     } else if (value == TreeState.ash) {
+      sprite = game.tilesetManager.getTile('bricks', 'tree_ash')?.sprite;
       _burningBehavior?.removeFromParent();
+      if (parent is CellLayer) {
+        (parent as CellLayer).cacheKey.invalidate();
+        (parent as CellLayer).isUpdateNeeded = true;
+      }
     }
     _state = value;
   }

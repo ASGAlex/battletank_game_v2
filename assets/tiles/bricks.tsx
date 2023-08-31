@@ -47,4 +47,5 @@
    <frame tileid="6" duration="500"/>
   </animation>
  </tile>
+ <tile id="7" type="tree_ash"/>
 </tileset>
