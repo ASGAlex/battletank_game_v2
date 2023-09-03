@@ -42,6 +42,7 @@ class TreeEntity extends SpriteComponent
 
   var _state = TreeState.normal;
   BurningBehavior? _burningBehavior;
+  late final ShadowBehavior shadow;
 
   set state(TreeState value) {
     if (value == _state) {
@@ -56,17 +57,28 @@ class TreeEntity extends SpriteComponent
         onBurningFinished: () {
           state = TreeState.ash;
         },
+        onRemoveCallback: () {
+          _burningBehavior = null;
+        },
       );
       add(_burningBehavior!);
     } else if (value == TreeState.ash) {
       sprite = game.tilesetManager.getTile('bricks', 'tree_ash')?.sprite;
-      _burningBehavior?.removeFromParent();
       if (parent is CellLayer) {
+        shadow.removeFromParent();
+        isUpdateNeeded = true;
         (parent as CellLayer).cacheKey.invalidate();
         (parent as CellLayer).isUpdateNeeded = true;
       }
     }
     _state = value;
+  }
+
+  @override
+  void update(double dt) {
+    if (_burningBehavior != null) {
+      isUpdateNeeded = true;
+    }
   }
 
   TreeState get state => _state;
@@ -108,7 +120,8 @@ class TreeEntity extends SpriteComponent
 
   @override
   FutureOr<void> onLoad() {
-    add(ShadowBehavior(shadowKey: 'tree'));
+    shadow = ShadowBehavior(shadowKey: 'tree');
+    add(shadow);
     super.onLoad();
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.passive;

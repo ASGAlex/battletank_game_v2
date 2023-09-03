@@ -4,19 +4,24 @@ import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:tank_game/world/core/actor.dart';
-import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 
-class SmokeBehavior extends CoreBehavior<ActorMixin> {
-  SmokeBehavior(
+class SmokeComponent extends PositionComponent {
+  SmokeComponent(
     this.rootComponent, {
+    this.parentSize,
+    this.parentPosition,
+    this.sizeAndPositionProvider,
     this.color,
     this.particlePriority = 0,
     this.nextParticleFrequency = 0.15,
-  });
+  }) : assert((parentSize != null && parentPosition != null) ||
+            sizeAndPositionProvider != null);
 
   Component rootComponent;
   bool isEnabled = false;
+  final Vector2? parentSize;
+  final Vector2? parentPosition;
+  final PositionComponent? sizeAndPositionProvider;
 
   Color? color;
   int particlePriority;
@@ -24,16 +29,33 @@ class SmokeBehavior extends CoreBehavior<ActorMixin> {
   double _nextSmokeParticle = 0;
   double nextParticleFrequency;
 
+  Vector2 get _parentSize {
+    if (parentSize != null) {
+      return parentSize!;
+    } else if (sizeAndPositionProvider != null) {
+      return sizeAndPositionProvider!.size;
+    }
+    throw 'Cant get parent size';
+  }
+
+  Vector2 get _parentPosition {
+    if (parentPosition != null) {
+      return parentPosition!;
+    } else if (sizeAndPositionProvider != null) {
+      return sizeAndPositionProvider!.position;
+    }
+    throw 'Cant get parent position';
+  }
+
   @override
   void update(double dt) {
     if (isEnabled) {
       if (_nextSmokeParticle <= 0) {
         final r = Random();
-        final w = parent.size.x.ceil();
-        final h = parent.size.y.ceil();
-        final newPos = parent.position.clone()
-          ..translate(
-              w / 2 - r.nextInt(w).toDouble(), h / 2 - r.nextInt(h).toDouble());
+        final w = _parentSize.x.ceil();
+        final h = _parentSize.y.ceil();
+        final newPos = _parentPosition.translated(
+            w / 2 - r.nextInt(w).toDouble(), h / 2 - r.nextInt(h).toDouble());
         rootComponent.add(ParticleSystemComponent(
             priority: particlePriority,
             position: newPos,

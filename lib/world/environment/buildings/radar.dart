@@ -47,7 +47,7 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   late final RotateEffect rotateEffect;
   late final SpriteAnimationComponent boom;
 
-  late final SmokeBehavior smoke;
+  late final SmokeComponent smoke;
 
   @override
   FutureOr<void> onLoad() {
@@ -67,10 +67,13 @@ class RadarEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }));
     current = ActorCoreState.move;
 
-    smoke = SmokeBehavior(game.world.skyLayer,
-        color: Colors.black38,
-        particlePriority: 10,
-        nextParticleFrequency: 0.1);
+    smoke = SmokeComponent(
+      game.world.skyLayer,
+      color: Colors.black38,
+      particlePriority: 10,
+      nextParticleFrequency: 0.1,
+      sizeAndPositionProvider: this,
+    );
     add(smoke);
 
     final groundSprite =

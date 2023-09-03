@@ -113,7 +113,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   final String _tileType;
-  late final SmokeBehavior smoke;
+  late final SmokeComponent smoke;
   late final SmokeStartMovingBehavior smokeStartMoving;
 
   @override
@@ -200,7 +200,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     smokeStartMoving = SmokeStartMovingBehavior(game.world.skyLayer);
     add(smokeStartMoving);
 
-    smoke = SmokeBehavior(game.world.skyLayer);
+    smoke = SmokeComponent(game.world.skyLayer, sizeAndPositionProvider: this);
     add(smoke);
 
     super.onLoad();
