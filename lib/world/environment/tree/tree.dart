@@ -56,6 +56,7 @@ class TreeEntity extends SpriteComponent
         duration: const Duration(seconds: 10),
         onBurningFinished: () {
           state = TreeState.ash;
+          recreateBoundingHitbox(() => BurnedTreeBoundingHitbox());
         },
         onRemoveCallback: () {
           _burningBehavior = null;
@@ -88,6 +89,9 @@ class TreeEntity extends SpriteComponent
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
+    if (state == TreeState.ash) {
+      return false;
+    }
     if (other is CanBurnTreesMixin) {
       return true;
     }
@@ -134,6 +138,15 @@ class TreeBoundingHitbox extends BoundingHitbox {
   FutureOr<void> onLoad() {
     groupAbsoluteCacheByType = true;
     collisionType = defaultCollisionType = CollisionType.passive;
+    return super.onLoad();
+  }
+}
+
+class BurnedTreeBoundingHitbox extends BoundingHitbox {
+  @override
+  FutureOr<void> onLoad() {
+    groupAbsoluteCacheByType = true;
+    collisionType = defaultCollisionType = CollisionType.inactive;
     return super.onLoad();
   }
 }
