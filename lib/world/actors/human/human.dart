@@ -47,7 +47,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     data.zoom = 5;
     (data as AttackerData)
       ..secondsBetweenFire = 0.2
-      ..ammoHealth = 0.25
+      ..ammoHealth = 0.05
       ..ammoRange = 15;
 
     bodyHitbox.onCollisionStartCallback = onWeakBodyCollision;
@@ -57,6 +57,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   final bodyHitbox = WeakBodyHitbox();
+  late final FireBulletBehavior fireBullet;
 
   void onWeakBodyCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
     if (coreState == ActorCoreState.idle || coreState == ActorCoreState.move) {
@@ -85,7 +86,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     }));
     current = ActorCoreState.idle;
     autoResize = false;
-    scale = Vector2.all(0.5);
+    scale = Vector2.all(0.3);
 
     final movementForward = MovementForwardCollisionBehavior(
       hitboxRelativePosition: Vector2(0, -2),
@@ -93,8 +94,9 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     );
     add(movementForward);
     add(HumanStepTrailBehavior());
-    add(FireBulletBehavior(
-      scale: 0.4,
+
+    fireBullet = FireBulletBehavior(
+      scale: 0.3,
       bulletsRootComponent: game.world.bulletLayer,
       speedPenalty: 40,
       speedPenaltyDuration: 1,
@@ -109,7 +111,10 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
             tileset: 'boom', tileType: 'crater', loop: true),
       },
       bulletOffset: Vector2(2.5, -2),
-    ));
+    );
+    fireBullet.burnTrees = false;
+    add(fireBullet);
+
     add(ShadowBehavior(shadowKey: 'human'));
     add(KillableBehavior(onBeingKilled: (attackedBy, killable) {
       if (attackedBy != null) {

@@ -14,6 +14,7 @@ import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior
 import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/tree/hide_in_trees_behavior.dart';
@@ -110,6 +111,10 @@ class InteractionSetPlayer extends InteractableBehavior {
         Future.delayed(const Duration(seconds: 2)).then((value) {
           onComplete?.call(parent);
           game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
+          if (parent is ScenarioEventEmitter) {
+            (parent as ScenarioEventEmitter).scenarioEvent(
+                EventSetPlayer(emitter: parent, name: 'PlayerSet'));
+          }
         });
       } catch (error) {
         print(error);

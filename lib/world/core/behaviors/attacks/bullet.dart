@@ -37,6 +37,7 @@ class BulletData extends ActorData {
   Color haloColor = Colors.orangeAccent.withOpacity(0.3);
   double speedPenalty = 0;
   double speedPenaltyDuration = 0;
+  bool burnTrees = true;
 }
 
 class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
@@ -60,6 +61,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     double speedPenalty = 0,
     double speedPenaltyDuration = 0,
     Vector2? offset,
+    bool burnTrees = true,
   }) {
     anchor = Anchor.center;
     data = BulletData();
@@ -67,6 +69,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     (data as BulletData).haloRadius = haloRadius;
     (data as BulletData).speedPenalty = speedPenalty;
     (data as BulletData).speedPenaltyDuration = speedPenaltyDuration;
+    (data as BulletData).burnTrees = burnTrees;
     data.health = health;
     data.speed = speed;
     data.lookDirection = lookDirection;
@@ -170,8 +173,10 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
         final bulletData = data as BulletData;
         bulletData.fliedDistance += distance;
         if (bulletData.fliedDistance >= bulletData.range) {
-          game.world.bulletLayer
-              .add(TreeBurner(position: position, currentCell: currentCell!));
+          if ((data as BulletData).burnTrees) {
+            game.world.bulletLayer
+                .add(TreeBurner(position: position, currentCell: currentCell!));
+          }
           coreState = ActorCoreState.wreck;
         }
       }
@@ -288,6 +293,7 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin>
   double speedPenalty = 0;
   double speedPenaltyDuration = 0;
   bool emitEvent = false;
+  bool burnTrees = true;
 
   void tryFire() {
     _tryFire = true;
@@ -296,17 +302,19 @@ class FireBulletBehavior extends CoreBehavior<ActorMixin>
   void doFire() {
     final offset = _offsetRotations[attackerData.lookDirection];
     final bullet = BulletEntity(
-        owner: parent,
-        animationConfigs: animationFactory.call(),
-        range: attackerData.ammoRange,
-        speed: attackerData.ammoSpeed,
-        lookDirection: attackerData.lookDirection,
-        health: attackerData.ammoHealth,
-        speedPenalty: speedPenalty,
-        speedPenaltyDuration: speedPenaltyDuration,
-        offset: offset,
-        audio: _audioHit,
-        haloRadius: haloRadius);
+      owner: parent,
+      animationConfigs: animationFactory.call(),
+      range: attackerData.ammoRange,
+      speed: attackerData.ammoSpeed,
+      lookDirection: attackerData.lookDirection,
+      health: attackerData.ammoHealth,
+      speedPenalty: speedPenalty,
+      speedPenaltyDuration: speedPenaltyDuration,
+      offset: offset,
+      audio: _audioHit,
+      haloRadius: haloRadius,
+      burnTrees: burnTrees,
+    );
     bullet.scale = Vector2.all(scale);
     bulletsRootComponent.add(bullet);
     _audioFire?.play();

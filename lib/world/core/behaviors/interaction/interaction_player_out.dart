@@ -18,6 +18,8 @@ import 'package:tank_game/world/core/behaviors/movement/movement_forward_collisi
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scripts/event.dart';
 
 class InteractionPlayerOut extends CoreBehavior<ActorMixin>
     with HasGameReference<MyGame>, MessageListenerMixin<List<PlayerAction>> {
@@ -166,7 +168,15 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
       game.cameraComponent
           .follow(restoredEntity, maxSpeed: restoredEntity.data.cameraSpeed);
     });
+    if (restoredEntity is ScenarioEventEmitter) {
+      (restoredEntity as ScenarioEventEmitter)
+          .scenarioEvent(EventPlayerOut(emitter: parent, name: 'PlayerOut'));
+    }
 
     removeFromParent();
   }
+}
+
+class EventPlayerOut extends ScenarioEvent {
+  const EventPlayerOut({required super.emitter, required super.name});
 }

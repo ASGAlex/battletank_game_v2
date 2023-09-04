@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/ui/game/scenario/message_widget.dart';
 import 'package:tank_game/world/actors/human/human.dart';
-import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
@@ -85,30 +84,15 @@ class MainTutorialScript extends ScriptCore {
       final actor = message.emitter;
       if (actor is ActorMixin &&
           actor.hasBehavior<PlayerControlledBehavior>()) {
-        if (actor is PlayerControlledTransitionInfo &&
-            actor.playerControlTransitionInProgress &&
-            actor.nextPlayerController != null) {
-          actor.nextPlayerController!
-              .findBehavior<FireBulletBehavior>()
-              .emitEvent = true;
-          if (message is EnterToNoFireZone) {
-            _noFireZone = true;
-          } else {
-            _trainingFireZone = true;
+        if (message is EnterToNoFireZone) {
+          if (_noFireZone != data.activated) {
+            _noFireZone = data.activated;
+            actor.findBehavior<FireBulletBehavior>().emitEvent = data.activated;
           }
         } else {
-          if (message is EnterToNoFireZone) {
-            if (_noFireZone != data.activated) {
-              _noFireZone = data.activated;
-              actor.findBehavior<FireBulletBehavior>().emitEvent =
-                  data.activated;
-            }
-          } else {
-            if (_trainingFireZone != data.activated) {
-              _trainingFireZone = data.activated;
-              actor.findBehavior<FireBulletBehavior>().emitEvent =
-                  data.activated;
-            }
+          if (_trainingFireZone != data.activated) {
+            _trainingFireZone = data.activated;
+            actor.findBehavior<FireBulletBehavior>().emitEvent = data.activated;
           }
         }
       }
@@ -167,28 +151,28 @@ class MainTutorialScript extends ScriptCore {
 
     if (message is EventSpawned) {
       final actor = message.data;
-      if (actor is TankEntity &&
-          actor.data.factions.contains(Faction(name: 'Neutral'))) {
-        actor.loaded.then((_) {
-          try {
-            actor.findBehavior<InteractionSetPlayer>().onComplete = (_) {
-              actor.scenarioEvent(
-                  EventSetPlayer(emitter: actor, name: 'TutorialPlayerSet'));
-            };
-          } catch (_) {}
-        });
-      }
+      // if (actor is TankEntity &&
+      //     actor.data.factions.contains(Faction(name: 'Neutral'))) {
+      //   actor.loaded.then((_) {
+      //     try {
+      //       actor.findBehavior<InteractionSetPlayer>().onComplete = (_) {
+      //         actor.scenarioEvent(
+      //             EventSetPlayer(emitter: actor, name: 'TutorialPlayerSet'));
+      //       };
+      //     } catch (_) {}
+      //   });
+      // }
 
       if (actor is HumanEntity && _initialDisableControls) {
         actor.loaded.then((value) {
           try {
             if (actor.hasBehavior<PlayerControlledBehavior>()) {
               PlayerControlledBehavior.ignoredEvents.addAll([
-                // PlayerAction.fire,
-                // PlayerAction.moveLeft,
-                // PlayerAction.moveRight,
-                // PlayerAction.moveDown,
-                // PlayerAction.moveUp,
+                PlayerAction.fire,
+                PlayerAction.moveLeft,
+                PlayerAction.moveRight,
+                PlayerAction.moveDown,
+                PlayerAction.moveUp,
               ]);
               _initialDisableControls = false;
               currentPlayer = actor;
@@ -201,7 +185,7 @@ class MainTutorialScript extends ScriptCore {
       if (message.emitter == currentPlayer && _disableOnlyFire) {
         PlayerControlledBehavior.ignoredEvents.clear();
         PlayerControlledBehavior.ignoredEvents.addAll([
-          // PlayerAction.fire,
+          PlayerAction.fire,
           PlayerAction.triggerF,
         ]);
         InteractionPlayerOut.globalPaused = true;
@@ -386,7 +370,9 @@ class TutorialHowToUseTank extends ScriptCore {
         break;
 
       case TutorialState.fireOldBuildings:
-        if (message is EnterToFireTrainingZone) {
+        if (message is EventPlayerOut || message is EventSetPlayer) {
+          parent = message.emitter;
+        } else if (message is EnterToFireTrainingZone) {
           game.showScenarioMessage(MessageWidget(
             texts: [txtEnterTrainingZone],
             key: UniqueKey(),

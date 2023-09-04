@@ -31,9 +31,10 @@ class BrickEntity extends SpriteComponent
     paint.isAntiAlias = false;
   }
 
-  ActorMixin? _attackedBy;
   final Vector2 _halfSize = Vector2.zero();
   final bool resizeOnHit;
+  late final double _halfHealth;
+  double _accumulatedDamage = 0;
 
   @override
   FutureOr<void> onLoad() {
@@ -44,41 +45,41 @@ class BrickEntity extends SpriteComponent
         boundingBox.defaultCollisionType = CollisionType.passive;
     boundingBox.isSolid = true;
     _halfSize.setFrom(size / 2);
+    _halfHealth = data.health / 2;
   }
 
-  @override
-  void update(double dt) {
-    final attackerData = _attackedBy?.data;
-    if (attackerData != null) {
-      switch (attackerData.lookDirection) {
-        case DirectionExtended.right:
-          size.x -= _halfSize.x;
-          position.x += _halfSize.x;
-          break;
-        case DirectionExtended.up:
-          size.y -= _halfSize.y;
-          break;
-        case DirectionExtended.left:
-          size.x -= _halfSize.x;
-          break;
-        case DirectionExtended.down:
-          size.y -= _halfSize.y;
-          position.y += _halfSize.y;
-          break;
-      }
-      if (size.x <= 0 || size.y <= 0) {
-        removeFromParent();
-      }
+  void _resizeOnHit(ActorMixin attackedBy) {
+    final attackerData = attackedBy.data;
+    switch (attackerData.lookDirection) {
+      case DirectionExtended.right:
+        size.x -= _halfSize.x;
+        position.x += _halfSize.x;
+        break;
+      case DirectionExtended.up:
+        size.y -= _halfSize.y;
+        break;
+      case DirectionExtended.left:
+        size.x -= _halfSize.x;
+        break;
+      case DirectionExtended.down:
+        size.y -= _halfSize.y;
+        position.y += _halfSize.y;
+        break;
     }
-    super.update(dt);
+    if (size.x <= 0 || size.y <= 0) {
+      removeFromParent();
+    }
   }
 
   bool applyAttack(ActorMixin attackedBy, ActorMixin killable) {
     if (attackedBy.data.coreState == ActorCoreState.move) {
-      _attackedBy = attackedBy;
       data.health -= attackedBy.data.health;
-      attackedBy.data.health = 0;
       if (resizeOnHit) {
+        _accumulatedDamage += attackedBy.data.health;
+        if (_accumulatedDamage >= _halfHealth) {
+          _resizeOnHit(attackedBy);
+          _accumulatedDamage = 0;
+        }
         isUpdateNeeded = true;
         if (parent is CellLayer) {
           (parent as CellLayer).isUpdateNeeded = true;
@@ -86,6 +87,7 @@ class BrickEntity extends SpriteComponent
       } else if (data.health <= 0) {
         removeFromParent();
       }
+      attackedBy.data.health = 0;
     }
     return true;
   }

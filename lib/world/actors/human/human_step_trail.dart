@@ -37,8 +37,8 @@ class HumanStep extends PositionComponent with HasPaint {
     paint.isAntiAlias = false;
     // final cell = human.currentCell;
     // if (cell != null) {
-    position = parentPosition - Vector2(2, 2);
-    size = Vector2(8, 3);
+    position = parentPosition;
+    size = Vector2(5, 5);
     // currentCell = cell;
     // }
   }
@@ -47,7 +47,9 @@ class HumanStep extends PositionComponent with HasPaint {
   void render(Canvas canvas) {
     canvas.drawPoints(
       PointMode.points,
-      [const Offset(1.5, 2), const Offset(6.5, 0)],
+      [
+        const Offset(0, 0),
+      ],
       paint,
     );
   }
