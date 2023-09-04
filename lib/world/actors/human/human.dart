@@ -7,7 +7,6 @@ import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/human/human_step_trail.dart';
-import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_behavior.dart';
 import 'package:tank_game/world/core/behaviors/animation/animation_group_behavior.dart';
@@ -56,10 +55,25 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 
   @override
-  final bodyHitbox = WeakBodyHitbox();
+  final bodyHitbox = HumanBodyHitbox();
   late final FireBulletBehavior fireBullet;
 
   void onWeakBodyCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
+    if (other is MovementCheckerHitbox) {
+      return;
+    }
+    final component = other.parentWithGridSupport;
+    if (component is ActorMixin) {
+      for (final faction in data.factions) {
+        if (component.data.factions.contains(faction)) {
+          return;
+        }
+        if (faction == Faction(name: 'Player') &&
+            component.data.factions.contains(Faction(name: 'Friendly'))) {
+          return;
+        }
+      }
+    }
     if (coreState == ActorCoreState.idle || coreState == ActorCoreState.move) {
       try {
         final killable = findBehavior<KillableBehavior>();
@@ -166,7 +180,7 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   }
 }
 
-class WeakBodyHitbox extends BodyHitbox {
+class HumanBodyHitbox extends BodyHitbox {
   @override
   bool pureTypeCheck(Type other) {
     if (other == BodyHitbox) {
@@ -181,16 +195,6 @@ class WeakBodyHitbox extends BodyHitbox {
         other.parent is WaterEntity ||
         other.parent is HeavyBrickEntity) {
       return false;
-    }
-
-    final tank = other.parent;
-    final actor = parent;
-    if (tank is TankEntity && actor is ActorMixin) {
-      if (actor.data.factions.contains(Faction(name: 'Player')) &&
-          (tank.data.factions.contains(Faction(name: 'Neutral')) ||
-              tank.data.factions.contains(Faction(name: 'Friendly')))) {
-        return false;
-      }
     }
 
     return true;

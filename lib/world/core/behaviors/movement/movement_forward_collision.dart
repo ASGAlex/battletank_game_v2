@@ -9,6 +9,7 @@ import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
+import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/environment/ground/asphalt.dart';
 import 'package:tank_game/world/environment/ground/sand.dart';
@@ -106,7 +107,7 @@ class MovementHitbox extends MovementCheckerHitbox {
         other == BoundingHitbox ||
         other == SandBoundingHitbox ||
         other == AsphaltHitbox ||
-        other == WeakBodyHitbox ||
+        // other == HumanBodyHitbox ||
         other == ScenarioHitbox ||
         other == MovementHitbox ||
         other == MovementCheckerHitbox ||
@@ -122,6 +123,10 @@ class MovementHitbox extends MovementCheckerHitbox {
     if (component is HumanEntity) {
       final factions = component.data.factions;
       final myFactions = (parent as ActorMixin).data.factions;
+      if (myFactions.contains(Faction(name: 'Friendly')) &&
+          factions.contains(Faction(name: 'Player'))) {
+        return true;
+      }
       var shouldCareAboutIt = false;
       for (final faction in factions) {
         if (myFactions.contains(faction)) {
