@@ -11,6 +11,8 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
   RandomMovementBehavior({
     required this.maxDirectionDistance,
     required this.minDirectionDistance,
+    this.maxPauseBetweenDirectionChanges = 0,
+    super.outerWidth,
   }) {
     _maxActualDistanceAtCycle = maxDirectionDistance.toDouble();
   }
@@ -32,6 +34,9 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
 
   DirectionExtended? _lastDirection;
 
+  int maxPauseBetweenDirectionChanges = 0;
+  double _pauseDt = 0;
+
   set trackCorners(bool value) {
     _trackCorners = value;
     if (_trackCorners) {
@@ -51,8 +56,15 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       return;
     }
 
-    for (var value in provider.movementSideHitboxes) {
-      value.debugMode = false;
+    if (_moveForwardBehavior.pauseMovement && _pauseDt > 0) {
+      _pauseDt -= dt;
+      if (_pauseDt <= 0) {
+        _moveForwardBehavior.pauseMovement = false;
+        parent.coreState = ActorCoreState.move;
+        _pauseDt = maxPauseBetweenDirectionChanges.toDouble();
+      } else {
+        return;
+      }
     }
 
     if (_chooseDirectionNextTick) {
@@ -71,6 +83,9 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     var distance = _moveForwardBehavior.lastDisplacement.x.abs();
     if (distance == 0) {
       distance = _moveForwardBehavior.lastDisplacement.y.abs();
+    }
+    if (distance == 0) {
+      _chooseDirectionNextTick = true;
     }
     _actualDistance += distance;
     if (movementHitbox.isMovementBlocked || isDistanceEnd) {
@@ -141,12 +156,19 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     _maxActualDistanceAtCycle = maxDirectionDistance.toDouble();
     _actualDistance = 0;
     parent.coreState = ActorCoreState.move;
+    if (maxPauseBetweenDirectionChanges > 0) {
+      _pauseDt = random.nextInt(maxPauseBetweenDirectionChanges).toDouble();
+      _moveForwardBehavior.pauseMovement = true;
+      parent.coreState = ActorCoreState.idle;
+    }
   }
 
   @override
   FutureOr onLoad() {
-    _moveForwardBehavior =
-        parent.findBehavior<MovementForwardCollisionBehavior>();
+    parent.loaded.then((value) {
+      _moveForwardBehavior =
+          parent.findBehavior<MovementForwardCollisionBehavior>();
+    });
     return super.onLoad();
   }
 }

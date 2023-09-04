@@ -5,6 +5,7 @@ import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 
 class SpawnActorFactory {
@@ -38,6 +39,22 @@ class SpawnActorFactory {
 
   factory SpawnActorFactory.human() {
     return SpawnActorFactory._(() => HumanEntity());
+  }
+
+  factory SpawnActorFactory.humanRandomCrowd() {
+    return SpawnActorFactory._(() {
+      final human = HumanEntity();
+      human.loaded.then((_) {
+        human.add(RandomMovementBehavior(
+          maxDirectionDistance: 10,
+          minDirectionDistance: 3,
+          maxPauseBetweenDirectionChanges: 5,
+          outerWidth: 4,
+        ));
+        human.data.speed = 5;
+      });
+      return human;
+    });
   }
 
   ActorMixin call(List<Faction> allowedFactions) {

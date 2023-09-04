@@ -626,10 +626,15 @@ class GameMapLoader extends TiledMapLoader {
   }
 
   Future onBuildSpawnHuman(TileBuilderContext context) async {
+    bool isRandomMovement =
+        context.tiledObject?.properties.getValue<bool>('randomMovement') ??
+            false;
     final newSpawn = SpawnTeleport(
       rootComponent: game.world.tankLayer,
       buildContext: context,
-      actorFactory: SpawnActorFactory.human().call,
+      actorFactory: isRandomMovement
+          ? SpawnActorFactory.humanRandomCrowd().call
+          : SpawnActorFactory.human().call,
     );
     // newSpawn.userData!.allowedFactions.add(Faction(name: 'Player'));
 

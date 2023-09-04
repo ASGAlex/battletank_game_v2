@@ -12,7 +12,8 @@ class MovementSideHitboxesProvider extends CoreBehavior<ActorMixin> {
   MovementSideHitboxesProvider({this.outerWidth = 0}) {
     movementSideHitboxes = <MovementSideHitbox>[
       MovementSideHitbox(
-          direction: DirectionExtended.left, outerWidth: outerWidth),
+          direction: DirectionExtended.left, outerWidth: outerWidth)
+        ..debugMode,
       MovementSideHitbox(
           direction: DirectionExtended.right, outerWidth: outerWidth),
       MovementSideHitbox(

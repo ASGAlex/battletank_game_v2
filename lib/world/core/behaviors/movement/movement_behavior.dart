@@ -6,9 +6,14 @@ import 'package:tank_game/world/core/direction.dart';
 class MovementBehavior extends CoreBehavior<ActorMixin> {
   final lastDisplacement = Vector2.zero();
   double lastInnerSpeed = 0;
+  bool pauseMovement = false;
 
   @override
   void update(double dt) {
+    if (pauseMovement) {
+      return;
+    }
+
     lastDisplacement.setZero();
     lastInnerSpeed = 0;
     if (parent.data.coreState != ActorCoreState.move) {

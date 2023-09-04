@@ -46,12 +46,13 @@ class MovingPathScript extends ScriptCore with ChildrenChangeListenerMixin {
 
   @override
   FutureOr<void> onLoad() {
+    assert(parent is PositionComponent);
     super.onLoad();
     _iterator = points.iterator;
     _iterator.moveNext();
     _targetedMovementBehavior = TargetedMovementBehavior(
       targetPosition: _iterator.current,
-      targetSize: Vector2.all(8),
+      targetSize: (parent as PositionComponent).size,
       maxRandomMovementTime: 15,
       stopAtTarget: true,
       precision: 0.5,

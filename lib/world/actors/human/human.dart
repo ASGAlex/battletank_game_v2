@@ -48,11 +48,11 @@ class HumanEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     (data as AttackerData)
       ..secondsBetweenFire = 0.2
       ..ammoHealth = 0.05
-      ..ammoRange = 15;
+      ..ammoRange = 25;
 
     bodyHitbox.onCollisionStartCallback = onWeakBodyCollision;
     bodyHitbox.collisionType = CollisionType.passive;
-    noVisibleChildren = true;
+    noVisibleChildren = false;
   }
 
   @override
