@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
@@ -6,6 +9,7 @@ import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
+import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_player_out.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
@@ -13,6 +17,7 @@ import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_event.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/has_text_message_mixin.dart';
+import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scenario_description.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
@@ -42,6 +47,8 @@ class TutorialScenario extends Scenario {
       mainScript.tutorialHowToUseTank = TutorialHowToUseTank(creator);
       return mainScript.tutorialHowToUseTank!;
     });
+    AreaInitScriptComponent.registerType(
+        'Mission1', (lifetimeMax, creator) => Mission1(creator));
     AreaEventComponent.registerEvent(
         'EnterToNoFireZone',
         ({
@@ -58,6 +65,7 @@ class TutorialScenario extends Scenario {
           dynamic data,
         }) =>
             EnterToFireTrainingZone(emitter: emitter, data: data));
+
     game.world.scenarioLayer.add(mainScript);
   }
 }
@@ -106,8 +114,7 @@ class MainTutorialScript extends ScriptCore {
       return;
     } else if (message is AttackHitTargetEvent &&
         tutorialHowToUseTank != null &&
-        (message.emitter as BulletEntity).owner ==
-            tutorialHowToUseTank!.currentTank) {
+        (message.emitter as BulletEntity).owner == game.currentPlayer) {
       final otherActor = message.data as ActorMixin;
       if (_noFireZone) {
         if (otherActor.data.factions.contains(Faction(name: 'Friendly')) ||
@@ -151,18 +158,6 @@ class MainTutorialScript extends ScriptCore {
 
     if (message is EventSpawned) {
       final actor = message.data;
-      // if (actor is TankEntity &&
-      //     actor.data.factions.contains(Faction(name: 'Neutral'))) {
-      //   actor.loaded.then((_) {
-      //     try {
-      //       actor.findBehavior<InteractionSetPlayer>().onComplete = (_) {
-      //         actor.scenarioEvent(
-      //             EventSetPlayer(emitter: actor, name: 'TutorialPlayerSet'));
-      //       };
-      //     } catch (_) {}
-      //   });
-      // }
-
       if (actor is HumanEntity && _initialDisableControls) {
         actor.loaded.then((value) {
           try {
@@ -197,6 +192,17 @@ class MainTutorialScript extends ScriptCore {
   }
 
   @override
+  FutureOr<void> onLoad() {
+    for (final scenario in game.world.scenarioLayer.children
+        .whereType<AreaInitScriptComponent>()) {
+      if (scenario.name != 'scenarioTutorial') {
+        scenario.boundingBox.collisionType = CollisionType.inactive;
+      }
+    }
+    return super.onLoad();
+  }
+
+  @override
   void scriptUpdate(double dt) {
     // TODO: implement scriptUpdate
   }
@@ -223,6 +229,7 @@ class TutorialHowToUseTank extends ScriptCore {
     txtTrainingFireHit = initializer.getTextMessage('txtTrainingFireHit');
     txtReturnToBase = initializer.getTextMessage('txtReturnToBase');
     txtEnterTrainingZone = initializer.getTextMessage('txtEnterTrainingZone');
+    txtTutorialFinished = initializer.getTextMessage('txtTutorialFinished');
   }
 
   late final String txtMoveToPolygon;
@@ -231,6 +238,7 @@ class TutorialHowToUseTank extends ScriptCore {
   late final String txtReturnToBase;
   late final String txtTrainingFireHit;
   late final String txtEnterTrainingZone;
+  late final String txtTutorialFinished;
 
   String txtChangeTank = '';
 
@@ -257,14 +265,28 @@ class TutorialHowToUseTank extends ScriptCore {
       ));
       AreaEventComponent.unregisterEvent('InvalidPolygonEvent');
       AreaEventComponent.unregisterEvent('EnterToFireTrainingZone');
-      for (final scenario
-          in game.world.scenarioLayer.children.whereType<ScenarioComponent>()) {
+      for (final scenario in game.world.scenarioLayer.children
+          .whereType<AreaEventComponent>()) {
         if (scenario.name == 'Destroy bricks' ||
             scenario.name == 'invalid direction') {
           scenario.removeFromParent();
+        } else if (scenario.name == 'InitialPointReached') {
+          AreaEventComponent.registerEvent(
+              'InitialPointReached',
+              (
+                      {required Component emitter,
+                      required String name,
+                      dynamic data}) =>
+                  InitialPointReached(emitter: emitter, data: data));
         }
       }
     }
+  }
+
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    super.onRemove();
   }
 
   @override
@@ -370,9 +392,7 @@ class TutorialHowToUseTank extends ScriptCore {
         break;
 
       case TutorialState.fireOldBuildings:
-        if (message is EventPlayerOut || message is EventSetPlayer) {
-          parent = message.emitter;
-        } else if (message is EnterToFireTrainingZone) {
+        if (message is EnterToFireTrainingZone) {
           game.showScenarioMessage(MessageWidget(
             texts: [txtEnterTrainingZone],
             key: UniqueKey(),
@@ -380,6 +400,27 @@ class TutorialHowToUseTank extends ScriptCore {
         }
         break;
       case TutorialState.returnToBase:
+        if (message is InitialPointReached) {
+          for (final scenario in game.world.scenarioLayer.children
+              .whereType<AreaEventComponent>()) {
+            if (scenario.name == 'InitialPointReached') {
+              scenario.removeFromParent();
+              break;
+            }
+          }
+          for (final scenario in game.world.scenarioLayer.children
+              .whereType<AreaInitScriptComponent>()) {
+            if (scenario.name == 'Mission1') {
+              scenario.boundingBox.collisionType = CollisionType.passive;
+              break;
+            }
+          }
+          game.showScenarioMessage(MessageWidget(
+            texts: [txtEnterTrainingZone],
+            key: UniqueKey(),
+          ));
+          removeFromParent();
+        }
         break;
     }
   }
@@ -408,4 +449,112 @@ class EnterToNoFireZone extends ScenarioEvent {
 class EnterToFireTrainingZone extends ScenarioEvent {
   const EnterToFireTrainingZone({required super.emitter, required super.data})
       : super(name: 'EnterToFireTrainingZone');
+}
+
+class InitialPointReached extends ScenarioEvent {
+  const InitialPointReached({required super.emitter, required super.data})
+      : super(name: 'InitialPointReached');
+}
+
+class Mission1 extends ScriptCore {
+  Mission1(this.initializer) {
+    missionObjectives = initializer.getTextMessage('txtObjectives');
+    killedEnemiesCounter = initializer.getTextMessage('txtCounter');
+    missionComplete = initializer.getTextMessage('txtCompleted');
+  }
+
+  AreaInitScriptComponent initializer;
+  late final String missionObjectives;
+  late final String killedEnemiesCounter;
+  late final String missionComplete;
+
+  final enemiesToKill = <ActorMixin>{};
+  var killedEnemies = 0;
+
+  @override
+  void onStreamMessage(ScenarioEvent message) {
+    if (message is Mission1EnemyKilled) {
+      if (enemiesToKill.contains(message.emitter)) {
+        enemiesToKill.remove(message.emitter);
+        killedEnemies++;
+      }
+      if (enemiesToKill.isEmpty) {
+        game.showScenarioMessage(MessageWidget(
+          texts: [missionComplete],
+          key: UniqueKey(),
+        ));
+        AreaInitScriptComponent.unregisterType('Mission1_mark_enemies');
+        for (final script in game.world.scenarioLayer.children
+            .query<AreaInitScriptComponent>()) {
+          if (script.name == 'Mission1_mark_enemies') {
+            script.removeFromParent();
+            break;
+          }
+        }
+        initializer.removeFromParent();
+        removeFromParent();
+      } else {
+        game.showScenarioMessage(MessageWidget(
+          texts: [
+            killedEnemiesCounter.replaceFirst('%n', killedEnemies.toString())
+          ],
+          key: UniqueKey(),
+        ));
+      }
+    }
+  }
+
+  @override
+  void scriptUpdate(double dt) {
+    // TODO: implement scriptUpdate
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    game.showScenarioMessage(MessageWidget(
+      texts: [missionObjectives],
+      key: UniqueKey(),
+    ));
+    AreaInitScriptComponent.registerType(
+        'Mission1_mark_enemies', (lifetimeMax, creator) => Mission1MarkEnemy());
+    return super.onLoad();
+  }
+}
+
+class Mission1MarkEnemy extends ScriptCore {
+  Mission1MarkEnemy() {
+    for (final script in game.world.scenarioLayer.children.query<Mission1>()) {
+      mission = script;
+      break;
+    }
+  }
+
+  late final Mission1 mission;
+
+  @override
+  void scriptUpdate(double dt) {
+    // TODO: implement scriptUpdate
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    final actor = parent as ActorMixin;
+    mission.enemiesToKill.add(actor);
+    final killable = actor.findBehavior<KillableBehavior>();
+    killable.onBeingKilled = (attackedBy, killable) {
+      (killable as ScenarioEventEmitter)
+          .scenarioEvent(Mission1EnemyKilled(emitter: killable));
+    };
+    return super.onLoad();
+  }
+
+  @override
+  void onStreamMessage(ScenarioEvent message) {
+    // TODO: implement onStreamMessage
+  }
+}
+
+class Mission1EnemyKilled extends ScenarioEvent {
+  const Mission1EnemyKilled({required super.emitter})
+      : super(name: 'Mission1EnemyKilled');
 }

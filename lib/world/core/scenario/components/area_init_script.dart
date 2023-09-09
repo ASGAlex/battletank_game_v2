@@ -53,6 +53,10 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
     _availableTypes[name] = factory;
   }
 
+  static unregisterType(String name) {
+    _availableTypes.remove(name);
+  }
+
   static restoreDefaults() {
     _availableTypes.clear();
     _availableTypes.addAll({}); // TODO: default scripts here
@@ -125,7 +129,7 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
     if (newScript != null) {
       switch (scriptTarget) {
         case AreaScriptTarget.global:
-          game.world.scriptLayer.add(newScript);
+          game.world.scenarioLayer.add(newScript);
           break;
         case AreaScriptTarget.player:
           game.currentPlayer?.add(newScript);

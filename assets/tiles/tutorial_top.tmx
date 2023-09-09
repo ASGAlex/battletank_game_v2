@@ -115,6 +115,7 @@
   <object id="2" name="Destroy bricks" type="scenario" x="6.75379" y="7.04545" width="322.371" height="159.121">
    <properties>
     <property name="eventName" value="EnterToFireTrainingZone"/>
+    <property name="factions" value="Player"/>
     <property name="trackActivity" type="bool" value="true"/>
     <property name="type" value="AreaEvent"/>
    </properties>

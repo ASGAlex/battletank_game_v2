@@ -32,7 +32,6 @@ class GameWorld extends World with HasGameRef<MyGame> {
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);
   final spawnLayer = Component(priority: RenderPriority.spawn.priority);
   final scenarioLayer = Component(priority: RenderPriority.sky.priority);
-  final scriptLayer = Component(priority: RenderPriority.sky.priority);
 
   final fadeOutConfig = FadeOutConfig(
     transparencyPerStep: 0.2,

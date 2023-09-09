@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="2">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="5">
  <tileset firstgid="1" source="ground.tsx"/>
  <tileset firstgid="7" source="bricks.tsx"/>
  <tileset firstgid="15" source="radar_head.tsx"/>
@@ -113,8 +113,26 @@
  </layer>
  <objectgroup id="3" name="spawns"/>
  <objectgroup id="4" name="collision areas"/>
- <objectgroup id="5" name="scenarios"/>
- <objectgroup id="6" name="prohibited area">
+ <objectgroup id="5" name="scenarios">
+  <object id="3" name="Mission1" type="scenario" x="49.5833" y="18.75" width="143.167" height="56.5">
+   <properties>
+    <property name="factions" value="Player"/>
+    <property name="limitedByArea" type="bool" value="true"/>
+    <property name="modal" type="bool" value="false"/>
+    <property name="removeWhenLeave" type="bool" value="true"/>
+    <property name="scriptName" value="Mission1"/>
+    <property name="scriptTarget" value="global"/>
+    <property name="txtCompleted" value="All done!"/>
+    <property name="txtCompleted_ru" value="Отлично, аванпост уничтожен! Возвращайтесь в узел связи для дальнейших инструкций."/>
+    <property name="txtCounter" value="%n enemies killed"/>
+    <property name="txtCounter_ru" value="Убито %n врагов"/>
+    <property name="txtObjectives" value="objectives"/>
+    <property name="txtObjectives_ru" value="Последние дни неаблюдается какая-то подозрительная активность в радиоэфире. Кроме того, мы запеленговали слабый сигнал из западного леса. Есть опасения, что противник мог разместить там свой аванпост. На данный момент у нас нет возможности провести разведку с воздуха, однако мы считаем, что одним танком вполне можно справиться. Отправляйся западнее базы, место дислокации противника предположительно должно находиться за двумя лесными озёрами. Уничтож аванпост и не дай никому уйти  живым. "/>
+    <property name="type" value="AreaInitScript"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="prohibited area" visible="0">
   <object id="1" name="do not destroy buildings" type="scenario" x="4.375" y="4" width="388.25" height="392.5">
    <properties>
     <property name="eventName" value="EnterToNoFireZone"/>
