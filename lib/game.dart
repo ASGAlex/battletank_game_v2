@@ -225,9 +225,9 @@ class MyGame extends MyGameFeatures
       },
       suspendedCellLifetime: suspendedCellLifetime,
       suspendCellPrecision: const Duration(seconds: 10),
-      cellBuilderNoMap: (Cell cell, Component rootComponent,
-              bool isFullyOutside) =>
-          GameMapLoader.noMapBuilder(this, cell, rootComponent, isFullyOutside),
+      cellBuilderNoMap:
+          (Cell cell, Component rootComponent, Iterable<Rect> mapRects) =>
+              GameMapLoader.noMapBuilder(this, cell, rootComponent, mapRects),
       // onAfterCellBuild: (cell, rootComponent) async {
       //   final trailLayer = CellTrailLayer(cell, name: 'trail');
       //   trailLayer.priority = RenderPriority.trackTrail.priority;

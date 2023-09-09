@@ -75,10 +75,19 @@ class AreaInitScriptComponent extends ScenarioComponent<AreaInitScriptComponent>
       this.script = script;
     } else {
       final scriptName = tiledObject?.properties.getValue<String>('scriptName');
+      final scriptFallback =
+          tiledObject?.properties.getValue<String>('scriptFallback');
       if (scriptName != null) {
-        final scriptFactory = _availableTypes[scriptName];
+        var scriptFactory = _availableTypes[scriptName];
         if (scriptFactory == null) {
-          throw 'script with name $scriptName id not registered';
+          if (scriptFallback != null) {
+            scriptFactory = _availableTypes[scriptFallback];
+            if (scriptFactory == null) {
+              throw 'Fallback script with name $scriptName id not registered';
+            }
+          } else {
+            throw 'script with name $scriptName id not registered';
+          }
         }
         this.scriptFactory = scriptFactory;
       }

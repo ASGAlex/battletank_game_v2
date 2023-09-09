@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/ui/game/scenario/message_widget.dart';
@@ -49,6 +50,8 @@ class TutorialScenario extends Scenario {
     });
     AreaInitScriptComponent.registerType(
         'Mission1', (lifetimeMax, creator) => Mission1(creator));
+    AreaInitScriptComponent.registerType(
+        'Mission1_no_init', (lifetimeMax, creator) => Mission1NoInit());
     AreaEventComponent.registerEvent(
         'EnterToNoFireZone',
         ({
@@ -75,7 +78,6 @@ class MainTutorialScript extends ScriptCore {
   var _disableOnlyFire = true;
 
   TutorialHowToUseTank? tutorialHowToUseTank;
-  ActorMixin? currentPlayer;
 
   bool _noFireZone = false;
   final _maxFriendlyFire = 10;
@@ -170,14 +172,13 @@ class MainTutorialScript extends ScriptCore {
                 PlayerAction.moveUp,
               ]);
               _initialDisableControls = false;
-              currentPlayer = actor;
             }
           } catch (_) {}
         });
       }
       return;
     } else if (message is MessageListFinishedEvent) {
-      if (message.emitter == currentPlayer && _disableOnlyFire) {
+      if (message.emitter == game.currentPlayer && _disableOnlyFire) {
         PlayerControlledBehavior.ignoredEvents.clear();
         PlayerControlledBehavior.ignoredEvents.addAll([
           PlayerAction.fire,
@@ -185,7 +186,6 @@ class MainTutorialScript extends ScriptCore {
         ]);
         InteractionPlayerOut.globalPaused = true;
         _disableOnlyFire = false;
-        currentPlayer = null;
       }
       return;
     }
@@ -551,6 +551,28 @@ class Mission1MarkEnemy extends ScriptCore {
   @override
   void onStreamMessage(ScenarioEvent message) {
     // TODO: implement onStreamMessage
+  }
+}
+
+class Mission1NoInit extends ScriptCore {
+  @override
+  void onStreamMessage(ScenarioEvent message) {
+    // TODO: implement onStreamMessage
+  }
+
+  @override
+  void scriptUpdate(double dt) {
+    // TODO: implement scriptUpdate
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    game.showScenarioMessage(MessageWidget(
+      texts: ['Strange buildings, I should report about it....'],
+      key: UniqueKey(),
+    ));
+    removeFromParent();
+    return super.onLoad();
   }
 }
 

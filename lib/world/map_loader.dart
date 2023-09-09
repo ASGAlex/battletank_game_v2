@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
@@ -78,36 +79,46 @@ class GameMapLoader extends TiledMapLoader {
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) async {
-    // return;
     if (game.scenario.name == 'Tutorial') {
       if (cell.rect.left < 1 && cell.rect.top > 750) {
-        buildWaterCell(game, cell, rootComponent, isFullyOutside);
+        buildWaterCell(game, cell, rootComponent, mapRects);
       } else if ((cell.rect.left > 700 && cell.rect.top > 0) ||
           (cell.rect.left > 370 && cell.rect.top > 750)) {
-        buildTreesAndGrassCell(game, cell, rootComponent, isFullyOutside);
+        buildTreesAndGrassCell(game, cell, rootComponent, mapRects);
       } else if (cell.rect.left > 700 &&
           cell.rect.top > -700 &&
           cell.rect.top < 200) {
-        buildWaterGrassTreeSandCell(game, cell, rootComponent, isFullyOutside);
+        buildWaterGrassTreeSandCell(game, cell, rootComponent, mapRects);
       } else if (cell.rect.left < 450 && cell.rect.top < 450) {
-        buildTreeCell(game, cell, rootComponent, isFullyOutside);
+        buildTreeCell(game, cell, rootComponent, mapRects);
       } else if (cell.rect.left < -300 &&
           cell.rect.top > 450 &&
           cell.rect.top < 750) {
-        buildWaterGrassTreeSandCell(game, cell, rootComponent, isFullyOutside);
+        buildWaterGrassTreeSandCell(game, cell, rootComponent, mapRects);
       }
     } else {
-      noMapBuilderFullRandom(game, cell, rootComponent, isFullyOutside);
+      noMapBuilderFullRandom(game, cell, rootComponent, mapRects);
     }
+  }
+
+  static bool canPlaceTile(
+      Iterable<Rect> mapRects, Vector2 position, Vector2 size) {
+    final tileRect = Rect.fromLTWH(position.x, position.y, size.x, size.y);
+    for (final map in mapRects) {
+      if (map.overlaps(tileRect)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   static Future<void> buildWaterGrassTreeSandCell(
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) async {
     final grass = game.tilesetManager.getTile('ground', 'grass');
     final sand = game.tilesetManager.getTile('ground', 'sand');
@@ -132,79 +143,87 @@ class GameMapLoader extends TiledMapLoader {
       final position = Vector2(filledWidth, filledHeight);
       final size = Vector2(8, 8);
 
-      if (tile == sandSlow) {
-        final animation = sandSlow.spriteAnimation;
-        if (animation == null) return;
-        final sand = SandEntity(
-          animation: animation,
-          size: size,
-          position: position,
-        );
-        sand.currentCell = cell;
-        game.layersManager.addComponent(
-            component: sand,
-            layerType: MapLayerType.animated,
-            absolutePosition: false,
-            layerName: 'Sand',
-            priority: RenderPriority.ground.priority + 1);
-      } else {
-        final sprite = tile.sprite;
-        if (sprite == null) {
-          throw 'Background sprites not found!';
-        }
-
-        final component = TileComponent(tile);
-        component.currentCell = cell;
-        component.position = Vector2(filledWidth, filledHeight);
-        component.size.setFrom(sprite.srcSize);
-
-        game.layersManager.addComponent(
-          component: component,
-          absolutePosition: false,
-          layerName: 'static-ground-procedural',
-          layerType: MapLayerType.static,
-          componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
-          optimizeCollisions: false,
-          priority: -100,
-        );
-      }
-
-      if (tile == grass) {
-        final random = Random().nextInt(100);
-        if (random < 20) {
-          final sprite = game.tilesetManager.getTile('bricks', 'tree')?.sprite;
-          if (sprite == null) return;
-          final tree = TreeEntity(
-            sprite: sprite,
-            position: position,
-            size: size,
-          );
-          tree.currentCell = cell;
-
-          game.layersManager.addComponent(
-            component: tree,
-            layerType: MapLayerType.static,
-            absolutePosition: false,
-            layerName: 'Tree',
-            renderMode: LayerRenderMode.image,
-            priority: RenderPriority.tree.priority,
-          );
-        } else if (random < 30) {
-          final animation =
-              game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
+      if (canPlaceTile(
+        mapRects,
+        Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
+        size,
+      )) {
+        if (tile == sandSlow) {
+          final animation = sandSlow.spriteAnimation;
           if (animation == null) return;
-          final water = WaterEntity(
+          final sand = SandEntity(
             animation: animation,
             size: size,
             position: position,
           );
-          water.currentCell = cell;
+          sand.currentCell = cell;
           game.layersManager.addComponent(
-              component: water,
+              component: sand,
               layerType: MapLayerType.animated,
               absolutePosition: false,
-              layerName: 'Water',
-              priority: RenderPriority.water.priority);
+              layerName: 'Sand',
+              priority: RenderPriority.ground.priority + 1);
+        } else {
+          final sprite = tile.sprite;
+          if (sprite == null) {
+            throw 'Background sprites not found!';
+          }
+
+          final component = TileComponent(tile);
+          component.currentCell = cell;
+          component.position = Vector2(filledWidth, filledHeight);
+          component.size.setFrom(sprite.srcSize);
+
+          game.layersManager.addComponent(
+            component: component,
+            absolutePosition: false,
+            layerName: 'static-ground-procedural',
+            layerType: MapLayerType.static,
+            componentsStorageMode:
+                LayerComponentsStorageMode.removeAfterCompile,
+            optimizeCollisions: false,
+            priority: -100,
+          );
+        }
+
+        if (tile == grass) {
+          final random = Random().nextInt(100);
+          if (random < 20) {
+            final sprite =
+                game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+            if (sprite == null) return;
+            final tree = TreeEntity(
+              sprite: sprite,
+              position: position,
+              size: size,
+            );
+            tree.currentCell = cell;
+
+            game.layersManager.addComponent(
+              component: tree,
+              layerType: MapLayerType.static,
+              absolutePosition: false,
+              layerName: 'Tree',
+              renderMode: LayerRenderMode.image,
+              priority: RenderPriority.tree.priority,
+            );
+          } else if (random < 30) {
+            final animation =
+                game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
+            if (animation == null) return;
+            final water = WaterEntity(
+              animation: animation,
+              size: size,
+              position: position,
+            );
+            water.currentCell = cell;
+            game.layersManager.addComponent(
+                component: water,
+                layerType: MapLayerType.animated,
+                absolutePosition: false,
+                layerName: 'Water',
+                priority: RenderPriority.water.priority);
+          }
         }
       }
 
@@ -223,7 +242,7 @@ class GameMapLoader extends TiledMapLoader {
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) {
     final grass = game.tilesetManager.getTile('ground', 'grass');
 
@@ -242,43 +261,48 @@ class GameMapLoader extends TiledMapLoader {
         throw 'Background sprites not found!';
       }
 
-      final component = TileComponent(tile);
-      component.currentCell = cell;
-      component.position = Vector2(filledWidth, filledHeight);
-      component.size.setFrom(sprite.srcSize);
+      if (canPlaceTile(
+          mapRects,
+          Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
+          sprite.srcSize)) {
+        final component = TileComponent(tile);
+        component.currentCell = cell;
+        component.position = Vector2(filledWidth, filledHeight);
+        component.size.setFrom(sprite.srcSize);
 
-      game.layersManager.addComponent(
-        component: component,
-        absolutePosition: false,
-        layerName: 'static-ground-procedural',
-        layerType: MapLayerType.static,
-        componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
-        optimizeCollisions: false,
-        priority: -100,
-      );
+        game.layersManager.addComponent(
+          component: component,
+          absolutePosition: false,
+          layerName: 'static-ground-procedural',
+          layerType: MapLayerType.static,
+          componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
+          optimizeCollisions: false,
+          priority: -100,
+        );
 
-      if (isFullyOutside) {
-        if (tile == grass) {
-          final random = Random().nextInt(100);
-          if (random < 40) {
-            final sprite =
-                game.tilesetManager.getTile('bricks', 'tree')?.sprite;
-            if (sprite == null) return;
-            final tree = TreeEntity(
-              sprite: sprite,
-              position: component.position,
-              size: component.size,
-            );
-            tree.currentCell = cell;
+        if (mapRects.isEmpty) {
+          if (tile == grass) {
+            final random = Random().nextInt(100);
+            if (random < 40) {
+              final sprite =
+                  game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+              if (sprite == null) return;
+              final tree = TreeEntity(
+                sprite: sprite,
+                position: component.position,
+                size: component.size,
+              );
+              tree.currentCell = cell;
 
-            game.layersManager.addComponent(
-              component: tree,
-              layerType: MapLayerType.static,
-              absolutePosition: false,
-              layerName: 'Tree',
-              renderMode: LayerRenderMode.image,
-              priority: RenderPriority.tree.priority,
-            );
+              game.layersManager.addComponent(
+                component: tree,
+                layerType: MapLayerType.static,
+                absolutePosition: false,
+                layerName: 'Tree',
+                renderMode: LayerRenderMode.image,
+                priority: RenderPriority.tree.priority,
+              );
+            }
           }
         }
       }
@@ -298,7 +322,7 @@ class GameMapLoader extends TiledMapLoader {
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) {
     final tree = game.tilesetManager.getTile('bricks', 'tree');
     if (tree == null) {
@@ -313,23 +337,28 @@ class GameMapLoader extends TiledMapLoader {
     CellLayer? layer;
     var componentsCount = 0;
     while (!filled) {
-      final component = TileComponent(tree);
-      component.currentCell = cell;
-      component.position = Vector2(filledWidth, filledHeight);
-      component.size.setFrom(srcSize);
-      final treeComponent = TreeEntity(
-        sprite: tree.sprite,
-        size: component.size,
-        position: component.position,
-      );
-      treeComponent.currentCell = cell;
-      layer = game.layersManager.addComponent(
-          component: treeComponent,
-          layerType: MapLayerType.static,
-          absolutePosition: false,
-          layerName: 'Tree',
-          priority: RenderPriority.tree.priority);
-      componentsCount++;
+      if (canPlaceTile(
+          mapRects,
+          Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
+          srcSize)) {
+        final component = TileComponent(tree);
+        component.currentCell = cell;
+        component.position = Vector2(filledWidth, filledHeight);
+        component.size.setFrom(srcSize);
+        final treeComponent = TreeEntity(
+          sprite: tree.sprite,
+          size: component.size,
+          position: component.position,
+        );
+        treeComponent.currentCell = cell;
+        layer = game.layersManager.addComponent(
+            component: treeComponent,
+            layerType: MapLayerType.static,
+            absolutePosition: false,
+            layerName: 'Tree',
+            priority: RenderPriority.tree.priority);
+        componentsCount++;
+      }
       filledWidth += srcSize.x.floor();
       if (filledWidth >= cell.rect.width) {
         filledHeight += srcSize.y.floor();
@@ -346,7 +375,7 @@ class GameMapLoader extends TiledMapLoader {
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) {
     final water = game.tilesetManager.getTile('bricks', 'water');
     if (water == null) {
@@ -362,23 +391,28 @@ class GameMapLoader extends TiledMapLoader {
     CellLayer? layer;
     var componentsCount = 0;
     while (!filled) {
-      final component = TileComponent(tile);
-      component.currentCell = cell;
-      component.position = Vector2(filledWidth, filledHeight);
-      component.size.setFrom(srcSize);
-      final waterComponent = WaterEntity(
-        animation: water.spriteAnimation,
-        size: component.size,
-        position: component.position,
-      );
-      waterComponent.currentCell = cell;
-      layer = game.layersManager.addComponent(
-          component: waterComponent,
-          layerType: MapLayerType.animated,
-          absolutePosition: false,
-          layerName: 'Water',
-          priority: RenderPriority.water.priority);
-      componentsCount++;
+      if (canPlaceTile(
+          mapRects,
+          Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
+          srcSize)) {
+        final component = TileComponent(tile);
+        component.currentCell = cell;
+        component.position = Vector2(filledWidth, filledHeight);
+        component.size.setFrom(srcSize);
+        final waterComponent = WaterEntity(
+          animation: water.spriteAnimation,
+          size: component.size,
+          position: component.position,
+        );
+        waterComponent.currentCell = cell;
+        layer = game.layersManager.addComponent(
+            component: waterComponent,
+            layerType: MapLayerType.animated,
+            absolutePosition: false,
+            layerName: 'Water',
+            priority: RenderPriority.water.priority);
+        componentsCount++;
+      }
 
       filledWidth += srcSize.x.floor();
       if (filledWidth >= cell.rect.width) {
@@ -396,7 +430,7 @@ class GameMapLoader extends TiledMapLoader {
     MyGame game,
     Cell cell,
     Component rootComponent,
-    bool isFullyOutside,
+    Iterable<Rect> mapRects,
   ) async {
     final grass = game.tilesetManager.getTile('ground', 'grass');
     final sand = game.tilesetManager.getTile('ground', 'sand');
@@ -419,63 +453,68 @@ class GameMapLoader extends TiledMapLoader {
         throw 'Background sprites not found!';
       }
 
-      final component = TileComponent(tile);
-      component.currentCell = cell;
-      component.position = Vector2(filledWidth, filledHeight);
-      component.size.setFrom(sprite.srcSize);
+      if (canPlaceTile(
+          mapRects,
+          Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
+          sprite.srcSize)) {
+        final component = TileComponent(tile);
+        component.currentCell = cell;
+        component.position = Vector2(filledWidth, filledHeight);
+        component.size.setFrom(sprite.srcSize);
 
-      game.layersManager.addComponent(
-        component: component,
-        absolutePosition: false,
-        layerName: 'static-ground-procedural',
-        layerType: MapLayerType.static,
-        componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
-        optimizeCollisions: false,
-        priority: -100,
-      );
+        game.layersManager.addComponent(
+          component: component,
+          absolutePosition: false,
+          layerName: 'static-ground-procedural',
+          layerType: MapLayerType.static,
+          componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
+          optimizeCollisions: false,
+          priority: -100,
+        );
 
-      if (isFullyOutside) {
-        if (tile == grass) {
-          final random = Random().nextInt(100);
-          if (random < 20) {
-            final sprite =
-                game.tilesetManager.getTile('bricks', 'tree')?.sprite;
-            if (sprite == null) return;
-            final tree = TreeEntity(
-              sprite: sprite,
-              position: component.position,
-              size: component.size,
-            );
-            tree.currentCell = cell;
+        if (mapRects.isEmpty) {
+          if (tile == grass) {
+            final random = Random().nextInt(100);
+            if (random < 20) {
+              final sprite =
+                  game.tilesetManager.getTile('bricks', 'tree')?.sprite;
+              if (sprite == null) return;
+              final tree = TreeEntity(
+                sprite: sprite,
+                position: component.position,
+                size: component.size,
+              );
+              tree.currentCell = cell;
 
-            game.layersManager.addComponent(
-              component: tree,
-              layerType: MapLayerType.static,
-              absolutePosition: false,
-              layerName: 'Tree',
-              renderMode: LayerRenderMode.image,
-              priority: RenderPriority.tree.priority,
-            );
-          } else if (random < 30) {
-            final animation =
-                game.tilesetManager.getTile('bricks', 'water')?.spriteAnimation;
-            if (animation == null) return;
-            final water = WaterEntity(
-              animation: animation,
-              size: component.size,
-              position: component.position,
-            );
-            water.currentCell = cell;
-            game.layersManager.addComponent(
-                component: water,
-                layerType: MapLayerType.animated,
+              game.layersManager.addComponent(
+                component: tree,
+                layerType: MapLayerType.static,
                 absolutePosition: false,
-                layerName: 'Water',
-                priority: RenderPriority.water.priority);
+                layerName: 'Tree',
+                renderMode: LayerRenderMode.image,
+                priority: RenderPriority.tree.priority,
+              );
+            } else if (random < 30) {
+              final animation = game.tilesetManager
+                  .getTile('bricks', 'water')
+                  ?.spriteAnimation;
+              if (animation == null) return;
+              final water = WaterEntity(
+                animation: animation,
+                size: component.size,
+                position: component.position,
+              );
+              water.currentCell = cell;
+              game.layersManager.addComponent(
+                  component: water,
+                  layerType: MapLayerType.animated,
+                  absolutePosition: false,
+                  layerName: 'Water',
+                  priority: RenderPriority.water.priority);
+            }
           }
         }
       }
-
       filledWidth += sprite.srcSize.x.floor();
       if (filledWidth >= cell.rect.width) {
         filledHeight += sprite.srcSize.y.floor();

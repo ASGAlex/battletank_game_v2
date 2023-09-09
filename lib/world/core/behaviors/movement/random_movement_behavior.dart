@@ -29,7 +29,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
 
   bool get isDistanceEnd => _plannedDistance <= _actualDistance;
 
-  late final MovementForwardCollisionBehavior _moveForwardBehavior;
+  MovementForwardCollisionBehavior? _moveForwardBehavior;
   bool _chooseDirectionNextTick = false;
 
   DirectionExtended? _lastDirection;
@@ -55,11 +55,14 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     if (pauseBehavior) {
       return;
     }
+    if (_moveForwardBehavior == null) {
+      return;
+    }
 
-    if (_moveForwardBehavior.pauseMovement && _pauseDt > 0) {
+    if (_moveForwardBehavior!.pauseMovement && _pauseDt > 0) {
       _pauseDt -= dt;
       if (_pauseDt <= 0) {
-        _moveForwardBehavior.pauseMovement = false;
+        _moveForwardBehavior!.pauseMovement = false;
         parent.coreState = ActorCoreState.move;
         _pauseDt = maxPauseBetweenDirectionChanges.toDouble();
       } else {
@@ -80,9 +83,9 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
       }
       return;
     }
-    var distance = _moveForwardBehavior.lastDisplacement.x.abs();
+    var distance = _moveForwardBehavior!.lastDisplacement.x.abs();
     if (distance == 0) {
-      distance = _moveForwardBehavior.lastDisplacement.y.abs();
+      distance = _moveForwardBehavior!.lastDisplacement.y.abs();
     }
     if (distance == 0) {
       _chooseDirectionNextTick = true;
@@ -158,7 +161,7 @@ class RandomMovementBehavior extends AvailableDirectionChecker {
     parent.coreState = ActorCoreState.move;
     if (maxPauseBetweenDirectionChanges > 0) {
       _pauseDt = random.nextInt(maxPauseBetweenDirectionChanges).toDouble();
-      _moveForwardBehavior.pauseMovement = true;
+      _moveForwardBehavior!.pauseMovement = true;
       parent.coreState = ActorCoreState.idle;
     }
   }
