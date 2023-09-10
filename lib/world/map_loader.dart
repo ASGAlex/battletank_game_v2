@@ -341,7 +341,26 @@ class GameMapLoader extends TiledMapLoader {
           mapRects,
           Vector2(cell.rect.left + filledWidth, cell.rect.top + filledHeight),
           srcSize)) {
-        final component = TileComponent(tree);
+        final grass = game.tilesetManager.getTile('ground', 'grass');
+        if (grass == null) {
+          return;
+        }
+        var component = TileComponent(grass);
+        component.currentCell = cell;
+        component.position = Vector2(filledWidth, filledHeight);
+        component.size.setFrom(grass.sprite!.srcSize);
+
+        game.layersManager.addComponent(
+          component: component,
+          absolutePosition: false,
+          layerName: 'static-ground-procedural',
+          layerType: MapLayerType.static,
+          componentsStorageMode: LayerComponentsStorageMode.removeAfterCompile,
+          optimizeCollisions: false,
+          priority: -100,
+        );
+
+        component = TileComponent(tree);
         component.currentCell = cell;
         component.position = Vector2(filledWidth, filledHeight);
         component.size.setFrom(srcSize);

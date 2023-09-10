@@ -27,7 +27,6 @@ import 'package:tank_game/world/core/scenario/components/area_collision_high_pre
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
 import 'package:tank_game/world/core/scenario/components/area_moving_path.dart';
-import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
 import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
@@ -337,7 +336,6 @@ class MyGame extends MyGameFeatures
       currentPlayer = HumanEntity()
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
-        ..add(ScenarioActivatorBehavior())
         ..add(DetectableBehavior(detectionType: DetectionType.visual))
         ..position = cameraComponent.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));

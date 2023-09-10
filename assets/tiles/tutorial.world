@@ -100,8 +100,8 @@
         },
         {
             "fileName": "mission1.tmx",
-            "height": 160,
-            "width": 160,
+            "height": 320,
+            "width": 320,
             "x": -1392,
             "y": -176
         }
