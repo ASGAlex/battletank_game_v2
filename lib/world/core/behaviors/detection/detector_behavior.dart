@@ -177,7 +177,7 @@ class DetectorBehavior extends CoreBehavior<ActorMixin>
     canvas.drawRect(
         rect,
         Paint()
-          ..color = (Color.fromRGBO(119, 0, 255, 1.0))
+          ..color = (Color.fromRGBO(255, 0, 144, 1.0))
           ..strokeWidth = 4
           ..style = PaintingStyle.stroke);
   }

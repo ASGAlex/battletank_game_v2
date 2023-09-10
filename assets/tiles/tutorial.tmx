@@ -430,7 +430,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="scenario" visible="0">
+ <objectgroup id="5" name="scenario">
   <properties>
    <property name="limitedByArea" type="bool" value="true"/>
    <property name="scriptName" value="TutorialUseFirstTank"/>
@@ -453,7 +453,7 @@ Now, go and enter into the tank that spawns nearby at right.
     <property name="type" value="AreaMessage"/>
    </properties>
   </object>
-  <object id="17" name="selecting tank" type="scenario" x="231.923" y="68.0738" width="126.903" height="123.307">
+  <object id="17" name="selecting tank" type="scenario" x="231.923" y="68.0738" width="126.903" height="139.974">
    <properties>
     <property name="factions" value="Player"/>
     <property name="modal" type="bool" value="false"/>

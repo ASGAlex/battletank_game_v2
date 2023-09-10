@@ -29,8 +29,7 @@ class SpawnCoreEntity extends SpriteAnimationComponent
         ActorMixin,
         RestorableStateMixin<SpawnData>,
         HasGameReference<MyGame>,
-        ScenarioEventEmitter,
-        UpdateOnDemand {
+        ScenarioEventEmitter {
   SpawnCoreEntity({
     required this.rootComponent,
     required this.buildContext,
@@ -143,16 +142,13 @@ class SpawnCoreEntity extends SpriteAnimationComponent
     switch (value) {
       case SpawnState.idle:
         hide();
-        isUpdateNeeded = false;
         break;
       case SpawnState.timeout:
         hide();
-        isUpdateNeeded = true;
         break;
       case SpawnState.spawning:
         if (_checkCapacity()) {
           show();
-          isUpdateNeeded = true;
         }
         break;
     }
@@ -172,17 +168,14 @@ class SpawnCoreEntity extends SpriteAnimationComponent
   void update(double dt) {
     if (!_checkCapacity()) {
       hide();
-      isUpdateNeeded = false;
       return;
     }
     switch (userData!.state) {
       case SpawnState.idle:
         hide();
-        isUpdateNeeded = false;
         break;
       case SpawnState.timeout:
         hide();
-        isUpdateNeeded = true;
         if (userData!.timeoutBetweenSpawnsElapsed >=
             userData!.secondsBetweenSpawns) {
           userData!.timeoutBetweenSpawnsElapsed = 0;
@@ -193,7 +186,6 @@ class SpawnCoreEntity extends SpriteAnimationComponent
         break;
       case SpawnState.spawning:
         show();
-        isUpdateNeeded = true;
         if (userData!.timeoutDuringSpawnsElapsed >=
             userData!.secondsDuringSpawn) {
           _trySpawn(_scheduledActor);
@@ -225,7 +217,7 @@ class SpawnCoreEntity extends SpriteAnimationComponent
     userData!.timeoutDuringSpawnsElapsed = 0;
     if (userData!.capacity != -1) {
       userData!.capacity--;
-      if (userData!.capacity == 0 && userData!.removeWhenEmpty) {
+      if (userData!.capacity < 1 && userData!.removeWhenEmpty) {
         game.spawnManager.remove(this);
         removeFromParent();
       }
