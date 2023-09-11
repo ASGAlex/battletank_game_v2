@@ -365,7 +365,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="5" name="scenario">
+ <objectgroup id="5" name="scenario" visible="0">
   <properties>
    <property name="limitedByArea" type="bool" value="true"/>
    <property name="scriptName" value="TutorialUseFirstTank"/>
@@ -462,13 +462,6 @@ Now, go and enter into the tank that spawns nearby at right.
   </object>
   <object id="26" x="451.75" y="-624.75">
    <point/>
-  </object>
-  <object id="41" name="InitialPointReached" type="scenario" x="115.167" y="227.333" width="72.667" height="112.667">
-   <properties>
-    <property name="eventName" value="InitialPointReached"/>
-    <property name="factions" value="Player"/>
-    <property name="type" value="AreaEvent"/>
-   </properties>
   </object>
  </objectgroup>
  <objectgroup id="6" name="protected area" visible="0" opacity="0.9">

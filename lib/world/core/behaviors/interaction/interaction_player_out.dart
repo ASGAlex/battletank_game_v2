@@ -12,6 +12,7 @@ import 'package:tank_game/world/core/behaviors/core_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detectable_behavior.dart';
 import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/camera_zoom_effect.dart';
+import 'package:tank_game/world/core/behaviors/hud/radar.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
@@ -173,6 +174,12 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
           .scenarioEvent(EventPlayerOut(emitter: parent, name: 'PlayerOut'));
     }
 
+    try {
+      final radar = parent.findBehavior<RadarBehavior>();
+      if (radar.keep) {
+        radar.parent = restoredEntity;
+      }
+    } catch (_) {}
     removeFromParent();
   }
 }

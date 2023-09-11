@@ -7,6 +7,8 @@ import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:tank_game/game.dart';
+import 'package:tank_game/world/core/actor.dart';
+import 'package:tank_game/world/core/behaviors/movement/targeted_movement_behavior.dart';
 
 enum RenderPriority {
   sky(25),
@@ -26,7 +28,8 @@ enum RenderPriority {
   const RenderPriority(this.priority);
 }
 
-class GameWorld extends World with HasGameRef<MyGame> {
+class GameWorld extends World with HasGameRef<MyGame>, TapCallbacks {
+  final uiLayer = Component(priority: RenderPriority.ui.priority);
   final skyLayer = Component(priority: RenderPriority.sky.priority);
   final tankLayer = Component(priority: RenderPriority.player.priority);
   final bulletLayer = Component(priority: RenderPriority.bullet.priority);
@@ -63,6 +66,7 @@ class GameWorld extends World with HasGameRef<MyGame> {
 
   @override
   Future<void>? onLoad() {
+    add(uiLayer);
     add(skyLayer);
     add(tankLayer);
     add(bulletLayer);
@@ -74,6 +78,24 @@ class GameWorld extends World with HasGameRef<MyGame> {
   @override
   void onTapDown(TapDownEvent event) {
     final tapPosition = event.localPosition;
+    final player = game.currentPlayer;
+    if (player != null) {
+      try {
+        final behavior = player.findBehavior<TargetedMovementBehavior>();
+        behavior.parent.coreState = ActorCoreState.idle;
+        behavior.removeFromParent();
+      } catch (_) {
+        player.add(TargetedMovementBehavior(
+          targetPosition: tapPosition,
+          targetSize: Vector2.all(2),
+          onTargetReached: (behavior) {
+            behavior.parent.coreState = ActorCoreState.idle;
+            behavior.removeFromParent();
+          },
+          drawLineToTarget: true,
+        ));
+      }
+    }
     final cellsUnderCursor = <Cell>[];
     try {
       print(gameRef.spatialGrid.cells.length);

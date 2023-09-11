@@ -104,6 +104,13 @@
             "width": 320,
             "x": -1392,
             "y": -176
+        },
+        {
+            "fileName": "movement_debug.tmx",
+            "height": 800,
+            "width": 800,
+            "x": -2760,
+            "y": 2680
         }
     ],
     "onlyShowAdjacentMaps": false,

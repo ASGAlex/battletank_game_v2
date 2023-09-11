@@ -50,6 +50,17 @@ enum DirectionExtended {
     }
   }
 
+  Iterable<DirectionExtended> get perpendicular {
+    switch (this) {
+      case DirectionExtended.up:
+      case DirectionExtended.down:
+        return const [DirectionExtended.right, DirectionExtended.left];
+      case DirectionExtended.left:
+      case DirectionExtended.right:
+        return const [DirectionExtended.up, DirectionExtended.down];
+    }
+  }
+
   double get angle {
     switch (this) {
       case DirectionExtended.down:

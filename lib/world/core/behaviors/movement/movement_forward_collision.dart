@@ -3,7 +3,10 @@ import 'dart:ui';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
+import 'package:flutter/material.dart';
 import 'package:tank_game/world/actors/human/human.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
@@ -55,6 +58,9 @@ abstract class MovementCheckerHitbox extends ActorDefaultHitbox {
   MovementCheckerHitbox({super.position, super.size}) {
     triggersParentCollision = false;
     // debugMode = true;
+    paint.color = Colors.white;
+    paint.strokeWidth = 1;
+    paint.style = PaintingStyle.stroke;
   }
 
   DirectionExtended get direction;
@@ -63,6 +69,112 @@ abstract class MovementCheckerHitbox extends ActorDefaultHitbox {
 
   bool get isMovementAllowed => activeCollisions.isEmpty;
 
+  Set<Vector2>? _lastIntersectionPoints;
+  ShapeHitbox? _lastHitbox;
+  DirectionExtended? _lastDirection;
+
+  Map<DirectionExtended, double> get alternativeDirectionShortest {
+    final diffList = _findDiff();
+    if (diffList.isNotEmpty) {
+      final type = diffList[0];
+      if (type > 0) {
+        final diffTop = diffList[1];
+        final diffBottom = diffList[2];
+        if (diffTop > diffBottom) {
+          return <DirectionExtended, double>{
+            DirectionExtended.down: diffBottom,
+            // DirectionExtended.up: diffTop,
+          };
+        } else {
+          return <DirectionExtended, double>{
+            DirectionExtended.up: diffTop,
+            // DirectionExtended.down: diffBottom,
+          };
+        }
+      } else {
+        final diffLeft = diffList[1];
+        final diffRight = diffList[2];
+        if (diffLeft > diffRight) {
+          return <DirectionExtended, double>{
+            // DirectionExtended.left: diffLeft,
+            DirectionExtended.right: diffRight,
+          };
+        } else {
+          return <DirectionExtended, double>{
+            DirectionExtended.left: diffLeft,
+            // DirectionExtended.right: diffRight,
+          };
+        }
+      }
+    }
+    return {};
+  }
+
+  Map<DirectionExtended, double> get alternativeDirectionLongest {
+    final diffList = _findDiff();
+    if (diffList.isNotEmpty) {
+      final type = diffList[0];
+      if (type > 0) {
+        final diffTop = diffList[1];
+        final diffBottom = diffList[2];
+        if (diffTop > diffBottom) {
+          return <DirectionExtended, double>{
+            // DirectionExtended.down: diffBottom,
+            DirectionExtended.up: diffTop,
+          };
+        } else {
+          return <DirectionExtended, double>{
+            // DirectionExtended.up: diffTop,
+            DirectionExtended.down: diffBottom,
+          };
+        }
+      } else {
+        final diffLeft = diffList[1];
+        final diffRight = diffList[2];
+        if (diffLeft > diffRight) {
+          return <DirectionExtended, double>{
+            DirectionExtended.left: diffLeft,
+            // DirectionExtended.right: diffRight,
+          };
+        } else {
+          return <DirectionExtended, double>{
+            // DirectionExtended.left: diffLeft,
+            DirectionExtended.right: diffRight,
+          };
+        }
+      }
+    }
+    return {};
+  }
+
+  List<double> _findDiff() {
+    if (_lastHitbox != null &&
+        _lastDirection != null &&
+        _lastIntersectionPoints != null) {
+      final alternativeDirections = _lastDirection!.perpendicular;
+      final polygon = Polygon(_lastIntersectionPoints!.toList(), convex: true);
+      final bounding = _lastHitbox as BoundingHitbox;
+      Rect boundingRect;
+      if (bounding.optimized) {
+        boundingRect = bounding.group!.aabb.toRect();
+      } else {
+        boundingRect = bounding.aabb.toRect();
+      }
+
+      if (alternativeDirections.contains(DirectionExtended.up)) {
+        final diffTop = (polygon.center.y - boundingRect.top).abs();
+        final diffBottom = (polygon.center.y - boundingRect.bottom).abs();
+        return [1, diffTop, diffBottom];
+      } else {
+        final diffLeft = (polygon.center.x - boundingRect.left).abs();
+        final diffRight = (polygon.center.x - boundingRect.right).abs();
+        return [-1, diffLeft, diffRight];
+      }
+    }
+
+    return [];
+  }
+
   DirectionExtended get globalMapDirection {
     var globalValue =
         direction.value + (parent as ActorMixin).data.lookDirection.value;
@@ -70,6 +182,28 @@ abstract class MovementCheckerHitbox extends ActorDefaultHitbox {
       return DirectionExtended.fromValue(globalValue - 4);
     }
     return DirectionExtended.fromValue(globalValue);
+  }
+
+  @override
+  void onCollision(Set<Vector2> intersectionPoints, ShapeHitbox other) {
+    _lastIntersectionPoints = intersectionPoints;
+    _lastHitbox = other;
+    _lastDirection = (parent as ActorMixin).data.lookDirection;
+    super.onCollision(intersectionPoints, other);
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final offsetPoints = <Offset>[];
+    if (_lastIntersectionPoints != null) {
+      for (final point in _lastIntersectionPoints!) {
+        final offset = absoluteToLocal(point).toOffset();
+        offsetPoints.add(offset);
+      }
+      canvas.drawPoints(PointMode.points, offsetPoints, paint);
+      renderDebugMode(canvas);
+    }
+    super.render(canvas);
   }
 
   @override
@@ -119,6 +253,9 @@ class MovementHitbox extends MovementCheckerHitbox {
 
   @override
   bool onComponentTypeCheck(PositionComponent other) {
+    if (parent == null) {
+      return false;
+    }
     final component = other.parent;
     if (component is HumanEntity) {
       final factions = component.data.factions;

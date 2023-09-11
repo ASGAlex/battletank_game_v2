@@ -21,6 +21,7 @@ import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dar
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/smoke_start_moving_behavior.dart';
+import 'package:tank_game/world/core/behaviors/hud/hud_bounds_renderer.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_forward_collision.dart';
@@ -109,12 +110,16 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
     boundingBox.collisionType =
         boundingBox.defaultCollisionType = CollisionType.inactive;
-    noVisibleChildren = true;
+    noVisibleChildren = false;
+    hudBoundsRenderer = HudBoundsRenderer(this);
+    hudBoundsRenderer.paint.color = Colors.red.withOpacity(0.5);
   }
 
   final String _tileType;
   late final SmokeComponent smoke;
   late final SmokeStartMovingBehavior smokeStartMoving;
+
+  late final HudBoundsRenderer hudBoundsRenderer;
 
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => TankBoundingHitbox();
@@ -307,6 +312,9 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
     for (final hitbox in hitboxes) {
       hitbox.parentSpeedGetter = _getCurrentSpeed;
     }
+
+    bodyHitbox.size = boundingBox.size;
+    game.world.uiLayer.add(hudBoundsRenderer);
   }
 
   @override

@@ -11,6 +11,7 @@ import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/attacks/attack_behavior.dart';
 import 'package:tank_game/world/core/behaviors/attacks/bullet.dart';
 import 'package:tank_game/world/core/behaviors/attacks/killable_behavior.dart';
+import 'package:tank_game/world/core/behaviors/hud/radar.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_player_out.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_set_player.dart';
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
@@ -165,11 +166,11 @@ class MainTutorialScript extends ScriptCore {
           try {
             if (actor.hasBehavior<PlayerControlledBehavior>()) {
               PlayerControlledBehavior.ignoredEvents.addAll([
-                PlayerAction.fire,
-                PlayerAction.moveLeft,
-                PlayerAction.moveRight,
-                PlayerAction.moveDown,
-                PlayerAction.moveUp,
+                // PlayerAction.fire,
+                // PlayerAction.moveLeft,
+                // PlayerAction.moveRight,
+                // PlayerAction.moveDown,
+                // PlayerAction.moveUp,
               ]);
               _initialDisableControls = false;
             }
@@ -270,14 +271,6 @@ class TutorialHowToUseTank extends ScriptCore {
         if (scenario.name == 'Destroy bricks' ||
             scenario.name == 'invalid direction') {
           scenario.removeFromParent();
-        } else if (scenario.name == 'InitialPointReached') {
-          AreaEventComponent.registerEvent(
-              'InitialPointReached',
-              (
-                      {required Component emitter,
-                      required String name,
-                      dynamic data}) =>
-                  InitialPointReached(emitter: emitter, data: data));
         }
       }
     }
@@ -400,27 +393,6 @@ class TutorialHowToUseTank extends ScriptCore {
         }
         break;
       case TutorialState.returnToBase:
-        if (message is InitialPointReached) {
-          for (final scenario in game.world.scenarioLayer.children
-              .whereType<AreaEventComponent>()) {
-            if (scenario.name == 'InitialPointReached') {
-              scenario.removeFromParent();
-              break;
-            }
-          }
-          for (final scenario in game.world.scenarioLayer.children
-              .whereType<AreaInitScriptComponent>()) {
-            if (scenario.name == 'Mission1') {
-              scenario.boundingBox.collisionType = CollisionType.passive;
-              break;
-            }
-          }
-          game.showScenarioMessage(MessageWidget(
-            texts: [txtEnterTrainingZone],
-            key: UniqueKey(),
-          ));
-          removeFromParent();
-        }
         break;
     }
   }
@@ -517,6 +489,15 @@ class Mission1 extends ScriptCore {
     ));
     AreaInitScriptComponent.registerType(
         'Mission1_mark_enemies', (lifetimeMax, creator) => Mission1MarkEnemy());
+
+    try {
+      final mainScript =
+          game.world.scenarioLayer.children.query<MainTutorialScript>().first;
+      mainScript.tutorialHowToUseTank?.removeFromParent();
+      mainScript.tutorialHowToUseTank = null;
+    } catch (_) {}
+
+    game.currentPlayer?.add(RadarBehavior());
     return super.onLoad();
   }
 }

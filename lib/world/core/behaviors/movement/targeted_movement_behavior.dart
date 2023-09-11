@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flame/components.dart';
+import 'package:flame/experimental.dart';
+import 'package:flame/extensions.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
+import 'package:tank_game/game.dart';
 import 'package:tank_game/world/core/actor.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
 import 'package:tank_game/world/core/behaviors/movement/movement_factory_mixin.dart';
@@ -9,23 +14,27 @@ import 'package:tank_game/world/core/behaviors/movement/movement_forward_collisi
 import 'package:tank_game/world/core/behaviors/movement/random_movement_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 
-class TargetedMovementBehavior extends AvailableDirectionChecker {
+class TargetedMovementBehavior extends AvailableDirectionChecker
+    with HasGameReference<MyGame> {
   TargetedMovementBehavior({
     required Vector2 targetPosition,
-    required Vector2 targetSize,
-    this.stopMovementDistance = 0,
+    required this.targetSize,
     this.maxRandomMovementTime = 5,
     this.onShouldFire,
     this.stopAtTarget = true,
     this.precision = 1,
-    this.maxDtFromLastDirectionChange = 0.5,
+    this.maxDtFromLastDirectionChange = 0.1,
+    this.onTargetReached,
+    this.drawLineToTarget = false,
   }) {
     this.targetPosition.setFrom(targetPosition);
     minDiff = max(targetSize.x, targetSize.y) / 2;
   }
 
   bool stopAtTarget;
-  double stopMovementDistance;
+  Function(TargetedMovementBehavior behavior)? onTargetReached;
+
+  Vector2 targetSize;
   double maxRandomMovementTime;
   double _randomMovementTimer = 0;
   final NotifyingVector2 targetPosition = NotifyingVector2.zero();
@@ -33,6 +42,9 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   final _diff = Vector2(0, 0);
   bool shouldFire = false;
   double precision;
+
+  bool drawLineToTarget;
+  _MovementLine? _movementLine;
 
   Function? onShouldFire;
 
@@ -44,6 +56,11 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   bool forceIdle = false;
   final maxAttemptsToChangeDirection = 2;
   int _attemptsToChangeDirection = 0;
+
+  DirectionExtended? _originalDirection;
+  double? _fallbackToOriginalDistance;
+  double? _blockAxisChangeDistance;
+  bool _chooseLongestAxis = false;
 
   bool isTargetReached = false;
   bool pauseBehavior = false;
@@ -65,6 +82,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   @override
   void onRemove() {
     targetPosition.dispose();
+    _movementLine?.removeFromParent();
     super.onRemove();
   }
 
@@ -72,66 +90,59 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   void update(double dt) {
     if (pauseBehavior) return;
 
-    _dtFromLastDirectionChange += dt;
-    if (isRandomMovement) {
-      if (_randomMovementTimer <= maxRandomMovementTime) {
-        _randomMovementTimer += dt;
-        return;
-      } else {
-        _stopRandomMovement();
+    if (drawLineToTarget && !isTargetReached) {
+      if (_movementLine == null) {
+        _movementLine = _MovementLine(parent.position, targetPosition);
+        game.world.uiLayer.add(_movementLine!);
       }
+      _movementLine!.position.setFrom(parent.position);
+      _movementLine!.target.setFrom(targetPosition);
     }
 
     _diff.setFrom(targetPosition - parent.data.positionCenter);
-    if ((_diff.x.abs() <= parent.size.x * precision &&
-            _diff.y.abs() <= parent.size.y / 2) ||
-        (_diff.x.abs() <= parent.size.x / 2 &&
-            _diff.y.abs() <= parent.size.y * precision)) {
-      if (stopAtTarget) {
-        parent.coreState = ActorCoreState.idle;
-        forceIdle = true;
-        isTargetReached = true;
-      } else {
-        _startRandomMovement();
-        // removeFromParent();
-        return;
-      }
-    } else {
-      if (stopAtTarget) {
-        parent.coreState = ActorCoreState.move;
-        forceIdle = false;
-      }
-    }
-    bool directionChanged = false;
-    if (_moveForwardBehavior.movementHitbox.isMovementBlocked && !forceIdle) {
-      if (_attemptsToChangeDirection < maxAttemptsToChangeDirection) {
-        if (parent.lookDirection == DirectionExtended.up ||
-            parent.lookDirection == DirectionExtended.down) {
-          _changeDirectionTry(_leftOrRight(_diff.x));
-          directionChanged = true;
-        } else if (parent.lookDirection == DirectionExtended.right ||
-            parent.lookDirection == DirectionExtended.left) {
-          _changeDirectionTry(_upOrDown(_diff.y));
-          directionChanged = true;
-        }
-      } else {
+    _dtFromLastDirectionChange += dt;
+
+    if (_attemptsToChangeDirection >= maxAttemptsToChangeDirection) {
+      if (!_chooseLongestAxis) {
+        _chooseLongestAxis = true;
         _attemptsToChangeDirection = 0;
-        forceIdle = false;
+      } else {
         _startRandomMovement();
-        return;
       }
     }
 
-    if (directionChanged && !forceIdle) {
-      _attemptsToChangeDirection++;
-    } else {
-      if (forceIdle) {
-        if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
-          forceIdle = false;
-          _changeDirectionTry();
+    if (!_randomMovementMode(dt)) {
+      if (!_reachTargetCheck()) {
+        if (_fallbackToOriginalDistance != null) {
+          _fallbackToOriginalDistance = _fallbackToOriginalDistance! -
+              _moveForwardBehavior.lastInnerSpeed;
+          if (_fallbackToOriginalDistance! <= 0) {
+            _fallbackToOriginalDistance = null;
+            if (_originalDirection != null) {
+              parent.lookDirection = _originalDirection!;
+              _chooseLongestAxis = false;
+              _attemptsToChangeDirection = 0;
+            } else {
+              _chooseShortestAxis();
+            }
+          } else {
+            if (!_blockedMovementCheck()) {
+              _chooseShortestAxis();
+            }
+          }
+        } else {
+          if (!_blockedMovementCheck()) {
+            if (_blockAxisChangeDistance != null) {
+              _blockAxisChangeDistance = _blockAxisChangeDistance! -
+                  _moveForwardBehavior.lastInnerSpeed;
+              if (_blockAxisChangeDistance! <= 0) {
+                _blockAxisChangeDistance = null;
+              }
+            } else {
+              _chooseShortestAxis();
+            }
+          }
         }
-      } else if (!directionChanged) {
-        _changeDirectionTry();
       }
     }
 
@@ -140,11 +151,115 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
     }
   }
 
-  void _changeDirectionTry([DirectionExtended? direction]) {
+  void _chooseShortestAxis() {
+    if (_attemptsToChangeDirection < maxAttemptsToChangeDirection) {
+      _changeDirectionTry();
+    }
+  }
+
+  bool _randomMovementMode(double dt) {
+    if (isRandomMovement) {
+      if (_randomMovementTimer <= maxRandomMovementTime) {
+        _randomMovementTimer += dt;
+        return true;
+      } else {
+        _stopRandomMovement();
+      }
+    }
+    return false;
+  }
+
+  bool _reachTargetCheck() {
+    if ((_diff.x.abs() <= targetSize.x && _diff.y.abs() <= targetSize.y / 2) ||
+        (_diff.x.abs() <= targetSize.x / 2 && _diff.y.abs() <= targetSize.y)) {
+      if (stopAtTarget) {
+        parent.coreState = ActorCoreState.idle;
+        forceIdle = true;
+      } else {
+        _startRandomMovement();
+        // removeFromParent();
+      }
+      if (drawLineToTarget && _movementLine != null) {
+        _movementLine!.removeFromParent();
+        _movementLine = null;
+      }
+      isTargetReached = true;
+      onTargetReached?.call(this);
+      _blockAxisChangeDistance = 0;
+      _chooseLongestAxis = false;
+      _attemptsToChangeDirection = 0;
+      _fallbackToOriginalDistance = 0;
+      return true;
+    } else {
+      if (stopAtTarget) {
+        parent.coreState = ActorCoreState.move;
+        forceIdle = false;
+      }
+    }
+    return false;
+  }
+
+  bool _blockedMovementCheck() {
+    if (_moveForwardBehavior.movementHitbox.isMovementBlocked) {
+      if (forceIdle) {
+        if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
+          forceIdle = false;
+          _changeAlternativeDirectionWhenCollide();
+        }
+      } else {
+        _changeAlternativeDirectionWhenCollide();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  void _changeAlternativeDirectionWhenCollide() {
+    _attemptsToChangeDirection++;
+    if (_attemptsToChangeDirection >= maxAttemptsToChangeDirection) {
+      if (!_chooseLongestAxis) {
+        _chooseLongestAxis = true;
+        _attemptsToChangeDirection = 0;
+      }
+    }
+
+    final short =
+        _moveForwardBehavior.movementHitbox.alternativeDirectionShortest;
+    final long =
+        _moveForwardBehavior.movementHitbox.alternativeDirectionLongest;
+    var distance = 0.0;
+    var secondaryDistance = 0.0;
+    DirectionExtended direction;
+    if (_chooseLongestAxis) {
+      direction = long.keys.first;
+      final longestSide =
+          _moveForwardBehavior.movementHitbox.aabb.toRect().longestSide;
+      distance = long.values.first + longestSide;
+      secondaryDistance = short.values.first + longestSide;
+    } else {
+      direction = short.keys.first;
+      final longestSide =
+          _moveForwardBehavior.movementHitbox.aabb.toRect().longestSide;
+      distance = short.values.first + longestSide;
+      secondaryDistance = long.values.first + longestSide;
+    }
+    _changeDirectionTry(direction, distance, secondaryDistance);
+  }
+
+  void _changeDirectionTry([
+    DirectionExtended? direction,
+    double? distance,
+    double? secondaryDistance,
+  ]) {
     final newDirection = direction ?? _findShortestDirection();
 
     if (newDirection != null && newDirection != parent.lookDirection) {
       if (_dtFromLastDirectionChange >= maxDtFromLastDirectionChange) {
+        if (distance != null && secondaryDistance != null) {
+          _fallbackToOriginalDistance = distance;
+          _blockAxisChangeDistance = secondaryDistance;
+          _originalDirection = parent.lookDirection;
+        }
         parent.lookDirection = newDirection;
         _dtFromLastDirectionChange = 0;
       } else {
@@ -172,6 +287,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
       parent.findBehavior<RandomMovementBehavior>().pauseBehavior = true;
     } catch (_) {}
     isRandomMovement = false;
+    _attemptsToChangeDirection = 0;
   }
 
   bool isRandomMovement = false;
@@ -187,8 +303,8 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
       }
     }
 
-    if (diffBetweenAxis > 0) {
-      if (_diff.y > 0) {
+    if (diffBetweenAxis > 0 && !_chooseLongestAxis) {
+      if (_diff.y > 0 && !_chooseLongestAxis) {
         if (_diff.y <= minDiff) {
           shouldFire = true;
           return _leftOrRight(_diff.x);
@@ -197,7 +313,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         }
         return DirectionExtended.down;
       } else {
-        if (_diff.y >= -minDiff) {
+        if (_diff.y >= -minDiff && !_chooseLongestAxis) {
           shouldFire = true;
           return _leftOrRight(_diff.x);
         } else {
@@ -206,7 +322,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         return DirectionExtended.up;
       }
     } else {
-      if (_diff.x > 0) {
+      if (_diff.x > 0 && !_chooseLongestAxis) {
         if (_diff.x <= minDiff) {
           shouldFire = true;
           return _upOrDown(_diff.y);
@@ -215,7 +331,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
         }
         return DirectionExtended.right;
       } else {
-        if (_diff.x >= -minDiff) {
+        if (_diff.x >= -minDiff && !_chooseLongestAxis) {
           shouldFire = true;
           return _upOrDown(_diff.y);
         } else {
@@ -227,7 +343,7 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   }
 
   DirectionExtended _leftOrRight(double diffX) {
-    if (diffX > 0) {
+    if (diffX > 0 && !_chooseLongestAxis) {
       return DirectionExtended.right;
     } else {
       return DirectionExtended.left;
@@ -235,10 +351,24 @@ class TargetedMovementBehavior extends AvailableDirectionChecker {
   }
 
   DirectionExtended _upOrDown(double diffY) {
-    if (diffY > 0) {
+    if (diffY > 0 && !_chooseLongestAxis) {
       return DirectionExtended.down;
     } else {
       return DirectionExtended.up;
     }
+  }
+}
+
+class _MovementLine extends Component with HasPaint {
+  _MovementLine(this.position, this.target) {
+    paint.color = Colors.pink;
+  }
+
+  Vector2 position;
+  Vector2 target;
+
+  @override
+  void render(Canvas canvas) {
+    canvas.drawLine(position.toOffset(), target.toOffset(), paint);
   }
 }

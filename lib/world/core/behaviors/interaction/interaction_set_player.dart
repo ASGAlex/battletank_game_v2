@@ -7,6 +7,7 @@ import 'package:tank_game/world/core/behaviors/detection/detector_behavior.dart'
 import 'package:tank_game/world/core/behaviors/effects/camera_zoom_effect.dart';
 import 'package:tank_game/world/core/behaviors/effects/color_filter_behavior.dart';
 import 'package:tank_game/world/core/behaviors/effects/shadow_behavior.dart';
+import 'package:tank_game/world/core/behaviors/hud/radar.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interactable.dart';
 import 'package:tank_game/world/core/behaviors/interaction/interaction_player_out.dart';
 import 'package:tank_game/world/core/behaviors/movement/available_direction_checker.dart';
@@ -73,6 +74,13 @@ class InteractionSetPlayer extends InteractableBehavior {
         } else {
           prevPlayerEntity = currentPlayerEntity;
         }
+
+        try {
+          final radar = currentPlayerEntity.findBehavior<RadarBehavior>();
+          if (radar.keep) {
+            radar.parent = parent;
+          }
+        } catch (_) {}
 
         parent.coreState = ActorCoreState.idle;
         parent.add(PlayerControlledBehavior());
