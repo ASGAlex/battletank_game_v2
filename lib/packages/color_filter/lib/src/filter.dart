@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'value_generator.dart';
 
-mixin ColorFilterMix on FlameGame {
+mixin ColorFilterMix<W extends World> on FlameGame<W> {
   initColorFilter<T extends ColorFilterMix>([ColorFilterConfig? config]) {
     config ??= ColorFilterConfig();
     colorFilter = ColorFilterComponent<T>(config);

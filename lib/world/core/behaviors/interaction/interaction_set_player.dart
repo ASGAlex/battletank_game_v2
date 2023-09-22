@@ -114,12 +114,12 @@ class InteractionSetPlayer extends InteractableBehavior {
         removeNpcBehaviors();
 
         game.currentPlayer = parent;
-        game.cameraComponent.viewfinder
+        game.camera.viewfinder
             .add(CameraZoomEffect(parent.data.zoom, LinearEffectController(2)));
-        game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 7);
+        game.camera.follow(game.currentPlayer!, maxSpeed: 7);
         Future.delayed(const Duration(seconds: 2)).then((value) {
           onComplete?.call(parent);
-          game.cameraComponent.follow(game.currentPlayer!, maxSpeed: 40);
+          game.camera.follow(game.currentPlayer!, maxSpeed: 40);
           if (parent is ScenarioEventEmitter) {
             (parent as ScenarioEventEmitter).scenarioEvent(
                 EventSetPlayer(emitter: parent, name: 'PlayerSet'));

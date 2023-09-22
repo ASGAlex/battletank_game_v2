@@ -1,4 +1,4 @@
-import 'package:flame/experimental.dart';
+import 'package:flame/components.dart';
 import 'package:tank_game/game.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/behaviors/core_behavior.dart';

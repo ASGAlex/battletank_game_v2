@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: "49b1fad315e57ab0bbc15bcbb874e83116a1d78f77ebd500a4af6c9407d6b28e"
+      sha256: "1227dc3efc4ea571eebb2dfb814506ed2cfb1d4b1b89fb918abdddde617ead3c"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.8"
+    version: "3.4.0"
   args:
     dependency: "direct main"
     description:
@@ -173,18 +173,18 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: bd2b45f9fc0ec4939031b85c0b0a97cf09357c12ecd072d44389a4c577a2c0f0
+      sha256: b61d557d340e4541dec5ffa9c5bc82dd0fb42cce7ec99d3e8cab3c745c93c327
       url: "https://pub.dev"
     source: hosted
-    version: "1.8.2"
+    version: "1.9.0"
   flame_audio:
     dependency: "direct main"
     description:
       name: flame_audio
-      sha256: "62c98d1541ecd023e8b549e0fd7f5e5b2026724f3289b44bd272959d170c8bba"
+      sha256: d05d8b358ff7943eee02fb81217d6c66c097b876f53a2b30f31b868784605ed8
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.5"
+    version: "2.1.0"
   flame_behaviors:
     dependency: "direct main"
     description:
@@ -208,15 +208,15 @@ packages:
       path: "../flame_spatial_grid"
       relative: true
     source: path
-    version: "0.8.2"
+    version: "0.8.4"
   flame_tiled:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: "8d8e0a4e14019a3eb161c772b6fafa26377df3fc3261e5edd9dfc9ba96346163"
+      sha256: "131d04c058e21830ed7e14bd9985f93e462e5834f469d0a8e1510ab6b78a02ae"
       url: "https://pub.dev"
     source: hosted
-    version: "1.13.0"
+    version: "1.14.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -345,10 +345,10 @@ packages:
     dependency: transitive
     description:
       name: ordered_set
-      sha256: "3fedcc9121b3ba24c0a84f32da2989c42e36c159b73feadbc2f402dc55966b81"
+      sha256: "3858c7d84619edfab87c3e367584648020903187edb70b52697646f4b2a93022"
       url: "https://pub.dev"
     source: hosted
-    version: "5.0.1"
+    version: "5.0.2"
   path:
     dependency: transitive
     description:

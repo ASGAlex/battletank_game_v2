@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
@@ -162,11 +161,11 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
 
     game.currentPlayer = restoredEntity;
 
-    game.cameraComponent.follow(restoredEntity, maxSpeed: 7);
-    game.cameraComponent.viewfinder.add(
+    game.camera.follow(restoredEntity, maxSpeed: 7);
+    game.camera.viewfinder.add(
         CameraZoomEffect(restoredEntity.data.zoom, LinearEffectController(2)));
     Future.delayed(const Duration(seconds: 2)).then((value) {
-      game.cameraComponent
+      game.camera
           .follow(restoredEntity, maxSpeed: restoredEntity.data.cameraSpeed);
     });
     if (restoredEntity is ScenarioEventEmitter) {

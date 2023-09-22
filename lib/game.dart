@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
@@ -39,19 +38,24 @@ import 'package:wakelock/wakelock.dart';
 
 import 'world/core/scenario/scenario_description.dart';
 
-abstract class MyGameFeatures extends FlameGame
+abstract class MyGameFeatures extends FlameGame<GameWorld>
     with
         ColorFilterMix,
         KeyboardEvents,
-        HasSpatialGridFramework,
+        HasSpatialGridFramework<GameWorld>,
         SingleGameInstance,
-        ColorFilterMix,
+        ColorFilterMix<GameWorld>,
         ScrollDetector {
-  GameWorld get world => rootComponent as GameWorld;
+  MyGameFeatures()
+      : super(
+          world: GameWorld(),
+        );
+
   final inputEventsHandler = InputEventsHandler();
 
   @override
   FutureOr<void> onLoad() {
+    rootComponent = world;
     inputEventsHandler.game = this as MyGame;
     return super.onLoad();
   }
@@ -78,8 +82,6 @@ class MyGame extends MyGameFeatures
 
   ConsoleMessagesController get consoleMessages =>
       SettingsController().consoleMessages;
-
-  late final CameraComponent cameraComponent;
 
   final initialPlayerPosition = Vector2(0, 0);
   final spawnManager = SpawnManager();
@@ -111,9 +113,9 @@ class MyGame extends MyGameFeatures
 
   @override
   void onScroll(PointerScrollInfo info) {
-    var zoom = cameraComponent.viewfinder.zoom;
+    var zoom = camera.viewfinder.zoom;
     zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
-    cameraComponent.viewfinder.zoom = zoom.clamp(0.1, 8.0);
+    camera.viewfinder.zoom = zoom.clamp(0.1, 8.0);
     onAfterZoom();
   }
 
@@ -135,12 +137,8 @@ class MyGame extends MyGameFeatures
     // SoundLibrary().init();
     // consoleMessages.sendMessage('done.');
 
-    final gameWorld = GameWorld();
-
-    cameraComponent =
-        CameraComponent(world: gameWorld, viewport: MaxViewport());
-    cameraComponent.viewfinder.zoom = 5;
-    cameraComponent.priority = 999;
+    camera.viewfinder.zoom = 5;
+    camera.priority = 999;
 
     final settings = SettingsController();
     Size activeRadius;
@@ -210,15 +208,14 @@ class MyGame extends MyGameFeatures
       cleanupCellsPerUpdate: 1,
       processCellsLimitToPauseEngine: processCellsLimitToPauseEngine,
       // maxCells: 200,
-      rootComponent: gameWorld,
+      rootComponent: world,
       trackWindowSize: true,
-      trackedComponent: SpatialGridCameraWrapper(cameraComponent),
+      trackedComponent: SpatialGridCameraWrapper(camera),
       initialPositionChecker: (layer, object, mapOffset, worldName) {
         if (object.name == 'spawn_human_player') {
           initialPlayerPosition.setValues(object.x, object.y);
-          cameraComponent.viewfinder.position =
-              mapOffset + Vector2(object.x, object.y);
-          return cameraComponent.viewfinder.position;
+          camera.viewfinder.position = mapOffset + Vector2(object.x, object.y);
+          return camera.viewfinder.position;
         }
         return null;
       },
@@ -251,8 +248,6 @@ class MyGame extends MyGameFeatures
     // }
     // consoleMessages.sendMessage('done.');
 
-    add(gameWorld);
-
     if (SettingsController().soundEnabled) {
       consoleMessages.sendMessage('Loading audio...');
       await FlameAudio.audioCache.loadAll([
@@ -272,13 +267,13 @@ class MyGame extends MyGameFeatures
       add(enemyAmbientVolume);
     }
 
-    initJoystick(cameraComponent.viewport);
+    initJoystick(camera.viewport);
     add(inputEventsHandler);
 
     // if (kIsWeb) {
     // } else {
     //   if (Platform.isAndroid) {
-    //     initJoystick(cameraComponent.viewport);
+    //     initJoystick(camera.viewport);
     //   }
     // }
 
@@ -287,7 +282,7 @@ class MyGame extends MyGameFeatures
     // Spawn.waitFree(true).then((playerSpawn) async {
     //   if (player == null || player?.dead == true) {
     //     // spatialGrid.trackedComponent = playerSpawn;
-    //     cameraComponent.follow(playerSpawn, maxSpeed: 60);
+    //     camera.follow(playerSpawn, maxSpeed: 60);
     //     await restorePlayer(playerSpawn);
     //     // SoundLibrary().playIntro();
     //     consoleMessages.sendMessage('done.');
@@ -317,7 +312,7 @@ class MyGame extends MyGameFeatures
     if (_initialized) return;
 
     listenProvider(inputEventsHandler.messageProvider);
-    cameraComponent.viewfinder.zoom = 5;
+    camera.viewfinder.zoom = 5;
     overlays.add('hud');
 
     onAfterZoom();
@@ -337,7 +332,7 @@ class MyGame extends MyGameFeatures
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
         ..add(DetectableBehavior(detectionType: DetectionType.visual))
-        ..position = cameraComponent.viewfinder.position
+        ..position = camera.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
 
       spawnManager.spawnNewActor(
@@ -345,7 +340,7 @@ class MyGame extends MyGameFeatures
           faction: Faction(name: 'Player'),
           onSpawnComplete: (objectToSpawn) {
             currentPlayer!.add(PlayerControlledBehavior());
-            cameraComponent.follow(currentPlayer!);
+            camera.follow(currentPlayer!);
           });
     } else {
       overlays.add('game_over_fail');

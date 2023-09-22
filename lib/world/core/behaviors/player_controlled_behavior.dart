@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flame/experimental.dart';
+import 'package:flame/components.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:tank_game/controls/input_events_handler.dart';
 import 'package:tank_game/game.dart';
