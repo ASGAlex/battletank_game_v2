@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +91,8 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   CircleComponent? halo;
   final Map<String, Sfx> audio;
 
+  double _dtSpeed = 0;
+
   @override
   FutureOr<void> onLoad() {
     anchor = Anchor.center;
@@ -123,9 +124,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
       add(halo!);
     }
 
-    boundingBox.parentSpeedGetter = () {
-      return data.speed;
-    };
+    boundingBox.parentSpeedGetter = () => _dtSpeed;
 
     super.onLoad();
   }
@@ -164,6 +163,11 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   void update(double dt) {
     if (data.coreState == ActorCoreState.move) {
+      final newDtSpeed = data.speed * dt;
+      if ((_dtSpeed - newDtSpeed).abs() > 0.5) {
+        boundingBox.onParentSpeedChange();
+      }
+      _dtSpeed = newDtSpeed;
       final lastDisplacement = movementBehavior.lastDisplacement..absolute();
       var distance = lastDisplacement.x;
       if (distance == 0) {

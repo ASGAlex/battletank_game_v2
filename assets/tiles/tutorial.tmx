@@ -356,14 +356,6 @@
     <property name="trigger_distance" type="float" value="512"/>
    </properties>
   </object>
-  <object id="45" name="spawn_human_player" type="spawn_human" x="169.5" y="241.375" width="13" height="13.25">
-   <properties>
-    <property name="allowedFactions" value="Player"/>
-    <property name="factions" value="Player"/>
-    <property name="removeWhenEmpty" type="bool" value="true"/>
-    <property name="spawn_seconds" type="float" value="3"/>
-   </properties>
-  </object>
  </objectgroup>
  <objectgroup id="5" name="scenario" visible="0">
   <properties>

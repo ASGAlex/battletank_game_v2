@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame_behaviors/flame_behaviors.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
@@ -124,11 +123,26 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
   @override
   BoundingHitboxFactory get boundingHitboxFactory => () => TankBoundingHitbox();
 
-  double _getCurrentSpeed() {
+  double _dtSpeed = 0;
+
+  double _getCurrentDtSpeed() {
     if (coreState == ActorCoreState.move) {
-      return data.speed;
+      return _dtSpeed;
     }
     return 0;
+  }
+
+  @override
+  void update(double dt) {
+    if (coreState == ActorCoreState.move) {
+      final newDtSpeed = dt * data.speed;
+      if ((_dtSpeed - newDtSpeed).abs() > 0.5) {
+        boundingBox.onParentSpeedChange();
+        bodyHitbox.onParentSpeedChange();
+      }
+      _dtSpeed = newDtSpeed;
+    }
+    super.update(dt);
   }
 
   @override
@@ -310,7 +324,7 @@ class TankEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
     final hitboxes = children.whereType<BoundingHitbox>();
     for (final hitbox in hitboxes) {
-      hitbox.parentSpeedGetter = _getCurrentSpeed;
+      hitbox.parentSpeedGetter = _getCurrentDtSpeed;
     }
 
     bodyHitbox.size = boundingBox.size;
