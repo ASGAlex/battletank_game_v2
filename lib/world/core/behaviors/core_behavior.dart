@@ -1,4 +1,4 @@
-import 'package:flame_behaviors/flame_behaviors.dart';
+import 'package:tank_game/packages/behaviors/lib/flame_behaviors.dart';
 
 abstract class CoreBehavior<Parent extends EntityMixin>
     extends Behavior<Parent> {

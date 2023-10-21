@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/experimental.dart';
-import 'package:flame_behaviors/flame_behaviors.dart' hide CollisionBehavior;
 import 'package:tank_game/game.dart';
+import 'package:tank_game/packages/behaviors/lib/flame_behaviors.dart';
 import 'package:tank_game/services/audio/sfx/sfx.dart';
 import 'package:tank_game/world/actors/tank/tank.dart';
 import 'package:tank_game/world/core/actor.dart';
