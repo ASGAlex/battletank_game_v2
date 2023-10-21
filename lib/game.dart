@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flame_fast_touch/flame_fast_touch.dart';
 import 'package:flame_message_stream/flame_message_stream.dart';
 import 'package:flame_spatial_grid/flame_spatial_grid.dart';
 import 'package:flutter/material.dart' hide Image;
@@ -66,6 +68,7 @@ class MyGame extends MyGameFeatures
         GameHardwareKeyboard,
         MyJoystickMix,
         XInputGamePad,
+        FastTouch<GameWorld>,
         MessageListenerMixin<List<PlayerAction>>,
         HasMessageProviders {
   MyGame(this.scenario, this.context);
@@ -114,7 +117,7 @@ class MyGame extends MyGameFeatures
   @override
   void onScroll(PointerScrollInfo info) {
     var zoom = camera.viewfinder.zoom;
-    zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
+    zoom += info.scrollDelta.global.y.sign * zoomPerScrollUnit;
     camera.viewfinder.zoom = zoom.clamp(0.1, 8.0);
     onAfterZoom();
   }
@@ -247,6 +250,8 @@ class MyGame extends MyGameFeatures
     // inputEventsHandler.getCurrentAngle = () => joystick!.knobAngleDegrees;
     // }
     // consoleMessages.sendMessage('done.');
+
+    componentsAtPointRoot = camera.viewport;
 
     if (SettingsController().soundEnabled) {
       consoleMessages.sendMessage('Loading audio...');
