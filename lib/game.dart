@@ -25,13 +25,17 @@ import 'package:tank_game/world/core/behaviors/detection/enemy_ambient_volume.da
 import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/faction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
+import 'package:tank_game/world/core/scenario/components/area_event.dart';
 import 'package:tank_game/world/core/scenario/components/area_init_script.dart';
 import 'package:tank_game/world/core/scenario/components/area_message.dart';
 import 'package:tank_game/world/core/scenario/components/area_moving_path.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scenario_component.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
+import 'package:tank_game/world/environment/ground/asphalt.dart';
 import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 import 'package:tank_game/world/environment/spawn/spawn_manager.dart';
+import 'package:tank_game/world/environment/spawn/spawn_teleport.dart';
 import 'package:tank_game/world/environment/tree/tree.dart';
 import 'package:tank_game/world/environment/water/water.dart';
 import 'package:tank_game/world/map_loader.dart';
@@ -336,6 +340,7 @@ class MyGame extends MyGameFeatures
       currentPlayer = HumanEntity()
         ..isInteractionEnabled = true
         ..add(TriggerSpawnBehavior())
+        ..add(ScenarioActivatorBehavior())
         ..add(DetectableBehavior(detectionType: DetectionType.visual))
         ..position = camera.viewfinder.position
         ..data.factions.add(Faction(name: 'Player'));
@@ -399,9 +404,13 @@ class MyGame extends MyGameFeatures
           potentialItemType == AreaInitScriptComponent ||
           potentialItemType == AreaMessageComponent ||
           potentialItemType == AreaMovingPathComponent ||
+          potentialItemType == AreaEventComponent ||
+          potentialItemType == AsphaltEntity ||
+          potentialItemType == SpawnTeleport ||
           potentialItemType == AreaCollisionHighPrecisionComponent) {
         return false;
       }
+      print(potentialItemType);
     }
 
     return true;

@@ -95,6 +95,7 @@ class BulletEntity extends SpriteAnimationGroupComponent<ActorCoreState>
 
   @override
   FutureOr<void> onLoad() {
+    currentCell = owner.currentCell;
     anchor = Anchor.center;
     if (data.coreState == ActorCoreState.init) {
       coreState = ActorCoreState.move;

@@ -19,7 +19,9 @@ import 'package:tank_game/world/core/behaviors/player_controlled_behavior.dart';
 import 'package:tank_game/world/core/direction.dart';
 import 'package:tank_game/world/core/scenario/components/area_collision_high_precision.dart';
 import 'package:tank_game/world/core/scenario/components/scenario_event_emitter_mixin.dart';
+import 'package:tank_game/world/core/scenario/scenario_activator_behavior.dart';
 import 'package:tank_game/world/core/scenario/scripts/event.dart';
+import 'package:tank_game/world/environment/spawn/spawn_core_entity.dart';
 
 class InteractionPlayerOut extends CoreBehavior<ActorMixin>
     with HasGameReference<MyGame>, MessageListenerMixin<List<PlayerAction>> {
@@ -125,6 +127,8 @@ class InteractionPlayerOut extends CoreBehavior<ActorMixin>
       [DirectionExtended direction = DirectionExtended.down]) {
     final restoredEntity = HumanEntity()
       ..isInteractionEnabled = true
+      ..add(TriggerSpawnBehavior())
+      ..add(ScenarioActivatorBehavior())
       ..add(DetectableBehavior(detectionType: DetectionType.visual));
 
     switch (direction) {
