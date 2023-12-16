@@ -766,4 +766,7 @@ class GameMapLoader extends TiledMapLoader {
         .toList(growable: false);
     MovingPathScript.namedLists[tiledObject.name] = points;
   }
+
+  @override
+  Map<String, LayerBuilderFunction>? get layerBuilders => {};
 }

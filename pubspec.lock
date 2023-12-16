@@ -13,10 +13,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: "7e0d52067d05f2e0324268097ba723b71cb41ac8a6a2b24d1edf9c536b987b03"
+      sha256: "7b875fd4a20b165a3084bd2d210439b22ebc653f21cea4842729c0c30c82596b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.6"
+    version: "3.4.9"
   args:
     dependency: "direct main"
     description:
@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  bit_array:
+    dependency: transitive
+    description:
+      name: bit_array
+      sha256: "127c01ebb740e6dd076f5d42aa39049cf847baee39a7e63fb499b1895581dba6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -137,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  dart_bloom_filter:
+    dependency: transitive
+    description:
+      name: dart_bloom_filter
+      sha256: dd61a0943f926c38774405706936b26b02931ff785ac16c9e5d475844024404d
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   equatable:
     dependency: transitive
     description:
@@ -173,18 +189,18 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: "042533edc7ded96c2a439b2eae1a905f2611447d0d106b33686b841371c8d8c5"
+      sha256: b6bb76224fc29fd5eea25d66cda6e322e3678bdedc1f65956c6151326a6a798b
       url: "https://pub.dev"
     source: hosted
-    version: "1.10.0"
+    version: "1.10.1"
   flame_audio:
     dependency: "direct main"
     description:
       name: flame_audio
-      sha256: dabcbb8fba44aeff62af0d5f9e4bd716f166e4bd4d7d54f0f2e8851fac0e9e4a
+      sha256: e9a25fac14a1017e7851f19ec18e759ce3001872d97398df29706824618b2690
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   flame_fast_touch:
     dependency: "direct main"
     description:
@@ -213,10 +229,19 @@ packages:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: "1d40c455612ed5a0b471bff5e86f06964f9be3039a8b69000359b4a27184d39e"
+      sha256: "3a560e5e07f84996ba693985d626d85cad1dfca143bf59f668e475ebafb6e80e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.15.0"
+    version: "1.15.1"
+  flat_buffers:
+    dependency: transitive
+    description:
+      path: dart
+      ref: HEAD
+      resolved-ref: "205285c35c164c0368c913b3f611cf8d672bc103"
+      url: "https://github.com/google/flatbuffers.git"
+    source: git
+    version: "23.5.26"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -297,10 +322,10 @@ packages:
     dependency: transitive
     description:
       name: isolate_manager
-      sha256: "02cec352cb0d5f49fedaa31a6b9ec0835bac7d91c28907d69381b4e7c5d15d89"
+      sha256: "2e69db3969818a8a5eac1caa00f0bb662d9d8458fdd9489534a699a23b0e91d6"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.4"
+    version: "4.1.5"
   js:
     dependency: transitive
     description:
@@ -309,6 +334,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.8.1"
   lints:
     dependency: transitive
     description:
@@ -349,6 +382,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0"
+  murmurhash:
+    dependency: transitive
+    description:
+      name: murmurhash
+      sha256: e9f30312675b6184d1311f87d27eeb9c3b2e107ea2eed94d79ecdc4f59fd2256
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   nes_ui:
     dependency: "direct main"
     description:
@@ -606,10 +647,10 @@ packages:
     dependency: transitive
     description:
       name: uuid
-      sha256: b715b8d3858b6fa9f68f87d20d98830283628014750c2b09b6f516c1da4af2a7
+      sha256: df5a4d8f22ee4ccd77f8839ac7cb274ebc11ef9adcce8b92be14b797fe889921
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.0"
+    version: "4.2.1"
   vector_math:
     dependency: transitive
     description:
