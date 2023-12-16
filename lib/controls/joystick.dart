@@ -71,7 +71,7 @@ mixin MyJoystickMix on MyGameFeatures {
           ..add(OpacityEffect.to(0.5, EffectController(duration: 0)))
           ..add(ColorEffect(
               const Color.fromRGBO(119, 0, 255, 1.0),
-              const Offset(1, 1),
+              // const Offset(1, 1),
               InfiniteEffectController(EffectController(duration: 100)))),
         buttonDown: SpriteComponent(
             sprite: sheet.getSpriteById(4), size: Vector2.all(40)),
