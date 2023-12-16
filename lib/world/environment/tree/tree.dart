@@ -136,6 +136,9 @@ class TreeBoundingHitbox extends BoundingHitbox {
   @override
   FutureOr<void> onLoad() {
     groupAbsoluteCacheByType = true;
+    fastCollisionForRects = true;
+    cacheAbsoluteScaledSize = true;
+    cacheAbsoluteAngle = true;
     collisionType = defaultCollisionType = CollisionType.passive;
     return super.onLoad();
   }
